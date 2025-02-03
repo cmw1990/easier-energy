@@ -52,13 +52,15 @@ const Index = () => {
       return data;
     },
     enabled: !!session?.user?.id,
-    onError: () => {
-      toast({
-        title: "Error loading mood data",
-        description: "Please try refreshing the page",
-        variant: "destructive",
-      });
-    },
+    meta: {
+      onError: () => {
+        toast({
+          title: "Error loading mood data",
+          description: "Please try refreshing the page",
+          variant: "destructive",
+        });
+      }
+    }
   });
 
   const handleBlockingAction = (action: "block" | "allow") => {

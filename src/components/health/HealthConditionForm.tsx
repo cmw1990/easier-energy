@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { Brain, Activity, Heart, Memory } from "lucide-react";
+import { Brain, Activity, Heart } from "lucide-react";
 
 type HealthCondition = 'adhd' | 'chronic_fatigue' | 'multiple_sclerosis' | 'other_fatigue' | 'other_focus_issue' | 'short_term_memory' | 'long_term_memory';
 
