@@ -47,6 +47,7 @@ export type Database = {
       }
       board_games: {
         Row: {
+          board_size: number | null
           completed_at: string | null
           created_at: string | null
           difficulty_level: number
@@ -60,9 +61,11 @@ export type Database = {
           status: string
           updated_at: string | null
           user_id: string | null
+          variant: string | null
           winner: string | null
         }
         Insert: {
+          board_size?: number | null
           completed_at?: string | null
           created_at?: string | null
           difficulty_level?: number
@@ -76,9 +79,11 @@ export type Database = {
           status?: string
           updated_at?: string | null
           user_id?: string | null
+          variant?: string | null
           winner?: string | null
         }
         Update: {
+          board_size?: number | null
           completed_at?: string | null
           created_at?: string | null
           difficulty_level?: number
@@ -92,6 +97,7 @@ export type Database = {
           status?: string
           updated_at?: string | null
           user_id?: string | null
+          variant?: string | null
           winner?: string | null
         }
         Relationships: []

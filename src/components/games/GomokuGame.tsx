@@ -1,40 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
-
-type GameType = 'chess' | 'go' | 'checkers' | 'reversi' | 'xiangqi' | 'shogi' | 'gomoku' | 'connect_four' | 'tic_tac_toe';
-type GameStatus = 'in_progress' | 'completed';
-
-interface GameState {
-  board: Array<Array<string>>;
-  currentPlayer: 'black' | 'white';
-  status: GameStatus;
-  winner: string | null;
-}
-
-const BOARD_SIZE = 15; // Traditional Gomoku is played on a 15x15 board
-const WIN_LENGTH = 5; // Need 5 in a row to win
+import GomokuSettings from './gomoku/GomokuSettings';
+import { checkWin, isValidMove, handleSwap2Move } from './gomoku/rules';
+import type { GomokuState, GomokuSettings as Settings } from './gomoku/types';
 
 const GomokuGame = () => {
-  const [gameState, setGameState] = useState<GameState>({
-    board: Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill('')),
+  const [gameState, setGameState] = useState<GomokuState>({
+    board: Array(15).fill(null).map(() => Array(15).fill('')),
     currentPlayer: 'black',
     status: 'in_progress',
-    winner: null
+    winner: null,
+    variant: 'standard',
+    boardSize: 15,
+    moveHistory: [],
   });
   
-  const [difficulty, setDifficulty] = useState('1');
+  const [settings, setSettings] = useState<Settings>({
+    variant: 'standard',
+    boardSize: 15,
+    difficulty: '1',
+  });
+
   const { toast } = useToast();
 
   useEffect(() => {
@@ -51,9 +42,13 @@ const GomokuGame = () => {
         .maybeSingle();
 
       if (existingGame) {
-        const loadedGameState = existingGame.game_state as unknown as GameState;
+        const loadedGameState = existingGame.game_state as unknown as GomokuState;
         setGameState(loadedGameState);
-        setDifficulty(existingGame.difficulty_level.toString());
+        setSettings({
+          variant: existingGame.variant as Settings['variant'],
+          boardSize: existingGame.board_size as Settings['boardSize'],
+          difficulty: existingGame.difficulty_level.toString(),
+        });
       } else {
         await createNewGame();
       }
@@ -69,20 +64,29 @@ const GomokuGame = () => {
 
   const createNewGame = async () => {
     const user = await supabase.auth.getUser();
-    const initialGameState: GameState = {
-      board: Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill('')),
+    const initialGameState: GomokuState = {
+      board: Array(settings.boardSize).fill(null).map(() => Array(settings.boardSize).fill('')),
       currentPlayer: 'black',
       status: 'in_progress',
-      winner: null
+      winner: null,
+      variant: settings.variant,
+      boardSize: settings.boardSize,
+      moveHistory: [],
+      ...(settings.variant === 'swap2' ? {
+        isSwap2Phase: true,
+        swap2Moves: [],
+      } : {}),
     };
 
     try {
       const { error } = await supabase
         .from('board_games')
         .insert([{
-          game_type: 'gomoku' as GameType,
-          difficulty_level: parseInt(difficulty),
+          game_type: 'gomoku',
+          difficulty_level: parseInt(settings.difficulty),
           game_state: initialGameState as unknown as Json,
+          variant: settings.variant,
+          board_size: settings.boardSize,
           status: 'in_progress',
           user_id: user.data.user?.id,
         }]);
@@ -100,51 +104,16 @@ const GomokuGame = () => {
     }
   };
 
-  const checkWin = (row: number, col: number, board: string[][]): boolean => {
-    const directions = [
-      [1, 0],   // horizontal
-      [0, 1],   // vertical
-      [1, 1],   // diagonal right
-      [1, -1],  // diagonal left
-    ];
-    
-    const color = board[row][col];
-    
-    for (const [dx, dy] of directions) {
-      let count = 1;
-      
-      // Check in positive direction
-      for (let i = 1; i < WIN_LENGTH; i++) {
-        const newRow = row + dx * i;
-        const newCol = col + dy * i;
-        if (
-          newRow < 0 || newRow >= BOARD_SIZE || 
-          newCol < 0 || newCol >= BOARD_SIZE ||
-          board[newRow][newCol] !== color
-        ) break;
-        count++;
-      }
-      
-      // Check in negative direction
-      for (let i = 1; i < WIN_LENGTH; i++) {
-        const newRow = row - dx * i;
-        const newCol = col - dy * i;
-        if (
-          newRow < 0 || newRow >= BOARD_SIZE || 
-          newCol < 0 || newCol >= BOARD_SIZE ||
-          board[newRow][newCol] !== color
-        ) break;
-        count++;
-      }
-      
-      if (count >= WIN_LENGTH) return true;
-    }
-    
-    return false;
-  };
-
   const makeMove = async (row: number, col: number) => {
-    if (gameState.board[row][col] !== '' || gameState.status === 'completed') {
+    if (gameState.status === 'completed' || !isValidMove(row, col, gameState)) {
+      return;
+    }
+
+    let newState = { ...gameState };
+
+    if (gameState.variant === 'swap2' && gameState.isSwap2Phase) {
+      newState = handleSwap2Move(row, col, gameState);
+      setGameState(newState);
       return;
     }
 
@@ -153,22 +122,24 @@ const GomokuGame = () => {
     
     const hasWon = checkWin(row, col, newBoard);
     
-    const newGameState: GameState = {
+    newState = {
+      ...newState,
       board: newBoard,
       currentPlayer: gameState.currentPlayer === 'black' ? 'white' : 'black',
       status: hasWon ? 'completed' : 'in_progress',
-      winner: hasWon ? gameState.currentPlayer : null
+      winner: hasWon ? gameState.currentPlayer : null,
+      moveHistory: [...gameState.moveHistory, [row, col]],
     };
 
-    setGameState(newGameState);
+    setGameState(newState);
 
     try {
       const { error } = await supabase
         .from('board_games')
         .update({
-          game_state: newGameState as unknown as Json,
-          status: newGameState.status,
-          winner: newGameState.winner,
+          game_state: newState as unknown as Json,
+          status: newState.status,
+          winner: newState.winner,
           last_move_at: new Date().toISOString(),
         })
         .eq('game_type', 'gomoku')
@@ -185,28 +156,24 @@ const GomokuGame = () => {
     }
   };
 
+  const handleSettingsChange = (newSettings: Settings) => {
+    setSettings(newSettings);
+  };
+
   return (
     <Card className="p-6 w-full max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-4">
-        <Select
-          value={difficulty}
-          onValueChange={(value) => setDifficulty(value)}
-        >
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Difficulty" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="1">Easy</SelectItem>
-            <SelectItem value="2">Medium</SelectItem>
-            <SelectItem value="3">Hard</SelectItem>
-          </SelectContent>
-        </Select>
+        <GomokuSettings
+          settings={settings}
+          onSettingsChange={handleSettingsChange}
+          className="flex-1 mr-4"
+        />
         <Button onClick={createNewGame}>
           New Game
         </Button>
       </div>
       <div className="aspect-square w-full bg-yellow-100 relative">
-        <div className="grid grid-cols-15 grid-rows-15 absolute inset-0">
+        <div className={`grid grid-cols-${gameState.boardSize} grid-rows-${gameState.boardSize} absolute inset-0`}>
           {gameState.board.map((row, rowIndex) =>
             row.map((cell, colIndex) => (
               <button
