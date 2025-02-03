@@ -11,7 +11,7 @@ import type { Json } from '@/integrations/supabase/types';
 const BOARD_SIZE = 8;
 
 export const ReversiGame = () => {
-  const { user } = useAuth();
+  const { session } = useAuth();
   const [gameState, setGameState] = useState<ReversiState | null>(null);
   const [difficulty, setDifficulty] = useState('1');
 
@@ -47,7 +47,7 @@ export const ReversiGame = () => {
           difficulty_level: parseInt(difficulty),
           game_state: initialGameState as unknown as Json,
           status: 'in_progress' as GameStatus,
-          user_id: user.data.user?.id,
+          user_id: session?.user?.id,
         }]);
       
       if (error) throw error;
@@ -95,7 +95,7 @@ export const ReversiGame = () => {
           game_state: newGameState as unknown as Json,
           last_move_at: new Date().toISOString(),
         })
-        .eq('user_id', user.data.user?.id)
+        .eq('user_id', session?.user?.id)
         .eq('status', 'in_progress')
         .eq('game_type', 'reversi');
 
