@@ -7,36 +7,58 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    // Log the raw request body for debugging
-    const rawBody = await req.text();
-    console.log('Raw request body:', rawBody);
+    // Ensure content type is application/json
+    const contentType = req.headers.get('content-type')
+    if (!contentType?.includes('application/json')) {
+      throw new Error('Content-Type must be application/json')
+    }
 
+    // Parse request body
     let requestData;
     try {
-      requestData = JSON.parse(rawBody);
-      console.log('Parsed request data:', requestData);
+      requestData = await req.json();
     } catch (e) {
       console.error('Error parsing request body:', e);
-      throw new Error('Invalid JSON in request body');
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid JSON in request body',
+          details: e.message 
+        }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     const { batch } = requestData;
     
     if (!batch) {
-      console.error('Missing batch parameter');
-      throw new Error('Missing batch parameter');
+      return new Response(
+        JSON.stringify({ error: 'Missing batch parameter' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     console.log(`Processing batch: ${batch}`);
 
     if (!GAME_ASSETS_CONFIG[batch]) {
-      console.error(`Invalid batch type: ${batch}`);
-      throw new Error(`Invalid batch type: ${batch}`);
+      return new Response(
+        JSON.stringify({ error: `Invalid batch type: ${batch}` }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     const supabaseClient = createClient(
@@ -47,7 +69,13 @@ serve(async (req) => {
     // Verify OpenAI API key is set
     const openAIKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIKey) {
-      throw new Error('OpenAI API key is not configured');
+      return new Response(
+        JSON.stringify({ error: 'OpenAI API key is not configured' }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     const assets = GAME_ASSETS_CONFIG[batch];
