@@ -19,7 +19,10 @@ export const GameAssetsGenerator = () => {
       const { data, error } = await supabase
         .storage
         .from('game-assets')
-        .list(batch);
+        .list(batch, {
+          limit: 1,
+          offset: 0,
+        });
 
       if (error) {
         console.error(`Error checking existing assets for ${batch}:`, error);
@@ -63,14 +66,17 @@ export const GameAssetsGenerator = () => {
 
           console.log(`Invoking edge function for ${batch}...`);
           
-          // Log the request body for debugging
-          const requestBody = { batch };
+          // Create a proper request body object
+          const requestBody = {
+            batch: batch
+          };
+          
           console.log('Request body:', JSON.stringify(requestBody));
           
           const { data, error } = await supabase.functions.invoke(
             'generate-initial-game-assets',
-            { 
-              body: JSON.stringify(requestBody),
+            {
+              body: requestBody,
               headers: {
                 'Content-Type': 'application/json',
               }
