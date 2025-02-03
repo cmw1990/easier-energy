@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Moon, Clock, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { SmartAlarm } from "@/components/sleep/SmartAlarm";
 import {
   LineChart,
   Line,
@@ -82,6 +83,8 @@ const Sleep = () => {
   return (
     <div className="space-y-6">
       <h1 className="text-4xl font-bold">Sleep Tracking</h1>
+      
+      <SmartAlarm />
       
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
