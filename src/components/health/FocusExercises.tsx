@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Brain, Puzzle, Book } from "lucide-react";
 import MemoryCards from "@/components/games/MemoryCards";
+import SequenceMemory from "@/components/games/SequenceMemory";
+import VisualMemory from "@/components/games/VisualMemory";
 
 export const FocusExercises = () => {
   return (
@@ -15,6 +17,8 @@ export const FocusExercises = () => {
         <CardContent>
           <div className="space-y-6">
             <MemoryCards />
+            <SequenceMemory />
+            <VisualMemory />
           </div>
         </CardContent>
       </Card>
