@@ -36,50 +36,48 @@ const BalloonJourney = () => {
       const assetTypes = ['balloon', 'mountains', 'clouds', 'obstacles', 'background'];
       try {
         const loadedAssets: Partial<GameAssets> = {};
-        let loadedCount = 0;
 
         for (const type of assetTypes) {
           try {
-            console.log(`Loading ${type} from game-assets storage`);
             const { data: publicUrl } = await supabase
               .storage
               .from('game-assets')
               .getPublicUrl(`balloon/${type}.png`);
 
             if (!publicUrl.publicUrl) {
-              throw new Error('No public URL received');
+              throw new Error(`No public URL received for ${type}`);
             }
 
-            // Pre-load the image to ensure it's cached
+            // Pre-load the image
             const img = new Image();
             await new Promise((resolve, reject) => {
               img.onload = resolve;
-              img.onerror = reject;
+              img.onerror = () => {
+                console.warn(`Failed to load ${type}, using fallback`);
+                reject(new Error(`Failed to load ${type}`));
+              };
               img.src = publicUrl.publicUrl;
             });
 
             loadedAssets[type as keyof GameAssets] = publicUrl.publicUrl;
-            loadedCount++;
+            console.log(`Successfully loaded ${type}`);
           } catch (err) {
-            console.error(`Error loading ${type}:`, err);
+            console.warn(`Error loading ${type}, using fallback:`, err);
             // Use placeholder for failed assets
-            loadedAssets[type as keyof GameAssets] = '/placeholder.svg';
+            loadedAssets[type as keyof GameAssets] = 'https://images.unsplash.com/photo-1501854140801-50d01698950b';
           }
         }
 
-        if (Object.keys(loadedAssets).length === assetTypes.length) {
-          setAssets(loadedAssets as GameAssets);
-          setIsLoading(false);
-        } else {
-          throw new Error('Failed to load all assets');
-        }
+        setAssets(loadedAssets as GameAssets);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error loading game assets:", error);
         toast({
           title: "Error Loading Game Assets",
-          description: "Please refresh the page to try again.",
+          description: "Using fallback images. You can still play the game.",
           variant: "destructive",
         });
+        setIsLoading(false);
       }
     };
 
@@ -276,5 +274,3 @@ const BalloonJourney = () => {
     </Card>
   );
 };
-
-export default BalloonJourney;

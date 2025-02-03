@@ -65,19 +65,27 @@ const ZenGarden = () => {
             .getPublicUrl(`zen-garden/${type}.png`);
 
           if (!publicUrl.publicUrl) {
-            throw new Error('No public URL received');
+            throw new Error(`No public URL received for ${type}`);
           }
 
           const img = new Image();
           img.src = publicUrl.publicUrl;
-          await new Promise((resolve) => {
+          
+          await new Promise((resolve, reject) => {
             img.onload = resolve;
+            img.onerror = () => {
+              console.warn(`Failed to load ${type}, using fallback`);
+              reject(new Error(`Failed to load ${type}`));
+            };
           });
+          
           newElements.push(img);
+          console.log(`Successfully loaded ${type}`);
         } catch (error) {
-          console.error('Error loading zen elements:', error);
+          console.warn(`Error loading ${type}, using fallback:`, error);
+          // Use a placeholder image
           const placeholderImg = new Image();
-          placeholderImg.src = '/placeholder.svg';
+          placeholderImg.src = 'https://images.unsplash.com/photo-1501854140801-50d01698950b';
           newElements.push(placeholderImg);
         }
       }
@@ -87,7 +95,7 @@ const ZenGarden = () => {
       console.error('Error loading zen elements:', error);
       toast({
         title: "Error Loading Assets",
-        description: "Could not load zen garden elements. Using default particles.",
+        description: "Using fallback images. You can still enjoy the experience.",
         variant: "destructive",
       });
     } finally {
