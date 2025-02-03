@@ -83,7 +83,7 @@ export const usePufferfishAssets = () => {
         toast({
           title: "Some Assets Failed to Load",
           description: "The game will work, but some visuals might be missing. Try refreshing.",
-          variant: "warning",
+          variant: "destructive",
         });
       }
     };
