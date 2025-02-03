@@ -16,7 +16,8 @@ import Food from "@/pages/Food";
 import NotFound from "@/pages/NotFound";
 import ChessGame from "@/components/games/ChessGame";
 import GoGame from "@/components/games/GoGame";
-import ReversiGame from "@/components/games/ReversiGame";
+import { ReversiGame } from "@/components/games/ReversiGame";
+import { ConnectFourGame } from "@/components/games/ConnectFourGame";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ function App() {
               <Route path="/games/chess" element={<ChessGame />} />
               <Route path="/games/go" element={<GoGame />} />
               <Route path="/games/reversi" element={<ReversiGame />} />
+              <Route path="/games/connect-four" element={<ConnectFourGame />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
