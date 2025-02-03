@@ -47,25 +47,45 @@ const Breathing = () => {
         const phaseLength = 4; // Each phase is 4 seconds
         const currentPhase = Math.floor((seconds % totalCycleLength) / phaseLength);
         
-        // Determine the breath phase
+        // Determine the breath phase and create haptic patterns
         let newPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
         switch (currentPhase) {
           case 0:
             newPhase = 'inhale';
             if (breathPhase !== 'inhale') {
-              await Haptics.impact({ style: ImpactStyle.Light });
+              // Start inhale pattern
+              for (let i = 0; i < 3; i++) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                await Haptics.impact({ style: ImpactStyle.Light });
+                await new Promise(resolve => setTimeout(resolve, 200));
+                await Haptics.impact({ style: ImpactStyle.Medium });
+                await new Promise(resolve => setTimeout(resolve, 200));
+                await Haptics.impact({ style: ImpactStyle.Heavy });
+              }
             }
             break;
           case 1:
             newPhase = 'hold';
             if (breathPhase !== 'hold') {
-              await Haptics.impact({ style: ImpactStyle.Medium });
+              // Rhythmic pulses for hold
+              for (let i = 0; i < 4; i++) {
+                await Haptics.impact({ style: ImpactStyle.Medium });
+                await new Promise(resolve => setTimeout(resolve, 800));
+              }
             }
             break;
           case 2:
             newPhase = 'exhale';
             if (breathPhase !== 'exhale') {
-              await Haptics.impact({ style: ImpactStyle.Heavy });
+              // Decreasing intensity for exhale
+              for (let i = 0; i < 3; i++) {
+                await Haptics.impact({ style: ImpactStyle.Heavy });
+                await new Promise(resolve => setTimeout(resolve, 200));
+                await Haptics.impact({ style: ImpactStyle.Medium });
+                await new Promise(resolve => setTimeout(resolve, 200));
+                await Haptics.impact({ style: ImpactStyle.Light });
+                await new Promise(resolve => setTimeout(resolve, 200));
+              }
             }
             break;
           default:
@@ -89,7 +109,7 @@ const Breathing = () => {
   const handleStartStop = async () => {
     if (!isActive) {
       setIsActive(true);
-      await Haptics.notification({ type: NotificationType.SUCCESS });
+      await Haptics.notification({ type: NotificationType.Success });
       const interval = setInterval(() => {
         setSeconds((prev) => prev + 1);
       }, 1000);
