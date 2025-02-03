@@ -10,7 +10,7 @@ import {
   ShieldBan,
   Utensils,
   BarChart3,
-  King,
+  Crown,
   CircleDot,
   Grid3X3,
   Gamepad2,
@@ -77,7 +77,7 @@ const navigationGroups = [
     links: [
       {
         to: "/games/chess",
-        icon: King,
+        icon: Crown,
         label: "Chess",
       },
       {
