@@ -15,13 +15,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export const Layout = ({ children }: LayoutProps) => {
+const Layout = ({ children }: LayoutProps) => {
   const { session } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -45,7 +45,7 @@ export const Layout = ({ children }: LayoutProps) => {
   };
 
   if (!session) {
-    return <div className="min-h-screen">{children}</div>;
+    return <div className="min-h-screen">{children || <Outlet />}</div>;
   }
 
   return (
@@ -77,10 +77,12 @@ export const Layout = ({ children }: LayoutProps) => {
             <Toolbar />
           </div>
           <div className="flex-1 overflow-auto p-4 md:p-6 space-y-6">
-            {children}
+            {children || <Outlet />}
           </div>
         </main>
       </div>
     </SidebarProvider>
   );
 };
+
+export default Layout;
