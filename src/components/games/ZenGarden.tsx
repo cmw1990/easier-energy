@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Flower, Loader2 } from "lucide-react";
+import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
 
 interface Particle {
   x: number;
@@ -28,6 +29,8 @@ const ZenGarden = () => {
   const [isLoadingAssets, setIsLoadingAssets] = useState(false);
   const [zenElements, setZenElements] = useState<HTMLImageElement[]>([]);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
+  const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
+  const [phaseTime, setPhaseTime] = useState(0);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -73,7 +76,6 @@ const ZenGarden = () => {
           newElements.push(img);
         } catch (error) {
           console.error('Error loading zen elements:', error);
-          // Use placeholder for failed elements
           const placeholderImg = new Image();
           placeholderImg.src = '/placeholder.svg';
           newElements.push(placeholderImg);
@@ -112,6 +114,15 @@ const ZenGarden = () => {
   }, []);
 
   const startExperience = async () => {
+    if (!selectedTechnique) {
+      toast({
+        title: "Please select a breathing technique",
+        description: "Choose a breathing technique before starting the experience",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       if (!audioSupported) {
         throw new Error("Audio input is not supported on this device/browser");
@@ -198,7 +209,6 @@ const ZenGarden = () => {
     
     const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
     
-    // Update breath phase based on intensity
     if (average > 50) {
       setBreathPhase('inhale');
     } else if (average > 30) {
@@ -230,15 +240,13 @@ const ZenGarden = () => {
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    // Create gradient background
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, '#faf5ff'); // Light purple
-    gradient.addColorStop(1, '#f0f7ff'); // Light blue
+    gradient.addColorStop(0, '#faf5ff');
+    gradient.addColorStop(1, '#f0f7ff');
     
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw particles with smooth transitions
     particles.forEach(particle => {
       ctx.save();
       ctx.globalAlpha = particle.opacity;
@@ -264,7 +272,6 @@ const ZenGarden = () => {
       ctx.restore();
     });
 
-    // Add subtle ripple effect
     ctx.strokeStyle = 'rgba(255,255,255,0.1)';
     ctx.lineWidth = 2;
     const time = Date.now() / 1000;
@@ -368,6 +375,15 @@ const ZenGarden = () => {
       </div>
 
       <div className="flex flex-col items-center gap-4">
+        {!isPlaying && (
+          <div className="w-full max-w-xl mb-4">
+            <BreathingTechniques
+              onSelectTechnique={setSelectedTechnique}
+              className="mb-4"
+            />
+          </div>
+        )}
+
         <div className="relative w-full">
           <canvas
             ref={canvasRef}

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Brain, Loader2 } from "lucide-react";
 import { usePufferfishAssets } from "./PufferfishAssets";
+import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
 
 interface GameState {
   score: number;
@@ -35,6 +36,9 @@ const BreathingGame = () => {
     obstacles: [],
     bubbles: [],
   });
+  const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
+  const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
+  const [phaseTime, setPhaseTime] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [audioSupported, setAudioSupported] = useState<boolean | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -46,11 +50,9 @@ const BreathingGame = () => {
   const { session } = useAuth();
   const { assets, isLoading } = usePufferfishAssets();
 
-  // Check audio support on mount
   useEffect(() => {
     const checkAudioSupport = async () => {
       try {
-        // Check if the browser supports the required APIs
         const supported = !!(
           navigator.mediaDevices &&
           navigator.mediaDevices.getUserMedia &&
@@ -65,13 +67,53 @@ const BreathingGame = () => {
     checkAudioSupport();
   }, []);
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (gameState.isPlaying && selectedTechnique) {
+      interval = setInterval(() => {
+        setPhaseTime(prev => prev + 1);
+        const { pattern } = selectedTechnique;
+        const totalCycleLength = (pattern.inhale + (pattern.hold || 0) + pattern.exhale + (pattern.holdAfterExhale || 0));
+        
+        setPhaseTime(prev => {
+          if (prev >= totalCycleLength) {
+            return 0;
+          }
+          return prev + 1;
+        });
+
+        // Update breath phase based on timing
+        if (phaseTime < pattern.inhale) {
+          setBreathPhase('inhale');
+        } else if (phaseTime < (pattern.inhale + (pattern.hold || 0))) {
+          setBreathPhase('hold');
+        } else if (phaseTime < (pattern.inhale + (pattern.hold || 0) + pattern.exhale)) {
+          setBreathPhase('exhale');
+        } else {
+          setBreathPhase('rest');
+        }
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [gameState.isPlaying, selectedTechnique, phaseTime]);
+
   const startGame = async () => {
+    if (!selectedTechnique) {
+      toast({
+        title: "Please select a breathing technique",
+        description: "Choose a breathing technique before starting the game",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       if (!audioSupported) {
         throw new Error("Audio input is not supported on this device/browser");
       }
 
-      // Request microphone access with constraints for voice optimization
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
@@ -109,7 +151,6 @@ const BreathingGame = () => {
     const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
     analyserRef.current.getByteFrequencyData(dataArray);
     
-    // Calculate average volume
     const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
     return average;
   };
@@ -118,15 +159,13 @@ const BreathingGame = () => {
     const breathingIntensity = detectBreathing();
     
     setGameState(prev => {
-      // Update fish size based on breathing
       let newSize = prev.fishSize;
-      if (breathingIntensity > 50) { // Inhale
+      if (breathPhase === 'inhale') {
         newSize = Math.min(1.5, prev.fishSize + 0.05);
-      } else if (breathingIntensity > 20) { // Exhale
+      } else if (breathPhase === 'exhale') {
         newSize = Math.max(0.8, prev.fishSize - 0.05);
       }
 
-      // Update fish position based on size (bigger = float up, smaller = sink down)
       let newPosition = prev.fishPosition;
       if (newSize > 1.2) {
         newPosition = Math.max(0, prev.fishPosition - 2);
@@ -134,7 +173,6 @@ const BreathingGame = () => {
         newPosition = Math.min(100, prev.fishPosition + 2);
       }
 
-      // Update obstacles
       const newObstacles = prev.obstacles
         .map(obs => ({
           ...obs,
@@ -143,7 +181,6 @@ const BreathingGame = () => {
         }))
         .filter(obs => obs.x > -20);
 
-      // Add new obstacles
       if (Math.random() < 0.02) {
         const types: Array<'coral' | 'seaweed' | 'predator' | 'smallFish'> = 
           ['coral', 'seaweed', 'predator', 'smallFish'];
@@ -155,7 +192,6 @@ const BreathingGame = () => {
         });
       }
 
-      // Update bubbles
       const newBubbles = [...prev.bubbles]
         .map(bubble => ({
           ...bubble,
@@ -164,7 +200,6 @@ const BreathingGame = () => {
         }))
         .filter(bubble => bubble.y > -10);
 
-      // Add new bubbles
       if (Math.random() < 0.1) {
         newBubbles.push({
           x: Math.random() * 100,
@@ -174,12 +209,10 @@ const BreathingGame = () => {
         });
       }
 
-      // Calculate score based on obstacles passed and fish control
       const newScore = prev.score + 
         newObstacles.filter(obs => obs.x < 20 && !obs.passed).length +
-        (Math.abs(1 - newSize) < 0.1 ? 0.1 : 0); // Bonus for maintaining neutral size
+        (Math.abs(1 - newSize) < 0.1 ? 0.1 : 0);
 
-      // Check collisions
       const collision = newObstacles.some(obs => {
         const hitbox = obs.type === 'predator' ? 15 : 10;
         return (
@@ -218,13 +251,11 @@ const BreathingGame = () => {
     const ctx = canvasRef.current.getContext('2d');
     if (!ctx) return;
 
-    // Clear and draw background
     ctx.clearRect(0, 0, 800, 400);
     const bgImage = new Image();
     bgImage.src = assets.background;
     ctx.drawImage(bgImage, 0, 0, 800, 400);
 
-    // Draw bubbles
     if (assets.bubbles) {
       const bubbleImage = new Image();
       bubbleImage.src = assets.bubbles;
@@ -239,7 +270,6 @@ const BreathingGame = () => {
       });
     }
 
-    // Draw obstacles
     gameState.obstacles.forEach(obstacle => {
       if (assets[obstacle.type]) {
         const obstacleImage = new Image();
@@ -255,7 +285,6 @@ const BreathingGame = () => {
       }
     });
 
-    // Draw pufferfish
     if (assets.pufferfish) {
       const fishImage = new Image();
       fishImage.src = assets.pufferfish;
@@ -269,7 +298,6 @@ const BreathingGame = () => {
       );
     }
 
-    // Draw score
     ctx.fillStyle = '#ffffff';
     ctx.font = '24px Arial';
     ctx.fillText(`Score: ${gameState.score}`, 20, 30);
@@ -293,17 +321,12 @@ const BreathingGame = () => {
     
     if (session?.user) {
       try {
-        // Normalize score to 0-100 range first
-        const normalizedScore = Math.min(Math.max(finalScore, 0), 100);
-        // Then convert to 0-10 range and ensure it's an integer
-        const focusRating = Math.min(Math.round((normalizedScore / 100) * 10), 10);
-
         const { error } = await supabase.from("energy_focus_logs").insert({
           user_id: session.user.id,
           activity_type: "breathing",
           activity_name: "Puffer Fish",
           duration_minutes: Math.ceil(finalScore / 10),
-          focus_rating: focusRating,
+          focus_rating: Math.min(Math.round((finalScore / 100) * 10), 10),
           energy_rating: null,
           notes: `Completed breathing game with score: ${finalScore}`
         });
@@ -315,7 +338,7 @@ const BreathingGame = () => {
           description: `Final score: ${finalScore}. Great job!`,
         });
       } catch (error) {
-        console.error("Error logging breathing game:", error);
+        console.error("Error saving game results:", error);
         toast({
           title: "Error Saving Results",
           description: "There was a problem saving your game results.",
@@ -327,7 +350,6 @@ const BreathingGame = () => {
     }
   };
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (streamRef.current) {
@@ -362,6 +384,15 @@ const BreathingGame = () => {
           </div>
         ) : (
           <>
+            {!gameState.isPlaying && (
+              <div className="w-full max-w-xl mb-4">
+                <BreathingTechniques
+                  onSelectTechnique={setSelectedTechnique}
+                  className="mb-4"
+                />
+              </div>
+            )}
+            
             <canvas
               ref={canvasRef}
               width={800}
@@ -373,7 +404,7 @@ const BreathingGame = () => {
               <Button 
                 onClick={startGame}
                 className="w-40"
-                disabled={isSubmitting || audioSupported === false}
+                disabled={isSubmitting || audioSupported === false || !selectedTechnique}
               >
                 Start Game
               </Button>
@@ -391,6 +422,7 @@ const BreathingGame = () => {
       <div className="mt-6 text-sm text-muted-foreground">
         <p>Welcome to Pufferfish Adventure! Control your pufferfish by breathing:</p>
         <ul className="list-disc list-inside mt-2">
+          <li>Follow the breathing pattern to control your pufferfish</li>
           <li>Breathe in deeply to inflate and rise</li>
           <li>Breathe out slowly to deflate and descend</li>
           <li>Avoid obstacles and predators</li>

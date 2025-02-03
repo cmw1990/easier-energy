@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Flame, Loader2 } from "lucide-react";
+import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
 
 interface GameAssets {
   balloon: string;
@@ -20,12 +21,15 @@ const BalloonJourney = () => {
   const [assets, setAssets] = useState<GameAssets>({} as GameAssets);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
   const { session } = useAuth();
   const gameLoopRef = useRef<number>();
   const balloonPositionRef = useRef({ x: 100, y: 200 });
   const obstaclesRef = useRef<Array<{ x: number, y: number }>>([]);
+  const breathPhaseRef = useRef<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
+  const phaseTimeRef = useRef(0);
 
   useEffect(() => {
     const loadAssets = async () => {
@@ -89,22 +93,57 @@ const BalloonJourney = () => {
   }, [toast]);
 
   const startGame = () => {
-    if (!canvasRef.current || !assets.balloon) return;
+    if (!canvasRef.current || !assets.balloon || !selectedTechnique) {
+      toast({
+        title: "Please select a breathing technique",
+        description: "Choose a breathing technique before starting the game",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsPlaying(true);
     setScore(0);
     balloonPositionRef.current = { x: 100, y: 200 };
     obstaclesRef.current = [];
+    breathPhaseRef.current = 'inhale';
+    phaseTimeRef.current = 0;
     gameLoop();
   };
 
   const gameLoop = () => {
-    if (!canvasRef.current || !isPlaying) return;
+    if (!canvasRef.current || !isPlaying || !selectedTechnique) return;
     
     const ctx = canvasRef.current.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
+    // Update breath phase
+    phaseTimeRef.current += 1;
+    const { pattern } = selectedTechnique;
+    const totalCycleLength = (pattern.inhale + (pattern.hold || 0) + pattern.exhale + (pattern.holdAfterExhale || 0));
+    
+    if (breathPhaseRef.current === 'inhale' && phaseTimeRef.current >= pattern.inhale) {
+      breathPhaseRef.current = pattern.hold ? 'hold' : 'exhale';
+      phaseTimeRef.current = 0;
+    } else if (breathPhaseRef.current === 'hold' && phaseTimeRef.current >= (pattern.hold || 0)) {
+      breathPhaseRef.current = 'exhale';
+      phaseTimeRef.current = 0;
+    } else if (breathPhaseRef.current === 'exhale' && phaseTimeRef.current >= pattern.exhale) {
+      breathPhaseRef.current = pattern.holdAfterExhale ? 'rest' : 'inhale';
+      phaseTimeRef.current = 0;
+    } else if (breathPhaseRef.current === 'rest' && phaseTimeRef.current >= (pattern.holdAfterExhale || 0)) {
+      breathPhaseRef.current = 'inhale';
+      phaseTimeRef.current = 0;
+    }
+
+    // Update balloon position based on breath phase
+    if (breathPhaseRef.current === 'inhale') {
+      balloonPositionRef.current.y = Math.max(50, balloonPositionRef.current.y - 2);
+    } else if (breathPhaseRef.current === 'exhale') {
+      balloonPositionRef.current.y = Math.min(350, balloonPositionRef.current.y + 2);
+    }
+
+    // Clear canvas and draw
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
     // Draw background
@@ -193,6 +232,15 @@ const BalloonJourney = () => {
           </div>
         ) : (
           <>
+            {!isPlaying && (
+              <div className="w-full max-w-xl mb-4">
+                <BreathingTechniques
+                  onSelectTechnique={setSelectedTechnique}
+                  className="mb-4"
+                />
+              </div>
+            )}
+            
             <canvas
               ref={canvasRef}
               width={800}
@@ -204,7 +252,7 @@ const BalloonJourney = () => {
               <Button 
                 onClick={startGame}
                 className="w-40"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !selectedTechnique}
               >
                 Start Journey
               </Button>
@@ -216,8 +264,10 @@ const BalloonJourney = () => {
       <div className="mt-6 text-sm text-muted-foreground">
         <p>Welcome to Balloon Journey! Control your hot air balloon through beautiful landscapes:</p>
         <ul className="list-disc list-inside mt-2">
-          <li>Breathe in to rise higher</li>
-          <li>Breathe out to descend</li>
+          <li>Follow the breathing pattern to control your balloon</li>
+          <li>Inhale to rise higher</li>
+          <li>Exhale to descend</li>
+          <li>Hold your breath to maintain position</li>
           <li>Avoid obstacles and mountains</li>
           <li>Collect clouds for extra points</li>
           <li>Enjoy the peaceful journey</li>
