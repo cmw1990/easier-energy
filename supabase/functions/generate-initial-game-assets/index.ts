@@ -6,6 +6,167 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders })
+  }
+
+  try {
+    // Log the raw request body for debugging
+    const rawBody = await req.text();
+    console.log('Raw request body:', rawBody);
+
+    let requestData;
+    try {
+      requestData = JSON.parse(rawBody);
+      console.log('Parsed request data:', requestData);
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      throw new Error('Invalid JSON in request body');
+    }
+
+    const { batch } = requestData;
+    
+    if (!batch) {
+      console.error('Missing batch parameter');
+      throw new Error('Missing batch parameter');
+    }
+
+    console.log(`Processing batch: ${batch}`);
+
+    if (!GAME_ASSETS_CONFIG[batch]) {
+      console.error(`Invalid batch type: ${batch}`);
+      throw new Error(`Invalid batch type: ${batch}`);
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    // Verify OpenAI API key is set
+    const openAIKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openAIKey) {
+      throw new Error('OpenAI API key is not configured');
+    }
+
+    const assets = GAME_ASSETS_CONFIG[batch];
+    const generatedAssets = [];
+
+    for (const asset of assets) {
+      console.log(`Generating asset: ${asset.name} for batch: ${batch}`);
+      
+      try {
+        const openAIResponse = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openAIKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: asset.prompt,
+            n: 1,
+            size: "1024x1024",
+            response_format: "url"
+          })
+        });
+
+        if (!openAIResponse.ok) {
+          const errorData = await openAIResponse.json();
+          console.error('OpenAI API error:', errorData);
+          throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
+        }
+
+        const data = await openAIResponse.json();
+        console.log('OpenAI response:', data);
+        
+        if (!data.data?.[0]?.url) {
+          throw new Error(`No image URL received for ${asset.name}`);
+        }
+
+        const imageUrl = data.data[0].url;
+        console.log(`Successfully generated image for ${asset.name}`);
+
+        // Download the image
+        const imageResponse = await fetch(imageUrl);
+        if (!imageResponse.ok) {
+          throw new Error(`Failed to download image for ${asset.name}`);
+        }
+        
+        const imageBlob = await imageResponse.blob();
+        console.log(`Downloaded image for ${asset.name}, size: ${imageBlob.size} bytes`);
+
+        // Upload to Supabase Storage
+        const filePath = `${batch}/${asset.name}.png`;
+        const { data: uploadData, error: uploadError } = await supabaseClient
+          .storage
+          .from('game-assets')
+          .upload(filePath, imageBlob, {
+            contentType: 'image/png',
+            upsert: true
+          });
+
+        if (uploadError) {
+          console.error(`Upload error for ${asset.name}:`, uploadError);
+          throw uploadError;
+        }
+
+        console.log(`Successfully uploaded ${asset.name} to storage`);
+
+        // Get the public URL
+        const { data: { publicUrl } } = supabaseClient
+          .storage
+          .from('game-assets')
+          .getPublicUrl(filePath);
+
+        generatedAssets.push({
+          name: asset.name,
+          url: publicUrl
+        });
+
+        console.log(`Successfully processed ${asset.name}`);
+        
+        // Add a small delay between generations to avoid rate limits
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+      } catch (error) {
+        console.error(`Error generating ${asset.name}:`, error);
+        throw error;
+      }
+    }
+
+    return new Response(
+      JSON.stringify({ 
+        message: `${batch} assets generated and uploaded successfully`,
+        assets: generatedAssets 
+      }),
+      { 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        } 
+      }
+    )
+
+  } catch (error) {
+    console.error('Error:', error);
+    return new Response(
+      JSON.stringify({ 
+        error: error.message,
+        details: error.toString()
+      }),
+      { 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        }, 
+        status: 500 
+      }
+    )
+  }
+})
+
 const GAME_ASSETS_CONFIG = {
   'memory-cards': [
     {
@@ -134,142 +295,3 @@ const GAME_ASSETS_CONFIG = {
     }
   ]
 };
-
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
-  }
-
-  try {
-    const body = await req.text();
-    let requestData;
-    
-    try {
-      requestData = JSON.parse(body);
-    } catch (e) {
-      console.error('Error parsing request body:', e);
-      throw new Error('Invalid JSON in request body');
-    }
-
-    const { batch } = requestData;
-    
-    if (!batch || !GAME_ASSETS_CONFIG[batch]) {
-      throw new Error(`Invalid batch type: ${batch}`);
-    }
-
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
-    const assets = GAME_ASSETS_CONFIG[batch];
-    const generatedAssets = [];
-
-    for (const asset of assets) {
-      console.log(`Generating asset: ${asset.name} for batch: ${batch}`);
-      
-      try {
-        const openAIResponse = await fetch('https://api.openai.com/v1/images/generations', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: "dall-e-3",
-            prompt: asset.prompt,
-            n: 1,
-            size: "1024x1024",
-            response_format: "url"
-          })
-        });
-
-        if (!openAIResponse.ok) {
-          const errorData = await openAIResponse.json();
-          console.error('OpenAI API error:', errorData);
-          throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
-        }
-
-        const data = await openAIResponse.json();
-        
-        if (!data.data?.[0]?.url) {
-          throw new Error(`No image URL received for ${asset.name}`);
-        }
-
-        const imageUrl = data.data[0].url;
-        console.log(`Successfully generated image for ${asset.name}`);
-
-        // Download the image
-        const imageResponse = await fetch(imageUrl);
-        if (!imageResponse.ok) {
-          throw new Error(`Failed to download image for ${asset.name}`);
-        }
-        
-        const imageBlob = await imageResponse.blob();
-
-        // Upload to Supabase Storage
-        const filePath = `${batch}/${asset.name}.png`;
-        const { data: uploadData, error: uploadError } = await supabaseClient
-          .storage
-          .from('game-assets')
-          .upload(filePath, imageBlob, {
-            contentType: 'image/png',
-            upsert: true
-          });
-
-        if (uploadError) {
-          throw uploadError;
-        }
-
-        // Get the public URL
-        const { data: { publicUrl } } = supabaseClient
-          .storage
-          .from('game-assets')
-          .getPublicUrl(filePath);
-
-        generatedAssets.push({
-          name: asset.name,
-          url: publicUrl
-        });
-
-        console.log(`Successfully uploaded ${asset.name} to storage`);
-        
-        // Add a small delay between generations to avoid rate limits
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-      } catch (error) {
-        console.error(`Error generating ${asset.name}:`, error);
-        throw error;
-      }
-    }
-
-    return new Response(
-      JSON.stringify({ 
-        message: `${batch} assets generated and uploaded successfully`,
-        assets: generatedAssets 
-      }),
-      { 
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        } 
-      }
-    )
-
-  } catch (error) {
-    console.error('Error:', error);
-    return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        details: error.toString()
-      }),
-      { 
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        }, 
-        status: 500 
-      }
-    )
-  }
-})

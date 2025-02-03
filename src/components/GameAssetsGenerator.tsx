@@ -10,6 +10,7 @@ export const GameAssetsGenerator = () => {
 
   const checkExistingAssets = async (batch: string) => {
     try {
+      console.log(`Checking storage for ${batch} assets...`);
       const { data, error } = await supabase
         .storage
         .from('game-assets')
@@ -19,7 +20,10 @@ export const GameAssetsGenerator = () => {
         console.error(`Error checking existing assets for ${batch}:`, error);
         throw error;
       }
-      return data && data.length > 0;
+      
+      const hasAssets = data && data.length > 0;
+      console.log(`${batch} assets exist:`, hasAssets);
+      return hasAssets;
     } catch (error) {
       console.error(`Error checking existing assets for ${batch}:`, error);
       return false;
@@ -44,7 +48,7 @@ export const GameAssetsGenerator = () => {
       
       for (const batch of batches) {
         try {
-          console.log(`Checking existing assets for ${batch}...`);
+          console.log(`Starting process for ${batch}...`);
           const hasExisting = await checkExistingAssets(batch);
           
           if (hasExisting) {
@@ -52,7 +56,7 @@ export const GameAssetsGenerator = () => {
             continue;
           }
 
-          console.log(`Starting generation for ${batch} assets...`);
+          console.log(`Invoking edge function for ${batch}...`);
           
           const { data, error } = await supabase.functions.invoke(
             'generate-initial-game-assets',
@@ -74,7 +78,13 @@ export const GameAssetsGenerator = () => {
             continue; // Continue with next batch even if this one fails
           }
           
-          console.log(`${batch} Asset Generation Response:`, data);
+          console.log(`${batch} generation response:`, data);
+          
+          toast({
+            title: 'Success',
+            description: `Generated assets for ${batch}`,
+            variant: 'default',
+          });
           
           // Wait between batches to avoid resource limits
           if (batch !== batches[batches.length - 1]) {
