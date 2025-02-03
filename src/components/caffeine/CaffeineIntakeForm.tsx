@@ -38,7 +38,29 @@ export const CaffeineIntakeForm = ({ onSubmit }: CaffeineIntakeFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="amount">Caffeine Amount (mg)</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="amount">Caffeine Amount (mg)</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-6 w-6">
+                <Info className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="space-y-2">
+                <h4 className="font-medium">Common Caffeine Amounts</h4>
+                <div className="grid gap-2">
+                  {CAFFEINE_REFERENCE.map((item) => (
+                    <div key={item.name} className="flex justify-between text-sm">
+                      <span>{item.name}</span>
+                      <span className="font-medium">{item.amount} mg</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
         <Input
           id="amount"
           type="number"
