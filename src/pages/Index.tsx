@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Brain, Shield, Activity, Ban, Clock, Bell, BellOff, Heart, Battery, Focus, Gamepad } from "lucide-react";
+import { Brain, Shield, Activity, Ban, Clock, Bell, Heart, Battery } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BlockingStats } from "@/components/distraction/BlockingStats";
 import { useAuth } from "@/components/AuthProvider";
@@ -15,6 +15,7 @@ import { FocusExercises } from "@/components/health/FocusExercises";
 import { MoodOverview } from "@/components/MoodOverview";
 import { useToast } from "@/hooks/use-toast";
 import { ActivityTracker } from "@/components/health/ActivityTracker";
+import { GamesSection } from "@/components/games/GamesSection";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -99,6 +100,9 @@ const Index = () => {
             <MoodOverview />
           </div>
           <div className="mb-8">
+            <GamesSection />
+          </div>
+          <div className="mb-8">
             <TailoredRecommendations />
           </div>
           <div className="mb-8">
@@ -110,7 +114,6 @@ const Index = () => {
         </>
       )}
 
-      {/* Main Action Card - Prominent Blocking Controls */}
       <Card className="p-6 bg-primary/5 border-2 border-primary/20 shadow-lg">
         <div className="flex flex-col items-center text-center space-y-6">
           <div className="p-4 bg-primary/10 rounded-full">
@@ -153,7 +156,6 @@ const Index = () => {
 
       <BlockingStats />
 
-      {/* Current State Card - Enhanced with condition context */}
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="p-6">
           <div className="flex flex-col items-center text-center space-y-4">
@@ -199,7 +201,6 @@ const Index = () => {
         </Card>
       </div>
 
-      {/* Games Section */}
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/distraction-blocker')}>
           <div className="flex flex-col items-center space-y-2 text-center">
