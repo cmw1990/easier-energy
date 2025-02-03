@@ -48,13 +48,19 @@ export class PufferfishScene extends BreathingBaseScene {
     super.create();
     this.gameState.isPlaying = true;
     
-    // Initialize fish sprite
+    // Initialize fish sprite with improved visual settings
     const fish = this.getSprite('pufferfish');
     if (fish) {
       fish.setVisible(true)
         .setPosition(100, this.gameState.fishPosition * 4)
-        .setScale(this.gameState.fishSize);
+        .setScale(this.gameState.fishSize)
+        .setAlpha(1)
+        .setTint(0xFFFFFF)
+        .setDepth(1);
     }
+
+    // Add a simple ocean background color
+    this.cameras.main.setBackgroundColor('#4a9ced');
   }
 
   update(time: number, delta: number) {
@@ -81,11 +87,12 @@ export class PufferfishScene extends BreathingBaseScene {
     this.gameState.score += 0.1 * (delta / 16.667);
     this.onScoreUpdate(Math.floor(this.gameState.score));
 
-    // Update fish sprite
+    // Update fish sprite with smooth animations
     const fish = this.getSprite('pufferfish');
     if (fish) {
       fish.setPosition(100, this.gameState.fishPosition * 4)
-          .setScale(this.gameState.fishSize);
+          .setScale(this.gameState.fishSize)
+          .setRotation(Math.sin(time * 0.003) * 0.1); // Add gentle swaying motion
     }
   }
 

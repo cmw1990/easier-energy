@@ -1,9 +1,6 @@
-import pufferfishImage from '@/assets/games/pufferfish/pufferfish.png';
-import bubblesImage from '@/assets/games/pufferfish/bubbles.png';
-import seaweedImage from '@/assets/games/pufferfish/seaweed.png';
-import smallFishImage from '@/assets/games/pufferfish/smallFish.png';
-import predatorImage from '@/assets/games/pufferfish/predator.png';
-import backgroundImage from '@/assets/games/pufferfish/background.png';
+import { useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export interface PufferfishAssets {
   pufferfish: string;
@@ -15,18 +12,58 @@ export interface PufferfishAssets {
 }
 
 export const usePufferfishAssets = () => {
-  const assets: PufferfishAssets = {
-    pufferfish: pufferfishImage,
-    bubbles: bubblesImage,
-    seaweed: seaweedImage,
-    smallFish: smallFishImage,
-    predator: predatorImage,
-    background: backgroundImage
+  const { toast } = useToast();
+
+  const fetchAssets = async () => {
+    try {
+      const { data: urlData } = await supabase
+        .storage
+        .from('game-assets')
+        .getPublicUrl('pufferfish/pufferfish.png');
+
+      if (!urlData?.publicUrl) {
+        throw new Error('No public URL received for pufferfish');
+      }
+
+      return {
+        pufferfish: urlData.publicUrl,
+        bubbles: '/placeholder.svg', // These will be implemented later
+        seaweed: '/placeholder.svg',
+        smallFish: '/placeholder.svg',
+        predator: '/placeholder.svg',
+        background: '/placeholder.svg'
+      };
+    } catch (err) {
+      console.error('Error loading pufferfish assets:', err);
+      toast({
+        title: "Asset Loading Error",
+        description: "Using placeholder images for now. The game will still work!",
+        variant: "default",
+      });
+      
+      // Return placeholder URLs if asset loading fails
+      return {
+        pufferfish: '/placeholder.svg',
+        bubbles: '/placeholder.svg',
+        seaweed: '/placeholder.svg',
+        smallFish: '/placeholder.svg',
+        predator: '/placeholder.svg',
+        background: '/placeholder.svg'
+      };
+    }
   };
 
   return {
-    assets,
+    assets: {
+      pufferfish: '/placeholder.svg',
+      bubbles: '/placeholder.svg',
+      seaweed: '/placeholder.svg',
+      smallFish: '/placeholder.svg',
+      predator: '/placeholder.svg',
+      background: '/placeholder.svg'
+    },
     isLoading: false,
-    error: null
+    error: null,
+    fetchAssets
   };
 };
