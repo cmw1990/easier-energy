@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { OpenAITest } from "@/components/OpenAITest";
+import { AIAssistant } from "@/components/AIAssistant";
 import {
   LineChart,
   Line,
@@ -122,7 +122,6 @@ const SleepTrack = () => {
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold mb-6">Sleep Tracking</h1>
-        <OpenAITest />
       </div>
       
       <div className="grid md:grid-cols-2 gap-6">
@@ -202,6 +201,38 @@ const SleepTrack = () => {
             </div>
           </CardContent>
         </Card>
+
+        <AIAssistant 
+          type="sleep_pattern_analysis"
+          data={sleepLogs}
+        />
+
+        <AIAssistant 
+          type="sleep_recommendations"
+          data={{
+            sleepLogs,
+            recentQuality: quality,
+            recentHours: hours
+          }}
+        />
+
+        <AIAssistant 
+          type="sleep_quality_prediction"
+          data={{
+            sleepLogs,
+            currentTime: new Date().toISOString(),
+            recentActivity: "sleep"
+          }}
+        />
+
+        <AIAssistant 
+          type="analyze_sleep"
+          data={{
+            sleepLogs,
+            averageQuality: sleepLogs?.reduce((acc, log) => acc + log.energy_rating, 0) / (sleepLogs?.length || 1),
+            averageHours: sleepLogs?.reduce((acc, log) => acc + (log.duration_minutes || 0), 0) / (sleepLogs?.length || 1) / 60
+          }}
+        />
       </div>
     </div>
   );

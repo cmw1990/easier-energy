@@ -7,7 +7,7 @@ import { Loader2, Brain } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface AIAssistantProps {
-  type: 'analyze_sleep' | 'analyze_energy' | 'analyze_focus' | 'daily_summary';
+  type: 'analyze_sleep' | 'analyze_energy' | 'analyze_focus' | 'daily_summary' | 'sleep_recommendations' | 'sleep_pattern_analysis' | 'sleep_quality_prediction';
   data: any;
 }
 
