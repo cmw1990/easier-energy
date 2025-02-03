@@ -8,10 +8,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Brain, Activity } from "lucide-react";
 
+type SmartBlockingSettings = {
+  adaptiveMode: boolean;
+  learningEnabled: boolean;
+  productivityThreshold: number;
+  autoAdjust: boolean;
+};
+
 export const SmartBlockingRules = () => {
   const { session } = useAuth();
   const { toast } = useToast();
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<SmartBlockingSettings>({
     adaptiveMode: false,
     learningEnabled: true,
     productivityThreshold: 70,
@@ -30,13 +37,13 @@ export const SmartBlockingRules = () => {
         .from('distraction_blocking')
         .select('pattern_data')
         .eq('user_id', session.user.id)
-        .eq('block_type', 'smart')
-        .single();
+        .eq('block_type', 'website')
+        .maybeSingle();
 
       if (error) throw error;
 
       if (data?.pattern_data) {
-        setSettings(data.pattern_data);
+        setSettings(data.pattern_data as SmartBlockingSettings);
       }
     } catch (error) {
       console.error('Error loading smart blocking settings:', error);
@@ -56,7 +63,7 @@ export const SmartBlockingRules = () => {
         .from('distraction_blocking')
         .upsert({
           user_id: session.user.id,
-          block_type: 'smart',
+          block_type: 'website',
           pattern_data: settings,
           is_active: true
         });
