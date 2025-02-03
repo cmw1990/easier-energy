@@ -7,18 +7,30 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  console.log('Function invoked with method:', req.method);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight request');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIApiKey) {
+      console.error('OpenAI API key not configured');
       throw new Error('OpenAI API key not configured');
     }
 
-    const { assetType } = await req.json();
+    const body = await req.json();
+    console.log('Request body:', body);
+    
+    const { assetType } = body;
+    if (!assetType) {
+      console.error('No assetType provided in request');
+      throw new Error('assetType is required');
+    }
+    
     console.log('Generating asset:', assetType);
 
     const prompts = {
@@ -33,9 +45,11 @@ serve(async (req) => {
 
     const prompt = prompts[assetType as keyof typeof prompts];
     if (!prompt) {
+      console.error('Invalid asset type requested:', assetType);
       throw new Error('Invalid asset type requested');
     }
 
+    console.log('Making request to OpenAI API...');
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
@@ -54,7 +68,7 @@ serve(async (req) => {
     if (!response.ok) {
       const error = await response.json();
       console.error('OpenAI API error:', error);
-      throw new Error('Failed to generate image');
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
     }
 
     const data = await response.json();
@@ -64,8 +78,11 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error generating game asset:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error('Error in generate-pufferfish-assets function:', error);
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      details: error.stack 
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

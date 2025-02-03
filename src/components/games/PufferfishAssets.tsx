@@ -19,18 +19,29 @@ export const usePufferfishAssets = () => {
 
   const loadAsset = async (assetType: keyof GameAssets) => {
     try {
+      console.log(`Attempting to load asset: ${assetType}`);
+      
       const { data, error } = await supabase.functions.invoke('generate-pufferfish-assets', {
         body: { assetType }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error(`Error loading ${assetType}:`, error);
+        throw error;
+      }
+
+      if (!data?.image) {
+        console.error(`No image data received for ${assetType}`);
+        throw new Error('No image data received');
+      }
       
+      console.log(`Successfully loaded asset: ${assetType}`);
       return `data:image/png;base64,${data.image}`;
     } catch (error) {
       console.error(`Error loading ${assetType}:`, error);
       toast({
         title: "Error Loading Game Assets",
-        description: `Failed to load ${assetType}. Please try refreshing.`,
+        description: `Failed to load ${assetType}. ${error.message || 'Please try refreshing.'}`,
         variant: "destructive",
       });
       return null;
@@ -39,7 +50,9 @@ export const usePufferfishAssets = () => {
 
   useEffect(() => {
     const loadAllAssets = async () => {
+      console.log('Starting to load all assets...');
       setIsLoading(true);
+      
       const assetTypes: (keyof GameAssets)[] = [
         'pufferfish', 'bubbles', 'coral', 'seaweed', 
         'smallFish', 'predator', 'background'
@@ -54,6 +67,7 @@ export const usePufferfishAssets = () => {
         }
       }
 
+      console.log('Finished loading assets:', Object.keys(loadedAssets));
       setAssets(loadedAssets);
       setIsLoading(false);
     };
