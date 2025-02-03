@@ -13,6 +13,7 @@ import Caffeine from "./pages/Caffeine";
 import SleepTrack from "./pages/SleepTrack";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import DistractionBlocker from "./pages/DistractionBlocker";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/focus" element={<Focus />} />
               <Route path="/caffeine" element={<Caffeine />} />
               <Route path="/sleep-track" element={<SleepTrack />} />
+              <Route path="/distraction-blocker" element={<DistractionBlocker />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

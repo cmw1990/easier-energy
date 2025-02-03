@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Activity, User } from "lucide-react";
+import { Activity, User, Ban } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,6 +42,11 @@ export const Layout = ({ children }: LayoutProps) => {
       });
     }
   };
+
+  const menuItems = [
+    { icon: <Activity className="h-5 w-5" />, label: "Dashboard", path: "/" },
+    { icon: <Ban className="h-5 w-5" />, label: "Block Distractions", path: "/distraction-blocker" },
+  ];
 
   if (!session) {
     return <div className="min-h-screen">{children}</div>;
