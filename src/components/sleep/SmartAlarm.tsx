@@ -12,7 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { 
   AlarmClock, Moon, Sun, Waves, Volume2, BedDouble, 
   Calendar, Repeat, Bell, Activity, Vibrate, Shield,
-  CloudMoon, Sunrise, Music, Settings, Info, Battery 
+  CloudMoon, Sunrise, Music, Settings, Info, Battery,
+  Timer, Plus, Trash2
 } from 'lucide-react';
 import { SleepAnalysis } from './SleepAnalysis';
 import {
@@ -84,91 +85,170 @@ export const SmartAlarm = () => {
   const [customSoundUrl, setCustomSoundUrl] = useState('');
   const [fallbackDevices, setFallbackDevices] = useState(true);
 
+  // New state variables for multiple alarms and pomodoro
+  const [alarms, setAlarms] = useState<Array<{
+    id: string;
+    time: string;
+    days: string[];
+    enabled: boolean;
+    label?: string;
+  }>>([]);
+  const [pomodoroMinutes, setPomodoroMinutes] = useState(25);
+  const [pomodoroActive, setPomodoroActive] = useState(false);
+  const [pomodoroTimeLeft, setPomodoroTimeLeft] = useState(0);
+  const [breakTime, setBreakTime] = useState(5);
+
   useEffect(() => {
-    const initAudio = () => {
-      if (!audioContext) {
-        const context = new (window.AudioContext || (window as any).webkitAudioContext)();
-        setAudioContext(context);
+    const checkNotificationPermissions = async () => {
+      const { display } = await Device.getInfo();
+      if (display === 'Unknown') {
+        // Web platform
+        if ('Notification' in window) {
+          await Notification.requestPermission();
+        }
+      } else {
+        // Mobile platform
+        await LocalNotifications.requestPermissions();
       }
     };
 
-    document.addEventListener('click', initAudio, { once: true });
-    return () => document.removeEventListener('click', initAudio);
+    checkNotificationPermissions();
+    loadSavedAlarms();
   }, []);
 
-  useEffect(() => {
-    const setupMotionTracking = async () => {
-      try {
-        const available = await Motion.addListener('accel', () => {});
-        if (!available) {
-          toast({
-            title: "Device not supported",
-            description: "Your device doesn't support motion tracking.",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        if (isTracking) {
-          let movementBuffer: number[] = [];
-          const BUFFER_SIZE = 10;
-
-          await Motion.addListener('accel', (event) => {
-            analyzeSleepMovement(event.acceleration, movementBuffer);
-          });
-        }
-
-        return () => {
-          Motion.removeAllListeners();
-        };
-      } catch (error) {
-        console.error('Error setting up motion tracking:', error);
+  const loadSavedAlarms = async () => {
+    try {
+      const { value } = await LocalNotifications.getPending();
+      if (value) {
+        const savedAlarms = value.map(notification => ({
+          id: notification.id.toString(),
+          time: new Date(notification.schedule?.at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+          days: notification.extra?.days || [],
+          enabled: true,
+          label: notification.title
+        }));
+        setAlarms(savedAlarms);
       }
-    };
-
-    setupMotionTracking();
-  }, [isTracking]);
-
-  useEffect(() => {
-    const fetchLastSleepScore = async () => {
-      const { data, error } = await supabase
-        .from('energy_focus_logs')
-        .select('energy_rating')
-        .eq('activity_type', 'sleep')
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      if (data && data.length > 0) {
-        setLastSleepScore(data[0].energy_rating);
-      }
-    };
-
-    fetchLastSleepScore();
-  }, []);
-
-  const analyzeSleepMovement = (
-    acceleration: { x: number; y: number; z: number },
-    buffer: number[]
-  ) => {
-    const intensity = Math.sqrt(
-      Math.pow(acceleration.x, 2) + 
-      Math.pow(acceleration.y, 2) + 
-      Math.pow(acceleration.z, 2)
-    );
-
-    buffer.push(intensity);
-    if (buffer.length > 10) buffer.shift();
-
-    const avgIntensity = buffer.reduce((a, b) => a + b, 0) / buffer.length;
-    const threshold = 0.1 * (11 - sensitivity);
-
-    if (avgIntensity < threshold) {
-      console.log('Deep sleep detected');
-    } else if (avgIntensity < threshold * 2) {
-      console.log('Light sleep detected');
-    } else {
-      console.log('Movement detected');
+    } catch (error) {
+      console.error('Error loading saved alarms:', error);
     }
+  };
+
+  const addNewAlarm = async () => {
+    const newAlarm = {
+      id: Date.now().toString(),
+      time: '07:00',
+      days: [],
+      enabled: true
+    };
+    
+    setAlarms(prev => [...prev, newAlarm]);
+    await scheduleAlarm(newAlarm);
+    
+    toast({
+      title: "New alarm added",
+      description: "Configure the alarm settings as needed.",
+    });
+  };
+
+  const removeAlarm = async (id: string) => {
+    await LocalNotifications.cancel({ notifications: [{ id: parseInt(id) }] });
+    setAlarms(prev => prev.filter(alarm => alarm.id !== id));
+    
+    toast({
+      title: "Alarm removed",
+      description: "The alarm has been deleted.",
+    });
+  };
+
+  const toggleAlarm = async (id: string, enabled: boolean) => {
+    const alarm = alarms.find(a => a.id === id);
+    if (!alarm) return;
+
+    if (enabled) {
+      await scheduleAlarm(alarm);
+    } else {
+      await LocalNotifications.cancel({ notifications: [{ id: parseInt(id) }] });
+    }
+
+    setAlarms(prev => prev.map(a => 
+      a.id === id ? { ...a, enabled } : a
+    ));
+  };
+
+  const scheduleAlarm = async (alarm: typeof alarms[0]) => {
+    try {
+      const [hours, minutes] = alarm.time.split(':').map(Number);
+      let scheduledTime = new Date();
+      scheduledTime.setHours(hours, minutes, 0);
+
+      if (scheduledTime < new Date()) {
+        scheduledTime.setDate(scheduledTime.getDate() + 1);
+      }
+
+      await LocalNotifications.schedule({
+        notifications: [{
+          id: parseInt(alarm.id),
+          title: alarm.label || "Wake Up!",
+          body: "Time to wake up!",
+          schedule: { at: scheduledTime },
+          sound: getSoundFile(),
+          extra: {
+            days: alarm.days,
+            soundType,
+            gradualVolume: gradualWake,
+            volume: volume / 100,
+            vibrate: vibrationEnabled
+          }
+        }]
+      });
+
+      toast({
+        title: "Alarm scheduled",
+        description: `Alarm set for ${alarm.time}`,
+      });
+    } catch (error) {
+      console.error('Error scheduling alarm:', error);
+      toast({
+        title: "Error",
+        description: "Failed to set alarm.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const startPomodoro = async () => {
+    setPomodoroActive(true);
+    setPomodoroTimeLeft(pomodoroMinutes * 60);
+
+    const endTime = new Date();
+    endTime.setMinutes(endTime.getMinutes() + pomodoroMinutes);
+
+    await LocalNotifications.schedule({
+      notifications: [{
+        id: 999999,
+        title: "Pomodoro Complete!",
+        body: `${pomodoroMinutes} minute focus session complete. Take a ${breakTime} minute break!`,
+        schedule: { at: endTime },
+        sound: 'gentle_chime.wav'
+      }]
+    });
+
+    toast({
+      title: "Pomodoro Timer Started",
+      description: `${pomodoroMinutes} minute focus session started`,
+    });
+  };
+
+  const stopPomodoro = async () => {
+    setPomodoroActive(false);
+    setPomodoroTimeLeft(0);
+    await LocalNotifications.cancel({ notifications: [{ id: 999999 }] });
+    
+    toast({
+      title: "Pomodoro Timer Stopped",
+      description: "Focus session cancelled",
+    });
   };
 
   const generateSound = async (type: string, volume: number) => {
@@ -479,6 +559,97 @@ export const SmartAlarm = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Add new Alarms section */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">Alarms</h3>
+            <Button onClick={addNewAlarm} size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Alarm
+            </Button>
+          </div>
+          
+          <div className="space-y-2">
+            {alarms.map(alarm => (
+              <div key={alarm.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                <Switch
+                  checked={alarm.enabled}
+                  onCheckedChange={(checked) => toggleAlarm(alarm.id, checked)}
+                />
+                <Input
+                  type="time"
+                  value={alarm.time}
+                  onChange={(e) => {
+                    setAlarms(prev => prev.map(a =>
+                      a.id === alarm.id ? { ...a, time: e.target.value } : a
+                    ));
+                  }}
+                  className="w-32"
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeAlarm(alarm.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Add Pomodoro Timer section */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <Timer className="h-5 w-5" />
+            Pomodoro Timer
+          </h3>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Focus Duration (minutes)</Label>
+              <Input
+                type="number"
+                min="1"
+                max="60"
+                value={pomodoroMinutes}
+                onChange={(e) => setPomodoroMinutes(parseInt(e.target.value))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Break Duration (minutes)</Label>
+              <Input
+                type="number"
+                min="1"
+                max="30"
+                value={breakTime}
+                onChange={(e) => setBreakTime(parseInt(e.target.value))}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-4">
+            {!pomodoroActive ? (
+              <Button onClick={startPomodoro}>
+                Start Focus Session
+              </Button>
+            ) : (
+              <Button variant="destructive" onClick={stopPomodoro}>
+                Stop Focus Session
+              </Button>
+            )}
+          </div>
+
+          {pomodoroActive && (
+            <div className="text-center">
+              <p className="text-2xl font-bold">
+                {Math.floor(pomodoroTimeLeft / 60)}:{(pomodoroTimeLeft % 60).toString().padStart(2, '0')}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Keep existing sections */}
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="quick-actions">
             <AccordionTrigger>
