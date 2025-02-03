@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain } from "lucide-react";
+import { Brain, Keyboard } from "lucide-react";
 
 const WORDS = [
   "focus", "brain", "smart", "think", "learn",
@@ -41,6 +41,10 @@ const SpeedTyping = () => {
     setScore(0);
     setTimeLeft(30);
     generateNewWord();
+    toast({
+      title: "Game Started!",
+      description: "Type as many words as you can in 30 seconds.",
+    });
   };
 
   const generateNewWord = () => {
@@ -99,34 +103,45 @@ const SpeedTyping = () => {
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-full animate-float">
-            <Brain className="h-5 w-5 text-primary" />
+            <Keyboard className="h-5 w-5 text-primary animate-pulse" />
           </div>
-          <h2 className="text-2xl font-bold">Speed Typing</h2>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Speed Typing
+          </h2>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-lg">Score: {score}</div>
-          <div className="text-lg">Time: {timeLeft}s</div>
+          <div className="text-lg font-semibold">
+            Score: <span className="text-primary">{score}</span>
+          </div>
+          <div className="text-lg font-semibold">
+            Time: <span className={`${timeLeft <= 10 ? 'text-energy-low animate-pulse' : 'text-secondary'}`}>
+              {timeLeft}s
+            </span>
+          </div>
         </div>
       </div>
 
       {!isActive ? (
         <Button 
           onClick={startGame} 
-          className="w-full animate-pulse"
+          className="w-full group relative overflow-hidden"
           disabled={isSubmitting}
         >
-          Start Game
+          <span className="relative z-10">Start Game</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-primary opacity-75 group-hover:animate-shimmer" />
         </Button>
       ) : (
         <>
           <div className="text-center mb-8">
-            <div className="text-4xl font-bold mb-4 animate-breathe">{currentWord}</div>
+            <div className="text-4xl font-bold mb-4 animate-breathe bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              {currentWord}
+            </div>
             <Input
               type="text"
               value={userInput}
               onChange={handleInputChange}
               placeholder="Type the word..."
-              className="text-center text-xl focus:ring-2 ring-primary transition-all"
+              className="text-center text-xl focus:ring-2 ring-primary transition-all transform hover:scale-105"
               autoFocus
               disabled={isSubmitting}
             />
@@ -134,8 +149,14 @@ const SpeedTyping = () => {
         </>
       )}
 
-      <div className="mt-6 text-sm text-muted-foreground">
-        Type each word as quickly and accurately as possible. Score points for each correct word typed.
+      <div className="mt-6">
+        <div className="text-sm text-muted-foreground">
+          Type each word as quickly and accurately as possible. Score points for each correct word typed.
+        </div>
+        <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+          <Brain className="h-4 w-4" />
+          <span>Improves: Typing Speed, Focus, Reaction Time</span>
+        </div>
       </div>
     </Card>
   );
