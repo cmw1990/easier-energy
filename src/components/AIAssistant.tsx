@@ -24,9 +24,33 @@ export const AIAssistant = ({ type, data }: AIAssistantProps) => {
   const [analysis, setAnalysis] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Determine if this analysis type requires AI
+  const requiresAI = (type: string): boolean => {
+    const aiRequiredTypes = [
+      'cognitive_impact_analysis',
+      'lifestyle_correlation',
+      'recovery_suggestions',
+      'behavioral_patterns',
+      'cognitive_load_analysis'
+    ];
+    return aiRequiredTypes.includes(type);
+  };
+
   const handleAnalyze = async () => {
     try {
       setIsAnalyzing(true);
+      
+      // For simple analyses, use local processing first
+      if (!requiresAI(type)) {
+        const basicAnalysis = await performLocalAnalysis(data);
+        if (basicAnalysis.isComplete) {
+          setAnalysis(basicAnalysis.result);
+          setIsAnalyzing(false);
+          return;
+        }
+      }
+
+      // Proceed with AI analysis if needed
       const { data: response, error } = await supabase.functions.invoke('ai-assistant', {
         body: { type, data }
       });
@@ -37,7 +61,7 @@ export const AIAssistant = ({ type, data }: AIAssistantProps) => {
       console.error('Error getting AI analysis:', error);
       toast({
         title: "Error",
-        description: "Failed to get AI analysis. Please try again.",
+        description: "Failed to get analysis. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -45,12 +69,21 @@ export const AIAssistant = ({ type, data }: AIAssistantProps) => {
     }
   };
 
+  const performLocalAnalysis = async (data: any) => {
+    // Implement local analysis logic for simple metrics
+    // Returns { isComplete: boolean, result: string }
+    return {
+      isComplete: false,
+      result: ''
+    };
+  };
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Brain className="h-5 w-5 text-primary" />
-          AI Assistant
+          {requiresAI(type) ? 'AI Analysis' : 'Smart Analysis'}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -63,10 +96,10 @@ export const AIAssistant = ({ type, data }: AIAssistantProps) => {
             {isAnalyzing ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
+                {requiresAI(type) ? 'AI Analyzing...' : 'Analyzing...'}
               </>
             ) : (
-              'Get AI Analysis'
+              requiresAI(type) ? 'Get AI Analysis' : 'Get Analysis'
             )}
           </Button>
         ) : (
