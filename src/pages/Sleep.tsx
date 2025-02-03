@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Moon, Clock, Star } from "lucide-react";
+import { Moon, Clock, Star, Brain } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SmartAlarm } from "@/components/sleep/SmartAlarm";
+import { SleepMetrics } from "@/components/sleep/SleepMetrics";
 import {
   LineChart,
   Line,
@@ -82,7 +83,7 @@ const Sleep = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold">Sleep Tracking</h1>
+      <h1 className="text-4xl font-bold">Advanced Sleep Optimization</h1>
       
       <SmartAlarm />
       
@@ -127,6 +128,18 @@ const Sleep = () => {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="h-5 w-5 text-primary" />
+            AI-Powered Sleep Analysis
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SleepMetrics sleepData={sleepLogs} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
