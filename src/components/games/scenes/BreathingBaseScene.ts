@@ -64,4 +64,11 @@ export class BreathingBaseScene extends Phaser.Scene {
   getSprite(key: string): Phaser.GameObjects.Image | undefined {
     return this.loadedAssets.get(key);
   }
+
+  destroy() {
+    // Clean up loaded assets
+    this.loadedAssets.forEach(sprite => sprite.destroy());
+    this.loadedAssets.clear();
+    super.destroy();
+  }
 }
