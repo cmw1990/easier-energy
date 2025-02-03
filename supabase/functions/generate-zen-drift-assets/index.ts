@@ -38,140 +38,219 @@ serve(async (req) => {
   }
 
   try {
+    if (!openAIApiKey) {
+      throw new Error('OPENAI_API_KEY is not configured');
+    }
+
     console.log('Starting Zen Drift assets generation...')
     const assets: { [key: string]: string } = {}
 
     // Generate cars
     for (let i = 0; i < carPrompts.length; i++) {
-      console.log(`Generating car ${i + 1}...`)
-      const response = await fetch('https://api.openai.com/v1/images/generations', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "dall-e-3",
-          prompt: carPrompts[i],
-          n: 1,
-          size: "1024x1024",
-          quality: "standard",
-          response_format: "url",
-        }),
-      })
-
-      const data = await response.json()
-      const imageUrl = data.data[0].url
-      const imageName = `car_${i + 1}.png`
-      
-      // Download image and upload to Supabase Storage
-      const imageResponse = await fetch(imageUrl)
-      const imageBlob = await imageResponse.blob()
-      
-      const { data: uploadData, error: uploadError } = await supabase
-        .storage
-        .from('game-assets')
-        .upload(`zen-drift/cars/${imageName}`, imageBlob, {
-          contentType: 'image/png',
-          upsert: true
+      try {
+        console.log(`Generating car ${i + 1}...`)
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openAIApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: carPrompts[i],
+            n: 1,
+            size: "1024x1024",
+            quality: "standard",
+            response_format: "url",
+          }),
         })
 
-      if (uploadError) throw uploadError
-      
-      const { data: { publicUrl } } = supabase
-        .storage
-        .from('game-assets')
-        .getPublicUrl(`zen-drift/cars/${imageName}`)
-      
-      assets[`car_${i + 1}`] = publicUrl
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error(`OpenAI API error for car ${i + 1}:`, errorData);
+          throw new Error(`OpenAI API returned ${response.status}: ${JSON.stringify(errorData)}`);
+        }
+
+        const data = await response.json()
+        console.log(`OpenAI response for car ${i + 1}:`, data);
+
+        if (!data.data?.[0]?.url) {
+          throw new Error(`No image URL in OpenAI response for car ${i + 1}`);
+        }
+
+        const imageUrl = data.data[0].url
+        const imageName = `car_${i + 1}.png`
+        
+        // Download image and upload to Supabase Storage
+        const imageResponse = await fetch(imageUrl)
+        if (!imageResponse.ok) {
+          throw new Error(`Failed to download image for car ${i + 1}`);
+        }
+
+        const imageBlob = await imageResponse.blob()
+        
+        const { data: uploadData, error: uploadError } = await supabase
+          .storage
+          .from('game-assets')
+          .upload(`zen-drift/cars/${imageName}`, imageBlob, {
+            contentType: 'image/png',
+            upsert: true
+          })
+
+        if (uploadError) {
+          console.error(`Upload error for car ${i + 1}:`, uploadError);
+          throw uploadError;
+        }
+        
+        const { data: { publicUrl } } = supabase
+          .storage
+          .from('game-assets')
+          .getPublicUrl(`zen-drift/cars/${imageName}`)
+        
+        assets[`car_${i + 1}`] = publicUrl
+        console.log(`Successfully generated and uploaded car ${i + 1}`);
+      } catch (carError) {
+        console.error(`Error processing car ${i + 1}:`, carError);
+        throw carError;
+      }
     }
 
-    // Generate backgrounds
+    // Generate backgrounds with similar error handling
     for (let i = 0; i < backgroundPrompts.length; i++) {
-      console.log(`Generating background ${i + 1}...`)
-      const response = await fetch('https://api.openai.com/v1/images/generations', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "dall-e-3",
-          prompt: backgroundPrompts[i],
-          n: 1,
-          size: "1024x1024",
-          quality: "standard",
-          response_format: "url",
-        }),
-      })
-
-      const data = await response.json()
-      const imageUrl = data.data[0].url
-      const imageName = `background_${i + 1}.png`
-      
-      const imageResponse = await fetch(imageUrl)
-      const imageBlob = await imageResponse.blob()
-      
-      const { data: uploadData, error: uploadError } = await supabase
-        .storage
-        .from('game-assets')
-        .upload(`zen-drift/backgrounds/${imageName}`, imageBlob, {
-          contentType: 'image/png',
-          upsert: true
+      try {
+        console.log(`Generating background ${i + 1}...`)
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openAIApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: backgroundPrompts[i],
+            n: 1,
+            size: "1024x1024",
+            quality: "standard",
+            response_format: "url",
+          }),
         })
 
-      if (uploadError) throw uploadError
-      
-      const { data: { publicUrl } } = supabase
-        .storage
-        .from('game-assets')
-        .getPublicUrl(`zen-drift/backgrounds/${imageName}`)
-      
-      assets[`background_${i + 1}`] = publicUrl
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error(`OpenAI API error for background ${i + 1}:`, errorData);
+          throw new Error(`OpenAI API returned ${response.status}: ${JSON.stringify(errorData)}`);
+        }
+
+        const data = await response.json()
+        console.log(`OpenAI response for background ${i + 1}:`, data);
+
+        if (!data.data?.[0]?.url) {
+          throw new Error(`No image URL in OpenAI response for background ${i + 1}`);
+        }
+
+        const imageUrl = data.data[0].url
+        const imageName = `background_${i + 1}.png`
+        
+        const imageResponse = await fetch(imageUrl)
+        if (!imageResponse.ok) {
+          throw new Error(`Failed to download image for background ${i + 1}`);
+        }
+
+        const imageBlob = await imageResponse.blob()
+        
+        const { data: uploadData, error: uploadError } = await supabase
+          .storage
+          .from('game-assets')
+          .upload(`zen-drift/backgrounds/${imageName}`, imageBlob, {
+            contentType: 'image/png',
+            upsert: true
+          })
+
+        if (uploadError) {
+          console.error(`Upload error for background ${i + 1}:`, uploadError);
+          throw uploadError;
+        }
+        
+        const { data: { publicUrl } } = supabase
+          .storage
+          .from('game-assets')
+          .getPublicUrl(`zen-drift/backgrounds/${imageName}`)
+        
+        assets[`background_${i + 1}`] = publicUrl
+        console.log(`Successfully generated and uploaded background ${i + 1}`);
+      } catch (backgroundError) {
+        console.error(`Error processing background ${i + 1}:`, backgroundError);
+        throw backgroundError;
+      }
     }
 
-    // Generate effects
+    // Generate effects with similar error handling
     for (let i = 0; i < effectPrompts.length; i++) {
-      console.log(`Generating effect ${i + 1}...`)
-      const response = await fetch('https://api.openai.com/v1/images/generations', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "dall-e-3",
-          prompt: effectPrompts[i],
-          n: 1,
-          size: "1024x1024",
-          quality: "standard",
-          response_format: "url",
-        }),
-      })
-
-      const data = await response.json()
-      const imageUrl = data.data[0].url
-      const imageName = `effect_${i + 1}.png`
-      
-      const imageResponse = await fetch(imageUrl)
-      const imageBlob = await imageResponse.blob()
-      
-      const { data: uploadData, error: uploadError } = await supabase
-        .storage
-        .from('game-assets')
-        .upload(`zen-drift/effects/${imageName}`, imageBlob, {
-          contentType: 'image/png',
-          upsert: true
+      try {
+        console.log(`Generating effect ${i + 1}...`)
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openAIApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: effectPrompts[i],
+            n: 1,
+            size: "1024x1024",
+            quality: "standard",
+            response_format: "url",
+          }),
         })
 
-      if (uploadError) throw uploadError
-      
-      const { data: { publicUrl } } = supabase
-        .storage
-        .from('game-assets')
-        .getPublicUrl(`zen-drift/effects/${imageName}`)
-      
-      assets[`effect_${i + 1}`] = publicUrl
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error(`OpenAI API error for effect ${i + 1}:`, errorData);
+          throw new Error(`OpenAI API returned ${response.status}: ${JSON.stringify(errorData)}`);
+        }
+
+        const data = await response.json()
+        console.log(`OpenAI response for effect ${i + 1}:`, data);
+
+        if (!data.data?.[0]?.url) {
+          throw new Error(`No image URL in OpenAI response for effect ${i + 1}`);
+        }
+
+        const imageUrl = data.data[0].url
+        const imageName = `effect_${i + 1}.png`
+        
+        const imageResponse = await fetch(imageUrl)
+        if (!imageResponse.ok) {
+          throw new Error(`Failed to download image for effect ${i + 1}`);
+        }
+
+        const imageBlob = await imageResponse.blob()
+        
+        const { data: uploadData, error: uploadError } = await supabase
+          .storage
+          .from('game-assets')
+          .upload(`zen-drift/effects/${imageName}`, imageBlob, {
+            contentType: 'image/png',
+            upsert: true
+          })
+
+        if (uploadError) {
+          console.error(`Upload error for effect ${i + 1}:`, uploadError);
+          throw uploadError;
+        }
+        
+        const { data: { publicUrl } } = supabase
+          .storage
+          .from('game-assets')
+          .getPublicUrl(`zen-drift/effects/${imageName}`)
+        
+        assets[`effect_${i + 1}`] = publicUrl
+        console.log(`Successfully generated and uploaded effect ${i + 1}`);
+      } catch (effectError) {
+        console.error(`Error processing effect ${i + 1}:`, effectError);
+        throw effectError;
+      }
     }
 
     console.log('Asset generation completed!')
