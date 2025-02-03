@@ -33,6 +33,7 @@ const effectPrompts = [
 ]
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -111,11 +112,20 @@ serve(async (req) => {
         console.log(`Successfully generated and uploaded car ${i + 1}`);
       } catch (carError) {
         console.error(`Error processing car ${i + 1}:`, carError);
-        throw carError;
+        return new Response(
+          JSON.stringify({ 
+            status: 'error',
+            message: `Error processing car ${i + 1}: ${carError.message}` 
+          }),
+          { 
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
       }
     }
 
-    // Generate backgrounds with similar error handling
+    // Generate backgrounds
     for (let i = 0; i < backgroundPrompts.length; i++) {
       try {
         console.log(`Generating background ${i + 1}...`)
@@ -180,11 +190,20 @@ serve(async (req) => {
         console.log(`Successfully generated and uploaded background ${i + 1}`);
       } catch (backgroundError) {
         console.error(`Error processing background ${i + 1}:`, backgroundError);
-        throw backgroundError;
+        return new Response(
+          JSON.stringify({ 
+            status: 'error',
+            message: `Error processing background ${i + 1}: ${backgroundError.message}` 
+          }),
+          { 
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
       }
     }
 
-    // Generate effects with similar error handling
+    // Generate effects
     for (let i = 0; i < effectPrompts.length; i++) {
       try {
         console.log(`Generating effect ${i + 1}...`)
@@ -249,18 +268,30 @@ serve(async (req) => {
         console.log(`Successfully generated and uploaded effect ${i + 1}`);
       } catch (effectError) {
         console.error(`Error processing effect ${i + 1}:`, effectError);
-        throw effectError;
+        return new Response(
+          JSON.stringify({ 
+            status: 'error',
+            message: `Error processing effect ${i + 1}: ${effectError.message}` 
+          }),
+          { 
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
       }
     }
 
-    console.log('Asset generation completed!')
+    console.log('Asset generation completed successfully!')
     return new Response(
       JSON.stringify({ 
         status: 'success',
         message: 'Generated all Zen Drift assets successfully',
         assets 
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     )
 
   } catch (error) {
@@ -271,8 +302,8 @@ serve(async (req) => {
         message: error.message 
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
   }
