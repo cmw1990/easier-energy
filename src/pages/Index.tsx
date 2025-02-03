@@ -14,6 +14,7 @@ import { EnergyPatternAnalysis } from "@/components/health/EnergyPatternAnalysis
 import { FocusExercises } from "@/components/health/FocusExercises";
 import { MoodOverview } from "@/components/MoodOverview";
 import { useToast } from "@/hooks/use-toast";
+import { ActivityTracker } from "@/components/health/ActivityTracker";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -91,6 +92,9 @@ const Index = () => {
 
       {healthConditions && (
         <>
+          <div className="mb-8">
+            <ActivityTracker />
+          </div>
           <div className="mb-8">
             <MoodOverview />
           </div>
