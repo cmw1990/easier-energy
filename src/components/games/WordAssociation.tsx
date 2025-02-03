@@ -138,7 +138,7 @@ const WordAssociation = () => {
       ) : (
         <>
           <div className="text-center mb-8">
-            <div className="text-4xl font-bold mb-8 animate-float">
+            <div className="text-4xl font-bold mb-4 animate-float">
               {WORD_PAIRS[currentPair].word}
             </div>
             <div className="grid grid-cols-2 gap-4">
