@@ -5,8 +5,13 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Activity, User } from "lucide-react";
+import { Activity, User, Menu } from "lucide-react";
 import { Toolbar } from "@/components/ui/toolbar/Toolbar";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,16 +53,45 @@ const Layout = ({ children }: LayoutProps) => {
     return <div className="min-h-screen">{children || <Outlet />}</div>;
   }
 
+  const SidebarContent = () => (
+    <div className="h-full flex flex-col">
+      <div className="flex items-center gap-2 p-4 border-b">
+        <Activity className="h-5 w-5 text-primary" />
+        <h1 className="text-xl font-semibold">Energy Support</h1>
+      </div>
+      <AppSidebar />
+    </div>
+  );
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
+        {isMobile ? (
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[280px] p-0">
+              <SidebarContent />
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <div className="w-64 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <SidebarContent />
+          </div>
+        )}
         <main className="flex-1 flex flex-col overflow-hidden">
           <div className="flex flex-col">
             <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <div className="flex items-center gap-2">
-                <Activity className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold">Energy Dashboard</h1>
+                {!isMobile && (
+                  <>
+                    <Activity className="h-5 w-5 text-primary" />
+                    <h1 className="text-xl font-semibold">Energy Dashboard</h1>
+                  </>
+                )}
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
