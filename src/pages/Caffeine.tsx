@@ -1,77 +1,90 @@
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Coffee, Battery } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { Coffee } from "lucide-react";
 
-const CaffeinePage = () => {
+const Caffeine = () => {
+  const { session } = useAuth();
   const { toast } = useToast();
-  const [amount, setAmount] = useState(0);
-  const [energyLevel, setEnergyLevel] = useState([5]);
-  const [notes, setNotes] = useState("");
+  const queryClient = useQueryClient();
+  const [amount, setAmount] = useState("");
+  const [energyRating, setEnergyRating] = useState("");
 
-  const { data: recentLogs } = useQuery({
-    queryKey: ["caffeineLogs"],
+  const { data: caffeineHistory } = useQuery({
+    queryKey: ["caffeineHistory"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("energy_focus_logs")
         .select("*")
+        .eq("user_id", session?.user?.id)
         .eq("activity_type", "caffeine")
         .order("created_at", { ascending: false })
-        .limit(5);
+        .limit(10);
 
       if (error) throw error;
       return data;
     },
+    enabled: !!session?.user?.id,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
+  const logCaffeineMutation = useMutation({
+    mutationFn: async (values: { amount: string; energyRating: string }) => {
       const { error } = await supabase.from("energy_focus_logs").insert({
+        user_id: session?.user?.id,
         activity_type: "caffeine",
-        activity_name: "Caffeine Intake",
-        energy_rating: energyLevel[0],
-        focus_rating: null,
-        notes: `Caffeine amount: ${amount}mg. ${notes}`,
+        activity_name: `Caffeine Intake: ${values.amount}mg`,
+        energy_rating: parseInt(values.energyRating),
+        notes: `Consumed ${values.amount}mg of caffeine`,
       });
 
       if (error) throw error;
-
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["caffeineHistory"] });
       toast({
         title: "Success",
         description: "Caffeine intake logged successfully",
       });
-
-      // Reset form
-      setAmount(0);
-      setEnergyLevel([5]);
-      setNotes("");
-    } catch (error) {
+      setAmount("");
+      setEnergyRating("");
+    },
+    onError: (error) => {
       toast({
         title: "Error",
         description: "Failed to log caffeine intake",
         variant: "destructive",
       });
+      console.error("Error logging caffeine:", error);
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!amount || !energyRating) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
     }
+    logCaffeineMutation.mutate({ amount, energyRating });
   };
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Caffeine Tracking</h1>
+      <h1 className="text-3xl font-bold mb-6">Caffeine Tracker</h1>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Coffee className="h-5 w-5" />
-              Log Caffeine Intake
-            </CardTitle>
+            <CardTitle>Log Caffeine Intake</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,42 +93,23 @@ const CaffeinePage = () => {
                 <Input
                   id="amount"
                   type="number"
+                  placeholder="e.g., 95 for a cup of coffee"
                   value={amount}
-                  onChange={(e) => setAmount(Number(e.target.value))}
-                  placeholder="Enter amount in mg"
-                  min="0"
+                  onChange={(e) => setAmount(e.target.value)}
                 />
               </div>
-
               <div className="space-y-2">
-                <Label>Energy Level</Label>
-                <div className="flex items-center gap-4">
-                  <Battery className="h-5 w-5 text-energy-low" />
-                  <Slider
-                    value={energyLevel}
-                    onValueChange={setEnergyLevel}
-                    max={10}
-                    min={1}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <Battery className="h-5 w-5 text-energy-high" />
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  Current: {energyLevel}
-                </span>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
+                <Label htmlFor="energyRating">Energy Rating (1-10)</Label>
                 <Input
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Add any notes about your caffeine intake"
+                  id="energyRating"
+                  type="number"
+                  min="1"
+                  max="10"
+                  placeholder="Rate your energy level"
+                  value={energyRating}
+                  onChange={(e) => setEnergyRating(e.target.value)}
                 />
               </div>
-
               <Button type="submit" className="w-full">
                 Log Intake
               </Button>
@@ -125,29 +119,32 @@ const CaffeinePage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent Logs</CardTitle>
+            <CardTitle>Recent History</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentLogs?.map((log) => (
+              {caffeineHistory?.map((log) => (
                 <div
                   key={log.id}
-                  className="p-4 border rounded-lg space-y-2"
+                  className="flex items-center justify-between border-b pb-2"
                 >
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">
-                      Energy Level: {log.energy_rating}/10
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {new Date(log.created_at).toLocaleDateString()}
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <Coffee className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">{log.activity_name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Energy Level: {log.energy_rating}/10
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">{log.notes}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(log.created_at).toLocaleDateString()}
+                  </p>
                 </div>
               ))}
-              {(!recentLogs || recentLogs.length === 0) && (
+              {(!caffeineHistory || caffeineHistory.length === 0) && (
                 <p className="text-center text-muted-foreground">
-                  No caffeine logs yet
+                  No caffeine intake logged yet
                 </p>
               )}
             </div>
@@ -158,4 +155,4 @@ const CaffeinePage = () => {
   );
 };
 
-export default CaffeinePage;
+export default Caffeine;
