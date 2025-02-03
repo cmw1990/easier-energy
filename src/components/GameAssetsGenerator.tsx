@@ -4,7 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Sparkles } from "lucide-react";
 
+// Only show this component in development
+const isDevelopment = import.meta.env.DEV;
+
 export const GameAssetsGenerator = () => {
+  if (!isDevelopment) return null;
+  
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
 
