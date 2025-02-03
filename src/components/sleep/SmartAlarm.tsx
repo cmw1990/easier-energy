@@ -10,13 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { AlarmClock, Moon, Sun, Waves, Volume2, BedDouble } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export const SmartAlarm = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -31,6 +24,23 @@ export const SmartAlarm = () => {
   const [gradualWake, setGradualWake] = useState(true);
   const [backupAlarm, setBackupAlarm] = useState(true);
   const { toast } = useToast();
+
+  // Initialize audio context for sound generation
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+
+  useEffect(() => {
+    // Initialize AudioContext on user interaction
+    const initAudio = () => {
+      if (!audioContext) {
+        const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+        setAudioContext(context);
+      }
+    };
+
+    // Add listener for user interaction
+    document.addEventListener('click', initAudio, { once: true });
+    return () => document.removeEventListener('click', initAudio);
+  }, []);
 
   // Initialize motion tracking with enhanced sensitivity
   useEffect(() => {
@@ -48,7 +58,7 @@ export const SmartAlarm = () => {
 
         if (isTracking) {
           let movementBuffer: number[] = [];
-          const BUFFER_SIZE = 10; // Store last 10 readings for better accuracy
+          const BUFFER_SIZE = 10;
 
           await Motion.addListener('accel', (event) => {
             analyzeSleepMovement(event.acceleration, movementBuffer);
@@ -70,21 +80,16 @@ export const SmartAlarm = () => {
     acceleration: { x: number; y: number; z: number },
     buffer: number[]
   ) => {
-    // Calculate movement intensity with enhanced accuracy
     const intensity = Math.sqrt(
       Math.pow(acceleration.x, 2) + 
       Math.pow(acceleration.y, 2) + 
       Math.pow(acceleration.z, 2)
     );
 
-    // Add to buffer and maintain buffer size
     buffer.push(intensity);
     if (buffer.length > 10) buffer.shift();
 
-    // Calculate moving average for more stable readings
     const avgIntensity = buffer.reduce((a, b) => a + b, 0) / buffer.length;
-
-    // Adjust threshold based on sensitivity setting (1-10)
     const threshold = 0.1 * (11 - sensitivity);
 
     if (avgIntensity < threshold) {
@@ -94,6 +99,50 @@ export const SmartAlarm = () => {
     } else {
       console.log('Movement detected');
     }
+  };
+
+  const generateSound = async (type: string, volume: number) => {
+    if (!audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    switch (type) {
+      case 'nature':
+        // Gentle nature-like sounds
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(432, audioContext.currentTime);
+        break;
+      case 'binaural':
+        // Binaural beats for gentle wake
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(432, audioContext.currentTime);
+        const secondOscillator = audioContext.createOscillator();
+        secondOscillator.frequency.setValueAtTime(436, audioContext.currentTime);
+        secondOscillator.connect(gainNode);
+        secondOscillator.start();
+        secondOscillator.stop(audioContext.currentTime + 2);
+        break;
+      case 'gradual':
+        // Gradually increasing frequency
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+        oscillator.frequency.linearRampToValueAtTime(800, audioContext.currentTime + 2);
+        break;
+      default:
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+    }
+
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(volume / 100, audioContext.currentTime + 0.5);
+    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 2);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 2);
   };
 
   const startSleepTracking = async () => {
@@ -109,6 +158,9 @@ export const SmartAlarm = () => {
 
       setIsTracking(true);
       scheduleSmartAlarm();
+
+      // Test sound generation
+      await generateSound(soundType, volume);
 
       toast({
         title: "Sleep tracking started",
