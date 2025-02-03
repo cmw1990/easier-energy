@@ -2,10 +2,12 @@ import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export class NotificationService {
   private static instance: NotificationService;
   private initialized = false;
+  private permissionGranted = false;
 
   private constructor() {}
 
@@ -19,13 +21,18 @@ export class NotificationService {
   async initialize() {
     if (this.initialized) return;
 
-    if (Capacitor.isNativePlatform()) {
-      await this.initializePushNotifications();
-    } else {
-      await this.initializeWebNotifications();
-    }
+    try {
+      if (Capacitor.isNativePlatform()) {
+        await this.initializePushNotifications();
+      } else {
+        await this.initializeWebNotifications();
+      }
 
-    this.initialized = true;
+      this.initialized = true;
+    } catch (error) {
+      console.error('Error initializing notifications:', error);
+      throw new Error('Failed to initialize notifications');
+    }
   }
 
   private async initializePushNotifications() {
@@ -34,28 +41,39 @@ export class NotificationService {
       
       if (permStatus.receive === 'prompt') {
         const result = await PushNotifications.requestPermissions();
-        if (result.receive === 'granted') {
-          await PushNotifications.register();
-        }
+        this.permissionGranted = result.receive === 'granted';
+      } else {
+        this.permissionGranted = permStatus.receive === 'granted';
       }
 
-      // Listen for push notifications
-      PushNotifications.addListener('pushNotificationReceived', notification => {
-        console.log('Push notification received:', notification);
-      });
+      if (this.permissionGranted) {
+        await PushNotifications.register();
+        
+        // Listen for push notifications
+        PushNotifications.addListener('pushNotificationReceived', notification => {
+          console.log('Push notification received:', notification);
+          this.showLocalNotification({
+            title: notification.title || '',
+            body: notification.body || '',
+            id: Math.floor(Math.random() * 10000)
+          });
+        });
 
-      PushNotifications.addListener('pushNotificationActionPerformed', notification => {
-        console.log('Push notification action performed:', notification);
-      });
+        PushNotifications.addListener('pushNotificationActionPerformed', notification => {
+          console.log('Push notification action performed:', notification);
+          // Handle notification action (e.g., navigate to specific screen)
+        });
+      }
     } catch (error) {
       console.error('Error initializing push notifications:', error);
+      throw error;
     }
   }
 
   private async initializeWebNotifications() {
     if ('Notification' in window) {
       const permission = await Notification.requestPermission();
-      console.log('Web notification permission:', permission);
+      this.permissionGranted = permission === 'granted';
     }
   }
 
@@ -66,6 +84,10 @@ export class NotificationService {
     schedule?: { at: Date };
     data?: any;
   }) {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+
     try {
       if (Capacitor.isNativePlatform()) {
         await LocalNotifications.schedule({
@@ -74,30 +96,47 @@ export class NotificationService {
             body: options.body,
             id: options.id,
             schedule: options.schedule,
-            extra: options.data
+            extra: options.data,
+            sound: options.schedule ? 'beep.wav' : undefined,
+            smallIcon: 'ic_stat_icon_config_sample',
+            iconColor: '#488AFF'
           }]
         });
-      } else if ('Notification' in window && Notification.permission === 'granted') {
+      } else if (this.permissionGranted) {
         if (options.schedule) {
           const delay = options.schedule.at.getTime() - Date.now();
           if (delay > 0) {
             setTimeout(() => {
-              new Notification(options.title, {
-                body: options.body,
-                data: options.data
-              });
+              this.showWebNotification(options);
             }, delay);
           }
         } else {
-          new Notification(options.title, {
-            body: options.body,
-            data: options.data
-          });
+          this.showWebNotification(options);
         }
       }
     } catch (error) {
       console.error('Error scheduling notification:', error);
+      throw error;
     }
+  }
+
+  private showWebNotification(options: {
+    title: string;
+    body: string;
+    data?: any;
+  }) {
+    const notification = new Notification(options.title, {
+      body: options.body,
+      data: options.data,
+      icon: '/favicon.ico'
+    });
+
+    notification.onclick = () => {
+      window.focus();
+      if (options.data?.url) {
+        window.location.href = options.data.url;
+      }
+    };
   }
 
   async cancelNotification(id: number) {
@@ -105,25 +144,60 @@ export class NotificationService {
       if (Capacitor.isNativePlatform()) {
         await LocalNotifications.cancel({ notifications: [{ id }] });
       }
-      // Web notifications can't be cancelled once shown
     } catch (error) {
       console.error('Error canceling notification:', error);
+      throw error;
     }
   }
 
   async getUserPreferences(userId: string) {
-    const { data, error } = await supabase
-      .from('notification_preferences')
-      .select('preferences')
-      .eq('user_id', userId)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('notification_preferences')
+        .select('preferences')
+        .eq('user_id', userId)
+        .single();
 
-    if (error) {
+      if (error) throw error;
+      return data?.preferences;
+    } catch (error) {
       console.error('Error fetching notification preferences:', error);
-      return null;
+      throw error;
     }
+  }
 
-    return data?.preferences;
+  async updateUserPreferences(userId: string, preferences: any) {
+    try {
+      const { error } = await supabase
+        .from('notification_preferences')
+        .upsert({
+          user_id: userId,
+          preferences,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating notification preferences:', error);
+      throw error;
+    }
+  }
+
+  async checkPermissions() {
+    if (Capacitor.isNativePlatform()) {
+      return await PushNotifications.checkPermissions();
+    } else {
+      return { receive: Notification.permission as 'granted' | 'denied' | 'prompt' };
+    }
+  }
+
+  async requestPermissions() {
+    if (Capacitor.isNativePlatform()) {
+      return await PushNotifications.requestPermissions();
+    } else {
+      const permission = await Notification.requestPermission();
+      return { receive: permission as 'granted' | 'denied' | 'prompt' };
+    }
   }
 }
 
