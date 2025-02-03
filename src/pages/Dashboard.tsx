@@ -1,10 +1,14 @@
 import React from 'react';
 import ChessGame from '@/components/games/ChessGame';
+import { GameAssetsGenerator } from '@/components/GameAssetsGenerator';
 
 const Dashboard = () => {
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <GameAssetsGenerator />
+      </div>
       <ChessGame />
     </div>
   );
