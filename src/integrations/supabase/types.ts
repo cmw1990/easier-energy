@@ -594,7 +594,9 @@ export type Database = {
           current_daily_usage: number | null
           id: string
           initial_daily_usage: number
+          is_shift_worker: boolean | null
           product_type: string
+          shift_pattern: string | null
           start_date: string | null
           strategy_type: Database["public"]["Enums"]["quit_strategy_type"]
           target_daily_usage: number | null
@@ -608,7 +610,9 @@ export type Database = {
           current_daily_usage?: number | null
           id?: string
           initial_daily_usage: number
+          is_shift_worker?: boolean | null
           product_type: string
+          shift_pattern?: string | null
           start_date?: string | null
           strategy_type: Database["public"]["Enums"]["quit_strategy_type"]
           target_daily_usage?: number | null
@@ -622,7 +626,9 @@ export type Database = {
           current_daily_usage?: number | null
           id?: string
           initial_daily_usage?: number
+          is_shift_worker?: boolean | null
           product_type?: string
+          shift_pattern?: string | null
           start_date?: string | null
           strategy_type?: Database["public"]["Enums"]["quit_strategy_type"]
           target_daily_usage?: number | null

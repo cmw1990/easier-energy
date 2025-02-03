@@ -71,7 +71,7 @@ const Dashboard = () => {
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
-      {shiftData?.strategy_type === 'shift_work' && (
+      {shiftData?.is_shift_worker && (
         <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -83,7 +83,7 @@ const Dashboard = () => {
             <AIAssistant
               type="energy_pattern_analysis"
               data={{
-                shiftPattern: shiftData?.product_type,
+                shiftPattern: shiftData?.shift_pattern,
                 shiftStartTime: shiftData?.start_date,
                 shiftEndTime: shiftData?.target_date,
                 lastSleepScore: getAverageRating("sleep", "energy_rating"),
@@ -245,8 +245,8 @@ const Dashboard = () => {
                 sleepDuration: getLatestDuration("sleep"),
                 focusScore: getAverageRating("focus", "focus_rating"),
                 energyLevel: getAverageRating("caffeine", "energy_rating"),
-                isShiftWorker: shiftData?.strategy_type === 'shift_work',
-                shiftPattern: shiftData?.product_type,
+                isShiftWorker: shiftData?.is_shift_worker,
+                shiftPattern: shiftData?.shift_pattern,
                 caffeineIntake: getLatestCaffeineIntake()
               }}
             />
