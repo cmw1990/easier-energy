@@ -21,9 +21,8 @@ export const GameAssetsGenerator = () => {
           'generate-initial-game-assets',
           { 
             body: { batch },
-            // Add timeout for longer operations
-            options: {
-              timeout: 120000 // 2 minutes timeout
+            headers: {
+              'Content-Type': 'application/json',
             }
           }
         );
