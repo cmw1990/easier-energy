@@ -35,6 +35,14 @@ export const CaffeineIntakeForm = ({ onSubmit }: CaffeineIntakeFormProps) => {
     setConsumedAt(new Date().toISOString().slice(0, 16));
   };
 
+  const getEnergyColor = (rating: string) => {
+    const numRating = parseInt(rating);
+    if (!numRating) return "bg-gray-100";
+    if (numRating <= 3) return "bg-energy-low";
+    if (numRating <= 7) return "bg-energy-medium";
+    return "bg-energy-high";
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
@@ -51,7 +59,11 @@ export const CaffeineIntakeForm = ({ onSubmit }: CaffeineIntakeFormProps) => {
                 <h4 className="font-medium">Common Caffeine Amounts</h4>
                 <div className="grid gap-2">
                   {CAFFEINE_REFERENCE.map((item) => (
-                    <div key={item.name} className="flex justify-between text-sm">
+                    <div 
+                      key={item.name} 
+                      className="flex justify-between text-sm cursor-pointer hover:bg-accent/50 p-1 rounded"
+                      onClick={() => setAmount(item.amount.toString())}
+                    >
                       <span>{item.name}</span>
                       <span className="font-medium">{item.amount} mg</span>
                     </div>
@@ -67,19 +79,32 @@ export const CaffeineIntakeForm = ({ onSubmit }: CaffeineIntakeFormProps) => {
           placeholder="e.g., 95 for a cup of coffee"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
+          className="text-lg"
         />
       </div>
       <div className="space-y-2">
         <Label htmlFor="energyRating">Energy Rating (1-10)</Label>
-        <Input
-          id="energyRating"
-          type="number"
-          min="1"
-          max="10"
-          placeholder="Rate your energy level"
-          value={energyRating}
-          onChange={(e) => setEnergyRating(e.target.value)}
-        />
+        <div className="relative">
+          <Input
+            id="energyRating"
+            type="number"
+            min="1"
+            max="10"
+            placeholder="Rate your energy level"
+            value={energyRating}
+            onChange={(e) => setEnergyRating(e.target.value)}
+            className={`text-lg transition-colors ${getEnergyColor(energyRating)}`}
+          />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
+            {[1, 5, 10].map((level) => (
+              <div
+                key={level}
+                className={`w-2 h-2 rounded-full ${getEnergyColor(level.toString())}`}
+                title={level === 1 ? "Low" : level === 5 ? "Medium" : "High"}
+              />
+            ))}
+          </div>
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="consumedAt">Time Consumed</Label>
@@ -88,6 +113,7 @@ export const CaffeineIntakeForm = ({ onSubmit }: CaffeineIntakeFormProps) => {
           type="datetime-local"
           value={consumedAt}
           onChange={(e) => setConsumedAt(e.target.value)}
+          className="text-lg"
         />
       </div>
       <Button type="submit" className="w-full">
