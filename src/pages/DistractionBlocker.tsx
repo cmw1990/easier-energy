@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Ban, Globe, Bell, Smartphone, Clock, Brain } from "lucide-react";
+import { Ban, Globe, Bell, Smartphone, Clock, Brain, Activity } from "lucide-react";
 import { BlockingSchedule } from "@/components/distraction/BlockingSchedule";
 import { WebsiteBlocker } from "@/components/distraction/WebsiteBlocker";
 import { AppBlocker } from "@/components/distraction/AppBlocker";

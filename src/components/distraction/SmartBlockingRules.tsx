@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain, Activity } from "lucide-react";
+import { Brain } from "lucide-react";
 
 type SmartBlockingSettings = {
   adaptiveMode: boolean;
@@ -38,6 +38,7 @@ export const SmartBlockingRules = () => {
         .select('pattern_data')
         .eq('user_id', session.user.id)
         .eq('block_type', 'website')
+        .eq('target', 'smart-rules')
         .maybeSingle();
 
       if (error) throw error;
@@ -64,6 +65,7 @@ export const SmartBlockingRules = () => {
         .upsert({
           user_id: session.user.id,
           block_type: 'website',
+          target: 'smart-rules',
           pattern_data: settings,
           is_active: true
         });
