@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Battery, Brain, Moon } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import { AIAssistant } from "@/components/AIAssistant";
 
 const Dashboard = () => {
   const { session } = useAuth();
@@ -88,48 +89,60 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentLogs?.map((log) => (
-              <div
-                key={log.id}
-                className="flex items-center justify-between border-b pb-2"
-              >
-                <div>
-                  <p className="font-medium capitalize">{log.activity_type}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {log.activity_name}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm">
-                    {new Date(log.created_at).toLocaleDateString()}
-                  </p>
-                  {log.energy_rating && (
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentLogs?.map((log) => (
+                <div
+                  key={log.id}
+                  className="flex items-center justify-between border-b pb-2"
+                >
+                  <div>
+                    <p className="font-medium capitalize">{log.activity_type}</p>
                     <p className="text-sm text-muted-foreground">
-                      Energy: {log.energy_rating}/10
+                      {log.activity_name}
                     </p>
-                  )}
-                  {log.focus_rating && (
-                    <p className="text-sm text-muted-foreground">
-                      Focus: {log.focus_rating}/10
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm">
+                      {new Date(log.created_at).toLocaleDateString()}
                     </p>
-                  )}
+                    {log.energy_rating && (
+                      <p className="text-sm text-muted-foreground">
+                        Energy: {log.energy_rating}/10
+                      </p>
+                    )}
+                    {log.focus_rating && (
+                      <p className="text-sm text-muted-foreground">
+                        Focus: {log.focus_rating}/10
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-            {(!recentLogs || recentLogs.length === 0) && (
-              <p className="text-center text-muted-foreground">
-                No recent activity
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              ))}
+              {(!recentLogs || recentLogs.length === 0) && (
+                <p className="text-center text-muted-foreground">
+                  No recent activity
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <AIAssistant 
+          type="daily_summary"
+          data={{
+            recentLogs,
+            sleepDuration: getLatestDuration("sleep"),
+            focusScore: getAverageRating("focus", "focus_rating"),
+            energyLevel: getAverageRating("caffeine", "energy_rating")
+          }}
+        />
+      </div>
     </div>
   );
 };
