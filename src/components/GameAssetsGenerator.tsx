@@ -12,7 +12,7 @@ export const GameAssetsGenerator = () => {
     setIsGenerating(true);
     try {
       // Generate all assets in sequence
-      const batches = ['pufferfish', 'balloon', 'color-match'];
+      const batches = ['pufferfish', 'balloon', 'zen-garden'];
       
       for (const batch of batches) {
         console.log(`Starting generation for ${batch} assets...`);

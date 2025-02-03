@@ -111,9 +111,15 @@ async function generateAssets(req: Request) {
     { name: 'background', prompt: 'Peaceful sky gradient from light blue to white, simple style for game background' }
   ];
 
-  const colorMatchAssets = [
-    { name: 'background', prompt: 'Abstract geometric pattern with soft colors for a game background' },
-    { name: 'particle', prompt: 'Simple colorful particle effect, transparent background' }
+  const zenGardenAssets = [
+    { name: 'stone', prompt: 'Minimalist Japanese zen garden stone in soft pastel colors, elegant with subtle shadows, watercolor style, transparent background' },
+    { name: 'sand-pattern', prompt: 'Delicate zen sand pattern showing gentle ripples like those made by a rake in a Japanese rock garden, minimal lines in pale beige, transparent background' },
+    { name: 'bonsai', prompt: 'Simple zen garden bonsai tree in minimalist style, graceful branches with few leaves in pale pink and mint green, transparent background' },
+    { name: 'moss', prompt: 'Minimal zen garden moss element in soft watercolor style, subtle texture in sage and moss green, transparent background' },
+    { name: 'bamboo', prompt: 'Simple zen garden bamboo element, few elegant stalks with minimal leaves in soft greens and pale gold, transparent background' },
+    { name: 'lantern', prompt: 'Minimalist zen garden lantern with simple geometric shapes and subtle glow, warm gray and soft yellow tones, transparent background' },
+    { name: 'bridge', prompt: 'Minimal zen garden bridge element in soft watercolor style, graceful curves and simple wooden texture in warm browns, transparent background' },
+    { name: 'koi', prompt: 'Abstract zen garden koi fish design showing flowing movement, soft pinks and blues, transparent background' }
   ];
 
   try {
@@ -128,8 +134,8 @@ async function generateAssets(req: Request) {
       await new Promise(resolve => setTimeout(resolve, 5000));
     }
 
-    if (batch === 'all' || batch === 'color-match') {
-      await generateBatch(colorMatchAssets, 'color-match');
+    if (batch === 'all' || batch === 'zen-garden') {
+      await generateBatch(zenGardenAssets, 'zen-garden');
     }
 
     console.log('Asset generation completed successfully!');
