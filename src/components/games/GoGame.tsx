@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Brain } from "lucide-react";
 import type { Json } from "@/integrations/supabase/types";
+import { cn } from "@/lib/utils";
 
 type GameType = 'chess' | 'go' | 'checkers' | 'reversi' | 'xiangqi' | 'shogi' | 'gomoku' | 'connect_four' | 'tic_tac_toe';
 type GameStatus = 'in_progress' | 'completed';
@@ -63,7 +64,7 @@ const GoGame = () => {
         .maybeSingle();
 
       if (existingGame) {
-        const loadedGameState = existingGame.game_state as unknown as GameState;
+        const loadedGameState = existingGame.game_state as GameState;
         setGameState(loadedGameState);
         setDifficulty(existingGame.difficulty_level.toString());
       } else {
@@ -98,7 +99,7 @@ const GoGame = () => {
     try {
       const { error } = await supabase
         .from('board_games')
-        .insert([newGame as unknown as Json]);
+        .insert([newGame]);
       
       if (error) throw error;
       
@@ -133,7 +134,7 @@ const GoGame = () => {
       const { error } = await supabase
         .from('board_games')
         .update({
-          game_state: newGameState as unknown as Json,
+          game_state: newGameState,
           last_move_at: new Date().toISOString(),
         })
         .eq('game_type', 'go')
