@@ -1,265 +1,112 @@
-import { BreathingBaseScene } from './BreathingBaseScene';
+import Phaser from 'phaser';
 
-interface GameState {
-  score: number;
-  fishPosition: number;
-  fishSize: number;
-  isPlaying: boolean;
-  health: number;
-}
+export class PufferfishScene extends Phaser.Scene {
+  private pufferfish: Phaser.GameObjects.Sprite | null = null;
+  private bubbleEmitter: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
+  private assets: Record<string, string> = {};
+  private setScoreCallback: (score: number) => void;
+  private currentScore: number = 0;
+  private breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest' = 'rest';
 
-interface GameObject {
-  sprite: Phaser.GameObjects.Image;
-  speed: number;
-  active: boolean;
-}
-
-export class PufferfishScene extends BreathingBaseScene {
-  private gameState: GameState;
-  private breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
-  private onScoreUpdate: (score: number) => void;
-  private smallFish: GameObject[];
-  private predators: GameObject[];
-  private bubbles: Phaser.GameObjects.Particles.ParticleEmitter | null;
-  private seaweed: Phaser.GameObjects.Image[];
-  private lastBubbleTime: number;
-  private background: Phaser.GameObjects.Image | null;
-  private sprites: Map<string, Phaser.GameObjects.Image>;
-
-  constructor(onScoreUpdate: (score: number) => void) {
+  constructor(setScore: (score: number) => void) {
     super({ key: 'PufferfishScene' });
-    this.gameState = {
-      score: 0,
-      fishPosition: 200,
-      fishSize: 1,
-      isPlaying: false,
-      health: 100
-    };
-    this.breathPhase = 'rest';
-    this.onScoreUpdate = onScoreUpdate;
-    this.smallFish = [];
-    this.predators = [];
-    this.seaweed = [];
-    this.bubbles = null;
-    this.lastBubbleTime = 0;
-    this.background = null;
-    this.sprites = new Map();
+    this.setScoreCallback = setScore;
+  }
+
+  setAssets(assets: Record<string, string>) {
+    this.assets = assets;
+    if (this.scene.isActive()) {
+      this.scene.restart();
+    }
   }
 
   setBreathPhase(phase: 'inhale' | 'hold' | 'exhale' | 'rest') {
     this.breathPhase = phase;
   }
 
+  preload() {
+    if (this.assets.pufferfish) {
+      this.load.image('pufferfish', this.assets.pufferfish);
+    }
+    if (this.assets.bubbles) {
+      this.load.image('bubbles', this.assets.bubbles);
+    }
+    if (this.assets.background) {
+      this.load.image('background', this.assets.background);
+    }
+  }
+
   create() {
-    super.create();
-    
-    // Set up background first
-    this.background = this.add.image(400, 200, 'background');
-    if (this.background) {
-      this.background.setDisplaySize(800, 400);
-      this.background.setDepth(0);
-    }
+    // Add background
+    this.add.image(400, 200, 'background').setScale(2);
 
-    // Initialize player fish
-    const fish = this.add.image(100, this.gameState.fishPosition, 'pufferfish');
-    if (fish) {
-      fish.setScale(this.gameState.fishSize)
-          .setDepth(1)
-          .setVisible(true);
-      this.sprites.set('pufferfish', fish);
-    }
+    // Create pufferfish sprite
+    this.pufferfish = this.add.sprite(400, 200, 'pufferfish');
+    this.pufferfish.setScale(0.5);
 
-    // Initialize seaweed decorations
-    for (let i = 0; i < 5; i++) {
-      const seaweed = this.add.image(
-        Phaser.Math.Between(0, 800),
-        380,
-        'seaweed'
+    // Create bubble particle emitter
+    if (this.pufferfish) {
+      this.bubbleEmitter = this.createBubbleEmitter(
+        this.pufferfish.x,
+        this.pufferfish.y
       );
-      seaweed.setOrigin(0.5, 1).setScale(0.8).setDepth(0);
-      this.seaweed.push(seaweed);
     }
 
-    // Setup particle system for bubbles
-    const particles = this.add.particles(0, 0, 'bubbles', {
+    // Start game loop
+    this.time.addEvent({
+      delay: 100,
+      callback: this.updateScore,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  update() {
+    if (!this.pufferfish || !this.bubbleEmitter) return;
+
+    // Update pufferfish position and scale based on breath phase
+    switch (this.breathPhase) {
+      case 'inhale':
+        this.pufferfish.setScale(Math.min(this.pufferfish.scale + 0.01, 0.8));
+        this.pufferfish.y = Math.max(this.pufferfish.y - 1, 50);
+        this.bubbleEmitter.setPosition(this.pufferfish.x, this.pufferfish.y + 20);
+        this.bubbleEmitter.setFrequency(50);
+        break;
+      case 'exhale':
+        this.pufferfish.setScale(Math.max(this.pufferfish.scale - 0.01, 0.3));
+        this.pufferfish.y = Math.min(this.pufferfish.y + 1, 350);
+        this.bubbleEmitter.setPosition(this.pufferfish.x, this.pufferfish.y + 20);
+        this.bubbleEmitter.setFrequency(200);
+        break;
+      case 'hold':
+        this.bubbleEmitter.setFrequency(1000);
+        break;
+      case 'rest':
+        this.bubbleEmitter.setFrequency(500);
+        break;
+    }
+
+    // Gentle floating animation
+    this.pufferfish.x += Math.sin(this.time.now / 1000) * 0.5;
+  }
+
+  private updateScore() {
+    this.currentScore += 1;
+    this.setScoreCallback(this.currentScore);
+  }
+
+  private createBubbleEmitter(x: number, y: number): Phaser.GameObjects.Particles.ParticleEmitter {
+    const particles = this.add.particles(x, y, 'bubbles', {
       speed: { min: 50, max: 100 },
-      angle: { min: -85, max: -95 },
-      scale: { start: 0.4, end: 0.2 },
+      angle: { min: 260, max: 280 },
+      scale: { start: 0.4, end: 0.1 },
       alpha: { start: 0.8, end: 0 },
       lifespan: 2000,
+      gravityY: -100,
       quantity: 1,
-      frequency: 100,
-      active: false
+      frequency: 100
     });
     
-    this.bubbles = particles.createEmitter();
-
-    this.gameState.isPlaying = true;
-
-    this.time.addEvent({
-      delay: 2000,
-      callback: this.spawnSmallFish,
-      callbackScope: this,
-      loop: true
-    });
-
-    this.time.addEvent({
-      delay: 3000,
-      callback: this.spawnPredator,
-      callbackScope: this,
-      loop: true
-    });
-  }
-
-  private spawnSmallFish = () => {
-    const sprite = this.add.image(850, Phaser.Math.Between(50, 350), 'smallFish');
-    sprite.setScale(0.6);
-    this.smallFish.push({
-      sprite,
-      speed: Phaser.Math.Between(100, 200),
-      active: true
-    });
-  };
-
-  private spawnPredator = () => {
-    const sprite = this.add.image(850, Phaser.Math.Between(50, 350), 'predator');
-    sprite.setScale(0.8);
-    this.predators.push({
-      sprite,
-      speed: Phaser.Math.Between(150, 250),
-      active: true
-    });
-  };
-
-  private updateGameObjects(delta: number) {
-    // Update small fish
-    this.smallFish.forEach((fish, index) => {
-      if (!fish.active) return;
-      
-      fish.sprite.x -= (fish.speed * delta) / 1000;
-      
-      // Check collision with player
-      const playerFish = this.getSprite('pufferfish');
-      if (playerFish && this.checkCollision(playerFish, fish.sprite)) {
-        this.gameState.score += 10;
-        this.onScoreUpdate(Math.floor(this.gameState.score));
-        fish.active = false;
-        fish.sprite.destroy();
-        this.smallFish.splice(index, 1);
-      }
-      
-      // Remove if off screen
-      if (fish.sprite.x < -50) {
-        fish.sprite.destroy();
-        this.smallFish.splice(index, 1);
-      }
-    });
-
-    // Update predators
-    this.predators.forEach((predator, index) => {
-      if (!predator.active) return;
-      
-      predator.sprite.x -= (predator.speed * delta) / 1000;
-      
-      // Check collision with player
-      const playerFish = this.getSprite('pufferfish');
-      if (playerFish && this.checkCollision(playerFish, predator.sprite)) {
-        this.gameState.health -= 20;
-        predator.active = false;
-        predator.sprite.destroy();
-        this.predators.splice(index, 1);
-        
-        if (this.gameState.health <= 0) {
-          this.gameOver();
-        }
-      }
-      
-      // Remove if off screen
-      if (predator.sprite.x < -50) {
-        predator.sprite.destroy();
-        this.predators.splice(index, 1);
-      }
-    });
-
-    // Animate seaweed
-    this.seaweed.forEach((seaweed, index) => {
-      seaweed.rotation = Math.sin(this.time.now / 1000 + index) * 0.1;
-    });
-  }
-
-  private checkCollision(obj1: Phaser.GameObjects.Image, obj2: Phaser.GameObjects.Image): boolean {
-    const bounds1 = obj1.getBounds();
-    const bounds2 = obj2.getBounds();
-    return Phaser.Geom.Intersects.RectangleToRectangle(bounds1, bounds2);
-  }
-
-  private gameOver() {
-    this.gameState.isPlaying = false;
-    this.scene.pause();
-    // The parent component will handle the game over state
-  }
-
-  update(time: number, delta: number) {
-    if (!this.gameState.isPlaying) return;
-
-    // Update fish size based on breath phase
-    const sizeChangeRate = 0.003 * delta;
-    if (this.breathPhase === 'inhale') {
-      this.gameState.fishSize = Math.min(1.5, this.gameState.fishSize + sizeChangeRate);
-      if (time - this.lastBubbleTime > 100) {
-        this.emitBubbles();
-        this.lastBubbleTime = time;
-      }
-    } else if (this.breathPhase === 'exhale') {
-      this.gameState.fishSize = Math.max(0.8, this.gameState.fishSize - sizeChangeRate);
-    }
-
-    // Update fish position with smooth interpolation
-    const targetY = this.gameState.fishSize > 1.2 ? 
-      Math.max(50, this.gameState.fishPosition - 2) :
-      this.gameState.fishSize < 1 ?
-        Math.min(350, this.gameState.fishPosition + 2) :
-        this.gameState.fishPosition;
-
-    this.gameState.fishPosition += (targetY - this.gameState.fishPosition) * 0.1;
-
-    // Update player fish sprite
-    const fish = this.sprites.get('pufferfish');
-    if (fish) {
-      fish.setPosition(100, this.gameState.fishPosition)
-          .setScale(this.gameState.fishSize)
-          .setRotation(Math.sin(time * 0.003) * 0.1);
-    }
-
-    // Update game objects
-    this.updateGameObjects(delta);
-
-    // Increment score based on survival time
-    this.gameState.score += 0.01 * delta;
-    this.onScoreUpdate(Math.floor(this.gameState.score));
-  }
-
-  private emitBubbles() {
-    if (this.bubbles && this.sprites.get('pufferfish')) {
-      const fish = this.sprites.get('pufferfish');
-      if (fish) {
-        this.bubbles.setPosition(fish.x, fish.y);
-        this.bubbles.explode();
-      }
-    }
-  }
-
-  destroy() {
-    this.gameState.isPlaying = false;
-    this.smallFish.forEach(fish => fish.sprite.destroy());
-    this.predators.forEach(predator => predator.sprite.destroy());
-    this.seaweed.forEach(seaweed => seaweed.destroy());
-    if (this.bubbles) {
-      this.bubbles.stop();
-    }
-    if (this.background) {
-      this.background.destroy();
-    }
-    super.destroy();
+    return particles.createEmitter();
   }
 }
