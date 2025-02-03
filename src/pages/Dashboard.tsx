@@ -7,6 +7,7 @@ import { AIAssistant } from "@/components/AIAssistant";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { MoodOverview } from "@/components/MoodOverview";
+import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 import {
   Tooltip,
   TooltipContent,
@@ -70,7 +71,10 @@ const Dashboard = () => {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <GameAssetsGenerator />
+      </div>
 
       <MoodOverview />
 

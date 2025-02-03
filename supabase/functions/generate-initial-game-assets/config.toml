@@ -1,4 +1,3 @@
 project_id = "zoubqdwxemivxrjruvam"
-
-[functions]
+[functions.generate-initial-game-assets]
 verify_jwt = false
