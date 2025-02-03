@@ -8,6 +8,8 @@ import { useState } from "react";
 import { BlockingConfirmDialog } from "@/components/distraction/BlockingConfirmDialog";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { HealthConditionForm } from "@/components/health/HealthConditionForm";
+import { TailoredRecommendations } from "@/components/health/TailoredRecommendations";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -24,6 +26,21 @@ const Index = () => {
         .eq('user_id', session?.user?.id)
         .order('created_at', { ascending: false })
         .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id,
+  });
+
+  const { data: healthConditions } = useQuery({
+    queryKey: ['health-conditions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_health_conditions')
+        .select('*')
+        .eq('user_id', session?.user?.id)
         .maybeSingle();
 
       if (error) throw error;
@@ -52,6 +69,18 @@ const Index = () => {
 
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-8">
+      {!healthConditions && (
+        <div className="mb-8">
+          <HealthConditionForm />
+        </div>
+      )}
+
+      {healthConditions && (
+        <div className="mb-8">
+          <TailoredRecommendations />
+        </div>
+      )}
+
       {/* Main Action Card - Prominent Blocking Controls */}
       <Card className="p-6 bg-primary/5 border-2 border-primary/20 shadow-lg">
         <div className="flex flex-col items-center text-center space-y-6">

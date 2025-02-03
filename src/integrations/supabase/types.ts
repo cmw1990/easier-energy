@@ -1218,6 +1218,66 @@ export type Database = {
         }
         Relationships: []
       }
+      tailored_recommendations: {
+        Row: {
+          category: string
+          condition: Database["public"]["Enums"]["health_condition"]
+          created_at: string | null
+          description: string
+          id: string
+          priority: number | null
+          title: string
+        }
+        Insert: {
+          category: string
+          condition: Database["public"]["Enums"]["health_condition"]
+          created_at?: string | null
+          description: string
+          id?: string
+          priority?: number | null
+          title: string
+        }
+        Update: {
+          category?: string
+          condition?: Database["public"]["Enums"]["health_condition"]
+          created_at?: string | null
+          description?: string
+          id?: string
+          priority?: number | null
+          title?: string
+        }
+        Relationships: []
+      }
+      user_health_conditions: {
+        Row: {
+          conditions: Database["public"]["Enums"]["health_condition"][]
+          created_at: string | null
+          id: string
+          needs_energy_support: boolean | null
+          needs_focus_support: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          conditions?: Database["public"]["Enums"]["health_condition"][]
+          created_at?: string | null
+          id?: string
+          needs_energy_support?: boolean | null
+          needs_focus_support?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          conditions?: Database["public"]["Enums"]["health_condition"][]
+          created_at?: string | null
+          id?: string
+          needs_energy_support?: boolean | null
+          needs_focus_support?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_nrt_progress: {
         Row: {
           completed_at: string | null
@@ -1391,6 +1451,12 @@ export type Database = {
     Enums: {
       app_role: "admin" | "user"
       distraction_type: "app" | "website" | "notification" | "social_media"
+      health_condition:
+        | "adhd"
+        | "chronic_fatigue"
+        | "multiple_sclerosis"
+        | "other_fatigue"
+        | "other_focus_issue"
       quit_strategy_type:
         | "cold_turkey"
         | "taper_down"
