@@ -45,7 +45,7 @@ const effectPrompts = [
 ]
 
 const MAX_RETRIES = 3
-const RETRY_DELAY = 2000 // 2 seconds
+const RETRY_DELAY = 2000
 
 async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -72,8 +72,31 @@ async function retryOperation<T>(
   throw new Error(`All ${maxRetries} attempts failed for ${description}`)
 }
 
+async function checkExistingAssets(type: string): Promise<boolean> {
+  try {
+    console.log(`Checking for existing ${type} assets...`);
+    const { data, error } = await supabase
+      .storage
+      .from('game-assets')
+      .list(`zen-drift/${type}s`, {
+        limit: 1,
+      });
+
+    if (error) {
+      console.error(`Error checking ${type} assets:`, error);
+      return false;
+    }
+
+    const hasAssets = data && data.length > 0;
+    console.log(`${type} assets exist:`, hasAssets);
+    return hasAssets;
+  } catch (error) {
+    console.error(`Error checking ${type} assets:`, error);
+    return false;
+  }
+}
+
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
       headers: corsHeaders,
@@ -86,7 +109,7 @@ serve(async (req) => {
       throw new Error('OPENAI_API_KEY is not configured')
     }
 
-    console.log('Starting enhanced Zen Drift assets generation...')
+    console.log('Starting Zen Drift assets generation with duplicate checking...')
     const assets: { [key: string]: string } = {}
     const errors: string[] = []
     const progress: { total: number; completed: number; current: string } = {
@@ -95,8 +118,38 @@ serve(async (req) => {
       current: ''
     }
 
+    // Check for existing assets first
+    const [hasCars, hasBackgrounds, hasEffects] = await Promise.all([
+      checkExistingAssets('car'),
+      checkExistingAssets('background'),
+      checkExistingAssets('effect')
+    ]);
+
+    if (hasCars && hasBackgrounds && hasEffects) {
+      console.log('All assets already exist, skipping generation');
+      return new Response(
+        JSON.stringify({ 
+          message: 'Assets already exist', 
+          status: 'skipped',
+          details: 'All required assets are already present in storage'
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 
+        }
+      );
+    }
+
     async function generateImage(prompt: string, index: number, type: string) {
       try {
+        // Skip if assets of this type already exist
+        const hasExisting = await checkExistingAssets(type);
+        if (hasExisting) {
+          console.log(`Skipping ${type} ${index + 1} - assets already exist`);
+          progress.completed++;
+          return null;
+        }
+
         progress.current = `${type} ${index + 1}`
         console.log(`Generating ${progress.current} (${progress.completed + 1}/${progress.total})...`)
         
@@ -120,9 +173,6 @@ serve(async (req) => {
 
             if (!response.ok) {
               const errorData = await response.json()
-              if (errorData.error?.code === 'billing_hard_limit_reached') {
-                throw new Error('OpenAI billing limit reached')
-              }
               throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`)
             }
 
@@ -136,7 +186,7 @@ serve(async (req) => {
         }
 
         const imageUrl = imageResponse.data[0].url
-        const imageName = `${type.toLowerCase()}_${index + 1}.png`
+        const filePath = `zen-drift/${type}s/${type}_${index + 1}.png`
         
         const imageBlob = await retryOperation(
           async () => {
@@ -153,7 +203,7 @@ serve(async (req) => {
           async () => supabase
             .storage
             .from('game-assets')
-            .upload(`zen-drift/${type.toLowerCase()}s/${imageName}`, imageBlob, {
+            .upload(filePath, imageBlob, {
               contentType: 'image/png',
               upsert: true
             }),
@@ -167,9 +217,9 @@ serve(async (req) => {
         const { data: { publicUrl } } = supabase
           .storage
           .from('game-assets')
-          .getPublicUrl(`zen-drift/${type.toLowerCase()}s/${imageName}`)
+          .getPublicUrl(filePath)
         
-        assets[`${type.toLowerCase()}_${index + 1}`] = publicUrl
+        assets[`${type}_${index + 1}`] = publicUrl
         progress.completed++
         console.log(`Successfully generated and uploaded ${type} ${index + 1} (${progress.completed}/${progress.total})`)
         return publicUrl
@@ -181,40 +231,54 @@ serve(async (req) => {
       }
     }
 
-    // Generate all assets with improved error handling and progress tracking
-    for (let i = 0; i < carPrompts.length; i++) {
-      const result = await generateImage(carPrompts[i], i, 'Car')
-      if (result === null) continue
-      await sleep(1000) // Rate limiting protection
+    // Generate assets only if they don't exist
+    if (!hasCars) {
+      for (let i = 0; i < carPrompts.length; i++) {
+        const result = await generateImage(carPrompts[i], i, 'car')
+        if (result === null) continue
+        await sleep(1000)
+      }
     }
 
-    for (let i = 0; i < backgroundPrompts.length; i++) {
-      const result = await generateImage(backgroundPrompts[i], i, 'Background')
-      if (result === null) continue
-      await sleep(1000)
+    if (!hasBackgrounds) {
+      for (let i = 0; i < backgroundPrompts.length; i++) {
+        const result = await generateImage(backgroundPrompts[i], i, 'background')
+        if (result === null) continue
+        await sleep(1000)
+      }
     }
 
-    for (let i = 0; i < effectPrompts.length; i++) {
-      const result = await generateImage(effectPrompts[i], i, 'Effect')
-      if (result === null) continue
-      await sleep(1000)
+    if (!hasEffects) {
+      for (let i = 0; i < effectPrompts.length; i++) {
+        const result = await generateImage(effectPrompts[i], i, 'effect')
+        if (result === null) continue
+        await sleep(1000)
+      }
     }
 
-    // Prepare detailed response
     const successCount = Object.keys(assets).length
-    const totalCount = progress.total
+    const totalNeeded = (!hasCars ? carPrompts.length : 0) + 
+                       (!hasBackgrounds ? backgroundPrompts.length : 0) + 
+                       (!hasEffects ? effectPrompts.length : 0)
     const failureCount = errors.length
 
     const response = {
-      status: successCount > 0 ? 'success' : 'error',
-      message: `Generated ${successCount}/${totalCount} assets${failureCount > 0 ? ` (${failureCount} failed)` : ''}`,
+      status: successCount > 0 || (hasCars && hasBackgrounds && hasEffects) ? 'success' : 'error',
+      message: `Generated ${successCount}/${totalNeeded} new assets${failureCount > 0 ? ` (${failureCount} failed)` : ''}`,
       assets,
       errors: errors.length > 0 ? errors : undefined,
       statistics: {
-        total: totalCount,
-        successful: successCount,
-        failed: failureCount,
-        completionRate: `${Math.round((successCount / totalCount) * 100)}%`
+        existing: {
+          cars: hasCars,
+          backgrounds: hasBackgrounds,
+          effects: hasEffects
+        },
+        new: {
+          total: totalNeeded,
+          successful: successCount,
+          failed: failureCount,
+          completionRate: totalNeeded > 0 ? `${Math.round((successCount / totalNeeded) * 100)}%` : '100%'
+        }
       }
     }
 
@@ -223,8 +287,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify(response),
       { 
-        status: successCount > 0 ? 200 : 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: successCount > 0 || (hasCars && hasBackgrounds && hasEffects) ? 200 : 500
       }
     )
 
@@ -237,8 +301,8 @@ serve(async (req) => {
         details: error.stack
       }),
       { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500
       }
     )
   }
