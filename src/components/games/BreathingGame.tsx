@@ -10,6 +10,7 @@ import { BreathingTechniques, type BreathingTechnique } from "@/components/breat
 import { usePhaserGame } from "@/hooks/use-phaser-game";
 import { PufferfishScene } from "./scenes/PufferfishScene";
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
+import { generateBinauralBeat, generateNatureSound } from "@/utils/audioGenerators";
 
 const BreathingGame = () => {
   const [score, setScore] = useState(0);
@@ -18,6 +19,9 @@ const BreathingGame = () => {
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [audioSupported, setAudioSupported] = useState<boolean | null>(null);
+  const [soundType, setSoundType] = useState<'binaural' | 'nature'>('binaural');
+  const [natureType, setNatureType] = useState<'ocean' | 'rain' | 'wind' | 'forest'>('ocean');
+  const soundRef = useRef<{ stop: () => void; setVolume: (v: number) => void } | null>(null);
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<PufferfishScene | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -177,6 +181,28 @@ const BreathingGame = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (isPlaying && selectedTechnique) {
+      // Stop previous sound if any
+      if (soundRef.current) {
+        soundRef.current.stop();
+      }
+
+      // Generate new sound based on type
+      if (soundType === 'binaural') {
+        soundRef.current = generateBinauralBeat(432, 4, 0.5); // 4Hz theta waves for relaxation
+      } else {
+        soundRef.current = generateNatureSound(natureType, 0.5);
+      }
+    }
+
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.stop();
+      }
+    };
+  }, [isPlaying, soundType, natureType, selectedTechnique]);
+
   return (
     <Card className="p-6">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
@@ -218,6 +244,39 @@ const BreathingGame = () => {
                   onSelectTechnique={setSelectedTechnique}
                   className="mb-4"
                 />
+                <div className="space-y-4">
+                  <div className="flex gap-4">
+                    <Select
+                      value={soundType}
+                      onValueChange={(value: 'binaural' | 'nature') => setSoundType(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select sound type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="binaural">Binaural Beats</SelectItem>
+                        <SelectItem value="nature">Nature Sounds</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    {soundType === 'nature' && (
+                      <Select
+                        value={natureType}
+                        onValueChange={(value: 'ocean' | 'rain' | 'wind' | 'forest') => setNatureType(value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select nature sound" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ocean">Ocean Waves</SelectItem>
+                          <SelectItem value="rain">Gentle Rain</SelectItem>
+                          <SelectItem value="wind">Wind</SelectItem>
+                          <SelectItem value="forest">Forest</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
             
