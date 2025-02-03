@@ -73,7 +73,7 @@ export class PufferfishScene extends BreathingBaseScene {
     // Setup particle system for bubbles
     const particles = this.add.particles('bubbles');
     if (particles) {
-      this.bubbles = particles.createEmitter({
+      const emitter = particles.createEmitter({
         x: 0,
         y: 0,
         speed: { min: 50, max: 100 },
@@ -85,6 +85,7 @@ export class PufferfishScene extends BreathingBaseScene {
         frequency: 100,
         on: false
       });
+      this.bubbles = emitter;
     }
 
     // Start spawning game objects
@@ -235,8 +236,8 @@ export class PufferfishScene extends BreathingBaseScene {
     if (this.bubbles && this.getSprite('pufferfish')) {
       const fish = this.getSprite('pufferfish');
       if (fish) {
-        this.bubbles.setPosition(fish.x + 20, fish.y);
-        this.bubbles.explode(3);
+        this.bubbles.setPosition(fish.x, fish.y);
+        this.bubbles.explode();
       }
     }
   }
