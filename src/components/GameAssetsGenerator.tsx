@@ -19,10 +19,19 @@ export const GameAssetsGenerator = () => {
         
         const { data, error } = await supabase.functions.invoke(
           'generate-initial-game-assets',
-          { body: { batch } }
+          { 
+            body: { batch },
+            // Add timeout for longer operations
+            options: {
+              timeout: 120000 // 2 minutes timeout
+            }
+          }
         );
         
-        if (error) throw error;
+        if (error) {
+          console.error(`Error generating ${batch} assets:`, error);
+          throw error;
+        }
         
         console.log(`${batch} Asset Generation Response:`, data);
         

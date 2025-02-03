@@ -35,7 +35,7 @@ export const usePufferfishAssets = () => {
 
         for (const type of assetTypes) {
           try {
-            console.log(`Loading ${type} from storage`);
+            console.log(`Loading ${type} from game-assets storage`);
             const { data: publicUrl } = await supabase
               .storage
               .from('game-assets')
@@ -55,7 +55,7 @@ export const usePufferfishAssets = () => {
 
             loadedAssets[type as keyof GameAssets] = publicUrl.publicUrl;
             loadedCount++;
-            console.log(`Successfully loaded ${type} asset`);
+            console.log(`Successfully loaded ${type} asset from game-assets storage`);
           } catch (err) {
             console.error(`Error loading ${type}:`, err);
             // Use placeholder for failed assets
