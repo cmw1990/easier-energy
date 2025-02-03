@@ -1,124 +1,158 @@
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Moon, Battery } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
-import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/components/AuthProvider";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-const SleepTrackPage = () => {
+const SleepTrack = () => {
+  const { session } = useAuth();
   const { toast } = useToast();
-  const [duration, setDuration] = useState("");
-  const [quality, setQuality] = useState([5]);
-  const [notes, setNotes] = useState("");
+  const queryClient = useQueryClient();
+  const [hours, setHours] = useState("");
+  const [quality, setQuality] = useState("");
 
-  const { data: recentLogs, refetch } = useQuery({
+  // Fetch sleep logs
+  const { data: sleepLogs } = useQuery({
     queryKey: ["sleepLogs"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("energy_focus_logs")
         .select("*")
+        .eq("user_id", session?.user.id)
         .eq("activity_type", "sleep")
         .order("created_at", { ascending: false })
-        .limit(5);
+        .limit(7);
 
       if (error) throw error;
       return data;
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const { error } = await supabase.from("energy_focus_logs").insert({
-        activity_type: "sleep",
-        activity_name: "Sleep Session",
-        duration_minutes: Number(duration) * 60, // Convert hours to minutes
-        energy_rating: quality[0],
-        notes,
-      });
+  // Mutation to add sleep log
+  const addSleepLog = useMutation({
+    mutationFn: async (values: { hours: number; quality: number }) => {
+      const { error } = await supabase.from("energy_focus_logs").insert([
+        {
+          user_id: session?.user.id,
+          activity_type: "sleep",
+          activity_name: "Sleep Session",
+          duration_minutes: values.hours * 60,
+          energy_rating: values.quality,
+          focus_rating: values.quality,
+        },
+      ]);
 
       if (error) throw error;
-
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sleepLogs"] });
       toast({
-        title: "Success",
-        description: "Sleep session logged successfully",
+        title: "Sleep log added",
+        description: "Your sleep data has been recorded successfully.",
       });
-
-      // Reset form and refresh data
-      setDuration("");
-      setQuality([5]);
-      setNotes("");
-      refetch();
-    } catch (error) {
+      setHours("");
+      setQuality("");
+    },
+    onError: (error) => {
       toast({
         title: "Error",
-        description: "Failed to log sleep session",
+        description: "Failed to record sleep data. Please try again.",
         variant: "destructive",
       });
+      console.error("Error adding sleep log:", error);
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!hours || !quality) {
+      toast({
+        title: "Missing fields",
+        description: "Please fill in all fields.",
+        variant: "destructive",
+      });
+      return;
     }
+
+    const hoursNum = parseFloat(hours);
+    const qualityNum = parseInt(quality);
+
+    if (hoursNum < 0 || hoursNum > 24) {
+      toast({
+        title: "Invalid hours",
+        description: "Hours must be between 0 and 24.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (qualityNum < 1 || qualityNum > 10) {
+      toast({
+        title: "Invalid quality rating",
+        description: "Quality must be between 1 and 10.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    addSleepLog.mutate({ hours: hoursNum, quality: qualityNum });
   };
+
+  const chartData = sleepLogs?.map((log) => ({
+    date: new Date(log.created_at).toLocaleDateString(),
+    hours: log.duration_minutes / 60,
+    quality: log.energy_rating,
+  })).reverse();
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Sleep Tracking</h1>
-
-      <div className="grid gap-6 md:grid-cols-2">
+      <h1 className="text-2xl font-bold mb-6">Sleep Tracking</h1>
+      
+      <div className="grid md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Moon className="h-5 w-5" />
-              Log Sleep Session
-            </CardTitle>
+            <CardTitle>Log Sleep</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="duration">Sleep Duration (hours)</Label>
+                <Label htmlFor="hours">Hours of Sleep</Label>
                 <Input
-                  id="duration"
+                  id="hours"
                   type="number"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
-                  placeholder="Enter sleep duration"
-                  min="0"
                   step="0.5"
+                  min="0"
+                  max="24"
+                  value={hours}
+                  onChange={(e) => setHours(e.target.value)}
+                  placeholder="Enter hours slept"
                 />
               </div>
-
               <div className="space-y-2">
-                <Label>Sleep Quality</Label>
-                <div className="flex items-center gap-4">
-                  <Battery className="h-5 w-5 text-sleep-low" />
-                  <Slider
-                    value={quality}
-                    onValueChange={setQuality}
-                    max={10}
-                    min={1}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <Battery className="h-5 w-5 text-sleep-high" />
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  Rating: {quality}/10
-                </span>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Add any notes about your sleep"
+                <Label htmlFor="quality">Sleep Quality (1-10)</Label>
+                <Input
+                  id="quality"
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={quality}
+                  onChange={(e) => setQuality(e.target.value)}
+                  placeholder="Rate your sleep quality"
                 />
               </div>
-
               <Button type="submit" className="w-full">
                 Log Sleep
               </Button>
@@ -128,35 +162,38 @@ const SleepTrackPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent Sleep Logs</CardTitle>
+            <CardTitle>Sleep History</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recentLogs?.map((log) => (
-                <div
-                  key={log.id}
-                  className="p-4 border rounded-lg space-y-2"
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">
-                      Duration: {Math.round((log.duration_minutes || 0) / 60)} hours
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {new Date(log.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">Quality: {log.energy_rating}/10</span>
-                  </div>
-                  {log.notes && (
-                    <p className="text-sm text-muted-foreground">{log.notes}</p>
-                  )}
+            <div className="h-[300px]">
+              {chartData && chartData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis yAxisId="left" />
+                    <YAxis yAxisId="right" orientation="right" />
+                    <Tooltip />
+                    <Line
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="hours"
+                      stroke="#8884d8"
+                      name="Hours"
+                    />
+                    <Line
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="quality"
+                      stroke="#82ca9d"
+                      name="Quality"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-muted-foreground">
+                  No sleep data available
                 </div>
-              ))}
-              {(!recentLogs || recentLogs.length === 0) && (
-                <p className="text-center text-muted-foreground">
-                  No sleep logs yet
-                </p>
               )}
             </div>
           </CardContent>
@@ -166,4 +203,4 @@ const SleepTrackPage = () => {
   );
 };
 
-export default SleepTrackPage;
+export default SleepTrack;
