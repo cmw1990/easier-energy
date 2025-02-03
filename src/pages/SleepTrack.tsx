@@ -233,6 +233,70 @@ const SleepTrack = () => {
             averageHours: sleepLogs?.reduce((acc, log) => acc + (log.duration_minutes || 0), 0) / (sleepLogs?.length || 1) / 60
           }}
         />
+
+        <AIAssistant 
+          type="sleep_habit_comparison"
+          data={{
+            sleepLogs,
+            userTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+          }}
+        />
+
+        <AIAssistant 
+          type="sleep_environment_analysis"
+          data={{
+            sleepLogs,
+            timeOfDay: new Date().getHours()
+          }}
+        />
+
+        <AIAssistant 
+          type="sleep_cycle_optimization"
+          data={{
+            sleepLogs,
+            targetWakeTime: new Date().setHours(7, 0, 0, 0)
+          }}
+        />
+
+        <AIAssistant 
+          type="cognitive_impact_analysis"
+          data={{
+            sleepLogs,
+            recentPerformance: sleepLogs?.[0]?.focus_rating
+          }}
+        />
+
+        <AIAssistant 
+          type="lifestyle_correlation"
+          data={{
+            sleepLogs,
+            recentActivities: sleepLogs?.map(log => log.notes)
+          }}
+        />
+
+        <AIAssistant 
+          type="recovery_suggestions"
+          data={{
+            sleepLogs,
+            sleepDebt: sleepLogs?.reduce((acc, log) => acc + (8 - (log.duration_minutes / 60)), 0)
+          }}
+        />
+
+        <AIAssistant 
+          type="next_day_preparation"
+          data={{
+            sleepLogs,
+            tomorrowSchedule: "typical workday"
+          }}
+        />
+
+        <AIAssistant 
+          type="circadian_rhythm_analysis"
+          data={{
+            sleepLogs,
+            naturalLightExposure: true
+          }}
+        />
       </div>
     </div>
   );
