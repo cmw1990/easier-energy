@@ -16,19 +16,23 @@ export const useZenGardenAssets = () => {
   useEffect(() => {
     const loadAssets = async () => {
       try {
-        const elements = ['stone', 'lantern', 'bonsai', 'bridge'];
-        const loadedAssets: Record<string, string> = {};
+        const requiredAssets: (keyof ZenGardenAssets)[] = ['stone', 'lantern', 'bonsai', 'bridge'];
+        const loadedAssets = {} as ZenGardenAssets;
 
-        for (const element of elements) {
+        for (const asset of requiredAssets) {
           const { data: { publicUrl } } = supabase
             .storage
             .from('game-assets')
-            .getPublicUrl(`zen-garden/${element}.png`);
+            .getPublicUrl(`zen-garden/${asset}.png`);
 
-          loadedAssets[element] = publicUrl;
+          if (!publicUrl) {
+            throw new Error(`Failed to load ${asset} asset`);
+          }
+
+          loadedAssets[asset] = publicUrl;
         }
 
-        setAssets(loadedAssets as ZenGardenAssets);
+        setAssets(loadedAssets);
       } catch (err) {
         console.error('Error loading zen garden assets:', err);
         setError('Failed to load game assets');
