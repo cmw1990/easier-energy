@@ -15,12 +15,14 @@ import DistractionBlocker from "@/pages/DistractionBlocker";
 import Food from "@/pages/Food";
 import NotFound from "@/pages/NotFound";
 import ChessGame from "@/components/games/ChessGame";
-import GoGame from "@/components/games/GoGame";
+import { GoGame } from "@/components/games/GoGame";
 import { ReversiGame } from "@/components/games/ReversiGame";
 import { ConnectFourGame } from "@/components/games/ConnectFourGame";
 import { TicTacToeGame } from "@/components/games/TicTacToeGame";
 import { XiangqiGame } from "@/components/games/XiangqiGame";
 import { ShogiGame } from "@/components/games/ShogiGame";
+import { CheckersGame } from "@/components/games/CheckersGame";
+import { GomokuGame } from "@/components/games/GomokuGame";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +50,8 @@ function App() {
               <Route path="/games/tic-tac-toe" element={<TicTacToeGame />} />
               <Route path="/games/xiangqi" element={<XiangqiGame />} />
               <Route path="/games/shogi" element={<ShogiGame />} />
+              <Route path="/games/checkers" element={<CheckersGame />} />
+              <Route path="/games/gomoku" element={<GomokuGame />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
