@@ -1,16 +1,34 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Brain, Shield, Activity, Ban, Clock } from "lucide-react";
+import { Brain, Shield, Activity, Ban, Clock, Bell, BellOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { BlockingStats } from "@/components/distraction/BlockingStats";
+import { useAuth } from "@/components/AuthProvider";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { session } = useAuth();
+
+  if (!session) {
+    return (
+      <div className="container max-w-4xl mx-auto p-4 space-y-8">
+        <h1 className="text-4xl font-bold mb-8 text-center">
+          Take Control of Your Focus
+        </h1>
+        <p className="text-center text-lg text-muted-foreground">
+          Sign in to start managing your distractions and boost productivity.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-8">
       <h1 className="text-4xl font-bold mb-8 text-center">
         Take Control of Your Focus
       </h1>
+
+      <BlockingStats />
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="p-6 hover:shadow-lg transition-shadow">
@@ -49,6 +67,44 @@ const Index = () => {
             </Button>
           </div>
         </Card>
+      </div>
+
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-6 text-center">Quick Actions</h2>
+        <div className="grid gap-4 md:grid-cols-4">
+          <Button
+            variant="outline"
+            className="h-24 flex flex-col items-center justify-center gap-2"
+            onClick={() => navigate('/distraction-blocker')}
+          >
+            <BellOff className="h-6 w-6" />
+            <span>Block All</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-24 flex flex-col items-center justify-center gap-2"
+            onClick={() => navigate('/distraction-blocker')}
+          >
+            <Bell className="h-6 w-6" />
+            <span>Allow All</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-24 flex flex-col items-center justify-center gap-2"
+            onClick={() => navigate('/focus')}
+          >
+            <Brain className="h-6 w-6" />
+            <span>Focus Mode</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-24 flex flex-col items-center justify-center gap-2"
+            onClick={() => navigate('/breathing')}
+          >
+            <Activity className="h-6 w-6" />
+            <span>Take a Break</span>
+          </Button>
+        </div>
       </div>
 
       <div className="mt-12">
