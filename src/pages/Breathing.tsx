@@ -132,16 +132,9 @@ const Breathing = () => {
       } catch (error) {
         console.warn('Haptic notification failed:', error);
       }
-      const interval = setInterval(() => {
-        setSeconds((prev) => prev + 1);
-      }, 1000);
-      // @ts-ignore - we know this is a number
-      window.breathingInterval = interval;
     } else {
       setIsActive(false);
       clearHapticTimeouts();
-      // @ts-ignore - we know this exists
-      clearInterval(window.breathingInterval);
       handleSaveSession();
     }
   };
