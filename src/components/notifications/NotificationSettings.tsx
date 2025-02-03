@@ -75,10 +75,13 @@ export const NotificationSettings = () => {
       return;
     }
 
-    if (data) {
+    if (data?.preferences) {
+      const loadedPrefs = data.preferences as Record<string, boolean>;
       setPreferences(prevPrefs => ({
         ...prevPrefs,
-        ...(data.preferences as NotificationPreferences)
+        ...Object.fromEntries(
+          Object.entries(loadedPrefs).filter(([key]) => key in prevPrefs)
+        )
       }));
     }
   };
@@ -86,11 +89,23 @@ export const NotificationSettings = () => {
   const savePreferences = async (newPreferences: NotificationPreferences) => {
     if (!session?.user?.id) return;
 
+    const preferencesJson: Record<string, boolean> = {
+      moodReminders: newPreferences.moodReminders,
+      sleepReminders: newPreferences.sleepReminders,
+      focusReminders: newPreferences.focusReminders,
+      energyAlerts: newPreferences.energyAlerts,
+      achievementAlerts: newPreferences.achievementAlerts,
+      supportMessages: newPreferences.supportMessages,
+      goalProgress: newPreferences.goalProgress,
+      scheduleReminders: newPreferences.scheduleReminders,
+      deviceEnabled: newPreferences.deviceEnabled
+    };
+
     const { error } = await supabase
       .from('notification_preferences')
       .upsert({
         user_id: session.user.id,
-        preferences: newPreferences as Json,
+        preferences: preferencesJson as Json,
         updated_at: new Date().toISOString()
       });
 
