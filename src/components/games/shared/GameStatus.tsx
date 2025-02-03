@@ -1,33 +1,54 @@
 import { Card } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, Trophy } from 'lucide-react';
 
 interface GameStatusProps {
-  status: 'not_started' | 'in_progress' | 'completed' | 'abandoned';
+  status: 'not_started' | 'in_progress' | 'completed';
   winner?: string | null;
   currentPlayer: string;
+  score?: {
+    black: number;
+    white: number;
+  };
 }
 
-export const GameStatus = ({ status, winner, currentPlayer }: GameStatusProps) => {
+export const GameStatus = ({ status, winner, currentPlayer, score }: GameStatusProps) => {
   return (
-    <Card className="p-4">
-      <div className="flex items-center gap-2">
-        {status === 'not_started' && (
-          <>
-            <AlertCircle className="text-yellow-500" />
-            <span>Game not started</span>
-          </>
-        )}
-        {status === 'in_progress' && (
-          <>
-            <Loader2 className="animate-spin text-blue-500" />
-            <span>Current player: {currentPlayer}</span>
-          </>
-        )}
-        {status === 'completed' && (
-          <>
-            <CheckCircle2 className="text-green-500" />
-            <span>{winner ? `Winner: ${winner}` : 'Game ended in a draw'}</span>
-          </>
+    <Card className="p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {status === 'not_started' && (
+            <>
+              <AlertCircle className="text-yellow-500 animate-pulse" />
+              <span>Game not started</span>
+            </>
+          )}
+          {status === 'in_progress' && (
+            <>
+              <Loader2 className="animate-spin text-blue-500" />
+              <span>Current player: <span className="font-semibold">{currentPlayer}</span></span>
+            </>
+          )}
+          {status === 'completed' && (
+            <>
+              {winner ? (
+                <>
+                  <Trophy className="text-yellow-500 animate-bounce" />
+                  <span className="font-semibold">{winner} wins!</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="text-green-500" />
+                  <span>Game ended in a draw</span>
+                </>
+              )}
+            </>
+          )}
+        </div>
+        {score && (
+          <div className="flex gap-4">
+            <div>Black: {score.black}</div>
+            <div>White: {score.white}</div>
+          </div>
         )}
       </div>
     </Card>
