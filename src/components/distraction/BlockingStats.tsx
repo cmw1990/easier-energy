@@ -52,17 +52,21 @@ export const BlockingStats = () => {
         .eq('user_id', session.user.id)
         .eq('is_active', true);
 
-      console.log('Fetching metrics for date:', today.toISOString().split('T')[0]);
+      const todayStr = today.toISOString().split('T')[0];
+      console.log('Fetching metrics for date:', todayStr);
 
       // Get today's productivity metrics
       const { data: metrics, error: metricsError } = await supabase
         .from('productivity_metrics')
         .select('*')
         .eq('user_id', session.user.id)
-        .eq('date', today.toISOString().split('T')[0])
+        .eq('date', todayStr)
         .maybeSingle();
 
-      console.log('Metrics query result:', { metrics, metricsError });
+      if (metricsError && metricsError.code !== 'PGRST116') {
+        console.error('Error fetching metrics:', metricsError);
+        throw metricsError;
+      }
 
       // If no metrics exist for today, create a default record
       if (!metrics) {
@@ -71,14 +75,14 @@ export const BlockingStats = () => {
           .from('productivity_metrics')
           .insert({
             user_id: session.user.id,
-            date: today.toISOString().split('T')[0],
+            date: todayStr,
             focus_duration: 0,
             distractions_blocked: todayBlocked || 0,
             productivity_score: 0,
             focus_sessions: 0
           })
           .select()
-          .maybeSingle();
+          .single();
 
         if (insertError) {
           console.error('Error creating metrics:', insertError);
