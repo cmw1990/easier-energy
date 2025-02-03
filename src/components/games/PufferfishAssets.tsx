@@ -17,14 +17,27 @@ export const usePufferfishAssets = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const loadAsset = async (assetType: keyof GameAssets) => {
+  const loadAsset = async (assetType: keyof GameAssets, retryCount = 0) => {
     try {
+      console.log(`Loading ${assetType}, attempt ${retryCount + 1}`);
       const { data, error } = await supabase.functions.invoke('generate-pufferfish-assets', {
         body: { assetType }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error(`Error loading ${assetType}:`, error);
+        if (retryCount < 2) { // Max 3 attempts
+          console.log(`Retrying ${assetType}...`);
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount + 1) * 1000));
+          return loadAsset(assetType, retryCount + 1);
+        }
+        throw error;
+      }
       
+      if (!data?.image) {
+        throw new Error(`No image data received for ${assetType}`);
+      }
+
       return `data:image/png;base64,${data.image}`;
     } catch (error) {
       console.error(`Error loading ${assetType}:`, error);
@@ -46,16 +59,33 @@ export const usePufferfishAssets = () => {
       ];
 
       const loadedAssets: Partial<GameAssets> = {};
+      let failedAssets = 0;
       
       for (const type of assetTypes) {
         const asset = await loadAsset(type);
         if (asset) {
           loadedAssets[type] = asset;
+        } else {
+          failedAssets++;
         }
       }
 
       setAssets(loadedAssets);
       setIsLoading(false);
+
+      // Show appropriate toast based on loading results
+      if (failedAssets === 0) {
+        toast({
+          title: "Assets Loaded Successfully",
+          description: "All game assets have been loaded.",
+        });
+      } else if (failedAssets < assetTypes.length) {
+        toast({
+          title: "Some Assets Failed to Load",
+          description: "The game will work, but some visuals might be missing. Try refreshing.",
+          variant: "warning",
+        });
+      }
     };
 
     loadAllAssets();

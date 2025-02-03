@@ -31,36 +31,63 @@ serve(async (req) => {
       throw new Error('Invalid asset type requested');
     }
 
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: "dall-e-3",
-        prompt: prompt,
-        n: 1,
-        size: "1024x1024",
-        response_format: "b64_json"
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('OpenAI API error:', error);
-      throw new Error('Failed to generate image');
+    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key not configured');
     }
 
-    const data = await response.json();
-    console.log('Successfully generated image for:', assetType);
-    
-    return new Response(JSON.stringify({ image: data.data[0].b64_json }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    // Add retry logic
+    let attempts = 0;
+    const maxAttempts = 3;
+    let lastError;
+
+    while (attempts < maxAttempts) {
+      try {
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openAIApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024",
+            response_format: "b64_json"
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          console.error('OpenAI API error:', error);
+          throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+        }
+
+        const data = await response.json();
+        console.log('Successfully generated image for:', assetType);
+        
+        return new Response(JSON.stringify({ image: data.data[0].b64_json }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } catch (error) {
+        console.error(`Attempt ${attempts + 1} failed:`, error);
+        lastError = error;
+        attempts++;
+        if (attempts < maxAttempts) {
+          // Wait before retrying (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempts) * 1000));
+        }
+      }
+    }
+
+    throw lastError || new Error('Failed to generate image after multiple attempts');
   } catch (error) {
     console.error('Error generating game asset:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      details: 'Please check the OpenAI API key configuration and try again.'
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
