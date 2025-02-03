@@ -13,16 +13,22 @@ serve(async (req) => {
   }
 
   try {
+    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
     const { assetType } = await req.json();
+    console.log('Generating asset:', assetType);
 
     const prompts = {
-      pufferfish: "Create a cute, cartoonish pufferfish character in two states - normal and inflated. Use soft, friendly colors with a transparent background. The pufferfish should have expressive eyes and a gentle smile, making it appealing to both children and adults. Style should be watercolor-like with subtle gradients.",
-      bubbles: "Design a set of translucent, iridescent bubbles in various sizes with subtle rainbow reflections. Use a minimalist, clean style with a transparent background. The bubbles should look magical and dreamy.",
-      coral: "Illustrate colorful coral reef elements in a soft, artistic style. Use pastel colors and gentle shapes that would work well as game obstacles. Include various shapes and sizes, all on a transparent background.",
-      seaweed: "Create flowing seaweed in gentle, calming shades of green and blue. The seaweed should look graceful and move naturally, drawn in a soft, artistic style with a transparent background.",
-      smallFish: "Design a collection of small, friendly fish in various colors and shapes. Use a consistent, cute art style that matches the pufferfish character. The fish should look harmless and playful.",
-      predators: "Create intimidating but not scary sea predators (like friendly sharks or grumpy bigger fish) in the same artistic style as the other elements. Use bold but not threatening designs with personality.",
-      background: "Create a serene underwater background with subtle light rays and a gentle gradient from light blue at the top to deeper blue at the bottom. The style should be calming and peaceful.",
+      pufferfish: "Create a cute cartoon pufferfish character in a side view against a transparent background. The pufferfish should be friendly-looking with big expressive eyes, in a simple, clean art style suitable for a game. Use soft colors.",
+      bubbles: "Create a simple, clean bubble pattern against a transparent background. The bubbles should be varying in size and have a slight blue tint with transparency.",
+      coral: "Design a colorful coral piece in a simple, clean art style against a transparent background. Use warm colors like pink and orange.",
+      seaweed: "Create a simple seaweed plant design against a transparent background. Use different shades of green in a clean, game-friendly art style.",
+      smallFish: "Design a small, cute tropical fish in a side view against a transparent background. Use bright, cheerful colors in a simple art style.",
+      predator: "Create a cartoon shark or barracuda character in a side view against a transparent background. Make it look slightly menacing but still cartoon-style.",
+      background: "Create a serene underwater background with subtle gradients of blue. Include some distant coral and seaweed silhouettes for depth."
     };
 
     const prompt = prompts[assetType as keyof typeof prompts];
@@ -30,12 +36,10 @@ serve(async (req) => {
       throw new Error('Invalid asset type requested');
     }
 
-    console.log('Generating game asset:', assetType);
-    
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${openAIApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -46,6 +50,12 @@ serve(async (req) => {
         response_format: "b64_json"
       }),
     });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('OpenAI API error:', error);
+      throw new Error('Failed to generate image');
+    }
 
     const data = await response.json();
     console.log('Successfully generated image for:', assetType);

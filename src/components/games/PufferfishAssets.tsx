@@ -8,7 +8,7 @@ export interface GameAssets {
   coral: string;
   seaweed: string;
   smallFish: string;
-  predators: string;
+  predator: string;
   background: string;
 }
 
@@ -42,7 +42,7 @@ export const usePufferfishAssets = () => {
       setIsLoading(true);
       const assetTypes: (keyof GameAssets)[] = [
         'pufferfish', 'bubbles', 'coral', 'seaweed', 
-        'smallFish', 'predators', 'background'
+        'smallFish', 'predator', 'background'
       ];
 
       const loadedAssets: Partial<GameAssets> = {};
