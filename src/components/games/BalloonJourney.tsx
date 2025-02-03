@@ -23,6 +23,9 @@ const BalloonJourney = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
   const { session } = useAuth();
+  const gameLoopRef = useRef<number>();
+  const balloonPositionRef = useRef({ x: 100, y: 200 });
+  const obstaclesRef = useRef<Array<{ x: number, y: number }>>([]);
 
   useEffect(() => {
     const loadAssets = async () => {
@@ -30,31 +33,38 @@ const BalloonJourney = () => {
       try {
         const loadedAssets: Partial<GameAssets> = {};
         let loadedCount = 0;
+        let maxAttempts = 3;
 
         for (const type of assetTypes) {
-          try {
-            const { data, error } = await supabase.functions.invoke('generate-game-assets', {
-              body: { assetType: type }
-            });
+          let attempt = 1;
+          while (attempt <= maxAttempts) {
+            try {
+              console.log(`Loading ${type}, attempt ${attempt}`);
+              const { data, error } = await supabase.functions.invoke('generate-game-assets', {
+                body: { assetType: type }
+              });
 
-            if (error) throw error;
-            if (!data?.image) throw new Error('No image data received');
+              if (error) throw error;
+              if (!data?.image) throw new Error('No image data received');
 
-            loadedAssets[type as keyof GameAssets] = `data:image/png;base64,${data.image}`;
-            loadedCount++;
-          } catch (err) {
-            console.error(`Error loading ${type}:`, err);
+              loadedAssets[type as keyof GameAssets] = `data:image/png;base64,${data.image}`;
+              loadedCount++;
+              break;
+            } catch (err) {
+              console.error(`Error loading ${type} on attempt ${attempt}:`, err);
+              attempt++;
+              if (attempt <= maxAttempts) {
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+              }
+            }
           }
         }
 
-        setAssets(loadedAssets as GameAssets);
-        
-        if (loadedCount < assetTypes.length) {
-          toast({
-            title: "Some Assets Failed to Load",
-            description: "The game will work, but some visuals might be missing. Try refreshing.",
-            variant: "destructive",
-          });
+        if (Object.keys(loadedAssets).length === assetTypes.length) {
+          setAssets(loadedAssets as GameAssets);
+          setIsLoading(false);
+        } else {
+          throw new Error('Failed to load all assets');
         }
       } catch (error) {
         console.error("Error loading game assets:", error);
@@ -63,18 +73,25 @@ const BalloonJourney = () => {
           description: "Please refresh the page to try again.",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
       }
     };
 
     loadAssets();
+
+    return () => {
+      if (gameLoopRef.current) {
+        cancelAnimationFrame(gameLoopRef.current);
+      }
+    };
   }, [toast]);
 
   const startGame = () => {
+    if (!canvasRef.current || !assets.balloon) return;
+    
     setIsPlaying(true);
     setScore(0);
-    // Initialize game state and start game loop
+    balloonPositionRef.current = { x: 100, y: 200 };
+    obstaclesRef.current = [];
     gameLoop();
   };
 
@@ -84,13 +101,43 @@ const BalloonJourney = () => {
     const ctx = canvasRef.current.getContext('2d');
     if (!ctx) return;
 
-    // Game logic and rendering
-    requestAnimationFrame(gameLoop);
+    // Clear canvas
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+
+    // Draw background
+    if (assets.background) {
+      const bgImage = new Image();
+      bgImage.src = assets.background;
+      ctx.drawImage(bgImage, 0, 0, canvasRef.current.width, canvasRef.current.height);
+    }
+
+    // Draw balloon
+    if (assets.balloon) {
+      const balloonImage = new Image();
+      balloonImage.src = assets.balloon;
+      ctx.drawImage(
+        balloonImage,
+        balloonPositionRef.current.x,
+        balloonPositionRef.current.y,
+        50,
+        70
+      );
+    }
+
+    // Update score
+    setScore(prev => prev + 1);
+
+    // Request next frame
+    gameLoopRef.current = requestAnimationFrame(gameLoop);
   };
 
   const endGame = async () => {
     setIsPlaying(false);
     setIsSubmitting(true);
+
+    if (gameLoopRef.current) {
+      cancelAnimationFrame(gameLoopRef.current);
+    }
 
     if (session?.user) {
       try {
