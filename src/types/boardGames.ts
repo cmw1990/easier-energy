@@ -9,6 +9,7 @@ export interface BaseGameState {
 }
 
 export interface GameMove {
+  [key: string]: any; // Add index signature for JSON compatibility
   from?: [number, number];
   to: [number, number];
   piece?: string;

@@ -26,10 +26,15 @@ export const GameBoard = ({
   };
 
   return (
-    <div className={cn("relative w-full aspect-square", className)}>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className={cn("relative w-full aspect-square", className)}
+    >
       <div 
         className={cn(
-          "grid gap-0.5 bg-gray-700 p-0.5 absolute inset-0",
+          "grid gap-0.5 bg-gray-700 p-0.5 absolute inset-0 rounded-lg shadow-lg",
           `grid-cols-${cols}`
         )}
       >
@@ -39,6 +44,7 @@ export const GameBoard = ({
               key={`${rowIndex}-${colIndex}`}
               className={cn(
                 "relative transition-colors duration-200",
+                "hover:bg-opacity-90 cursor-pointer",
                 isSelected(rowIndex, colIndex) && "ring-2 ring-blue-400",
                 isHighlighted(rowIndex, colIndex) && "ring-2 ring-green-400",
                 isLastMove(rowIndex, colIndex) && "ring-2 ring-yellow-400"
@@ -52,6 +58,6 @@ export const GameBoard = ({
           ))
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
