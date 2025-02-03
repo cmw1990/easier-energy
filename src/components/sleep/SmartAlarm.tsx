@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { 
   AlarmClock, Moon, Sun, Waves, Volume2, BedDouble, 
   Calendar, Repeat, Bell, Activity, Vibrate, Shield,
-  CloudMoon, Sunrise, Music, Settings 
+  CloudMoon, Sunrise, Music, Settings, Info 
 } from 'lucide-react';
 import { SleepAnalysis } from './SleepAnalysis';
 import {
