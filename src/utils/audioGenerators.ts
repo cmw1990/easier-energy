@@ -21,10 +21,10 @@ const createNoiseBuffer = (context: AudioContext) => {
   return buffer;
 };
 
-type NatureSound = 'ocean' | 'rain' | 'wind' | 'forest';
+type NatureSound = 'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream';
 
-// Frequency modulation for wind effect
-const createWindModulation = (context: AudioContext, frequency: number, depth: number) => {
+// Frequency modulation for effects
+const createModulation = (context: AudioContext, frequency: number, depth: number) => {
   const oscillator = context.createOscillator();
   const gain = context.createGain();
   
@@ -34,6 +34,35 @@ const createWindModulation = (context: AudioContext, frequency: number, depth: n
   oscillator.start();
   
   return gain;
+};
+
+// Create random bursts for thunder
+const createThunderBurst = (context: AudioContext, masterGain: GainNode) => {
+  const burstGain = context.createGain();
+  const filter = context.createBiquadFilter();
+  
+  filter.type = 'lowpass';
+  filter.frequency.value = 100;
+  
+  const noise = context.createBufferSource();
+  noise.buffer = createNoiseBuffer(context);
+  
+  noise.connect(filter);
+  filter.connect(burstGain);
+  burstGain.connect(masterGain);
+  
+  burstGain.gain.setValueAtTime(0, context.currentTime);
+  burstGain.gain.linearRampToValueAtTime(0.8, context.currentTime + 0.1);
+  burstGain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 2);
+  
+  noise.start();
+  noise.stop(context.currentTime + 2);
+  
+  setTimeout(() => {
+    if (Math.random() > 0.7) {
+      createThunderBurst(context, masterGain);
+    }
+  }, Math.random() * 10000 + 5000);
 };
 
 export const generateNatureSound = (type: NatureSound, volume = 0.5) => {
@@ -49,13 +78,12 @@ export const generateNatureSound = (type: NatureSound, volume = 0.5) => {
 
   switch (type) {
     case 'ocean': {
-      // Ocean waves using filtered noise and slow modulation
       const filter = context.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.value = 850;
       filter.Q.value = 0.5;
 
-      const modulator = createWindModulation(context, 0.1, 400);
+      const modulator = createModulation(context, 0.1, 400);
       modulator.connect(filter.frequency);
 
       noiseSource.connect(filter);
@@ -63,7 +91,6 @@ export const generateNatureSound = (type: NatureSound, volume = 0.5) => {
       break;
     }
     case 'rain': {
-      // Rain effect using filtered noise and resonance
       const filter = context.createBiquadFilter();
       filter.type = 'bandpass';
       filter.frequency.value = 2500;
@@ -74,13 +101,12 @@ export const generateNatureSound = (type: NatureSound, volume = 0.5) => {
       break;
     }
     case 'wind': {
-      // Wind effect using modulated filtered noise
       const filter = context.createBiquadFilter();
       filter.type = 'bandpass';
       filter.frequency.value = 400;
       filter.Q.value = 1.0;
 
-      const modulator = createWindModulation(context, 0.2, 200);
+      const modulator = createModulation(context, 0.2, 200);
       modulator.connect(filter.frequency);
 
       noiseSource.connect(filter);
@@ -88,7 +114,6 @@ export const generateNatureSound = (type: NatureSound, volume = 0.5) => {
       break;
     }
     case 'forest': {
-      // Forest ambience using multiple filtered layers
       const highFilter = context.createBiquadFilter();
       highFilter.type = 'highpass';
       highFilter.frequency.value = 2000;
@@ -99,14 +124,81 @@ export const generateNatureSound = (type: NatureSound, volume = 0.5) => {
       lowFilter.frequency.value = 400;
       lowFilter.Q.value = 0.5;
 
-      // Subtle modulation for movement
-      const modulator = createWindModulation(context, 0.3, 100);
+      const modulator = createModulation(context, 0.3, 100);
       modulator.connect(highFilter.frequency);
 
       noiseSource.connect(highFilter);
       noiseSource.connect(lowFilter);
       highFilter.connect(masterGain);
       lowFilter.connect(masterGain);
+      break;
+    }
+    case 'thunder': {
+      const filter = context.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 100;
+      
+      noiseSource.connect(filter);
+      filter.connect(masterGain);
+      
+      createThunderBurst(context, masterGain);
+      break;
+    }
+    case 'crickets': {
+      const filter = context.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 4500;
+      filter.Q.value = 10;
+
+      const modulator = createModulation(context, 20, 0.7);
+      const modulatorGain = context.createGain();
+      modulatorGain.gain.value = 0.3;
+      
+      modulator.connect(modulatorGain);
+      modulatorGain.connect(filter.frequency);
+
+      noiseSource.connect(filter);
+      filter.connect(masterGain);
+      break;
+    }
+    case 'birds': {
+      const filter = context.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 3000;
+      filter.Q.value = 5;
+
+      const chirpModulator = createModulation(context, 10, 1000);
+      chirpModulator.connect(filter.frequency);
+
+      noiseSource.connect(filter);
+      filter.connect(masterGain);
+
+      // Random chirps
+      setInterval(() => {
+        if (Math.random() > 0.7) {
+          filter.frequency.setTargetAtTime(2000 + Math.random() * 2000, context.currentTime, 0.1);
+        }
+      }, 1000);
+      break;
+    }
+    case 'stream': {
+      const filter1 = context.createBiquadFilter();
+      filter1.type = 'bandpass';
+      filter1.frequency.value = 600;
+      filter1.Q.value = 1;
+
+      const filter2 = context.createBiquadFilter();
+      filter2.type = 'highpass';
+      filter2.frequency.value = 2000;
+      filter2.Q.value = 0.5;
+
+      const modulator = createModulation(context, 0.5, 200);
+      modulator.connect(filter1.frequency);
+
+      noiseSource.connect(filter1);
+      noiseSource.connect(filter2);
+      filter1.connect(masterGain);
+      filter2.connect(masterGain);
       break;
     }
   }

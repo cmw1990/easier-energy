@@ -27,7 +27,7 @@ const BreathingGame = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [audioSupported, setAudioSupported] = useState<boolean | null>(null);
   const [soundType, setSoundType] = useState<'binaural' | 'nature'>('binaural');
-  const [natureType, setNatureType] = useState<'ocean' | 'rain' | 'wind' | 'forest'>('ocean');
+  const [natureType, setNatureType] = useState<'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream'>('ocean');
   const soundRef = useRef<{ stop: () => void; setVolume: (v: number) => void } | null>(null);
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<PufferfishScene | null>(null);
@@ -269,7 +269,7 @@ const BreathingGame = () => {
                     {soundType === 'nature' && (
                       <Select
                         value={natureType}
-                        onValueChange={(value: 'ocean' | 'rain' | 'wind' | 'forest') => setNatureType(value)}
+                        onValueChange={(value: 'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream') => setNatureType(value)}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select nature sound" />
@@ -279,6 +279,10 @@ const BreathingGame = () => {
                           <SelectItem value="rain">Gentle Rain</SelectItem>
                           <SelectItem value="wind">Wind</SelectItem>
                           <SelectItem value="forest">Forest</SelectItem>
+                          <SelectItem value="thunder">Distant Thunder</SelectItem>
+                          <SelectItem value="crickets">Night Crickets</SelectItem>
+                          <SelectItem value="birds">Bird Songs</SelectItem>
+                          <SelectItem value="stream">Mountain Stream</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
