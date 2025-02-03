@@ -4,6 +4,7 @@ import { Flower2, Wind, Car } from "lucide-react";
 import { ZenDrift } from "@/components/games/ZenDrift";
 import { BreathingTechniques } from "@/components/breathing/BreathingTechniques";
 import { OpenAITest } from "@/components/OpenAITest";
+import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 import {
   Tabs,
   TabsContent,
@@ -24,8 +25,9 @@ const Relax = () => {
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Take a moment to unwind and find your inner peace through various relaxation techniques and mindful activities.
         </p>
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-4">
           <OpenAITest />
+          <GameAssetsGenerator />
         </div>
       </div>
 
