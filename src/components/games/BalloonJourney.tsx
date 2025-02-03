@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Flame, Loader2 } from "lucide-react";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
-import { useGameAssets } from "@/hooks/use-game-assets";
+import { useBalloonAssets } from "./BalloonAssets";
 
 const BalloonJourney = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -22,7 +22,7 @@ const BalloonJourney = () => {
   const breathPhaseRef = useRef<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
   const phaseTimeRef = useRef(0);
   
-  const { assets, isLoading, error } = useGameAssets('balloon');
+  const { assets, isLoading, error } = useBalloonAssets();
 
   // Ensure assets are loaded before starting
   useEffect(() => {
@@ -37,7 +37,7 @@ const BalloonJourney = () => {
   }, [error, toast]);
 
   const startGame = () => {
-    if (!canvasRef.current || !assets.balloon?.url || !selectedTechnique) {
+    if (!canvasRef.current || !assets.balloon || !selectedTechnique) {
       toast({
         title: "Please select a breathing technique",
         description: "Choose a breathing technique before starting the game",
@@ -56,7 +56,7 @@ const BalloonJourney = () => {
   };
 
   const gameLoop = () => {
-    if (!canvasRef.current || !isPlaying || !selectedTechnique || !assets.balloon?.url) return;
+    if (!canvasRef.current || !isPlaying || !selectedTechnique || !assets.balloon) return;
     
     const ctx = canvasRef.current.getContext('2d');
     if (!ctx) return;
@@ -91,16 +91,16 @@ const BalloonJourney = () => {
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
     // Draw background
-    if (assets.background?.url) {
+    if (assets.background) {
       const bgImage = new Image();
-      bgImage.src = assets.background.url;
+      bgImage.src = assets.background;
       ctx.drawImage(bgImage, 0, 0, canvasRef.current.width, canvasRef.current.height);
     }
 
     // Draw balloon
-    if (assets.balloon?.url) {
+    if (assets.balloon) {
       const balloonImage = new Image();
-      balloonImage.src = assets.balloon.url;
+      balloonImage.src = assets.balloon;
       ctx.drawImage(
         balloonImage,
         balloonPositionRef.current.x,
