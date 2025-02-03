@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain, Lightning } from "lucide-react";
+import { Brain, Zap } from "lucide-react";
 
 const SequenceMemory = () => {
   const [sequence, setSequence] = useState<number[]>([]);
@@ -102,7 +102,7 @@ const SequenceMemory = () => {
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-full">
-            <Lightning className="h-5 w-5 text-primary animate-pulse" />
+            <Zap className="h-5 w-5 text-primary animate-pulse" />
           </div>
           <h2 className="text-2xl font-bold">Sequence Memory</h2>
         </div>
