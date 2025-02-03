@@ -28,14 +28,6 @@ interface GameState {
   winner: string | null;
 }
 
-interface BoardGame {
-  game_type: GameType;
-  difficulty_level: number;
-  game_state: GameState;
-  status: GameStatus;
-  user_id: string | undefined;
-}
-
 const BOARD_SIZE = 19;
 
 const GoGame = () => {
@@ -90,18 +82,16 @@ const GoGame = () => {
       winner: null
     };
 
-    const newGame = {
-      game_type: 'go' as GameType,
-      difficulty_level: parseInt(difficulty),
-      game_state: initialGameState,
-      status: 'in_progress' as GameStatus,
-      user_id: user.data.user?.id,
-    };
-
     try {
       const { error } = await supabase
         .from('board_games')
-        .insert([newGame]);
+        .insert([{
+          game_type: 'go' as GameType,
+          difficulty_level: parseInt(difficulty),
+          game_state: initialGameState as unknown as Json,
+          status: 'in_progress' as GameStatus,
+          user_id: user.data.user?.id,
+        }]);
       
       if (error) throw error;
       
