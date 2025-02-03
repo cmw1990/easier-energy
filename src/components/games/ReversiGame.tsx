@@ -157,7 +157,7 @@ export const ReversiGame = () => {
     const validMoves = getValidMoves(newBoard, nextPlayer);
     const scores = calculateScores(newBoard);
     
-    let status = gameState.status;
+    let status: GameStatus = gameState.status;
     let winner = gameState.winner;
 
     if (checkGameOver(newBoard, nextPlayer)) {
