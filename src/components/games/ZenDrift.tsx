@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Wind, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ZenDriftAssetsGenerator } from "./ZenDriftAssetsGenerator";
 
 export const ZenDrift = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -356,6 +357,8 @@ export const ZenDrift = () => {
             </Button>
           </div>
         </div>
+
+        <ZenDriftAssetsGenerator />
         
         <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-primary/20 shadow-lg">
           <canvas
