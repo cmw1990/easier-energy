@@ -14,6 +14,7 @@ import {
   CircleDot,
   Grid3X3,
   Gamepad2,
+  Flower2,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -29,6 +30,11 @@ const navigationGroups = [
         to: "/sleep",
         icon: Moon,
         label: "Sleep",
+      },
+      {
+        to: "/relax",
+        icon: Flower2,
+        label: "Relax",
       },
       {
         to: "/focus",
