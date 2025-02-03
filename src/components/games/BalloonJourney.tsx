@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Hot, Loader2 } from "lucide-react";
+import { Flame, Loader2 } from "lucide-react";
 
 interface GameAssets {
   balloon: string;
@@ -128,7 +128,7 @@ const BalloonJourney = () => {
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-full">
-            <Hot className="h-5 w-5 text-primary" />
+            <Flame className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold">Balloon Journey</h2>
         </div>
