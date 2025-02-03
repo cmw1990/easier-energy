@@ -232,8 +232,10 @@ export class PufferfishScene extends BreathingBaseScene {
   private emitBubbles() {
     if (this.bubbles && this.getSprite('pufferfish')) {
       const fish = this.getSprite('pufferfish');
-      this.bubbles.setPosition(fish!.x + 20, fish!.y);
-      this.bubbles.explode(3);
+      if (fish) {
+        this.bubbles.setPosition(fish.x + 20, fish.y);
+        this.bubbles.explode(3);
+      }
     }
   }
 
