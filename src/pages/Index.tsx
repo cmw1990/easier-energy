@@ -13,14 +13,16 @@ import { TailoredRecommendations } from "@/components/health/TailoredRecommendat
 import { EnergyPatternAnalysis } from "@/components/health/EnergyPatternAnalysis";
 import { FocusExercises } from "@/components/health/FocusExercises";
 import { MoodOverview } from "@/components/MoodOverview";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const navigate = useNavigate();
   const { session } = useAuth();
+  const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [blockingAction, setBlockingAction] = useState<"block" | "allow">("block");
 
-  const { data: healthConditions } = useQuery({
+  const { data: healthConditions, isLoading: isLoadingConditions } = useQuery({
     queryKey: ['health-conditions'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -35,7 +37,7 @@ const Index = () => {
     enabled: !!session?.user?.id,
   });
 
-  const { data: latestMood } = useQuery({
+  const { data: latestMood, isLoading: isLoadingMood, error: moodError } = useQuery({
     queryKey: ['latest-mood'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -50,6 +52,13 @@ const Index = () => {
       return data;
     },
     enabled: !!session?.user?.id,
+    onError: () => {
+      toast({
+        title: "Error loading mood data",
+        description: "Please try refreshing the page",
+        variant: "destructive",
+      });
+    },
   });
 
   const handleBlockingAction = (action: "block" | "allow") => {
@@ -72,7 +81,7 @@ const Index = () => {
 
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-8">
-      {!healthConditions && (
+      {!healthConditions && !isLoadingConditions && (
         <div className="mb-8">
           <HealthConditionForm />
         </div>
@@ -138,65 +147,6 @@ const Index = () => {
 
       <BlockingStats />
 
-      {/* Games Section - Adaptive based on health conditions */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">
-          {healthConditions?.needs_focus_support ? 'Focus Training Games' : 'Focus Games'}
-        </h2>
-        <div className="grid gap-6 md:grid-cols-3">
-          <Card 
-            className="p-6 hover:shadow-lg transition-shadow cursor-pointer" 
-            onClick={() => navigate('/breathing')}
-          >
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="p-3 bg-primary/10 rounded-full">
-                <Gamepad className="h-8 w-8 text-primary animate-bounce" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Pufferfish Adventure</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Control your breathing with a fun underwater game
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card 
-            className="p-6 hover:shadow-lg transition-shadow cursor-pointer" 
-            onClick={() => navigate('/focus')}
-          >
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="p-3 bg-primary/10 rounded-full">
-                <Gamepad className="h-8 w-8 text-primary animate-pulse" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Balloon Journey</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Navigate through peaceful landscapes
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card 
-            className="p-6 hover:shadow-lg transition-shadow cursor-pointer" 
-            onClick={() => navigate('/focus')}
-          >
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="p-3 bg-primary/10 rounded-full">
-                <Gamepad className="h-8 w-8 text-primary animate-float" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Zen Garden</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Create your peaceful Japanese garden
-                </p>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
-
       {/* Current State Card - Enhanced with condition context */}
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="p-6">
@@ -205,22 +155,28 @@ const Index = () => {
               <Activity className="h-10 w-10 text-primary" />
             </div>
             <h2 className="text-2xl font-semibold">Current State</h2>
-            <div className="grid grid-cols-2 gap-4 w-full">
-              <div className="space-y-2">
-                <div className="flex items-center justify-center gap-2">
-                  <Heart className="h-5 w-5 text-rose-500" />
-                  <span className="text-sm font-medium">Mood</span>
-                </div>
-                <p className="text-2xl font-bold">{latestMood?.mood_score || '-'}/10</p>
+            {isLoadingMood ? (
+              <div className="w-full h-24 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-center gap-2">
-                  <Battery className="h-5 w-5 text-yellow-500" />
-                  <span className="text-sm font-medium">Energy</span>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 w-full">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-center gap-2">
+                    <Heart className="h-5 w-5 text-rose-500" />
+                    <span className="text-sm font-medium">Mood</span>
+                  </div>
+                  <p className="text-2xl font-bold">{latestMood?.mood_score || '-'}/10</p>
                 </div>
-                <p className="text-2xl font-bold">{latestMood?.energy_level || '-'}/10</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-center gap-2">
+                    <Battery className="h-5 w-5 text-yellow-500" />
+                    <span className="text-sm font-medium">Energy</span>
+                  </div>
+                  <p className="text-2xl font-bold">{latestMood?.energy_level || '-'}/10</p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </Card>
 
@@ -237,6 +193,7 @@ const Index = () => {
         </Card>
       </div>
 
+      {/* Games Section */}
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/distraction-blocker')}>
           <div className="flex flex-col items-center space-y-2 text-center">
