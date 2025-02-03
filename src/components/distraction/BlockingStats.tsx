@@ -63,7 +63,7 @@ export const BlockingStats = () => {
         .eq('date', todayStr)
         .maybeSingle();
 
-      if (metricsError && metricsError.code !== 'PGRST116') {
+      if (metricsError) {
         console.error('Error fetching metrics:', metricsError);
         throw metricsError;
       }
@@ -95,7 +95,18 @@ export const BlockingStats = () => {
 
         if (newMetrics) {
           console.log('Created new metrics record:', newMetrics);
+          setStats(prevStats => ({
+            ...prevStats,
+            focusTime: newMetrics.focus_duration,
+            productivityScore: newMetrics.productivity_score
+          }));
         }
+      } else {
+        setStats(prevStats => ({
+          ...prevStats,
+          focusTime: metrics.focus_duration,
+          productivityScore: metrics.productivity_score
+        }));
       }
 
       // Calculate streak days
@@ -121,14 +132,14 @@ export const BlockingStats = () => {
         }
       }
 
-      setStats({
+      setStats(prevStats => ({
+        ...prevStats,
         totalBlocked: totalBlocked || 0,
         todayBlocked: todayBlocked || 0,
         activeRules: activeRules || 0,
-        focusTime: metrics?.focus_duration || 0,
-        productivityScore: metrics?.productivity_score || 0,
         streakDays
-      });
+      }));
+
     } catch (error) {
       console.error('Error loading stats:', error);
       toast({
