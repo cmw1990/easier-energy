@@ -54,6 +54,10 @@ export const GameAssetsGenerator = () => {
           
           if (hasExisting) {
             console.log(`Skipping ${batch} - assets already exist`);
+            toast({
+              title: `${batch} assets exist`,
+              description: "Skipping generation as assets already exist",
+            });
             continue;
           }
 
