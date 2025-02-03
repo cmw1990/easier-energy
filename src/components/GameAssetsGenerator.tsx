@@ -11,22 +11,39 @@ export const GameAssetsGenerator = () => {
   const generateAssets = async () => {
     setIsGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-initial-game-assets');
+      // First try generating pufferfish assets
+      const { data: pufferfishData, error: pufferfishError } = await supabase.functions.invoke(
+        'generate-initial-game-assets',
+        { body: { batch: 'pufferfish' } }
+      );
       
-      if (error) throw error;
+      if (pufferfishError) throw pufferfishError;
       
-      console.log('Asset Generation Response:', data);
+      console.log('Pufferfish Asset Generation Response:', pufferfishData);
+      
+      // Wait a bit before starting balloon assets to avoid resource limits
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      
+      // Then try generating balloon assets
+      const { data: balloonData, error: balloonError } = await supabase.functions.invoke(
+        'generate-initial-game-assets',
+        { body: { batch: 'balloon' } }
+      );
+      
+      if (balloonError) throw balloonError;
+      
+      console.log('Balloon Asset Generation Response:', balloonData);
       
       toast({
-        title: data.success ? 'Success!' : 'Error',
-        description: data.success ? 'Game assets generation started!' : 'Failed to generate game assets',
-        variant: data.success ? 'default' : 'destructive',
+        title: 'Success!',
+        description: 'Game assets generation completed!',
+        variant: 'default',
       });
     } catch (error) {
       console.error('Error generating game assets:', error);
       toast({
         title: 'Error',
-        description: 'Failed to start game assets generation. Check console for details.',
+        description: 'Failed to generate game assets. Check console for details.',
         variant: 'destructive',
       });
     } finally {
