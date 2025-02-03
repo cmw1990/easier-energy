@@ -137,7 +137,6 @@ const ChessGame = () => {
         return;
       }
 
-      // Simple AI: Random legal move for now
       const randomMove = moves[Math.floor(Math.random() * moves.length)];
       const gameCopy = new Chess(currentGame.fen());
       gameCopy.move(randomMove);
