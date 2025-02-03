@@ -1,1 +1,24 @@
 project_id = "zoubqdwxemivxrjruvam"
+
+[api]
+enabled = true
+url = "https://zoubqdwxemivxrjruvam.supabase.co"
+
+[db]
+enabled = true
+
+[realtime]
+enabled = true
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+
+[functions]
+enabled = true
+
+[[functions.paths]]
+name = "generate-pufferfish-assets"
+verify_jwt = false
