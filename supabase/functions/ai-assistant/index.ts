@@ -75,9 +75,62 @@ serve(async (req) => {
         systemPrompt = 'You are a wellness coach. Provide a comprehensive daily summary and personalized recommendations.';
         userPrompt = `Based on today's data: ${JSON.stringify(data)}, provide a holistic analysis of sleep, energy, and focus patterns. Include actionable recommendations for improvement.`;
         break;
-      default:
-        systemPrompt = 'You are a helpful wellness assistant.';
-        userPrompt = JSON.stringify(data);
+      case 'focus_optimization':
+        systemPrompt = 'You are a focus and productivity expert specializing in optimizing cognitive performance.';
+        userPrompt = `Analyze focus patterns and provide optimization strategies: ${JSON.stringify(data)}. Include specific techniques for improving focus.`;
+        break;
+      case 'energy_pattern_analysis':
+        systemPrompt = 'You are an energy management specialist analyzing daily energy patterns.';
+        userPrompt = `Based on this energy data: ${JSON.stringify(data)}, identify patterns and suggest optimal times for different activities.`;
+        break;
+      case 'productivity_insights':
+        systemPrompt = 'You are a productivity analyst specializing in personal performance optimization.';
+        userPrompt = `Analyze productivity patterns from this data: ${JSON.stringify(data)}. Provide actionable insights for improvement.`;
+        break;
+      case 'habit_formation_analysis':
+        systemPrompt = 'You are a habit formation specialist focusing on behavioral psychology.';
+        userPrompt = `Analyze habit formation patterns: ${JSON.stringify(data)}. Provide strategies for building and maintaining positive habits.`;
+        break;
+      case 'wellness_correlation':
+        systemPrompt = 'You are a wellness correlation expert analyzing relationships between different health metrics.';
+        userPrompt = `Analyze correlations between wellness factors: ${JSON.stringify(data)}. Identify patterns and suggest optimizations.`;
+        break;
+      case 'circadian_rhythm_analysis':
+        systemPrompt = 'You are a circadian rhythm specialist focusing on biological clock optimization.';
+        userPrompt = `Analyze circadian patterns from this data: ${JSON.stringify(data)}. Suggest ways to optimize daily rhythms.`;
+        break;
+      case 'stress_impact_analysis':
+        systemPrompt = 'You are a stress management expert analyzing impact on performance.';
+        userPrompt = `Analyze stress patterns and their impact: ${JSON.stringify(data)}. Provide stress management strategies.`;
+        break;
+      case 'recovery_optimization':
+        systemPrompt = 'You are a recovery optimization specialist.';
+        userPrompt = `Based on this recovery data: ${JSON.stringify(data)}, suggest optimal recovery strategies and timing.`;
+        break;
+      case 'performance_prediction':
+        systemPrompt = 'You are a performance prediction model specializing in human potential.';
+        userPrompt = `Using this performance data: ${JSON.stringify(data)}, predict potential performance patterns and suggest optimizations.`;
+        break;
+      case 'behavioral_patterns':
+        systemPrompt = 'You are a behavioral pattern analyst specializing in habit optimization.';
+        userPrompt = `Analyze these behavioral patterns: ${JSON.stringify(data)}. Identify trends and suggest improvements.`;
+        break;
+      case 'cognitive_load_analysis':
+        systemPrompt = 'You are a cognitive load specialist focusing on mental resource management.';
+        userPrompt = `Analyze cognitive load patterns: ${JSON.stringify(data)}. Suggest ways to optimize mental resource allocation.`;
+        break;
+      case 'attention_span_optimization':
+        systemPrompt = 'You are an attention span optimization expert.';
+        userPrompt = `Based on this attention data: ${JSON.stringify(data)}, provide strategies for improving attention span and focus duration.`;
+        break;
+      case 'mental_stamina_tracking':
+        systemPrompt = 'You are a mental stamina specialist tracking cognitive endurance.';
+        userPrompt = `Analyze mental stamina patterns: ${JSON.stringify(data)}. Suggest ways to build and maintain mental endurance.`;
+        break;
+      case 'focus_fatigue_analysis':
+        systemPrompt = 'You are a focus fatigue analyst specializing in cognitive recovery.';
+        userPrompt = `Analyze focus fatigue patterns: ${JSON.stringify(data)}. Provide strategies for managing and preventing mental fatigue.`;
+        break;
     }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {

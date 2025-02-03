@@ -11,7 +11,11 @@ interface AIAssistantProps {
         'sleep_recommendations' | 'sleep_pattern_analysis' | 'sleep_quality_prediction' |
         'sleep_habit_comparison' | 'sleep_environment_analysis' | 'sleep_cycle_optimization' |
         'cognitive_impact_analysis' | 'lifestyle_correlation' | 'recovery_suggestions' |
-        'next_day_preparation';
+        'next_day_preparation' | 'focus_optimization' | 'energy_pattern_analysis' |
+        'productivity_insights' | 'habit_formation_analysis' | 'wellness_correlation' |
+        'circadian_rhythm_analysis' | 'stress_impact_analysis' | 'recovery_optimization' |
+        'performance_prediction' | 'behavioral_patterns' | 'cognitive_load_analysis' |
+        'attention_span_optimization' | 'mental_stamina_tracking' | 'focus_fatigue_analysis';
   data: any;
 }
 
