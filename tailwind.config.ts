@@ -52,9 +52,29 @@ export default {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.1)" },
         },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        pulse: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200%" },
+          "100%": { backgroundPosition: "200%" },
+        },
+        bounce: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
       },
       animation: {
         breathe: "breathe 4s ease-in-out infinite",
+        float: "float 3s ease-in-out infinite",
+        pulse: "pulse 2s ease-in-out infinite",
+        shimmer: "shimmer 2s linear infinite",
+        bounce: "bounce 1s ease-in-out infinite",
       },
     },
   },

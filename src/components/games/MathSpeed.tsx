@@ -125,10 +125,10 @@ const MathSpeed = () => {
   };
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 hover:shadow-lg transition-shadow">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-full">
+          <div className="p-2 bg-primary/10 rounded-full animate-bounce">
             <Brain className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold">Math Speed</h2>
@@ -142,7 +142,7 @@ const MathSpeed = () => {
       {!isActive ? (
         <Button 
           onClick={startGame} 
-          className="w-full"
+          className="w-full animate-pulse"
           disabled={isSubmitting}
         >
           Start Game
@@ -150,7 +150,7 @@ const MathSpeed = () => {
       ) : (
         <>
           <div className="text-center mb-8">
-            <div className="text-4xl font-bold mb-8">
+            <div className="text-4xl font-bold mb-8 animate-float">
               {num1} {operator} {num2} = ?
             </div>
             <form onSubmit={handleSubmit} className="flex gap-2">
@@ -159,9 +159,13 @@ const MathSpeed = () => {
                 value={userAnswer}
                 onChange={(e) => setUserAnswer(e.target.value)}
                 placeholder="Enter answer"
-                className="text-center text-xl"
+                className="text-center text-xl focus:ring-2 ring-primary transition-all"
               />
-              <Button type="submit" disabled={isSubmitting}>
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="hover:scale-105 transition-transform"
+              >
                 Submit
               </Button>
             </form>

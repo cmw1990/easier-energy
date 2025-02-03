@@ -101,10 +101,10 @@ const ColorMatch = () => {
   };
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 hover:shadow-lg transition-shadow">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-full">
+          <div className="p-2 bg-primary/10 rounded-full animate-float">
             <Brain className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold">Color Match</h2>
@@ -118,7 +118,7 @@ const ColorMatch = () => {
       {!isActive ? (
         <Button 
           onClick={startGame} 
-          className="w-full"
+          className="w-full animate-pulse"
           disabled={isSubmitting}
         >
           Start Game
@@ -126,14 +126,14 @@ const ColorMatch = () => {
       ) : (
         <>
           <div className="text-center mb-8">
-            <div className={`text-4xl font-bold mb-8 ${COLOR_CLASSES[color as keyof typeof COLOR_CLASSES]}`}>
+            <div className={`text-4xl font-bold mb-8 transition-all duration-300 ${COLOR_CLASSES[color as keyof typeof COLOR_CLASSES]} animate-breathe`}>
               {word.toUpperCase()}
             </div>
             <div className="flex justify-center gap-4">
               <Button
                 onClick={() => handleAnswer(true)}
                 variant="outline"
-                className="w-32"
+                className="w-32 hover:scale-105 transition-transform"
                 disabled={isSubmitting}
               >
                 Matches
@@ -141,7 +141,7 @@ const ColorMatch = () => {
               <Button
                 onClick={() => handleAnswer(false)}
                 variant="outline"
-                className="w-32"
+                className="w-32 hover:scale-105 transition-transform"
                 disabled={isSubmitting}
               >
                 Different

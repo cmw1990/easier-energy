@@ -117,10 +117,10 @@ const SimonSays = () => {
   };
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 hover:shadow-lg transition-shadow">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-full">
+          <div className="p-2 bg-primary/10 rounded-full animate-shimmer">
             <Brain className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold">Simon Says</h2>
@@ -131,7 +131,7 @@ const SimonSays = () => {
       {!isPlaying ? (
         <Button 
           onClick={startGame} 
-          className="w-full"
+          className="w-full animate-pulse"
           disabled={isSubmitting}
         >
           Start Game
@@ -143,7 +143,9 @@ const SimonSays = () => {
               key={color}
               id={`simon-${color}`}
               onClick={() => handleColorClick(color)}
-              className={`h-24 transition-opacity opacity-60 ${COLOR_CLASSES[color as keyof typeof COLOR_CLASSES]}`}
+              className={`h-24 transition-all duration-300 opacity-60 hover:opacity-100 ${COLOR_CLASSES[color as keyof typeof COLOR_CLASSES]} ${
+                isShowingSequence ? 'animate-breathe' : ''
+              }`}
               disabled={isShowingSequence || isSubmitting}
             />
           ))}

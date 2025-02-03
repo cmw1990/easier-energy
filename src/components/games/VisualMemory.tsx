@@ -118,10 +118,10 @@ const VisualMemory = () => {
   };
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 hover:shadow-lg transition-shadow">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-full">
+          <div className="p-2 bg-primary/10 rounded-full animate-bounce">
             <Brain className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold">Visual Memory</h2>
@@ -135,7 +135,7 @@ const VisualMemory = () => {
       {!isActive ? (
         <Button 
           onClick={startGame} 
-          className="w-full"
+          className="w-full animate-pulse"
           disabled={isSubmitting}
         >
           Start Game
@@ -149,14 +149,14 @@ const VisualMemory = () => {
               key={index}
               onClick={() => handleCellClick(index)}
               variant="outline"
-              className={`h-16 transition-colors ${
+              className={`h-16 transition-all duration-300 ${
                 isShowingPattern
                   ? cell
-                    ? 'bg-primary'
+                    ? 'bg-primary animate-breathe'
                     : ''
                   : userPattern[index]
-                  ? 'bg-primary/50'
-                  : ''
+                  ? 'bg-primary/50 hover:bg-primary/60'
+                  : 'hover:bg-primary/10'
               }`}
               disabled={isShowingPattern || isSubmitting}
             />

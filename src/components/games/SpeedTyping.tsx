@@ -95,10 +95,10 @@ const SpeedTyping = () => {
   };
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 hover:shadow-lg transition-shadow">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-full">
+          <div className="p-2 bg-primary/10 rounded-full animate-float">
             <Brain className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold">Speed Typing</h2>
@@ -112,7 +112,7 @@ const SpeedTyping = () => {
       {!isActive ? (
         <Button 
           onClick={startGame} 
-          className="w-full"
+          className="w-full animate-pulse"
           disabled={isSubmitting}
         >
           Start Game
@@ -120,13 +120,13 @@ const SpeedTyping = () => {
       ) : (
         <>
           <div className="text-center mb-8">
-            <div className="text-4xl font-bold mb-4">{currentWord}</div>
+            <div className="text-4xl font-bold mb-4 animate-breathe">{currentWord}</div>
             <Input
               type="text"
               value={userInput}
               onChange={handleInputChange}
               placeholder="Type the word..."
-              className="text-center text-xl"
+              className="text-center text-xl focus:ring-2 ring-primary transition-all"
               autoFocus
               disabled={isSubmitting}
             />
