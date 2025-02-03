@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Flower2, Wind, Car } from "lucide-react";
 import { ZenDrift } from "@/components/games/ZenDrift";
 import { BreathingTechniques } from "@/components/breathing/BreathingTechniques";
