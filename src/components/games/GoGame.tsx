@@ -9,10 +9,11 @@ import { Brain } from "lucide-react";
 
 type GameType = 'chess' | 'go' | 'checkers' | 'reversi' | 'xiangqi' | 'shogi' | 'gomoku' | 'connect_four' | 'tic_tac_toe';
 type GameStatus = 'in_progress' | 'completed';
+type Player = 'black' | 'white';
 
 interface GameState {
   board: string[][];
-  currentPlayer: 'black' | 'white';
+  currentPlayer: Player;
   captures: {
     black: number;
     white: number;
@@ -24,14 +25,7 @@ interface GameState {
 interface BoardGame {
   game_type: GameType;
   difficulty_level: number;
-  game_state: {
-    board: string[][];
-    currentPlayer: 'black' | 'white';
-    captures: {
-      black: number;
-      white: number;
-    };
-  };
+  game_state: GameState;
   status: GameStatus;
   user_id: string | undefined;
 }
@@ -65,8 +59,10 @@ const GoGame = () => {
 
       if (existingGame) {
         const gameState = existingGame.game_state as GameState;
-        setGameState(gameState);
-        setDifficulty(existingGame.difficulty_level.toString());
+        if (isValidGameState(gameState)) {
+          setGameState(gameState);
+          setDifficulty(existingGame.difficulty_level.toString());
+        }
       }
     } catch (error) {
       console.error('Error loading game:', error);
@@ -78,16 +74,33 @@ const GoGame = () => {
     }
   };
 
+  const isValidGameState = (state: any): state is GameState => {
+    return (
+      state &&
+      Array.isArray(state.board) &&
+      (state.currentPlayer === 'black' || state.currentPlayer === 'white') &&
+      typeof state.captures === 'object' &&
+      typeof state.captures.black === 'number' &&
+      typeof state.captures.white === 'number' &&
+      (state.status === 'in_progress' || state.status === 'completed') &&
+      (state.winner === null || typeof state.winner === 'string')
+    );
+  };
+
   const createNewGame = async () => {
     const user = await supabase.auth.getUser();
+    const newGameState: GameState = {
+      board: Array(BOARD_SIZE).fill(Array(BOARD_SIZE).fill('')),
+      currentPlayer: 'black',
+      captures: { black: 0, white: 0 },
+      status: 'in_progress',
+      winner: null
+    };
+
     const newGame: BoardGame = {
       game_type: 'go',
       difficulty_level: parseInt(difficulty),
-      game_state: {
-        board: Array(BOARD_SIZE).fill(Array(BOARD_SIZE).fill('')),
-        currentPlayer: 'black',
-        captures: { black: 0, white: 0 }
-      },
+      game_state: newGameState,
       status: 'in_progress',
       user_id: user.data.user?.id,
     };
@@ -99,11 +112,7 @@ const GoGame = () => {
 
       if (error) throw error;
 
-      setGameState({
-        ...newGame.game_state,
-        status: 'in_progress',
-        winner: null
-      });
+      setGameState(newGameState);
 
       toast({
         title: "New Game Started",
@@ -126,7 +135,7 @@ const GoGame = () => {
       const newBoard = gameState.board.map(row => [...row]);
       newBoard[row][col] = gameState.currentPlayer;
 
-      const newGameState = {
+      const newGameState: GameState = {
         ...gameState,
         board: newBoard,
         currentPlayer: gameState.currentPlayer === 'black' ? 'white' : 'black'
