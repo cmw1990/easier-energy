@@ -9,7 +9,7 @@ export interface BalloonAssets {
 export const useBalloonAssets = () => {
   const assets: BalloonAssets = {
     balloon: balloonImage,
-    background: backgroundImage,
+    background: backgroundImage
   };
 
   return {
