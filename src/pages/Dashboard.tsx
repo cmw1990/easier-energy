@@ -1,110 +1,59 @@
-import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { Battery, TrendingUp, Clock, Brain } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from "recharts";
+import { Battery, Brain, Moon } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
 
 const Dashboard = () => {
-  const { toast } = useToast();
-  const [currentEnergyLevel, setCurrentEnergyLevel] = useState<number | null>(null);
+  const { session } = useAuth();
 
-  // Fetch energy logs
-  const { data: energyLogs, isLoading } = useQuery({
-    queryKey: ['energy-logs'],
+  const { data: recentLogs } = useQuery({
+    queryKey: ["energyFocusLogs"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('energy_focus_logs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(7);
+        .from("energy_focus_logs")
+        .select("*")
+        .eq("user_id", session?.user?.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
 
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!session?.user?.id,
   });
 
-  const logEnergyLevel = async (level: number) => {
-    try {
-      const { error } = await supabase
-        .from('energy_focus_logs')
-        .insert([
-          {
-            activity_type: 'energy_rating',
-            activity_name: 'daily_check',
-            energy_rating: level,
-          }
-        ]);
-
-      if (error) throw error;
-
-      setCurrentEnergyLevel(level);
-      toast({
-        title: "Energy level logged",
-        description: "Your energy level has been recorded successfully.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to log energy level. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const getAverageRating = (type: string, ratingField: "energy_rating" | "focus_rating") => {
+    if (!recentLogs) return 0;
+    const typeData = recentLogs.filter(log => log.activity_type === type);
+    if (typeData.length === 0) return 0;
+    const sum = typeData.reduce((acc, log) => acc + (log[ratingField] || 0), 0);
+    return Math.round((sum / typeData.length) * 10) / 10;
   };
 
-  const chartData = energyLogs?.map(log => ({
-    date: new Date(log.created_at).toLocaleDateString(),
-    energy: log.energy_rating
-  })).reverse();
+  const getLatestDuration = (type: string) => {
+    if (!recentLogs) return 0;
+    const typeData = recentLogs.find(log => log.activity_type === type);
+    return typeData?.duration_minutes || 0;
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Energy</CardTitle>
-            <Battery className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {currentEnergyLevel ? `${currentEnergyLevel}/10` : 'Not logged'}
-            </div>
-          </CardContent>
-        </Card>
+    <div className="container mx-auto p-4 space-y-6">
+      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
+      <div className="grid gap-6 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Energy</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Sleep Duration</CardTitle>
+            <Moon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {energyLogs?.length ? 
-                (energyLogs.reduce((acc, log) => acc + (log.energy_rating || 0), 0) / energyLogs.length).toFixed(1) 
-                : 'N/A'}
+              {Math.round(getLatestDuration("sleep") / 60)} hours
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Focus Time</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {energyLogs?.reduce((acc, log) => acc + (log.duration_minutes || 0), 0)} min
-            </div>
+            <p className="text-xs text-muted-foreground">
+              Latest sleep session
+            </p>
           </CardContent>
         </Card>
 
@@ -115,60 +64,69 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {energyLogs?.length ? 
-                (energyLogs.reduce((acc, log) => acc + (log.focus_rating || 0), 0) / energyLogs.length).toFixed(1) 
-                : 'N/A'}
+              {getAverageRating("focus", "focus_rating")}/10
             </div>
+            <p className="text-xs text-muted-foreground">
+              Average focus rating
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Energy Level</CardTitle>
+            <Battery className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {getAverageRating("caffeine", "energy_rating")}/10
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Average energy rating
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="col-span-4">
-        <CardHeader>
-          <CardTitle>Energy Levels</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            {chartData && chartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis domain={[0, 10]} />
-                  <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="energy" 
-                    stroke="#ee9ca7" 
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="flex h-full items-center justify-center text-muted-foreground">
-                No energy data available
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>
-          <CardTitle>Log Current Energy Level</CardTitle>
+          <CardTitle>Recent Activity</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((level) => (
-              <Button
-                key={level}
-                variant={currentEnergyLevel === level ? "default" : "outline"}
-                className="h-12 w-12"
-                onClick={() => logEnergyLevel(level)}
+          <div className="space-y-4">
+            {recentLogs?.map((log) => (
+              <div
+                key={log.id}
+                className="flex items-center justify-between border-b pb-2"
               >
-                {level}
-              </Button>
+                <div>
+                  <p className="font-medium capitalize">{log.activity_type}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {log.activity_name}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm">
+                    {new Date(log.created_at).toLocaleDateString()}
+                  </p>
+                  {log.energy_rating && (
+                    <p className="text-sm text-muted-foreground">
+                      Energy: {log.energy_rating}/10
+                    </p>
+                  )}
+                  {log.focus_rating && (
+                    <p className="text-sm text-muted-foreground">
+                      Focus: {log.focus_rating}/10
+                    </p>
+                  )}
+                </div>
+              </div>
             ))}
+            {(!recentLogs || recentLogs.length === 0) && (
+              <p className="text-center text-muted-foreground">
+                No recent activity
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
