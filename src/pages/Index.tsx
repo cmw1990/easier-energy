@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { HealthConditionForm } from "@/components/health/HealthConditionForm";
 import { TailoredRecommendations } from "@/components/health/TailoredRecommendations";
+import { EnergyPatternAnalysis } from "@/components/health/EnergyPatternAnalysis";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -76,9 +77,14 @@ const Index = () => {
       )}
 
       {healthConditions && (
-        <div className="mb-8">
-          <TailoredRecommendations />
-        </div>
+        <>
+          <div className="mb-8">
+            <TailoredRecommendations />
+          </div>
+          <div className="mb-8">
+            <EnergyPatternAnalysis />
+          </div>
+        </>
       )}
 
       {/* Main Action Card - Prominent Blocking Controls */}
@@ -121,7 +127,9 @@ const Index = () => {
           </Button>
         </div>
       </Card>
+
       <BlockingStats />
+
       {/* Games Section */}
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">Focus Games</h2>
@@ -178,6 +186,7 @@ const Index = () => {
           </Card>
         </div>
       </div>
+
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="p-6">
           <div className="flex flex-col items-center text-center space-y-4">
@@ -216,6 +225,7 @@ const Index = () => {
           </div>
         </Card>
       </div>
+
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/distraction-blocker')}>
           <div className="flex flex-col items-center space-y-2 text-center">
