@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain, Loader2 } from "lucide-react";
+import { Brain, Loader2, RefreshCw } from "lucide-react";
 import { usePufferfishAssets } from "./PufferfishAssets";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
 import { usePhaserGame } from "@/hooks/use-phaser-game";
@@ -24,7 +24,7 @@ const BreathingGame = () => {
   const streamRef = useRef<MediaStream | null>(null);
   const { toast } = useToast();
   const { session } = useAuth();
-  const { assets, isLoading } = usePufferfishAssets();
+  const { assets, isLoading, generateAssets } = usePufferfishAssets();
 
   // Initialize Phaser game
   const game = usePhaserGame({
@@ -185,7 +185,21 @@ const BreathingGame = () => {
           </div>
           <h2 className="text-2xl font-bold">Pufferfish Adventure</h2>
         </div>
-        <div className="text-lg">Score: {score}</div>
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline"
+            onClick={generateAssets}
+            className="gap-2"
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
+            Generate Visuals
+          </Button>
+          <div className="text-lg">Score: {score}</div>
+        </div>
       </div>
 
       <div className="flex flex-col items-center gap-4">
