@@ -114,21 +114,26 @@ const WordAssociation = () => {
           <div className="p-2 bg-primary/10 rounded-full">
             <Star className="h-5 w-5 text-primary animate-bounce" />
           </div>
-          <h2 className="text-2xl font-bold">Word Association</h2>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Word Association
+          </h2>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-lg">Score: {score}</div>
-          <div className="text-lg">Time: {timeLeft}s</div>
+          <div className="text-lg">Score: <span className="text-primary">{score}</span></div>
+          <div className="text-lg">Time: <span className={`${timeLeft <= 10 ? 'text-energy-low animate-pulse' : 'text-secondary'}`}>
+            {timeLeft}s
+          </span></div>
         </div>
       </div>
 
       {!isActive ? (
         <Button 
           onClick={startGame} 
-          className="w-full animate-pulse"
+          className="w-full group relative overflow-hidden animate-pulse"
           disabled={isSubmitting}
         >
-          Start Game
+          <span className="relative z-10">Start Game</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-primary opacity-75 group-hover:animate-shimmer" />
         </Button>
       ) : (
         <>
@@ -153,8 +158,14 @@ const WordAssociation = () => {
         </>
       )}
 
-      <div className="mt-6 text-sm text-muted-foreground">
-        Click on words that are most closely related to the main word. Score points for correct associations.
+      <div className="mt-6">
+        <div className="text-sm text-muted-foreground">
+          Click on words that are most closely related to the main word. Score points for correct associations.
+        </div>
+        <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+          <Brain className="h-4 w-4" />
+          <span>Improves: Vocabulary, Association Skills, Quick Thinking</span>
+        </div>
       </div>
     </Card>
   );
