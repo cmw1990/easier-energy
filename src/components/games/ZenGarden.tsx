@@ -51,20 +51,33 @@ const ZenGarden = () => {
   const loadZenElements = async () => {
     setIsLoadingAssets(true);
     try {
-      // Load multiple zen elements
-      const numberOfElements = 5;
+      const elementTypes = ['stone', 'sand-pattern', 'bonsai', 'moss', 'bamboo', 'lantern', 'bridge', 'koi'];
       const newElements: HTMLImageElement[] = [];
 
-      for (let i = 0; i < numberOfElements; i++) {
-        const { data, error } = await supabase.functions.invoke('generate-zen-elements');
-        if (error) throw error;
+      for (const type of elementTypes) {
+        try {
+          const { data: publicUrl } = await supabase
+            .storage
+            .from('game-assets')
+            .getPublicUrl(`zen-garden/${type}.png`);
 
-        const img = new Image();
-        img.src = `data:image/png;base64,${data.image}`;
-        await new Promise((resolve) => {
-          img.onload = resolve;
-        });
-        newElements.push(img);
+          if (!publicUrl.publicUrl) {
+            throw new Error('No public URL received');
+          }
+
+          const img = new Image();
+          img.src = publicUrl.publicUrl;
+          await new Promise((resolve) => {
+            img.onload = resolve;
+          });
+          newElements.push(img);
+        } catch (error) {
+          console.error('Error loading zen elements:', error);
+          // Use placeholder for failed elements
+          const placeholderImg = new Image();
+          placeholderImg.src = '/placeholder.svg';
+          newElements.push(placeholderImg);
+        }
       }
 
       setZenElements(newElements);

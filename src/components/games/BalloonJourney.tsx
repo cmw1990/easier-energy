@@ -33,30 +33,33 @@ const BalloonJourney = () => {
       try {
         const loadedAssets: Partial<GameAssets> = {};
         let loadedCount = 0;
-        let maxAttempts = 3;
 
         for (const type of assetTypes) {
-          let attempt = 1;
-          while (attempt <= maxAttempts) {
-            try {
-              console.log(`Loading ${type}, attempt ${attempt}`);
-              const { data, error } = await supabase.functions.invoke('generate-game-assets', {
-                body: { assetType: type }
-              });
+          try {
+            console.log(`Loading ${type} from game-assets storage`);
+            const { data: publicUrl } = await supabase
+              .storage
+              .from('game-assets')
+              .getPublicUrl(`balloon/${type}.png`);
 
-              if (error) throw error;
-              if (!data?.image) throw new Error('No image data received');
-
-              loadedAssets[type as keyof GameAssets] = `data:image/png;base64,${data.image}`;
-              loadedCount++;
-              break;
-            } catch (err) {
-              console.error(`Error loading ${type} on attempt ${attempt}:`, err);
-              attempt++;
-              if (attempt <= maxAttempts) {
-                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
-              }
+            if (!publicUrl.publicUrl) {
+              throw new Error('No public URL received');
             }
+
+            // Pre-load the image to ensure it's cached
+            const img = new Image();
+            await new Promise((resolve, reject) => {
+              img.onload = resolve;
+              img.onerror = reject;
+              img.src = publicUrl.publicUrl;
+            });
+
+            loadedAssets[type as keyof GameAssets] = publicUrl.publicUrl;
+            loadedCount++;
+          } catch (err) {
+            console.error(`Error loading ${type}:`, err);
+            // Use placeholder for failed assets
+            loadedAssets[type as keyof GameAssets] = '/placeholder.svg';
           }
         }
 
