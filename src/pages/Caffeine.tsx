@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Coffee } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const Caffeine = () => {
   const { session } = useAuth();
@@ -33,6 +34,32 @@ const Caffeine = () => {
     enabled: !!session?.user?.id,
   });
 
+  const { data: chartData } = useQuery({
+    queryKey: ["caffeineChartData"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("energy_focus_logs")
+        .select("*")
+        .eq("user_id", session?.user?.id)
+        .eq("activity_type", "caffeine")
+        .order("created_at", { ascending: true })
+        .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .limit(50);
+
+      if (error) throw error;
+
+      // Process data for the chart
+      const processedData = data.map(log => ({
+        date: new Date(log.created_at).toLocaleDateString(),
+        amount: parseInt(log.activity_name.split(":")[1]),
+        energy: log.energy_rating
+      }));
+
+      return processedData;
+    },
+    enabled: !!session?.user?.id,
+  });
+
   const logCaffeineMutation = useMutation({
     mutationFn: async (values: { amount: string; energyRating: string }) => {
       const { error } = await supabase.from("energy_focus_logs").insert({
@@ -47,6 +74,7 @@ const Caffeine = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["caffeineHistory"] });
+      queryClient.invalidateQueries({ queryKey: ["caffeineChartData"] });
       toast({
         title: "Success",
         description: "Caffeine intake logged successfully",
@@ -147,6 +175,27 @@ const Caffeine = () => {
                   No caffeine intake logged yet
                 </p>
               )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Caffeine Intake Trends (Last 7 Days)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData || []}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis yAxisId="left" label={{ value: 'Caffeine (mg)', angle: -90, position: 'insideLeft' }} />
+                  <YAxis yAxisId="right" orientation="right" label={{ value: 'Energy Level', angle: 90, position: 'insideRight' }} />
+                  <Tooltip />
+                  <Line yAxisId="left" type="monotone" dataKey="amount" stroke="#8884d8" name="Caffeine Intake" />
+                  <Line yAxisId="right" type="monotone" dataKey="energy" stroke="#82ca9d" name="Energy Level" />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
