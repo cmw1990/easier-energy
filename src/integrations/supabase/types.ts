@@ -144,6 +144,83 @@ export type Database = {
         }
         Relationships: []
       }
+      distraction_block_logs: {
+        Row: {
+          attempt_count: number | null
+          block_id: string | null
+          block_type: Database["public"]["Enums"]["distraction_type"]
+          blocked_at: string | null
+          id: string
+          target: string
+          user_id: string
+        }
+        Insert: {
+          attempt_count?: number | null
+          block_id?: string | null
+          block_type: Database["public"]["Enums"]["distraction_type"]
+          blocked_at?: string | null
+          id?: string
+          target: string
+          user_id: string
+        }
+        Update: {
+          attempt_count?: number | null
+          block_id?: string | null
+          block_type?: Database["public"]["Enums"]["distraction_type"]
+          blocked_at?: string | null
+          id?: string
+          target?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "distraction_block_logs_block_id_fkey"
+            columns: ["block_id"]
+            isOneToOne: false
+            referencedRelation: "distraction_blocking"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      distraction_blocking: {
+        Row: {
+          block_type: Database["public"]["Enums"]["distraction_type"]
+          created_at: string | null
+          days_active: string[] | null
+          id: string
+          is_active: boolean | null
+          schedule_end: string | null
+          schedule_start: string | null
+          target: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          block_type: Database["public"]["Enums"]["distraction_type"]
+          created_at?: string | null
+          days_active?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          schedule_end?: string | null
+          schedule_start?: string | null
+          target: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          block_type?: Database["public"]["Enums"]["distraction_type"]
+          created_at?: string | null
+          days_active?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          schedule_end?: string | null
+          schedule_start?: string | null
+          target?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       energy_focus_logs: {
         Row: {
           activity_name: string
@@ -1175,6 +1252,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      distraction_type: "app" | "website" | "notification" | "social_media"
       quit_strategy_type:
         | "cold_turkey"
         | "taper_down"
