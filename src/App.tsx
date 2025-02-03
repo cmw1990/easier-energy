@@ -9,6 +9,7 @@ import Dashboard from "@/pages/Dashboard";
 import Sleep from "@/pages/Sleep";
 import SleepTrack from "@/pages/SleepTrack";
 import Focus from "@/pages/Focus";
+import Relax from "@/pages/Relax";
 import Breathing from "@/pages/Breathing";
 import Caffeine from "@/pages/Caffeine";
 import DistractionBlocker from "@/pages/DistractionBlocker";
@@ -39,6 +40,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/sleep" element={<Sleep />} />
               <Route path="/sleep/track" element={<SleepTrack />} />
+              <Route path="/relax" element={<Relax />} />
               <Route path="/focus" element={<Focus />} />
               <Route path="/breathing" element={<Breathing />} />
               <Route path="/caffeine" element={<Caffeine />} />
