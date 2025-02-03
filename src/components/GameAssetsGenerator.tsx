@@ -61,7 +61,7 @@ export const GameAssetsGenerator = () => {
           const { data, error } = await supabase.functions.invoke(
             'generate-initial-game-assets',
             { 
-              body: JSON.stringify({ batch }),
+              body: { batch },
               headers: {
                 'Content-Type': 'application/json',
               }

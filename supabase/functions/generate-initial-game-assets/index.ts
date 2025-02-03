@@ -13,33 +13,14 @@ serve(async (req) => {
   }
 
   try {
-    // Ensure content type is application/json
-    const contentType = req.headers.get('content-type')
-    if (!contentType?.includes('application/json')) {
-      throw new Error('Content-Type must be application/json')
-    }
-
     // Parse request body
-    let requestData;
-    try {
-      requestData = await req.json();
-    } catch (e) {
-      console.error('Error parsing request body:', e);
-      return new Response(
-        JSON.stringify({ 
-          error: 'Invalid JSON in request body',
-          details: e.message 
-        }),
-        { 
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
+    const requestData = await req.json();
+    console.log('Received request data:', requestData);
 
     const { batch } = requestData;
     
     if (!batch) {
+      console.error('Missing batch parameter');
       return new Response(
         JSON.stringify({ error: 'Missing batch parameter' }),
         { 
@@ -52,6 +33,7 @@ serve(async (req) => {
     console.log(`Processing batch: ${batch}`);
 
     if (!GAME_ASSETS_CONFIG[batch]) {
+      console.error(`Invalid batch type: ${batch}`);
       return new Response(
         JSON.stringify({ error: `Invalid batch type: ${batch}` }),
         { 
@@ -69,6 +51,7 @@ serve(async (req) => {
     // Verify OpenAI API key is set
     const openAIKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIKey) {
+      console.error('OpenAI API key not configured');
       return new Response(
         JSON.stringify({ error: 'OpenAI API key is not configured' }),
         { 
@@ -178,18 +161,18 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error in edge function:', error);
     return new Response(
       JSON.stringify({ 
-        error: error.message,
+        error: error.message || 'Internal server error',
         details: error.toString()
       }),
       { 
+        status: 500,
         headers: { 
           ...corsHeaders, 
           'Content-Type': 'application/json' 
-        }, 
-        status: 500 
+        }
       }
     )
   }
