@@ -2,5 +2,3 @@
 project_id = "zoubqdwxemivxrjruvam"
 
 [functions]
-[functions.generate-pufferfish-assets]
-verify_jwt = false
