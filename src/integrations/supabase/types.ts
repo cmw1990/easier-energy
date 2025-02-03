@@ -45,6 +45,57 @@ export type Database = {
         }
         Relationships: []
       }
+      board_games: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          difficulty_level: number
+          game_state: Json
+          game_type: Database["public"]["Enums"]["game_type"]
+          id: string
+          last_move_at: string | null
+          moves: Json[] | null
+          score: number | null
+          started_at: string | null
+          status: string
+          updated_at: string | null
+          user_id: string | null
+          winner: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          difficulty_level?: number
+          game_state?: Json
+          game_type: Database["public"]["Enums"]["game_type"]
+          id?: string
+          last_move_at?: string | null
+          moves?: Json[] | null
+          score?: number | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+          winner?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          difficulty_level?: number
+          game_state?: Json
+          game_type?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          last_move_at?: string | null
+          moves?: Json[] | null
+          score?: number | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+          winner?: string | null
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           active: boolean | null
@@ -1451,6 +1502,16 @@ export type Database = {
     Enums: {
       app_role: "admin" | "user"
       distraction_type: "app" | "website" | "notification" | "social_media"
+      game_type:
+        | "chess"
+        | "go"
+        | "checkers"
+        | "reversi"
+        | "xiangqi"
+        | "shogi"
+        | "gomoku"
+        | "connect_four"
+        | "tic_tac_toe"
       health_condition:
         | "adhd"
         | "chronic_fatigue"
