@@ -28,6 +28,15 @@ export class BreathingBaseScene extends Phaser.Scene {
       sprite.setVisible(false);
       this.loadedAssets.set(key, sprite);
     });
+
+    // Set background if it exists
+    const background = this.loadedAssets.get('background');
+    if (background) {
+      background.setVisible(true)
+        .setPosition(this.cameras.main.centerX, this.cameras.main.centerY)
+        .setDisplaySize(800, 400)
+        .setDepth(-1);
+    }
   }
 
   getSprite(key: string): Phaser.GameObjects.Image | undefined {
