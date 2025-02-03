@@ -24,7 +24,7 @@ const Index = () => {
         .eq('user_id', session?.user?.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
