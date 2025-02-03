@@ -7,7 +7,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
 import { Heart, Play, Pause, History } from "lucide-react";
-import { Haptics, ImpactStyle, NotificationImpact } from '@capacitor/haptics';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 
 const Breathing = () => {
   const [isActive, setIsActive] = useState(false);
@@ -89,7 +89,7 @@ const Breathing = () => {
   const handleStartStop = async () => {
     if (!isActive) {
       setIsActive(true);
-      await Haptics.notification({ type: NotificationImpact.Success });
+      await Haptics.notification({ type: NotificationType.SUCCESS });
       const interval = setInterval(() => {
         setSeconds((prev) => prev + 1);
       }, 1000);
