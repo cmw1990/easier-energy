@@ -22,6 +22,7 @@ import VisualMemory from "@/components/games/VisualMemory";
 import PatternRecognition from "@/components/games/PatternRecognition";
 import SequenceMemory from "@/components/games/SequenceMemory";
 import WordAssociation from "@/components/games/WordAssociation";
+import BrainMatch3 from "@/components/games/BrainMatch3";
 
 const Focus = () => {
   const { session } = useAuth();
@@ -89,7 +90,6 @@ const Focus = () => {
 
         <TabsContent value="quick" className="space-y-4">
           <BrainMatch3 />
-          <NumberSequence />
           <ColorMatch />
           <MathSpeed />
         </TabsContent>
@@ -122,7 +122,7 @@ const Focus = () => {
           <div className="space-y-2">
             <h3 className="font-medium text-primary">Quick Exercises</h3>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Number Sequence: Test quick thinking and focus</li>
+              <li>• Brain Match 3: Test mathematical thinking and pattern recognition</li>
               <li>• Color Match: Improve reaction time and cognitive flexibility</li>
               <li>• Math Speed: Enhance mental calculation abilities</li>
             </ul>
