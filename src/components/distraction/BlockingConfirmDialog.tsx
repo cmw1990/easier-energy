@@ -18,6 +18,19 @@ interface BlockingConfirmDialogProps {
   action: "block" | "allow";
 }
 
+type SmartBlockingSettings = {
+  strictMode: boolean;
+  allowedBreakTime: number;
+  productivityThreshold: number;
+  adaptiveMode?: boolean;
+  learningEnabled?: boolean;
+  autoAdjust?: boolean;
+  focusTimeBlocking?: boolean;
+  aiSuggestions?: boolean;
+  customPatterns?: boolean;
+  timeBoxing?: boolean;
+};
+
 export function BlockingConfirmDialog({
   open,
   onOpenChange,
@@ -39,7 +52,8 @@ export function BlockingConfirmDialog({
         .eq('target', 'smart-rules')
         .maybeSingle();
 
-      const isStrictMode = smartSettings?.pattern_data?.strictMode;
+      const settings = smartSettings?.pattern_data as SmartBlockingSettings;
+      const isStrictMode = settings?.strictMode ?? false;
 
       // Update all blocking rules
       const { error } = await supabase
@@ -48,7 +62,7 @@ export function BlockingConfirmDialog({
           is_active: action === 'block',
           // If in strict mode and blocking, set a minimum duration
           break_duration: action === 'block' && isStrictMode ? 
-            Math.max(smartSettings?.pattern_data?.allowedBreakTime || 5, 5) : 5
+            Math.max(settings?.allowedBreakTime || 5, 5) : 5
         })
         .eq('user_id', session.user.id);
 
@@ -63,7 +77,7 @@ export function BlockingConfirmDialog({
             date: new Date().toISOString().split('T')[0],
             focus_sessions: 1,
             distractions_blocked: 0,
-            productivity_score: smartSettings?.pattern_data?.productivityThreshold || 70
+            productivity_score: settings?.productivityThreshold || 70
           });
 
         if (logError) throw logError;
