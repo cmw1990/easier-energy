@@ -14,6 +14,9 @@ interface Particle {
   speed: number;
   angle: number;
   image?: HTMLImageElement;
+  rotation: number;
+  rotationSpeed: number;
+  opacity: number;
 }
 
 const ZenGarden = () => {
@@ -24,6 +27,7 @@ const ZenGarden = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingAssets, setIsLoadingAssets] = useState(false);
   const [zenElements, setZenElements] = useState<HTMLImageElement[]>([]);
+  const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -47,16 +51,23 @@ const ZenGarden = () => {
   const loadZenElements = async () => {
     setIsLoadingAssets(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-zen-elements');
-      if (error) throw error;
+      // Load multiple zen elements
+      const numberOfElements = 5;
+      const newElements: HTMLImageElement[] = [];
 
-      const img = new Image();
-      img.src = `data:image/png;base64,${data.image}`;
-      await new Promise((resolve) => {
-        img.onload = resolve;
-      });
+      for (let i = 0; i < numberOfElements; i++) {
+        const { data, error } = await supabase.functions.invoke('generate-zen-elements');
+        if (error) throw error;
 
-      setZenElements(prev => [...prev, img]);
+        const img = new Image();
+        img.src = `data:image/png;base64,${data.image}`;
+        await new Promise((resolve) => {
+          img.onload = resolve;
+        });
+        newElements.push(img);
+      }
+
+      setZenElements(newElements);
     } catch (error) {
       console.error('Error loading zen elements:', error);
       toast({
@@ -143,8 +154,14 @@ const ZenGarden = () => {
     const image = zenElements.length > 0 ? 
       zenElements[Math.floor(Math.random() * zenElements.length)] : 
       undefined;
+    const rotation = Math.random() * Math.PI * 2;
+    const rotationSpeed = (Math.random() - 0.5) * 0.02;
+    const opacity = Math.random() * 0.3 + 0.7;
 
-    setParticles(prev => [...prev.slice(-50), { x, y, size, color, speed, angle, image }]);
+    setParticles(prev => [...prev.slice(-50), { 
+      x, y, size, color, speed, angle, image, 
+      rotation, rotationSpeed, opacity 
+    }]);
   };
 
   const updateParticles = (breathIntensity: number) => {
@@ -154,7 +171,9 @@ const ZenGarden = () => {
         x: particle.x + Math.cos(particle.angle) * particle.speed * (breathIntensity / 50),
         y: particle.y + Math.sin(particle.angle) * particle.speed * (breathIntensity / 50),
         size: particle.size + (breathIntensity > 50 ? 0.1 : -0.1),
-      })).filter(particle => particle.size > 0)
+        rotation: particle.rotation + particle.rotationSpeed,
+        opacity: Math.min(1, particle.opacity + (breathIntensity > 50 ? 0.02 : -0.02))
+      })).filter(particle => particle.size > 0 && particle.opacity > 0)
     );
   };
 
@@ -165,6 +184,18 @@ const ZenGarden = () => {
     analyserRef.current.getByteFrequencyData(dataArray);
     
     const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+    
+    // Update breath phase based on intensity
+    if (average > 50) {
+      setBreathPhase('inhale');
+    } else if (average > 30) {
+      setBreathPhase('hold');
+    } else if (average > 10) {
+      setBreathPhase('exhale');
+    } else {
+      setBreathPhase('rest');
+    }
+    
     return average;
   };
 
@@ -186,28 +217,55 @@ const ZenGarden = () => {
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    // Create gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#faf5ff'); // Light purple
+    gradient.addColorStop(1, '#f0f7ff'); // Light blue
+    
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Draw particles with smooth transitions
     particles.forEach(particle => {
+      ctx.save();
+      ctx.globalAlpha = particle.opacity;
+      
       if (particle.image) {
-        const size = particle.size * 5; // Adjust size for images
-        ctx.globalAlpha = 0.8;
+        const size = particle.size * 5;
+        ctx.translate(particle.x, particle.y);
+        ctx.rotate(particle.rotation);
         ctx.drawImage(
           particle.image,
-          particle.x - size/2,
-          particle.y - size/2,
+          -size/2,
+          -size/2,
           size,
           size
         );
-        ctx.globalAlpha = 1;
       } else {
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fillStyle = particle.color;
         ctx.fill();
       }
+      
+      ctx.restore();
     });
+
+    // Add subtle ripple effect
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 2;
+    const time = Date.now() / 1000;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(
+        canvas.width / 2,
+        canvas.height / 2,
+        50 + i * 30 + Math.sin(time + i) * 10,
+        0,
+        Math.PI * 2
+      );
+      ctx.stroke();
+    }
   };
 
   const endExperience = async () => {
@@ -231,7 +289,6 @@ const ZenGarden = () => {
     
     if (session?.user) {
       try {
-        // Calculate focus rating based on duration (max 10 for sessions >= 5 minutes)
         const focusRating = Math.min(Math.round((duration / 300) * 10), 10);
 
         const { error } = await supabase.from("energy_focus_logs").insert({
@@ -282,55 +339,61 @@ const ZenGarden = () => {
   }, []);
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-full">
-            <Flower className="h-5 w-5 text-primary" />
+            <Flower className={`h-5 w-5 text-primary ${isPlaying ? 'animate-pulse' : ''}`} />
           </div>
-          <h2 className="text-2xl font-bold">Zen Garden</h2>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Zen Garden
+          </h2>
         </div>
-        <div className="text-lg">
+        <div className="text-lg font-medium text-secondary">
           Time: {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
         </div>
       </div>
 
       <div className="flex flex-col items-center gap-4">
-        <canvas
-          ref={canvasRef}
-          width={800}
-          height={400}
-          className="border border-gray-200 rounded-lg w-full max-w-3xl bg-gradient-to-b from-[#faf5ff] to-[#f0f7ff]"
-        />
+        <div className="relative w-full">
+          <canvas
+            ref={canvasRef}
+            width={800}
+            height={400}
+            className="border border-primary/10 rounded-lg w-full max-w-3xl bg-gradient-to-b from-[#faf5ff] to-[#f0f7ff] shadow-lg"
+          />
+          {isPlaying && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/80 px-4 py-2 rounded-full shadow-md backdrop-blur-sm">
+              <span className="text-primary font-medium animate-pulse">
+                {breathPhase === 'inhale' ? 'Breathe In...' :
+                 breathPhase === 'hold' ? 'Hold...' :
+                 breathPhase === 'exhale' ? 'Breathe Out...' :
+                 'Relax...'}
+              </span>
+            </div>
+          )}
+        </div>
         
         {!isPlaying ? (
-          <>
-            <Button 
-              onClick={startExperience}
-              className="w-40"
-              disabled={isSubmitting || audioSupported === false || isLoadingAssets}
-            >
-              {isLoadingAssets ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                'Start Experience'
-              )}
-            </Button>
-            {audioSupported === false && (
-              <p className="text-destructive text-sm">
-                Audio input is not supported on your device or browser.
-                Please try using a different browser or device.
-              </p>
+          <Button 
+            onClick={startExperience}
+            className="w-40 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-all duration-300"
+            disabled={isSubmitting || audioSupported === false || isLoadingAssets}
+          >
+            {isLoadingAssets ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              'Start Experience'
             )}
-          </>
+          </Button>
         ) : (
           <Button 
             onClick={endExperience}
             variant="outline"
-            className="w-40"
+            className="w-40 border-primary/20 hover:bg-primary/5 transition-all duration-300"
             disabled={isSubmitting}
           >
             End Experience
@@ -338,9 +401,15 @@ const ZenGarden = () => {
         )}
       </div>
 
-      <div className="mt-6 text-sm text-muted-foreground">
-        Breathe deeply and watch as your breath creates a beautiful, dynamic garden.
-        Each breath brings new life and movement to your personal zen space.
+      <div className="mt-6 text-sm text-muted-foreground text-center max-w-2xl mx-auto">
+        <p className="mb-2">
+          Welcome to your personal Zen Garden. As you breathe, watch your garden come alive with
+          peaceful elements inspired by traditional Japanese gardens.
+        </p>
+        <p>
+          Each breath brings new life and movement to your space, creating a unique pattern of
+          tranquility. Take this moment to find your inner peace.
+        </p>
       </div>
     </Card>
   );

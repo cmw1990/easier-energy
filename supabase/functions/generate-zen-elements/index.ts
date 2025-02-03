@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -18,14 +17,15 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
     
-    console.log('Generating zen garden element...');
-    
     const prompts = [
-      "Create a minimalist Japanese zen garden element with soft pastel colors. A single, elegant stone or pebble with subtle shadows, rendered in a watercolor style with transparent background. Use muted tones of sage green, dusty rose, and lavender.",
+      "Create a minimalist Japanese zen garden stone in soft pastel colors. A single, elegant stone with subtle shadows, rendered in a watercolor style with transparent background. Use muted tones of sage green, dusty rose, and lavender.",
       "Design a delicate zen sand pattern in soft pastel colors, showing gentle ripples like those made by a rake in a Japanese rock garden. Use minimal lines in pale beige and cream tones, with a transparent background.",
       "Illustrate a simple zen garden bonsai tree in a minimalist style, using soft pastel colors. Show graceful branches with a few leaves, rendered in gentle strokes of pale pink and mint green against a transparent background.",
       "Create a minimal zen garden moss element in soft watercolor style, showing subtle texture and depth. Use gentle shades of sage and moss green with transparent background, perfect for digital layering.",
-      "Design a simple zen garden bamboo element in delicate pastel colors. Show a few elegant stalks with minimal leaves, using soft greens and pale gold tones, with a transparent background."
+      "Design a simple zen garden bamboo element in delicate pastel colors. Show a few elegant stalks with minimal leaves, using soft greens and pale gold tones, with a transparent background.",
+      "Illustrate a zen garden lantern in minimalist style, using soft pastel colors. Show simple geometric shapes with subtle glow effects, using gentle tones of warm gray and soft yellow against a transparent background.",
+      "Create a minimal zen garden bridge element in soft watercolor style. Show graceful curves and simple wooden texture, using warm browns and soft grays with transparent background.",
+      "Design a zen garden koi fish in delicate pastel colors. Show flowing, abstract forms suggesting movement, using soft pinks and blues with transparent background."
     ];
     
     // Randomly select a prompt
@@ -47,8 +47,14 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('OpenAI API error:', error);
+      throw new Error('Failed to generate zen element');
+    }
+
     const data = await response.json();
-    console.log('Successfully generated image');
+    console.log('Successfully generated zen element');
     
     return new Response(JSON.stringify({ image: data.data[0].b64_json }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
