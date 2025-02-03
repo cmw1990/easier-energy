@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { LocalNotifications, PendingLocalNotificationsResult } from '@capacitor/local-notifications';
 import { Motion } from '@capacitor/motion';
-import { Device } from '@capacitor/device';
+import { Device, DeviceInfo } from '@capacitor/device';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,7 +85,6 @@ export const SmartAlarm = () => {
   const [customSoundUrl, setCustomSoundUrl] = useState('');
   const [fallbackDevices, setFallbackDevices] = useState(true);
 
-  // New state variables for multiple alarms and pomodoro
   const [alarms, setAlarms] = useState<Array<{
     id: string;
     time: string;
@@ -100,14 +99,12 @@ export const SmartAlarm = () => {
 
   useEffect(() => {
     const checkNotificationPermissions = async () => {
-      const { display } = await Device.getInfo();
-      if (display === 'Unknown') {
-        // Web platform
+      const deviceInfo: DeviceInfo = await Device.getInfo();
+      if (deviceInfo.platform === 'web') {
         if ('Notification' in window) {
           await Notification.requestPermission();
         }
       } else {
-        // Mobile platform
         await LocalNotifications.requestPermissions();
       }
     };
@@ -118,9 +115,9 @@ export const SmartAlarm = () => {
 
   const loadSavedAlarms = async () => {
     try {
-      const { value } = await LocalNotifications.getPending();
-      if (value) {
-        const savedAlarms = value.map(notification => ({
+      const pendingResult: PendingLocalNotificationsResult = await LocalNotifications.getPending();
+      if (pendingResult.notifications) {
+        const savedAlarms = pendingResult.notifications.map(notification => ({
           id: notification.id.toString(),
           time: new Date(notification.schedule?.at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
           days: notification.extra?.days || [],
@@ -559,7 +556,6 @@ export const SmartAlarm = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Add new Alarms section */}
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Alarms</h3>
@@ -598,7 +594,6 @@ export const SmartAlarm = () => {
           </div>
         </div>
 
-        {/* Add Pomodoro Timer section */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Timer className="h-5 w-5" />
@@ -649,7 +644,6 @@ export const SmartAlarm = () => {
           )}
         </div>
 
-        {/* Keep existing sections */}
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="quick-actions">
             <AccordionTrigger>
