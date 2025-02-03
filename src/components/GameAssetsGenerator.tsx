@@ -42,18 +42,9 @@ export const GameAssetsGenerator = () => {
     setIsGenerating(true);
     try {
       const batches = [
-        'memory-cards',
-        'sequence-memory',
-        'visual-memory',
-        'pattern-match',
-        'color-match',
-        'word-scramble',
-        'math-speed',
-        'simon-says',
-        'speed-typing',
-        'pufferfish',
         'balloon',
-        'zen-drift'
+        'pufferfish',
+        'zen-garden'
       ];
       
       for (const batch of batches) {
