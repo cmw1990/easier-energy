@@ -7,8 +7,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Coffee } from "lucide-react";
+import { Coffee, Info } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+const CAFFEINE_REFERENCE = [
+  { name: "Coffee (8 oz)", amount: 95 },
+  { name: "Espresso (1 oz)", amount: 64 },
+  { name: "Black Tea (8 oz)", amount: 47 },
+  { name: "Green Tea (8 oz)", amount: 28 },
+  { name: "Energy Drink (8 oz)", amount: 80 },
+  { name: "Cola (12 oz)", amount: 34 },
+];
 
 const Caffeine = () => {
   const { session } = useAuth();
@@ -16,6 +30,7 @@ const Caffeine = () => {
   const queryClient = useQueryClient();
   const [amount, setAmount] = useState("");
   const [energyRating, setEnergyRating] = useState("");
+  const [consumedAt, setConsumedAt] = useState(new Date().toISOString().slice(0, 16));
 
   const { data: caffeineHistory } = useQuery({
     queryKey: ["caffeineHistory"],
@@ -48,7 +63,6 @@ const Caffeine = () => {
 
       if (error) throw error;
 
-      // Process data for the chart
       const processedData = data.map(log => ({
         date: new Date(log.created_at).toLocaleDateString(),
         amount: parseInt(log.activity_name.split(":")[1]),
@@ -61,13 +75,13 @@ const Caffeine = () => {
   });
 
   const logCaffeineMutation = useMutation({
-    mutationFn: async (values: { amount: string; energyRating: string }) => {
+    mutationFn: async (values: { amount: string; energyRating: string; consumedAt: string }) => {
       const { error } = await supabase.from("energy_focus_logs").insert({
         user_id: session?.user?.id,
         activity_type: "caffeine",
         activity_name: `Caffeine Intake: ${values.amount}mg`,
         energy_rating: parseInt(values.energyRating),
-        notes: `Consumed ${values.amount}mg of caffeine`,
+        created_at: values.consumedAt,
       });
 
       if (error) throw error;
@@ -81,6 +95,7 @@ const Caffeine = () => {
       });
       setAmount("");
       setEnergyRating("");
+      setConsumedAt(new Date().toISOString().slice(0, 16));
     },
     onError: (error) => {
       toast({
@@ -102,7 +117,7 @@ const Caffeine = () => {
       });
       return;
     }
-    logCaffeineMutation.mutate({ amount, energyRating });
+    logCaffeineMutation.mutate({ amount, energyRating, consumedAt });
   };
 
   return (
@@ -112,7 +127,29 @@ const Caffeine = () => {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Log Caffeine Intake</CardTitle>
+            <CardTitle className="flex items-center justify-between">
+              Log Caffeine Intake
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Common Caffeine Amounts</h4>
+                    <div className="grid gap-2">
+                      {CAFFEINE_REFERENCE.map((item) => (
+                        <div key={item.name} className="flex justify-between text-sm">
+                          <span>{item.name}</span>
+                          <span className="font-mono">{item.amount}mg</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -136,6 +173,15 @@ const Caffeine = () => {
                   placeholder="Rate your energy level"
                   value={energyRating}
                   onChange={(e) => setEnergyRating(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="consumedAt">Time Consumed</Label>
+                <Input
+                  id="consumedAt"
+                  type="datetime-local"
+                  value={consumedAt}
+                  onChange={(e) => setConsumedAt(e.target.value)}
                 />
               </div>
               <Button type="submit" className="w-full">
