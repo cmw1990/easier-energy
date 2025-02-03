@@ -11,29 +11,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { HealthConditionForm } from "@/components/health/HealthConditionForm";
 import { TailoredRecommendations } from "@/components/health/TailoredRecommendations";
 import { EnergyPatternAnalysis } from "@/components/health/EnergyPatternAnalysis";
+import { FocusExercises } from "@/components/health/FocusExercises";
+import { MoodOverview } from "@/components/MoodOverview";
 
 const Index = () => {
   const navigate = useNavigate();
   const { session } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [blockingAction, setBlockingAction] = useState<"block" | "allow">("block");
-
-  const { data: latestMood } = useQuery({
-    queryKey: ['latest-mood'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('mood_logs')
-        .select('*')
-        .eq('user_id', session?.user?.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!session?.user?.id,
-  });
 
   const { data: healthConditions } = useQuery({
     queryKey: ['health-conditions'],
@@ -79,10 +64,16 @@ const Index = () => {
       {healthConditions && (
         <>
           <div className="mb-8">
+            <MoodOverview />
+          </div>
+          <div className="mb-8">
             <TailoredRecommendations />
           </div>
           <div className="mb-8">
             <EnergyPatternAnalysis />
+          </div>
+          <div className="mb-8">
+            <FocusExercises />
           </div>
         </>
       )}
@@ -130,9 +121,11 @@ const Index = () => {
 
       <BlockingStats />
 
-      {/* Games Section */}
+      {/* Games Section - Adaptive based on health conditions */}
       <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Focus Games</h2>
+        <h2 className="text-2xl font-bold mb-4">
+          {healthConditions?.needs_focus_support ? 'Focus Training Games' : 'Focus Games'}
+        </h2>
         <div className="grid gap-6 md:grid-cols-3">
           <Card 
             className="p-6 hover:shadow-lg transition-shadow cursor-pointer" 
@@ -187,6 +180,7 @@ const Index = () => {
         </div>
       </div>
 
+      {/* Current State Card - Enhanced with condition context */}
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="p-6">
           <div className="flex flex-col items-center text-center space-y-4">
