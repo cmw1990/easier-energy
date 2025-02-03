@@ -14,12 +14,23 @@ import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
 import type { Square, Piece } from 'react-chessboard/dist/chessboard/types';
 
-type GameState = {
+type GameType = 'chess' | 'go' | 'checkers' | 'reversi' | 'xiangqi' | 'shogi' | 'gomoku' | 'connect_four' | 'tic_tac_toe';
+type GameStatus = 'in_progress' | 'completed';
+
+interface GameState {
   fen: string;
   history: string[];
-  status: 'in_progress' | 'completed';
+  status: GameStatus;
   winner: string | null;
-};
+}
+
+interface BoardGame {
+  game_type: GameType;
+  difficulty_level: number;
+  game_state: { fen: string };
+  status: GameStatus;
+  user_id: string | undefined;
+}
 
 const ChessGame = () => {
   const [game, setGame] = useState(new Chess());
@@ -48,12 +59,13 @@ const ChessGame = () => {
 
       if (existingGame) {
         const loadedGame = new Chess();
-        loadedGame.load(existingGame.game_state.fen);
+        const gameStateFen = existingGame.game_state as { fen: string };
+        loadedGame.load(gameStateFen.fen);
         setGame(loadedGame);
         setGameState({
-          fen: existingGame.game_state.fen,
-          history: existingGame.moves?.map(m => m.toString()) || [],
-          status: existingGame.status as 'in_progress' | 'completed',
+          fen: gameStateFen.fen,
+          history: (existingGame.moves as string[]) || [],
+          status: existingGame.status as GameStatus,
           winner: existingGame.winner,
         });
         setDifficulty(existingGame.difficulty_level.toString());
@@ -71,12 +83,13 @@ const ChessGame = () => {
   };
 
   const createNewGame = async () => {
-    const newGame = {
-      game_type: 'chess' as const,
+    const user = await supabase.auth.getUser();
+    const newGame: BoardGame = {
+      game_type: 'chess',
       difficulty_level: parseInt(difficulty),
       game_state: { fen: 'start' },
-      status: 'in_progress' as const,
-      user_id: (await supabase.auth.getUser()).data.user?.id,
+      status: 'in_progress',
+      user_id: user.data.user?.id,
     };
 
     try {
@@ -103,7 +116,7 @@ const ChessGame = () => {
     }
   };
 
-  const makeMove = async (move: any) => {
+  const makeMove = (move: any): boolean => {
     if (isThinking || gameState.status === 'completed') return false;
 
     try {
@@ -113,7 +126,7 @@ const ChessGame = () => {
       if (result === null) return false;
 
       setGame(gameCopy);
-      await updateGameState(gameCopy);
+      updateGameState(gameCopy);
 
       if (!gameCopy.isGameOver()) {
         setIsThinking(true);
@@ -194,7 +207,7 @@ const ChessGame = () => {
     }
   };
 
-  const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece) => {
+  const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece): boolean => {
     return makeMove({
       from: sourceSquare,
       to: targetSquare,
