@@ -9,6 +9,7 @@ import { Moon, Clock, Star, Brain } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SmartAlarm } from "@/components/sleep/SmartAlarm";
 import { SleepMetrics } from "@/components/sleep/SleepMetrics";
+import { StressScanner } from "@/components/sleep/StressScanner";
 import {
   LineChart,
   Line,
@@ -128,6 +129,8 @@ const Sleep = () => {
           </CardContent>
         </Card>
       </div>
+
+      <StressScanner />
 
       <Card>
         <CardHeader>
