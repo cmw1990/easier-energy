@@ -32,7 +32,10 @@ export const useGameAssets = (gameType: string) => {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
+      img.onerror = () => {
+        console.error(`Failed to load image from URL: ${url}`);
+        resolve(false);
+      };
       img.src = url;
     });
   };
@@ -43,13 +46,24 @@ export const useGameAssets = (gameType: string) => {
       const cached = assetCache[`${gameType}/${type}`];
       if (cached && isCacheValid(cached.timestamp)) {
         console.log(`Using cached asset for ${gameType}/${type}`);
-        return cached.url;
+        const isValid = await loadImage(cached.url);
+        if (isValid) {
+          return cached.url;
+        } else {
+          console.log(`Cached image invalid for ${gameType}/${type}, refetching...`);
+          delete assetCache[`${gameType}/${type}`];
+        }
       }
 
-      const { data: publicUrl } = await supabase
+      console.log(`Fetching asset for ${gameType}/${type}`);
+      const { data: publicUrl, error: urlError } = await supabase
         .storage
         .from('game-assets')
         .getPublicUrl(`${gameType}/${type}.png`);
+
+      if (urlError) {
+        throw urlError;
+      }
 
       if (!publicUrl.publicUrl) {
         throw new Error(`No public URL received for ${type}`);
@@ -69,15 +83,14 @@ export const useGameAssets = (gameType: string) => {
 
       return publicUrl.publicUrl;
     } catch (err) {
-      console.warn(`Error loading ${type}, attempt ${retryCount + 1}:`, err);
+      console.error(`Error loading ${type}, attempt ${retryCount + 1}:`, err);
       
-      // Retry logic with exponential backoff
-      if (retryCount < 3) {
+      if (retryCount < 2) {
         await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
         return fetchAsset(type, retryCount + 1);
       }
       
-      return null;
+      throw err;
     }
   };
 
@@ -93,17 +106,27 @@ export const useGameAssets = (gameType: string) => {
 
         await Promise.all(
           assetTypes.map(async (type) => {
-            const url = await fetchAsset(type);
-            if (url) {
-              loadedAssets[type] = {
-                url,
-                type,
-                loaded: true
-              };
-            } else {
+            try {
+              const url = await fetchAsset(type);
+              if (url) {
+                loadedAssets[type] = {
+                  url,
+                  type,
+                  loaded: true
+                };
+              } else {
+                failedCount++;
+                loadedAssets[type] = {
+                  url: '/placeholder.svg',
+                  type,
+                  loaded: false
+                };
+              }
+            } catch (assetError) {
+              console.error(`Failed to load ${type} asset:`, assetError);
               failedCount++;
               loadedAssets[type] = {
-                url: '/placeholder.svg', // Fallback image
+                url: '/placeholder.svg',
                 type,
                 loaded: false
               };
@@ -114,18 +137,22 @@ export const useGameAssets = (gameType: string) => {
         setAssets(loadedAssets);
         
         if (failedCount > 0) {
+          const message = `Some game assets failed to load. Try using the "Generate Game Assets" button in the top menu to fix this.`;
+          console.error(message);
           toast({
-            title: "Some Assets Failed to Load",
-            description: "Using fallback images where needed. Try using the Generate Game Assets button to fix this.",
+            title: "Missing Game Assets",
+            description: message,
             variant: "destructive",
           });
+          setError(message);
         }
       } catch (err) {
-        console.error('Error loading game assets:', err);
-        setError('Failed to load game assets');
+        const message = 'Failed to load game assets. Try using the "Generate Game Assets" button to fix this.';
+        console.error(message, err);
+        setError(message);
         toast({
           title: "Error Loading Game Assets",
-          description: "Please try using the Generate Game Assets button to fix this.",
+          description: message,
           variant: "destructive",
         });
       } finally {
@@ -142,12 +169,13 @@ export const useGameAssets = (gameType: string) => {
 const getAssetTypesForGame = async (gameType: string): Promise<string[]> => {
   switch (gameType) {
     case 'balloon':
-      return ['balloon', 'mountains', 'clouds', 'obstacles', 'background'];
+      return ['balloon', 'background'];
     case 'zen-drift':
-      return ['cars/car_1', 'cars/car_2', 'backgrounds/background_1', 'effects/effect_1'];
-    case 'zen-garden':
-      return ['stone', 'sand-pattern', 'bonsai', 'moss', 'bamboo', 'lantern', 'bridge', 'koi'];
+      return ['car', 'background', 'effects'];
+    case 'pufferfish':
+      return ['pufferfish', 'bubbles', 'coral', 'seaweed', 'smallFish', 'predator', 'background'];
     default:
+      console.warn(`No asset types defined for game type: ${gameType}`);
       return [];
   }
 };
