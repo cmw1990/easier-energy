@@ -6,32 +6,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-interface GameControlsProps {
-  onNewGame: () => void;
-  onUndo?: () => void;
-  onRedo?: () => void;
-  onSettings?: () => void;
-  canUndo?: boolean;
-  canRedo?: boolean;
-  difficulty?: string;
-  onDifficultyChange?: (value: string) => void;
-  className?: string;
-}
+import type { GameControls as GameControlsProps } from '@/types/boardGames';
+import { motion } from 'framer-motion';
 
 export const GameControls = ({
   onNewGame,
   onUndo,
   onRedo,
-  onSettings,
-  canUndo = false,
-  canRedo = false,
   difficulty,
   onDifficultyChange,
   className = '',
 }: GameControlsProps) => {
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <motion.div 
+      className={`flex items-center gap-2 ${className}`}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <Button 
         onClick={onNewGame} 
         variant="outline" 
@@ -47,7 +39,6 @@ export const GameControls = ({
           onClick={onUndo} 
           variant="outline" 
           size="sm"
-          disabled={!canUndo}
           className="transition-opacity"
         >
           <Undo className="h-4 w-4 mr-2" />
@@ -60,7 +51,6 @@ export const GameControls = ({
           onClick={onRedo} 
           variant="outline" 
           size="sm"
-          disabled={!canRedo}
           className="transition-opacity"
         >
           <Redo className="h-4 w-4 mr-2" />
@@ -89,6 +79,6 @@ export const GameControls = ({
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-    </div>
+    </motion.div>
   );
 };

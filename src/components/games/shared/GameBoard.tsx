@@ -1,34 +1,28 @@
 import { cn } from '@/lib/utils';
-
-interface GameBoardProps {
-  rows: number;
-  cols: number;
-  renderCell: (row: number, col: number) => React.ReactNode;
-  onCellClick?: (row: number, col: number) => void;
-  className?: string;
-  cellClassName?: string;
-  boardClassName?: string;
-  highlightedCells?: [number, number][];
-  lastMove?: [number, number];
-}
+import type { BoardProps } from '@/types/boardGames';
+import { motion } from 'framer-motion';
 
 export const GameBoard = ({
   rows,
   cols,
-  renderCell,
+  board,
   onCellClick,
-  className = '',
-  cellClassName = '',
-  boardClassName = '',
-  highlightedCells = [],
+  selectedPosition,
+  validMoves = [],
   lastMove,
-}: GameBoardProps) => {
+  renderCell,
+  className = '',
+}: BoardProps) => {
   const isHighlighted = (row: number, col: number) => {
-    return highlightedCells.some(([r, c]) => r === row && c === col);
+    return validMoves.some(([r, c]) => r === row && c === col);
   };
 
   const isLastMove = (row: number, col: number) => {
     return lastMove && lastMove[0] === row && lastMove[1] === col;
+  };
+
+  const isSelected = (row: number, col: number) => {
+    return selectedPosition && selectedPosition[0] === row && selectedPosition[1] === col;
   };
 
   return (
@@ -36,24 +30,25 @@ export const GameBoard = ({
       <div 
         className={cn(
           "grid gap-0.5 bg-gray-700 p-0.5 absolute inset-0",
-          `grid-cols-${cols}`,
-          boardClassName
+          `grid-cols-${cols}`
         )}
       >
-        {Array.from({ length: rows }, (_, row) =>
-          Array.from({ length: cols }, (_, col) => (
-            <div
-              key={`${row}-${col}`}
+        {board.map((row, rowIndex) =>
+          row.map((cell, colIndex) => (
+            <motion.div
+              key={`${rowIndex}-${colIndex}`}
               className={cn(
-                "relative transition-all duration-200",
-                cellClassName,
-                isHighlighted(row, col) && "ring-2 ring-yellow-400",
-                isLastMove(row, col) && "ring-2 ring-blue-400"
+                "relative transition-colors duration-200",
+                isSelected(rowIndex, colIndex) && "ring-2 ring-blue-400",
+                isHighlighted(rowIndex, colIndex) && "ring-2 ring-green-400",
+                isLastMove(rowIndex, colIndex) && "ring-2 ring-yellow-400"
               )}
-              onClick={() => onCellClick?.(row, col)}
+              onClick={() => onCellClick(rowIndex, colIndex)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {renderCell(row, col)}
-            </div>
+              {renderCell(rowIndex, colIndex)}
+            </motion.div>
           ))
         )}
       </div>
