@@ -45,6 +45,7 @@ serve(async (req) => {
 
     console.log('Starting Zen Drift assets generation...')
     const assets: { [key: string]: string } = {}
+    const errors: string[] = []
 
     // Generate cars
     for (let i = 0; i < carPrompts.length; i++) {
@@ -69,23 +70,25 @@ serve(async (req) => {
         if (!response.ok) {
           const errorData = await response.json();
           console.error(`OpenAI API error for car ${i + 1}:`, errorData);
-          throw new Error(`OpenAI API returned ${response.status}: ${JSON.stringify(errorData)}`);
+          errors.push(`Car ${i + 1}: OpenAI API error - ${errorData.error?.message || 'Unknown error'}`);
+          continue;
         }
 
         const data = await response.json()
         console.log(`OpenAI response for car ${i + 1}:`, data);
 
         if (!data.data?.[0]?.url) {
-          throw new Error(`No image URL in OpenAI response for car ${i + 1}`);
+          errors.push(`Car ${i + 1}: No image URL in OpenAI response`);
+          continue;
         }
 
         const imageUrl = data.data[0].url
         const imageName = `car_${i + 1}.png`
         
-        // Download image and upload to Supabase Storage
         const imageResponse = await fetch(imageUrl)
         if (!imageResponse.ok) {
-          throw new Error(`Failed to download image for car ${i + 1}`);
+          errors.push(`Car ${i + 1}: Failed to download image`);
+          continue;
         }
 
         const imageBlob = await imageResponse.blob()
@@ -100,7 +103,8 @@ serve(async (req) => {
 
         if (uploadError) {
           console.error(`Upload error for car ${i + 1}:`, uploadError);
-          throw uploadError;
+          errors.push(`Car ${i + 1}: Upload failed - ${uploadError.message}`);
+          continue;
         }
         
         const { data: { publicUrl } } = supabase
@@ -112,16 +116,8 @@ serve(async (req) => {
         console.log(`Successfully generated and uploaded car ${i + 1}`);
       } catch (carError) {
         console.error(`Error processing car ${i + 1}:`, carError);
-        return new Response(
-          JSON.stringify({ 
-            status: 'error',
-            message: `Error processing car ${i + 1}: ${carError.message}` 
-          }),
-          { 
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          }
-        );
+        errors.push(`Car ${i + 1}: ${carError.message}`);
+        continue;
       }
     }
 
@@ -148,14 +144,16 @@ serve(async (req) => {
         if (!response.ok) {
           const errorData = await response.json();
           console.error(`OpenAI API error for background ${i + 1}:`, errorData);
-          throw new Error(`OpenAI API returned ${response.status}: ${JSON.stringify(errorData)}`);
+          errors.push(`Background ${i + 1}: OpenAI API error - ${errorData.error?.message || 'Unknown error'}`);
+          continue;
         }
 
         const data = await response.json()
         console.log(`OpenAI response for background ${i + 1}:`, data);
 
         if (!data.data?.[0]?.url) {
-          throw new Error(`No image URL in OpenAI response for background ${i + 1}`);
+          errors.push(`Background ${i + 1}: No image URL in OpenAI response`);
+          continue;
         }
 
         const imageUrl = data.data[0].url
@@ -163,7 +161,8 @@ serve(async (req) => {
         
         const imageResponse = await fetch(imageUrl)
         if (!imageResponse.ok) {
-          throw new Error(`Failed to download image for background ${i + 1}`);
+          errors.push(`Background ${i + 1}: Failed to download image`);
+          continue;
         }
 
         const imageBlob = await imageResponse.blob()
@@ -178,7 +177,8 @@ serve(async (req) => {
 
         if (uploadError) {
           console.error(`Upload error for background ${i + 1}:`, uploadError);
-          throw uploadError;
+          errors.push(`Background ${i + 1}: Upload failed - ${uploadError.message}`);
+          continue;
         }
         
         const { data: { publicUrl } } = supabase
@@ -190,16 +190,8 @@ serve(async (req) => {
         console.log(`Successfully generated and uploaded background ${i + 1}`);
       } catch (backgroundError) {
         console.error(`Error processing background ${i + 1}:`, backgroundError);
-        return new Response(
-          JSON.stringify({ 
-            status: 'error',
-            message: `Error processing background ${i + 1}: ${backgroundError.message}` 
-          }),
-          { 
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          }
-        );
+        errors.push(`Background ${i + 1}: ${backgroundError.message}`);
+        continue;
       }
     }
 
@@ -226,14 +218,16 @@ serve(async (req) => {
         if (!response.ok) {
           const errorData = await response.json();
           console.error(`OpenAI API error for effect ${i + 1}:`, errorData);
-          throw new Error(`OpenAI API returned ${response.status}: ${JSON.stringify(errorData)}`);
+          errors.push(`Effect ${i + 1}: OpenAI API error - ${errorData.error?.message || 'Unknown error'}`);
+          continue;
         }
 
         const data = await response.json()
         console.log(`OpenAI response for effect ${i + 1}:`, data);
 
         if (!data.data?.[0]?.url) {
-          throw new Error(`No image URL in OpenAI response for effect ${i + 1}`);
+          errors.push(`Effect ${i + 1}: No image URL in OpenAI response`);
+          continue;
         }
 
         const imageUrl = data.data[0].url
@@ -241,7 +235,8 @@ serve(async (req) => {
         
         const imageResponse = await fetch(imageUrl)
         if (!imageResponse.ok) {
-          throw new Error(`Failed to download image for effect ${i + 1}`);
+          errors.push(`Effect ${i + 1}: Failed to download image`);
+          continue;
         }
 
         const imageBlob = await imageResponse.blob()
@@ -256,7 +251,8 @@ serve(async (req) => {
 
         if (uploadError) {
           console.error(`Upload error for effect ${i + 1}:`, uploadError);
-          throw uploadError;
+          errors.push(`Effect ${i + 1}: Upload failed - ${uploadError.message}`);
+          continue;
         }
         
         const { data: { publicUrl } } = supabase
@@ -268,29 +264,39 @@ serve(async (req) => {
         console.log(`Successfully generated and uploaded effect ${i + 1}`);
       } catch (effectError) {
         console.error(`Error processing effect ${i + 1}:`, effectError);
-        return new Response(
-          JSON.stringify({ 
-            status: 'error',
-            message: `Error processing effect ${i + 1}: ${effectError.message}` 
-          }),
-          { 
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          }
-        );
+        errors.push(`Effect ${i + 1}: ${effectError.message}`);
+        continue;
       }
     }
 
-    console.log('Asset generation completed successfully!')
+    // If we have any assets generated, consider it a partial success
+    if (Object.keys(assets).length > 0) {
+      console.log('Asset generation completed with some assets generated successfully!')
+      return new Response(
+        JSON.stringify({ 
+          status: 'success',
+          message: errors.length > 0 ? 'Generated some Zen Drift assets with errors' : 'Generated all Zen Drift assets successfully',
+          assets,
+          errors: errors.length > 0 ? errors : undefined
+        }),
+        { 
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    // If no assets were generated, return an error
+    console.error('No assets were generated successfully');
     return new Response(
       JSON.stringify({ 
-        status: 'success',
-        message: 'Generated all Zen Drift assets successfully',
-        assets 
+        status: 'error',
+        message: 'Failed to generate any assets',
+        errors 
       }),
       { 
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
 
