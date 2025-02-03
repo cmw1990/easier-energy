@@ -12,6 +12,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
+import type { Square, Piece } from 'react-chessboard/dist/chessboard/types';
 
 type GameState = {
   fen: string;
@@ -38,12 +39,12 @@ const ChessGame = () => {
 
   const loadOrCreateGame = async () => {
     try {
-      const { data: existingGame } = await supabase
+      const { data: existingGame, error } = await supabase
         .from('board_games')
         .select('*')
         .eq('game_type', 'chess')
         .eq('status', 'in_progress')
-        .single();
+        .maybeSingle();
 
       if (existingGame) {
         const loadedGame = new Chess();
@@ -51,13 +52,13 @@ const ChessGame = () => {
         setGame(loadedGame);
         setGameState({
           fen: existingGame.game_state.fen,
-          history: existingGame.moves || [],
-          status: existingGame.status,
+          history: existingGame.moves?.map(m => m.toString()) || [],
+          status: existingGame.status as 'in_progress' | 'completed',
           winner: existingGame.winner,
         });
         setDifficulty(existingGame.difficulty_level.toString());
       } else {
-        createNewGame();
+        await createNewGame();
       }
     } catch (error) {
       console.error('Error loading game:', error);
@@ -71,14 +72,18 @@ const ChessGame = () => {
 
   const createNewGame = async () => {
     const newGame = {
-      game_type: 'chess',
+      game_type: 'chess' as const,
       difficulty_level: parseInt(difficulty),
       game_state: { fen: 'start' },
-      status: 'in_progress',
+      status: 'in_progress' as const,
+      user_id: (await supabase.auth.getUser()).data.user?.id,
     };
 
     try {
-      const { error } = await supabase.from('board_games').insert([newGame]);
+      const { error } = await supabase
+        .from('board_games')
+        .insert([newGame]);
+      
       if (error) throw error;
       
       setGame(new Chess());
@@ -133,7 +138,6 @@ const ChessGame = () => {
       }
 
       // Simple AI: Random legal move for now
-      // TODO: Implement minimax algorithm with different difficulty levels
       const randomMove = moves[Math.floor(Math.random() * moves.length)];
       const gameCopy = new Chess(currentGame.fen());
       gameCopy.move(randomMove);
@@ -148,7 +152,7 @@ const ChessGame = () => {
   };
 
   const updateGameState = async (currentGame: Chess) => {
-    const newGameState = {
+    const newGameState: GameState = {
       fen: currentGame.fen(),
       history: gameState.history.concat(currentGame.fen()),
       status: currentGame.isGameOver() ? 'completed' : 'in_progress',
@@ -191,14 +195,12 @@ const ChessGame = () => {
     }
   };
 
-  const onDrop = (sourceSquare: string, targetSquare: string) => {
-    const move = makeMove({
+  const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece) => {
+    return makeMove({
       from: sourceSquare,
       to: targetSquare,
       promotion: 'q', // Always promote to queen for simplicity
     });
-
-    return move;
   };
 
   return (
