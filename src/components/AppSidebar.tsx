@@ -1,4 +1,4 @@
-import { Brain, Coffee, Heart, Moon, Battery, AlarmClock } from "lucide-react";
+import { Battery, Coffee, Heart, Moon, Brain, AlarmClock } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -9,7 +9,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const menuItems = [
   { title: "Dashboard", icon: Battery, path: "/" },
@@ -21,17 +22,24 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
+  const location = useLocation();
+  const isMobile = useIsMobile();
+
   return (
-    <Sidebar>
+    <Sidebar variant={isMobile ? "floating" : "sidebar"}>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>The Well-Charged</SidebarGroupLabel>
+          <SidebarGroupLabel className="hidden md:flex">The Well-Charged</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link to={item.path} className="flex items-center gap-2">
+                    <Link 
+                      to={item.path} 
+                      className="flex items-center gap-2"
+                      data-active={location.pathname === item.path}
+                    >
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </Link>
