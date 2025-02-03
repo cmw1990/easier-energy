@@ -3,6 +3,7 @@ import { Brain, Puzzle, Book } from "lucide-react";
 import MemoryCards from "@/components/games/MemoryCards";
 import SequenceMemory from "@/components/games/SequenceMemory";
 import VisualMemory from "@/components/games/VisualMemory";
+import WordMemoryChain from "@/components/games/WordMemoryChain";
 
 export const FocusExercises = () => {
   return (
@@ -19,6 +20,7 @@ export const FocusExercises = () => {
             <MemoryCards />
             <SequenceMemory />
             <VisualMemory />
+            <WordMemoryChain />
           </div>
         </CardContent>
       </Card>
