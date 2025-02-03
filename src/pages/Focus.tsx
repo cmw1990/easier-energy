@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
+import { Brain } from "lucide-react";
 
 const Focus = () => {
   const [isActive, setIsActive] = useState(false);
@@ -11,6 +12,7 @@ const Focus = () => {
   const [timeLeft, setTimeLeft] = useState(30);
   const [targets, setTargets] = useState<number[]>([]);
   const [currentTarget, setCurrentTarget] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { session } = useAuth();
 
@@ -59,10 +61,11 @@ const Focus = () => {
 
   const endTest = async () => {
     setIsActive(false);
+    setIsSubmitting(true);
     
     if (session?.user) {
       try {
-        await supabase.from("energy_focus_logs").insert({
+        const { error } = await supabase.from("energy_focus_logs").insert({
           user_id: session.user.id,
           activity_type: "focus_test",
           activity_name: "Number Sequence",
@@ -72,12 +75,21 @@ const Focus = () => {
           notes: `Completed focus test with score: ${score}`
         });
 
+        if (error) throw error;
+
         toast({
           title: "Test Complete!",
           description: `Your score: ${score}. Great job!`,
         });
       } catch (error) {
         console.error("Error logging focus test:", error);
+        toast({
+          title: "Error Saving Results",
+          description: "There was a problem saving your test results.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -85,7 +97,12 @@ const Focus = () => {
   return (
     <div className="container max-w-2xl mx-auto space-y-6 p-4">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <h1 className="text-3xl font-bold">Focus Test</h1>
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-full">
+            <Brain className="h-5 w-5 text-primary" />
+          </div>
+          <h1 className="text-3xl font-bold">Focus Test</h1>
+        </div>
         <div className="flex items-center gap-4">
           <div className="text-lg font-medium">Score: {score}</div>
           <div className="text-lg font-medium">Time: {timeLeft}s</div>
@@ -99,8 +116,10 @@ const Focus = () => {
               key={`${number}-${index}`}
               onClick={() => handleNumberClick(number)}
               variant={number === currentTarget ? "default" : "outline"}
-              className="h-16 text-xl font-bold"
-              disabled={!isActive || number !== currentTarget}
+              className={`h-16 text-xl font-bold transition-all ${
+                number === currentTarget ? 'ring-2 ring-primary ring-offset-2' : ''
+              } ${!isActive || number !== currentTarget ? 'opacity-80' : ''}`}
+              disabled={!isActive || number !== currentTarget || isSubmitting}
             >
               {number}
             </Button>
@@ -113,6 +132,7 @@ const Focus = () => {
               onClick={startTest} 
               className="w-full" 
               size="lg"
+              disabled={isSubmitting}
             >
               Start Test
             </Button>
@@ -122,6 +142,7 @@ const Focus = () => {
               onClick={endTest} 
               className="w-full"
               size="lg"
+              disabled={isSubmitting}
             >
               End Test
             </Button>
