@@ -13,34 +13,33 @@ serve(async (req) => {
   }
 
   try {
-    // Parse request body
-    const requestData = await req.json();
-    console.log('Received request data:', requestData);
+    const requestData = await req.json()
+    console.log('Received request data:', requestData)
 
-    const { batch } = requestData;
+    const { batch } = requestData
     
     if (!batch) {
-      console.error('Missing batch parameter');
+      console.error('Missing batch parameter')
       return new Response(
         JSON.stringify({ error: 'Missing batch parameter' }),
         { 
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
-      );
+      )
     }
 
-    console.log(`Processing batch: ${batch}`);
+    console.log(`Processing batch: ${batch}`)
 
     if (!GAME_ASSETS_CONFIG[batch]) {
-      console.error(`Invalid batch type: ${batch}`);
+      console.error(`Invalid batch type: ${batch}`)
       return new Response(
         JSON.stringify({ error: `Invalid batch type: ${batch}` }),
         { 
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
-      );
+      )
     }
 
     const supabaseClient = createClient(
@@ -49,23 +48,23 @@ serve(async (req) => {
     )
 
     // Verify OpenAI API key is set
-    const openAIKey = Deno.env.get('OPENAI_API_KEY');
+    const openAIKey = Deno.env.get('OPENAI_API_KEY')
     if (!openAIKey) {
-      console.error('OpenAI API key not configured');
+      console.error('OpenAI API key not configured')
       return new Response(
         JSON.stringify({ error: 'OpenAI API key is not configured' }),
         { 
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
-      );
+      )
     }
 
-    const assets = GAME_ASSETS_CONFIG[batch];
-    const generatedAssets = [];
+    const assets = GAME_ASSETS_CONFIG[batch]
+    const generatedAssets = []
 
     for (const asset of assets) {
-      console.log(`Generating asset: ${asset.name} for batch: ${batch}`);
+      console.log(`Generating asset: ${asset.name} for batch: ${batch}`)
       
       try {
         const openAIResponse = await fetch('https://api.openai.com/v1/images/generations', {
@@ -81,69 +80,69 @@ serve(async (req) => {
             size: "1024x1024",
             response_format: "url"
           })
-        });
+        })
 
         if (!openAIResponse.ok) {
-          const errorData = await openAIResponse.json();
-          console.error('OpenAI API error:', errorData);
-          throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
+          const errorData = await openAIResponse.json()
+          console.error('OpenAI API error:', errorData)
+          throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`)
         }
 
-        const data = await openAIResponse.json();
-        console.log('OpenAI response:', data);
+        const data = await openAIResponse.json()
+        console.log('OpenAI response:', data)
         
         if (!data.data?.[0]?.url) {
-          throw new Error(`No image URL received for ${asset.name}`);
+          throw new Error(`No image URL received for ${asset.name}`)
         }
 
-        const imageUrl = data.data[0].url;
-        console.log(`Successfully generated image for ${asset.name}`);
+        const imageUrl = data.data[0].url
+        console.log(`Successfully generated image for ${asset.name}`)
 
         // Download the image
-        const imageResponse = await fetch(imageUrl);
+        const imageResponse = await fetch(imageUrl)
         if (!imageResponse.ok) {
-          throw new Error(`Failed to download image for ${asset.name}`);
+          throw new Error(`Failed to download image for ${asset.name}`)
         }
         
-        const imageBlob = await imageResponse.blob();
-        console.log(`Downloaded image for ${asset.name}, size: ${imageBlob.size} bytes`);
+        const imageBlob = await imageResponse.blob()
+        console.log(`Downloaded image for ${asset.name}, size: ${imageBlob.size} bytes`)
 
         // Upload to Supabase Storage
-        const filePath = `${batch}/${asset.name}.png`;
+        const filePath = `${batch}/${asset.name}.png`
         const { data: uploadData, error: uploadError } = await supabaseClient
           .storage
           .from('game-assets')
           .upload(filePath, imageBlob, {
             contentType: 'image/png',
             upsert: true
-          });
+          })
 
         if (uploadError) {
-          console.error(`Upload error for ${asset.name}:`, uploadError);
-          throw uploadError;
+          console.error(`Upload error for ${asset.name}:`, uploadError)
+          throw uploadError
         }
 
-        console.log(`Successfully uploaded ${asset.name} to storage`);
+        console.log(`Successfully uploaded ${asset.name} to storage`)
 
         // Get the public URL
         const { data: { publicUrl } } = supabaseClient
           .storage
           .from('game-assets')
-          .getPublicUrl(filePath);
+          .getPublicUrl(filePath)
 
         generatedAssets.push({
           name: asset.name,
           url: publicUrl
-        });
+        })
 
-        console.log(`Successfully processed ${asset.name}`);
+        console.log(`Successfully processed ${asset.name}`)
         
         // Add a small delay between generations to avoid rate limits
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000))
 
       } catch (error) {
-        console.error(`Error generating ${asset.name}:`, error);
-        throw error;
+        console.error(`Error generating ${asset.name}:`, error)
+        throw error
       }
     }
 
@@ -153,6 +152,7 @@ serve(async (req) => {
         assets: generatedAssets 
       }),
       { 
+        status: 200,
         headers: { 
           ...corsHeaders, 
           'Content-Type': 'application/json' 
@@ -161,7 +161,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error in edge function:', error);
+    console.error('Error in edge function:', error)
     return new Response(
       JSON.stringify({ 
         error: error.message || 'Internal server error',

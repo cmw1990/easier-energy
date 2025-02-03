@@ -67,7 +67,7 @@ export const GameAssetsGenerator = () => {
               }
             }
           );
-          
+
           if (error) {
             console.error(`Error generating ${batch} assets:`, error);
             toast({
@@ -75,7 +75,7 @@ export const GameAssetsGenerator = () => {
               description: error.message || 'Unknown error occurred',
               variant: 'destructive',
             });
-            continue; // Continue with next batch even if this one fails
+            continue;
           }
           
           console.log(`${batch} generation response:`, data);
@@ -83,10 +83,8 @@ export const GameAssetsGenerator = () => {
           toast({
             title: 'Success',
             description: `Generated assets for ${batch}`,
-            variant: 'default',
           });
           
-          // Wait between batches to avoid resource limits
           if (batch !== batches[batches.length - 1]) {
             await new Promise(resolve => setTimeout(resolve, 5000));
           }
@@ -97,20 +95,19 @@ export const GameAssetsGenerator = () => {
             description: batchError.message || 'Failed to process batch',
             variant: 'destructive',
           });
-          continue; // Continue with next batch even if this one fails
+          continue;
         }
       }
       
       toast({
         title: 'Success!',
         description: 'Game assets generation completed!',
-        variant: 'default',
       });
     } catch (error) {
       console.error('Error generating game assets:', error);
       toast({
         title: 'Error',
-        description: error.message || 'Failed to generate game assets. Check console for details.',
+        description: error.message || 'Failed to generate game assets',
         variant: 'destructive',
       });
     } finally {
