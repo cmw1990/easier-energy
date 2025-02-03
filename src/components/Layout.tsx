@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Activity, User, Ban } from "lucide-react";
+import { Activity, User } from "lucide-react";
+import { Toolbar } from "@/components/ui/toolbar/Toolbar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,11 +44,6 @@ export const Layout = ({ children }: LayoutProps) => {
     }
   };
 
-  const menuItems = [
-    { icon: <Activity className="h-5 w-5" />, label: "Dashboard", path: "/" },
-    { icon: <Ban className="h-5 w-5" />, label: "Block Distractions", path: "/distraction-blocker" },
-  ];
-
   if (!session) {
     return <div className="min-h-screen">{children}</div>;
   }
@@ -57,25 +53,28 @@ export const Layout = ({ children }: LayoutProps) => {
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
         <main className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="flex items-center gap-2">
-              <Activity className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold">Energy Dashboard</h1>
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+              <div className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-primary" />
+                <h1 className="text-xl font-semibold">Energy Dashboard</h1>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <User className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Toolbar />
           </div>
           <div className="flex-1 overflow-auto p-4 md:p-6 space-y-6">
             {children}
