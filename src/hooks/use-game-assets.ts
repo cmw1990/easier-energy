@@ -56,32 +56,28 @@ export const useGameAssets = (gameType: string) => {
       }
 
       console.log(`Fetching asset for ${gameType}/${type}`);
-      const { data: publicUrl, error: urlError } = await supabase
+      const { data: urlData } = await supabase
         .storage
         .from('game-assets')
         .getPublicUrl(`${gameType}/${type}.png`);
 
-      if (urlError) {
-        throw urlError;
-      }
-
-      if (!publicUrl.publicUrl) {
+      if (!urlData?.publicUrl) {
         throw new Error(`No public URL received for ${type}`);
       }
 
       // Pre-load image
-      const loaded = await loadImage(publicUrl.publicUrl);
+      const loaded = await loadImage(urlData.publicUrl);
       if (!loaded) {
         throw new Error(`Failed to load image for ${type}`);
       }
 
       // Update cache
       assetCache[`${gameType}/${type}`] = {
-        url: publicUrl.publicUrl,
+        url: urlData.publicUrl,
         timestamp: Date.now()
       };
 
-      return publicUrl.publicUrl;
+      return urlData.publicUrl;
     } catch (err) {
       console.error(`Error loading ${type}, attempt ${retryCount + 1}:`, err);
       
