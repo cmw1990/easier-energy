@@ -10,6 +10,9 @@ import PatternMatch from "@/components/games/PatternMatch";
 import WordScramble from "@/components/games/WordScramble";
 import ColorMatch from "@/components/games/ColorMatch";
 import MathSpeed from "@/components/games/MathSpeed";
+import SimonSays from "@/components/games/SimonSays";
+import SpeedTyping from "@/components/games/SpeedTyping";
+import VisualMemory from "@/components/games/VisualMemory";
 
 const NumberSequence = () => {
   const [isActive, setIsActive] = useState(false);
@@ -177,6 +180,9 @@ const Focus = () => {
         <WordScramble />
         <ColorMatch />
         <MathSpeed />
+        <SimonSays />
+        <SpeedTyping />
+        <VisualMemory />
       </div>
 
       <Card className="p-6">
@@ -188,6 +194,9 @@ const Focus = () => {
           <li>• <strong>Word Scramble:</strong> Enhance vocabulary and mental agility by unscrambling words</li>
           <li>• <strong>Color Match:</strong> Test your reaction time and cognitive flexibility with color-word matching</li>
           <li>• <strong>Math Speed:</strong> Sharpen your mental math skills with quick calculations</li>
+          <li>• <strong>Simon Says:</strong> Test your memory and sequence recall with color patterns</li>
+          <li>• <strong>Speed Typing:</strong> Improve typing speed and accuracy while maintaining focus</li>
+          <li>• <strong>Visual Memory:</strong> Enhance spatial memory by remembering grid patterns</li>
           <li>• All results are saved to track your progress over time</li>
           <li>• Regular practice can help improve concentration and cognitive function</li>
         </ul>
