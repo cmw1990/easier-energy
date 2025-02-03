@@ -274,3 +274,5 @@ const BalloonJourney = () => {
     </Card>
   );
 };
+
+export default BalloonJourney;
