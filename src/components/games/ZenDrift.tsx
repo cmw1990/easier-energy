@@ -18,6 +18,7 @@ export const ZenDrift = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isLoadingAssets, setIsLoadingAssets] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [assets, setAssets] = useState<GameAsset[]>([]);
   const { toast } = useToast();
   
@@ -62,75 +63,66 @@ export const ZenDrift = () => {
   const loadAssets = async () => {
     try {
       setIsLoadingAssets(true);
+      setLoadingProgress(0);
       const newAssets: GameAsset[] = [];
+      let totalAssets = 24; // 8 of each type
+      let loadedAssets = 0;
       
-      // Load cars
-      for (let i = 1; i <= 8; i++) {
-        const { data: { publicUrl } } = supabase.storage
-          .from('game-assets')
-          .getPublicUrl(`zen-drift/cars/car_${i}.png`);
-          
-        if (publicUrl) {
-          const img = new Image();
-          img.src = publicUrl;
-          await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
-          });
-          newAssets.push({ type: 'car', image: img, index: i - 1 });
-        }
-      }
+      const assetTypes = [
+        { type: 'car', count: 8 },
+        { type: 'background', count: 8 },
+        { type: 'effect', count: 8 }
+      ];
 
-      // Load backgrounds
-      for (let i = 1; i <= 8; i++) {
-        const { data: { publicUrl } } = supabase.storage
-          .from('game-assets')
-          .getPublicUrl(`zen-drift/backgrounds/background_${i}.png`);
-          
-        if (publicUrl) {
-          const img = new Image();
-          img.src = publicUrl;
-          await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
-          });
-          newAssets.push({ type: 'background', image: img, index: i - 1 });
-        }
-      }
-
-      // Load effects
-      for (let i = 1; i <= 8; i++) {
-        const { data: { publicUrl } } = supabase.storage
-          .from('game-assets')
-          .getPublicUrl(`zen-drift/effects/effect_${i}.png`);
-          
-        if (publicUrl) {
-          const img = new Image();
-          img.src = publicUrl;
-          await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
-          });
-          newAssets.push({ type: 'effect', image: img, index: i - 1 });
+      for (const { type, count } of assetTypes) {
+        for (let i = 1; i <= count; i++) {
+          try {
+            const { data: { publicUrl } } = supabase.storage
+              .from('game-assets')
+              .getPublicUrl(`zen-drift/${type}s/${type}_${i}.png`);
+              
+            if (publicUrl) {
+              const img = new Image();
+              img.src = publicUrl;
+              await new Promise((resolve, reject) => {
+                img.onload = () => {
+                  loadedAssets++;
+                  setLoadingProgress(Math.round((loadedAssets / totalAssets) * 100));
+                  resolve(true);
+                };
+                img.onerror = () => {
+                  console.error(`Failed to load ${type}_${i}.png`);
+                  reject(new Error(`Failed to load ${type}_${i}.png`));
+                };
+              });
+              newAssets.push({ type: type as 'car' | 'background' | 'effect', image: img, index: i - 1 });
+            }
+          } catch (error) {
+            console.error(`Error loading ${type}_${i}:`, error);
+            // Continue loading other assets even if one fails
+          }
         }
       }
 
       if (newAssets.length === 0) {
-        toast({
-          title: "No Assets Found",
-          description: "Please generate game assets first using the Generate Assets button.",
-          variant: "destructive",
-        });
-        return;
+        throw new Error("No assets were loaded successfully");
       }
 
       setAssets(newAssets);
       console.log(`Loaded ${newAssets.length} assets successfully`);
+      
+      // Only show success toast if we loaded at least some assets
+      if (newAssets.length > 0) {
+        toast({
+          title: "Assets Loaded",
+          description: `Successfully loaded ${newAssets.length} game assets.`,
+        });
+      }
     } catch (error) {
       console.error('Error loading assets:', error);
       toast({
         title: "Error Loading Assets",
-        description: "Please try generating the assets again.",
+        description: "Please try generating the assets first using the Generate Assets button.",
         variant: "destructive",
       });
     } finally {
@@ -467,8 +459,14 @@ export const ZenDrift = () => {
         
         <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-primary/20 shadow-lg">
           {isLoadingAssets && (
-            <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-              <div className="text-primary animate-pulse">Loading assets...</div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
+              <div className="text-primary mb-2">Loading assets... {loadingProgress}%</div>
+              <div className="w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-primary transition-all duration-300"
+                  style={{ width: `${loadingProgress}%` }}
+                />
+              </div>
             </div>
           )}
           <canvas
