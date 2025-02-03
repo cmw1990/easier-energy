@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
-import { cn } from "@/lib/utils";
+import GomokuBoard from './gomoku/GomokuBoard';
 import GomokuSettings from './gomoku/GomokuSettings';
+import GomokuStatus from './gomoku/GomokuStatus';
 import { checkWin, isValidMove, handleSwap2Move } from './gomoku/rules';
 import type { GomokuState, GomokuSettings as Settings } from './gomoku/types';
 
@@ -172,30 +173,13 @@ const GomokuGame = () => {
           New Game
         </Button>
       </div>
-      <div className="aspect-square w-full bg-yellow-100 relative">
-        <div className={`grid grid-cols-${gameState.boardSize} grid-rows-${gameState.boardSize} absolute inset-0`}>
-          {gameState.board.map((row, rowIndex) =>
-            row.map((cell, colIndex) => (
-              <button
-                key={`${rowIndex}-${colIndex}`}
-                className={cn(
-                  "border border-black relative",
-                  cell === 'black' && "bg-black rounded-full",
-                  cell === 'white' && "bg-white rounded-full border-2"
-                )}
-                onClick={() => makeMove(rowIndex, colIndex)}
-              />
-            ))
-          )}
-        </div>
-      </div>
-      {gameState.status === 'completed' && (
-        <div className="mt-4 text-center">
-          <h3 className="text-lg font-semibold">
-            {gameState.winner ? `${gameState.winner} wins!` : 'Game ended in a draw!'}
-          </h3>
-        </div>
-      )}
+      <GomokuBoard
+        board={gameState.board}
+        onCellClick={makeMove}
+        currentPlayer={gameState.currentPlayer}
+        isValidMove={(row, col) => isValidMove(row, col, gameState)}
+      />
+      <GomokuStatus gameState={gameState} />
     </Card>
   );
 };
