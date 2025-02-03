@@ -65,7 +65,8 @@ const ZenGarden = () => {
             .getPublicUrl(`zen-garden/${type}.png`);
 
           if (!publicUrl.publicUrl) {
-            throw new Error(`No public URL received for ${type}`);
+            console.warn(`No public URL received for ${type}, using fallback`);
+            continue;
           }
 
           const img = new Image();
@@ -82,12 +83,17 @@ const ZenGarden = () => {
           newElements.push(img);
           console.log(`Successfully loaded ${type}`);
         } catch (error) {
-          console.warn(`Error loading ${type}, using fallback:`, error);
-          // Use a placeholder image
-          const placeholderImg = new Image();
-          placeholderImg.src = 'https://images.unsplash.com/photo-1501854140801-50d01698950b';
-          newElements.push(placeholderImg);
+          console.warn(`Error loading ${type}, skipping:`, error);
         }
+      }
+
+      if (newElements.length === 0) {
+        toast({
+          title: "Missing Game Assets",
+          description: "Please generate game assets first using the Generate Assets button.",
+          variant: "destructive",
+        });
+        return;
       }
 
       setZenElements(newElements);
@@ -95,7 +101,7 @@ const ZenGarden = () => {
       console.error('Error loading zen elements:', error);
       toast({
         title: "Error Loading Assets",
-        description: "Using fallback images. You can still enjoy the experience.",
+        description: "Please try again or generate new assets.",
         variant: "destructive",
       });
     } finally {
@@ -175,7 +181,7 @@ const ZenGarden = () => {
 
   const createParticle = (breathIntensity: number) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || zenElements.length === 0) return;
 
     const x = Math.random() * canvas.width;
     const y = Math.random() * canvas.height;
@@ -183,9 +189,7 @@ const ZenGarden = () => {
     const color = colors[Math.floor(Math.random() * colors.length)];
     const speed = 0.5 + (breathIntensity / 100);
     const angle = Math.random() * Math.PI * 2;
-    const image = zenElements.length > 0 ? 
-      zenElements[Math.floor(Math.random() * zenElements.length)] : 
-      undefined;
+    const image = zenElements[Math.floor(Math.random() * zenElements.length)];
     const rotation = Math.random() * Math.PI * 2;
     const rotationSpeed = (Math.random() - 0.5) * 0.02;
     const opacity = Math.random() * 0.3 + 0.7;
@@ -248,19 +252,20 @@ const ZenGarden = () => {
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
+    // Create gradient background
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
     gradient.addColorStop(0, '#faf5ff');
     gradient.addColorStop(1, '#f0f7ff');
-    
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Draw particles with zen elements
     particles.forEach(particle => {
       ctx.save();
       ctx.globalAlpha = particle.opacity;
       
       if (particle.image) {
-        const size = particle.size * 5;
+        const size = particle.size * 5; // Larger size for images
         ctx.translate(particle.x, particle.y);
         ctx.rotate(particle.rotation);
         ctx.drawImage(
@@ -280,6 +285,7 @@ const ZenGarden = () => {
       ctx.restore();
     });
 
+    // Draw breathing circles
     ctx.strokeStyle = 'rgba(255,255,255,0.1)';
     ctx.lineWidth = 2;
     const time = Date.now() / 1000;
