@@ -23,6 +23,7 @@ export class PufferfishScene extends BreathingBaseScene {
   private bubbles: Phaser.GameObjects.Particles.ParticleEmitter | null;
   private seaweed: Phaser.GameObjects.Image[];
   private lastBubbleTime: number;
+  private background: Phaser.GameObjects.Image | null;
 
   constructor(onScoreUpdate: (score: number) => void) {
     super({ key: 'PufferfishScene' });
@@ -40,6 +41,7 @@ export class PufferfishScene extends BreathingBaseScene {
     this.seaweed = [];
     this.bubbles = null;
     this.lastBubbleTime = 0;
+    this.background = null;
   }
 
   setBreathPhase(phase: 'inhale' | 'hold' | 'exhale' | 'rest') {
@@ -48,15 +50,21 @@ export class PufferfishScene extends BreathingBaseScene {
 
   create() {
     super.create();
-    this.gameState.isPlaying = true;
     
-    // Initialize player fish with improved physics
-    const fish = this.getSprite('pufferfish');
+    // Set up background first
+    this.background = this.add.image(400, 200, 'background');
+    if (this.background) {
+      this.background.setDisplaySize(800, 400);
+      this.background.setDepth(0);
+    }
+
+    // Initialize player fish
+    const fish = this.add.image(100, this.gameState.fishPosition, 'pufferfish');
     if (fish) {
-      fish.setVisible(true)
-        .setPosition(100, this.gameState.fishPosition)
-        .setScale(this.gameState.fishSize)
-        .setDepth(1);
+      fish.setScale(this.gameState.fishSize)
+          .setDepth(1)
+          .setVisible(true);
+      this.sprites.set('pufferfish', fish);
     }
 
     // Initialize seaweed decorations
@@ -71,22 +79,20 @@ export class PufferfishScene extends BreathingBaseScene {
     }
 
     // Setup particle system for bubbles
-    const particles = this.add.particles('bubbles');
-    if (particles) {
-      const emitter = particles.createEmitter({
-        x: 0,
-        y: 0,
-        speed: { min: 50, max: 100 },
-        angle: { min: -85, max: -95 },
-        scale: { start: 0.4, end: 0.2 },
-        alpha: { start: 0.8, end: 0 },
-        lifespan: 2000,
-        quantity: 1,
-        frequency: 100,
-        on: false
-      });
-      this.bubbles = emitter;
-    }
+    const particles = this.add.particles(0, 0, 'bubbles', {
+      speed: { min: 50, max: 100 },
+      angle: { min: -85, max: -95 },
+      scale: { start: 0.4, end: 0.2 },
+      alpha: { start: 0.8, end: 0 },
+      lifespan: 2000,
+      quantity: 1,
+      frequency: 100,
+      on: false
+    });
+    
+    this.bubbles = particles.createEmitter();
+
+    this.gameState.isPlaying = true;
 
     // Start spawning game objects
     this.time.addEvent({
@@ -249,6 +255,9 @@ export class PufferfishScene extends BreathingBaseScene {
     this.seaweed.forEach(seaweed => seaweed.destroy());
     if (this.bubbles) {
       this.bubbles.stop();
+    }
+    if (this.background) {
+      this.background.destroy();
     }
     super.destroy();
   }
