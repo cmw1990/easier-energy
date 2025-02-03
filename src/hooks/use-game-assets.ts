@@ -116,7 +116,7 @@ export const useGameAssets = (gameType: string) => {
         if (failedCount > 0) {
           toast({
             title: "Some Assets Failed to Load",
-            description: "Using fallback images where needed. The game will still work.",
+            description: "Using fallback images where needed. Try using the Generate Game Assets button to fix this.",
             variant: "destructive",
           });
         }
@@ -125,7 +125,7 @@ export const useGameAssets = (gameType: string) => {
         setError('Failed to load game assets');
         toast({
           title: "Error Loading Game Assets",
-          description: "Please refresh the page to try again.",
+          description: "Please try using the Generate Game Assets button to fix this.",
           variant: "destructive",
         });
       } finally {

@@ -51,7 +51,9 @@ export const GameAssetsGenerator = () => {
         'math-speed',
         'simon-says',
         'speed-typing',
-        'pufferfish'
+        'pufferfish',
+        'balloon',
+        'zen-drift'
       ];
       
       for (const batch of batches) {
