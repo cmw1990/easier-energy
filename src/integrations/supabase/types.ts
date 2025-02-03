@@ -437,6 +437,87 @@ export type Database = {
         }
         Relationships: []
       }
+      mood_logs: {
+        Row: {
+          activities: string[] | null
+          ai_analysis: string | null
+          ai_recommendations: string | null
+          cognitive_state: string[] | null
+          coping_strategies: string[] | null
+          created_at: string | null
+          emotional_state: string[] | null
+          energy_level: number | null
+          environmental_factors: string[] | null
+          exercise_minutes: number | null
+          focus_level: number | null
+          id: string
+          meditation_minutes: number | null
+          mood_score: number | null
+          notes: string | null
+          outdoor_time_minutes: number | null
+          physical_symptoms: string[] | null
+          screen_time_minutes: number | null
+          sleep_quality: number | null
+          social_interactions: string[] | null
+          stress_level: number | null
+          thought_patterns: string[] | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activities?: string[] | null
+          ai_analysis?: string | null
+          ai_recommendations?: string | null
+          cognitive_state?: string[] | null
+          coping_strategies?: string[] | null
+          created_at?: string | null
+          emotional_state?: string[] | null
+          energy_level?: number | null
+          environmental_factors?: string[] | null
+          exercise_minutes?: number | null
+          focus_level?: number | null
+          id?: string
+          meditation_minutes?: number | null
+          mood_score?: number | null
+          notes?: string | null
+          outdoor_time_minutes?: number | null
+          physical_symptoms?: string[] | null
+          screen_time_minutes?: number | null
+          sleep_quality?: number | null
+          social_interactions?: string[] | null
+          stress_level?: number | null
+          thought_patterns?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activities?: string[] | null
+          ai_analysis?: string | null
+          ai_recommendations?: string | null
+          cognitive_state?: string[] | null
+          coping_strategies?: string[] | null
+          created_at?: string | null
+          emotional_state?: string[] | null
+          energy_level?: number | null
+          environmental_factors?: string[] | null
+          exercise_minutes?: number | null
+          focus_level?: number | null
+          id?: string
+          meditation_minutes?: number | null
+          mood_score?: number | null
+          notes?: string | null
+          outdoor_time_minutes?: number | null
+          physical_symptoms?: string[] | null
+          screen_time_minutes?: number | null
+          sleep_quality?: number | null
+          social_interactions?: string[] | null
+          stress_level?: number | null
+          thought_patterns?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       nrt_guide_steps: {
         Row: {
           created_at: string | null

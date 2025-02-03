@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SmartAlarm } from "@/components/sleep/SmartAlarm";
 import { SleepMetrics } from "@/components/sleep/SleepMetrics";
 import { StressScanner } from "@/components/sleep/StressScanner";
+import { MoodAnalysis } from "@/components/sleep/MoodAnalysis";
 import {
   LineChart,
   Line,
@@ -19,6 +20,8 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
+
+// ... keep existing code (imports and component setup)
 
 const Sleep = () => {
   const { toast } = useToast();
@@ -82,6 +85,14 @@ const Sleep = () => {
     quality: log.energy_rating
   })).reverse();
 
+  // Add stressData state
+  const [stressData, setStressData] = useState<any>(null);
+
+  // Handle stress data updates
+  const handleStressDataUpdate = (data: any) => {
+    setStressData(data);
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-4xl font-bold">Advanced Sleep Optimization</h1>
@@ -130,19 +141,23 @@ const Sleep = () => {
         </Card>
       </div>
 
-      <StressScanner />
+      <StressScanner onDataUpdate={handleStressDataUpdate} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5 text-primary" />
-            AI-Powered Sleep Analysis
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SleepMetrics sleepData={sleepLogs} />
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 md:grid-cols-2">
+        <MoodAnalysis sleepData={sleepLogs} stressData={stressData} />
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary" />
+              AI-Powered Sleep Analysis
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SleepMetrics sleepData={sleepLogs} />
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>

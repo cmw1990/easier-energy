@@ -41,7 +41,11 @@ interface BiometricAnalysis {
   bloodOxygenEstimate: number;
 }
 
-export const StressScanner = () => {
+interface StressScannerProps {
+  onDataUpdate?: (data: any) => void;
+}
+
+export const StressScanner = ({ onDataUpdate }: StressScannerProps) => {
   const [isScanning, setIsScanning] = useState(false);
   const [progress, setProgress] = useState(0);
   const [hrvMetrics, setHrvMetrics] = useState<HRVMetrics | null>(null);
@@ -204,7 +208,7 @@ export const StressScanner = () => {
     const respiratoryRate = estimateRespiratoryRate(metrics);
     const bloodOxygenEstimate = estimateBloodOxygen();
 
-    return {
+    const analysis = {
       stressLevel,
       cognitiveLoad,
       energyLevel,
@@ -214,6 +218,13 @@ export const StressScanner = () => {
       respiratoryRate,
       bloodOxygenEstimate
     };
+
+    // Emit data update if callback is provided
+    if (onDataUpdate) {
+      onDataUpdate(analysis);
+    }
+
+    return analysis;
   };
 
   const calculateStressLevel = (metrics: HRVMetrics): number => {
@@ -550,3 +561,4 @@ export const StressScanner = () => {
     </Card>
   );
 };
+
