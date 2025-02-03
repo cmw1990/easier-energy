@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain } from "lucide-react";
+import { Brain, Target, Puzzle } from "lucide-react";
+import MemoryCards from "@/components/games/MemoryCards";
+import PatternMatch from "@/components/games/PatternMatch";
 
-const Focus = () => {
+const NumberSequence = () => {
   const [isActive, setIsActive] = useState(false);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -70,7 +72,7 @@ const Focus = () => {
           activity_type: "focus_test",
           activity_name: "Number Sequence",
           duration_minutes: 0.5,
-          focus_rating: Math.round((score / 45) * 10), // Max possible score is ~45 in 30 seconds
+          focus_rating: Math.round((score / 45) * 10),
           energy_rating: null,
           notes: `Completed focus test with score: ${score}`
         });
@@ -95,13 +97,13 @@ const Focus = () => {
   };
 
   return (
-    <div className="container max-w-2xl mx-auto space-y-6 p-4">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+    <Card className="p-6">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-full">
-            <Brain className="h-5 w-5 text-primary" />
+            <Puzzle className="h-5 w-5 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold">Focus Test</h1>
+          <h2 className="text-2xl font-bold">Number Sequence</h2>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-lg font-medium">Score: {score}</div>
@@ -109,55 +111,76 @@ const Focus = () => {
         </div>
       </div>
 
-      <Card className="p-6">
-        <div className="grid grid-cols-3 gap-4">
-          {targets.map((number, index) => (
-            <Button
-              key={`${number}-${index}`}
-              onClick={() => handleNumberClick(number)}
-              variant={number === currentTarget ? "default" : "outline"}
-              className={`h-16 text-xl font-bold transition-all ${
-                number === currentTarget ? 'ring-2 ring-primary ring-offset-2' : ''
-              } ${!isActive || number !== currentTarget ? 'opacity-80' : ''}`}
-              disabled={!isActive || number !== currentTarget || isSubmitting}
-            >
-              {number}
-            </Button>
-          ))}
-        </div>
+      <div className="grid grid-cols-3 gap-4">
+        {targets.map((number, index) => (
+          <Button
+            key={`${number}-${index}`}
+            onClick={() => handleNumberClick(number)}
+            variant={number === currentTarget ? "default" : "outline"}
+            className={`h-16 text-xl font-bold transition-all ${
+              number === currentTarget ? 'ring-2 ring-primary ring-offset-2' : ''
+            } ${!isActive || number !== currentTarget ? 'opacity-80' : ''}`}
+            disabled={!isActive || number !== currentTarget || isSubmitting}
+          >
+            {number}
+          </Button>
+        ))}
+      </div>
 
-        <div className="mt-6">
-          {!isActive ? (
-            <Button 
-              onClick={startTest} 
-              className="w-full" 
-              size="lg"
-              disabled={isSubmitting}
-            >
-              Start Test
-            </Button>
-          ) : (
-            <Button 
-              variant="destructive" 
-              onClick={endTest} 
-              className="w-full"
-              size="lg"
-              disabled={isSubmitting}
-            >
-              End Test
-            </Button>
-          )}
+      <div className="mt-6">
+        {!isActive ? (
+          <Button 
+            onClick={startTest} 
+            className="w-full" 
+            size="lg"
+            disabled={isSubmitting}
+          >
+            Start Test
+          </Button>
+        ) : (
+          <Button 
+            variant="destructive" 
+            onClick={endTest} 
+            className="w-full"
+            size="lg"
+            disabled={isSubmitting}
+          >
+            End Test
+          </Button>
+        )}
+      </div>
+
+      <div className="mt-4 text-sm text-muted-foreground">
+        Click numbers in ascending order (1-9). Complete as many sequences as possible in 30 seconds.
+      </div>
+    </Card>
+  );
+};
+
+const Focus = () => {
+  return (
+    <div className="container max-w-4xl mx-auto space-y-8 p-4">
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-primary/10 rounded-full">
+          <Brain className="h-6 w-6 text-primary" />
         </div>
-      </Card>
+        <h1 className="text-3xl font-bold">Brain & Focus Exercises</h1>
+      </div>
+
+      <div className="grid gap-8">
+        <NumberSequence />
+        <MemoryCards />
+        <PatternMatch />
+      </div>
 
       <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">How it Works</h2>
+        <h2 className="text-xl font-semibold mb-4">About These Exercises</h2>
         <ul className="space-y-2 text-muted-foreground">
-          <li>• Click numbers in ascending order (1-9)</li>
-          <li>• Complete as many sequences as possible in 30 seconds</li>
-          <li>• Your score is the total number of correct clicks</li>
-          <li>• Results are saved to track your progress</li>
-          <li>• Try to improve your speed and accuracy over time</li>
+          <li>• <strong>Number Sequence:</strong> Test your quick thinking and focus by clicking numbers in order</li>
+          <li>• <strong>Memory Cards:</strong> Challenge your memory by matching pairs of cards</li>
+          <li>• <strong>Pattern Match:</strong> Improve pattern recognition by memorizing and recreating sequences</li>
+          <li>• All results are saved to track your progress over time</li>
+          <li>• Regular practice can help improve concentration and cognitive function</li>
         </ul>
       </Card>
     </div>
