@@ -2,20 +2,24 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Utensils } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
 
 export const FoodHistory = () => {
+  const { session } = useAuth();
   const { data: foodLogs, isLoading } = useQuery({
     queryKey: ['food-logs'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('food_logs')
         .select('*')
+        .eq('user_id', session?.user?.id)
         .order('created_at', { ascending: false })
         .limit(10);
 
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!session?.user?.id,
   });
 
   if (isLoading) {

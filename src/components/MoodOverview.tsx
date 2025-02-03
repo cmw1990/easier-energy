@@ -42,7 +42,7 @@ export const MoodOverview = () => {
         .select('*')
         .eq('user_id', session?.user?.id)
         .order('created_at', { ascending: false })
-        .limit(1);
+        .maybeSingle();
 
       if (error) throw error;
       return data;
@@ -128,10 +128,10 @@ export const MoodOverview = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {foodLogs?.[0]?.food_name || '-'}
+              {foodLogs?.food_name || '-'}
             </div>
             <p className="text-xs text-muted-foreground">
-              {foodLogs?.[0]?.calories ? `${foodLogs[0].calories} calories` : 'No recent meals'}
+              {foodLogs?.calories ? `${foodLogs.calories} calories` : 'No recent meals'}
             </p>
           </CardContent>
         </Card>

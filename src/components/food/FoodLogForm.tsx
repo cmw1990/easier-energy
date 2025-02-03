@@ -12,11 +12,13 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Upload } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
 
 export const FoodLogForm = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
+  const { session } = useAuth();
   const [foodName, setFoodName] = useState("");
   const [calories, setCalories] = useState("");
   const [mealType, setMealType] = useState("");
@@ -30,10 +32,20 @@ export const FoodLogForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!session?.user?.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to log food",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsUploading(true);
 
     try {
       let imageUrl = "";
+      let aiAnalysis = null;
       
       if (selectedFile) {
         const fileExt = selectedFile.name.split('.').pop();
@@ -60,35 +72,33 @@ export const FoodLogForm = () => {
 
         if (analysisError) throw analysisError;
 
-        const nutritionData = JSON.parse(analysisData.analysis);
+        aiAnalysis = analysisData.analysis;
+      }
 
-        // Log the food entry with AI analysis
-        const { error: logError } = await supabase
-          .from('food_logs')
-          .insert({
-            food_name: foodName || nutritionData.foods.join(', '),
-            calories: calories || nutritionData.calories,
-            protein_grams: nutritionData.protein,
-            carbs_grams: nutritionData.carbs,
-            fat_grams: nutritionData.fat,
-            meal_type: mealType,
-            image_url: imageUrl,
-            ai_analysis: JSON.stringify(nutritionData)
-          });
-
-        if (logError) throw logError;
-
-        toast({
-          title: "Success",
-          description: "Food logged successfully with AI analysis",
+      // Log the food entry
+      const { error: logError } = await supabase
+        .from('food_logs')
+        .insert({
+          user_id: session.user.id,
+          food_name: foodName,
+          calories: calories ? parseInt(calories) : null,
+          meal_type: mealType,
+          image_url: imageUrl || null,
+          ai_analysis: aiAnalysis
         });
 
-        // Reset form
-        setFoodName("");
-        setCalories("");
-        setMealType("");
-        setSelectedFile(null);
-      }
+      if (logError) throw logError;
+
+      toast({
+        title: "Success",
+        description: "Food logged successfully",
+      });
+
+      // Reset form
+      setFoodName("");
+      setCalories("");
+      setMealType("");
+      setSelectedFile(null);
     } catch (error) {
       console.error('Error logging food:', error);
       toast({
@@ -111,6 +121,7 @@ export const FoodLogForm = () => {
           value={foodName}
           onChange={(e) => setFoodName(e.target.value)}
           placeholder="e.g., Grilled Chicken Salad"
+          required
         />
       </div>
 
@@ -154,7 +165,7 @@ export const FoodLogForm = () => {
       <Button 
         type="submit" 
         className="w-full"
-        disabled={isUploading || isAnalyzing || (!foodName && !selectedFile) || !mealType}
+        disabled={isUploading || isAnalyzing || !foodName || !mealType}
       >
         {isUploading || isAnalyzing ? (
           <>
