@@ -77,60 +77,63 @@ const WordScramble = () => {
     }
   };
 
-return (
-  <Card className="p-6 hover:shadow-lg transition-shadow">
-    <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-primary/10 rounded-full">
-          <Brain className="h-5 w-5 text-primary animate-pulse" />
+  return (
+    <Card className="p-6 hover:shadow-lg transition-shadow">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-full">
+            <Brain className="h-5 w-5 text-primary animate-pulse" />
+          </div>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Word Scramble
+          </h2>
         </div>
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          Word Scramble
-        </h2>
+        <div className="flex items-center gap-4">
+          <div className="text-lg">Score: <span className="text-primary">{score}</span></div>
+          <Button 
+            onClick={newWord}
+            variant="outline"
+            size="icon"
+            className="hover:scale-105 transition-transform"
+            disabled={isSubmitting}
+          >
+            <Shuffle className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        <div className="text-lg">Score: <span className="text-primary">{score}</span></div>
-        <Button 
-          onClick={newWord}
-          variant="outline"
-          size="icon"
-          className="hover:scale-105 transition-transform"
-          disabled={isSubmitting}
-        >
-          <Shuffle className="h-4 w-4" />
-        </Button>
-      </div>
-    </div>
 
-    <div className="text-center mb-8">
-      <div className="text-4xl font-bold tracking-wider mb-4 animate-float">{scrambledWord}</div>
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <Input
-          type="text"
-          value={userGuess}
-          onChange={(e) => setUserGuess(e.target.value)}
-          placeholder="Enter your guess"
-          className="text-center text-xl focus:ring-2 ring-primary transition-all"
-          maxLength={word.length}
-        />
-        <Button 
-          type="submit" 
-          disabled={isSubmitting}
-          className="hover:scale-105 transition-transform"
-        >
-          Submit
-        </Button>
-      </form>
-    </div>
+      <div className="text-center mb-8">
+        <div className="text-4xl font-bold tracking-wider mb-4 animate-float">{scrambledWord}</div>
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <Input
+            type="text"
+            value={userGuess}
+            onChange={(e) => setUserGuess(e.target.value)}
+            placeholder="Enter your guess"
+            className="text-center text-xl focus:ring-2 ring-primary transition-all"
+            maxLength={word.length}
+          />
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="hover:scale-105 transition-transform"
+          >
+            Submit
+          </Button>
+        </form>
+      </div>
 
-    <div className="mt-6">
-      <div className="text-sm text-muted-foreground">
-        Unscramble the letters to find the hidden word. Type your answer and submit to check if you're correct.
+      <div className="mt-6">
+        <div className="text-sm text-muted-foreground">
+          Unscramble the letters to find the hidden word. Type your answer and submit to check if you're correct.
+        </div>
+        <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+          <Brain className="h-4 w-4" />
+          <span>Improves: Vocabulary, Problem Solving, Pattern Recognition</span>
+        </div>
       </div>
-      <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-        <Brain className="h-4 w-4" />
-        <span>Improves: Vocabulary, Problem Solving, Pattern Recognition</span>
-      </div>
-    </div>
-  </Card>
-);
+    </Card>
+  );
+};
+
+export default WordScramble;

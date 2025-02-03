@@ -106,54 +106,57 @@ const PatternRecognition = () => {
 
   const uniqueSymbols = Array.from(new Set(PATTERNS.flat()));
 
-return (
-  <Card className="p-6 hover:shadow-lg transition-shadow">
-    <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-primary/10 rounded-full">
-          <Sparkles className="h-5 w-5 text-primary animate-shimmer" />
+  return (
+    <Card className="p-6 hover:shadow-lg transition-shadow">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-full">
+            <Sparkles className="h-5 w-5 text-primary animate-shimmer" />
+          </div>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Pattern Recognition
+          </h2>
         </div>
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          Pattern Recognition
-        </h2>
+        <div className="flex items-center gap-4">
+          <div className="text-lg">Level: {level + 1}/{PATTERNS.length}</div>
+          <div className="text-lg">Score: <span className="text-primary">{score}</span></div>
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        <div className="text-lg">Level: {level + 1}/{PATTERNS.length}</div>
-        <div className="text-lg">Score: <span className="text-primary">{score}</span></div>
-      </div>
-    </div>
 
-    <div className="flex justify-center mb-8">
-      <div className="grid grid-flow-col gap-4">
-        {currentPattern.map((symbol, index) => (
+      <div className="flex justify-center mb-8">
+        <div className="grid grid-flow-col gap-4">
+          {currentPattern.map((symbol, index) => (
+            <Button
+              key={index}
+              variant="outline"
+              className="h-16 w-16 text-2xl animate-float"
+              disabled={true}
+            >
+              {showPattern ? symbol : "?"}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-4 gap-4">
+        {uniqueSymbols.map((symbol, index) => (
           <Button
             key={index}
+            onClick={() => handleSymbolClick(symbol)}
             variant="outline"
-            className="h-16 w-16 text-2xl animate-float"
-            disabled={true}
+            className="h-16 text-2xl hover:scale-105 transition-transform"
+            disabled={showPattern || isSubmitting}
           >
-            {showPattern ? symbol : "?"}
+            {symbol}
           </Button>
         ))}
       </div>
-    </div>
 
-    <div className="grid grid-cols-4 gap-4">
-      {uniqueSymbols.map((symbol, index) => (
-        <Button
-          key={index}
-          onClick={() => handleSymbolClick(symbol)}
-          variant="outline"
-          className="h-16 text-2xl hover:scale-105 transition-transform"
-          disabled={showPattern || isSubmitting}
-        >
-          {symbol}
-        </Button>
-      ))}
-    </div>
+      <div className="mt-6 text-sm text-muted-foreground">
+        Memorize the pattern of symbols shown, then recreate it using the symbols below. The pattern will be hidden after 3 seconds.
+      </div>
+    </Card>
+  );
+};
 
-    <div className="mt-6 text-sm text-muted-foreground">
-      Memorize the pattern of symbols shown, then recreate it using the symbols below. The pattern will be hidden after 3 seconds.
-    </div>
-  </Card>
-);
+export default PatternRecognition;
