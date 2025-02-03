@@ -4,6 +4,7 @@ import MemoryCards from "@/components/games/MemoryCards";
 import SequenceMemory from "@/components/games/SequenceMemory";
 import VisualMemory from "@/components/games/VisualMemory";
 import WordMemoryChain from "@/components/games/WordMemoryChain";
+import PatternRecognition from "@/components/games/PatternRecognition";
 
 export const FocusExercises = () => {
   return (
@@ -21,6 +22,7 @@ export const FocusExercises = () => {
             <SequenceMemory />
             <VisualMemory />
             <WordMemoryChain />
+            <PatternRecognition />
           </div>
         </CardContent>
       </Card>
