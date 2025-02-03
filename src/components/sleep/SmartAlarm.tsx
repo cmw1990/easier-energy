@@ -9,7 +9,11 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import { AlarmClock, Moon, Sun, Waves, Volume2, BedDouble, Info } from 'lucide-react';
+import { 
+  AlarmClock, Moon, Sun, Waves, Volume2, BedDouble, 
+  Calendar, Repeat, Bell, Activity, Vibrate, Shield,
+  CloudMoon, Sunrise, Music, Settings 
+} from 'lucide-react';
 import { SleepAnalysis } from './SleepAnalysis';
 import {
   Tooltip,
@@ -23,6 +27,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const SmartAlarm = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -38,6 +49,33 @@ export const SmartAlarm = () => {
   const [backupAlarm, setBackupAlarm] = useState(true);
   const { toast } = useToast();
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+
+  const [weekdayAlarms, setWeekdayAlarms] = useState({
+    monday: { enabled: false, time: '07:00' },
+    tuesday: { enabled: false, time: '07:00' },
+    wednesday: { enabled: false, time: '07:00' },
+    thursday: { enabled: false, time: '07:00' },
+    friday: { enabled: false, time: '07:00' },
+    saturday: { enabled: false, time: '08:00' },
+    sunday: { enabled: false, time: '08:00' },
+  });
+  const [napsEnabled, setNapsEnabled] = useState(false);
+  const [napDuration, setNapDuration] = useState(20);
+  const [weatherAware, setWeatherAware] = useState(false);
+  const [powerNapMode, setPowerNapMode] = useState(false);
+  const [sleepEnvironment, setSleepEnvironment] = useState({
+    temperature: 20,
+    humidity: 45,
+    noise: 30,
+    light: 5,
+  });
+  const [alarmProfile, setAlarmProfile] = useState('default');
+  const [snoozeLimit, setSnoozeLimit] = useState(3);
+  const [snoozeInterval, setSnoozeInterval] = useState(5);
+  const [sleepQualityTracking, setSleepQualityTracking] = useState(true);
+  const [sleepDebtAware, setSleepDebtAware] = useState(true);
+  const [customSoundUrl, setCustomSoundUrl] = useState('');
+  const [fallbackDevices, setFallbackDevices] = useState(true);
 
   useEffect(() => {
     const initAudio = () => {
@@ -189,6 +227,98 @@ export const SmartAlarm = () => {
     });
   };
 
+  const handleWeekdayAlarmChange = (day: string, field: 'enabled' | 'time', value: boolean | string) => {
+    setWeekdayAlarms(prev => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [field]: value
+      }
+    }));
+  };
+
+  const scheduleWeeklyAlarms = async () => {
+    try {
+      const notifications = Object.entries(weekdayAlarms)
+        .filter(([_, settings]) => settings.enabled)
+        .map(([day, settings], index) => {
+          const dayNumber = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+            .indexOf(day);
+          const [hours, minutes] = settings.time.split(':').map(Number);
+          
+          return {
+            title: "Smart Wake-up Time",
+            body: `Good morning! It's your optimal wake time.`,
+            id: 100 + index,
+            schedule: {
+              on: {
+                weekday: dayNumber + 1
+              },
+              at: new Date(2024, 0, 1, hours, minutes)
+            },
+            extra: {
+              soundType,
+              gradualVolume: gradualWake,
+              volume: volume / 100,
+              vibrate: vibrationEnabled
+            }
+          };
+        });
+
+      await LocalNotifications.schedule({
+        notifications
+      });
+
+      toast({
+        title: "Weekly alarms set",
+        description: "Your weekly wake-up schedule has been configured.",
+      });
+    } catch (error) {
+      console.error('Error scheduling weekly alarms:', error);
+      toast({
+        title: "Error",
+        description: "Failed to set weekly alarms.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const scheduleNap = async (duration: number) => {
+    try {
+      const napTime = new Date();
+      napTime.setMinutes(napTime.getMinutes() + duration);
+
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            title: "Nap Time Complete",
+            body: `Your ${duration}-minute power nap is complete.`,
+            id: 200,
+            schedule: { at: napTime },
+            sound: 'gentle_chime.wav',
+            extra: {
+              gradualVolume: true,
+              volume: 0.7,
+              vibrate: true
+            }
+          }
+        ]
+      });
+
+      toast({
+        title: "Nap timer set",
+        description: `You'll be gently awakened in ${duration} minutes.`,
+      });
+    } catch (error) {
+      console.error('Error scheduling nap:', error);
+      toast({
+        title: "Error",
+        description: "Failed to set nap timer.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const scheduleSmartAlarm = async () => {
     try {
       const [hours, minutes] = alarmTime.split(':').map(Number);
@@ -317,80 +447,102 @@ export const SmartAlarm = () => {
   );
 
   return (
-    <Card>
+    <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <AlarmClock className="h-5 w-5 text-primary" />
-          Advanced Sleep Tracking & Smart Alarm
+          Advanced Sleep & Wake System
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={isTracking}
-              onCheckedChange={(checked) => checked ? startSleepTracking() : stopSleepTracking()}
-            />
-            <Label>Track Sleep</Label>
-          </div>
-          {renderFeatureTooltip(
-            "Advanced Sleep Tracking",
-            "Our AI-powered sleep tracking uses motion analysis and sound monitoring to detect sleep phases with 95% accuracy - superior to traditional accelerometer-only solutions."
-          )}
-        </div>
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="quick-actions">
+            <AccordionTrigger>
+              <div className="flex items-center gap-2">
+                <Activity className="h-4 w-4" />
+                Quick Actions
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-2 gap-4">
+                <Button 
+                  variant="outline" 
+                  className="flex flex-col items-center p-6 h-auto"
+                  onClick={() => scheduleNap(powerNapMode ? 20 : napDuration)}
+                >
+                  <CloudMoon className="h-6 w-6 mb-2" />
+                  <span>Quick Nap</span>
+                  <span className="text-sm text-muted-foreground">
+                    {powerNapMode ? '20min Power Nap' : `${napDuration}min Rest`}
+                  </span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex flex-col items-center p-6 h-auto"
+                  onClick={() => startSleepTracking()}
+                >
+                  <BedDouble className="h-6 w-6 mb-2" />
+                  <span>Start Sleep</span>
+                  <span className="text-sm text-muted-foreground">
+                    With Smart Wake
+                  </span>
+                </Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
 
-        <Accordion type="single" collapsible>
-          <AccordionItem value="wake-settings">
-            <AccordionTrigger>Wake-up Settings</AccordionTrigger>
+          <AccordionItem value="weekly-schedule">
+            <AccordionTrigger>
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Weekly Schedule
+              </div>
+            </AccordionTrigger>
             <AccordionContent>
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="alarmTime">Target Wake Time</Label>
-                    {renderFeatureTooltip(
-                      "Smart Wake Technology",
-                      "Our algorithm analyzes your sleep cycles to wake you during light sleep, within your specified window, making waking up easier and more natural."
-                    )}
-                  </div>
-                  <Input
-                    id="alarmTime"
-                    type="time"
-                    value={alarmTime}
-                    onChange={(e) => setAlarmTime(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label>Smart Wake Window</Label>
-                    <Switch
-                      checked={smartWakeEnabled}
-                      onCheckedChange={setSmartWakeEnabled}
+                {Object.entries(weekdayAlarms).map(([day, settings]) => (
+                  <div key={day} className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <Switch
+                        checked={settings.enabled}
+                        onCheckedChange={(checked) => 
+                          handleWeekdayAlarmChange(day, 'enabled', checked)
+                        }
+                      />
+                      <Label className="capitalize">{day}</Label>
+                    </div>
+                    <Input
+                      type="time"
+                      value={settings.time}
+                      onChange={(e) => 
+                        handleWeekdayAlarmChange(day, 'time', e.target.value)
+                      }
+                      className="w-32"
+                      disabled={!settings.enabled}
                     />
                   </div>
-                  {smartWakeEnabled && (
-                    <div className="space-y-2">
-                      <Label>Window Duration: {smartWakeWindow} minutes</Label>
-                      <Slider
-                        value={[smartWakeWindow]}
-                        onValueChange={([value]) => setSmartWakeWindow(value)}
-                        min={5}
-                        max={60}
-                        step={5}
-                      />
-                    </div>
-                  )}
-                </div>
+                ))}
+                <Button 
+                  className="w-full mt-4"
+                  onClick={scheduleWeeklyAlarms}
+                >
+                  Save Weekly Schedule
+                </Button>
               </div>
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="sound-settings">
-            <AccordionTrigger>Sound Settings</AccordionTrigger>
+            <AccordionTrigger>
+              <div className="flex items-center gap-2">
+                <Music className="h-4 w-4" />
+                Sound Settings
+              </div>
+            </AccordionTrigger>
             <AccordionContent>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Alarm Sound</Label>
+                  <Label>Wake-up Sound</Label>
                   <div className="grid grid-cols-3 gap-2">
                     <Button
                       variant={soundType === 'nature' ? 'default' : 'outline'}
@@ -413,10 +565,20 @@ export const SmartAlarm = () => {
                       onClick={() => setSoundType('gradual')}
                       className="flex flex-col items-center p-4"
                     >
-                      <Moon className="h-5 w-5 mb-2" />
+                      <Sunrise className="h-5 w-5 mb-2" />
                       Gradual
                     </Button>
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Custom Sound URL (Optional)</Label>
+                  <Input
+                    type="url"
+                    placeholder="https://example.com/sound.mp3"
+                    value={customSoundUrl}
+                    onChange={(e) => setCustomSoundUrl(e.target.value)}
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -432,50 +594,98 @@ export const SmartAlarm = () => {
                     />
                   </div>
                 </div>
+
+                <div className="flex items-center justify-between">
+                  <Label>Vibration</Label>
+                  <Switch
+                    checked={vibrationEnabled}
+                    onCheckedChange={setVibrationEnabled}
+                  />
+                </div>
               </div>
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="advanced-settings">
-            <AccordionTrigger>Advanced Settings</AccordionTrigger>
+            <AccordionTrigger>
+              <div className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Advanced Settings
+              </div>
+            </AccordionTrigger>
             <AccordionContent>
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label>Motion Sensitivity</Label>
-                    {renderFeatureTooltip(
-                      "Enhanced Motion Detection",
-                      "Our advanced algorithm uses AI to calibrate sensitivity based on your movement patterns, providing 30% more accurate sleep stage detection than standard methods."
-                    )}
-                  </div>
-                  <Slider
-                    value={[sensitivity]}
-                    onValueChange={([value]) => setSensitivity(value)}
-                    min={1}
-                    max={10}
-                    step={1}
+                <div className="flex items-center justify-between">
+                  <Label>Sleep Quality Tracking</Label>
+                  <Switch
+                    checked={sleepQualityTracking}
+                    onCheckedChange={setSleepQualityTracking}
                   />
-                  <span className="text-sm text-muted-foreground">
-                    {sensitivity} - {sensitivity < 4 ? 'Less sensitive' : sensitivity > 7 ? 'Very sensitive' : 'Balanced'}
-                  </span>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label>Gradual Wake</Label>
-                    <Switch
-                      checked={gradualWake}
-                      onCheckedChange={setGradualWake}
-                    />
-                  </div>
+                <div className="flex items-center justify-between">
+                  <Label>Sleep Debt Awareness</Label>
+                  <Switch
+                    checked={sleepDebtAware}
+                    onCheckedChange={setSleepDebtAware}
+                  />
+                </div>
 
-                  <div className="flex items-center justify-between">
-                    <Label>Backup Alarm</Label>
-                    <Switch
-                      checked={backupAlarm}
-                      onCheckedChange={setBackupAlarm}
-                    />
+                <div className="flex items-center justify-between">
+                  <Label>Weather-Aware Wake-up</Label>
+                  <Switch
+                    checked={weatherAware}
+                    onCheckedChange={setWeatherAware}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Alarm Profile</Label>
+                  <Select value={alarmProfile} onValueChange={setAlarmProfile}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select profile" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default">Default</SelectItem>
+                      <SelectItem value="gentle">Gentle Wake</SelectItem>
+                      <SelectItem value="energetic">Energetic Start</SelectItem>
+                      <SelectItem value="custom">Custom</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Snooze Settings</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm">Max Snoozes</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        max={5}
+                        value={snoozeLimit}
+                        onChange={(e) => setSnoozeLimit(parseInt(e.target.value))}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm">Interval (min)</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={30}
+                        value={snoozeInterval}
+                        onChange={(e) => setSnoozeInterval(parseInt(e.target.value))}
+                      />
+                    </div>
                   </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <Label>Fallback Devices</Label>
+                  <Switch
+                    checked={fallbackDevices}
+                    onCheckedChange={setFallbackDevices}
+                  />
                 </div>
               </div>
             </AccordionContent>
