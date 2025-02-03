@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +44,28 @@ export const FoodLogForm = () => {
   const [open, setOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
+  // Check if food is favorited when food name changes
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (!session?.user?.id || !foodName) return;
+      
+      try {
+        const { data } = await supabase
+          .from('favorite_foods')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('food_name', foodName)
+          .maybeSingle();
+        
+        setIsFavorite(!!data);
+      } catch (error) {
+        console.error('Error checking favorite status:', error);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [foodName, session?.user?.id]);
+
   const { data: searchResults, isLoading: isSearching } = useQuery({
     queryKey: ['food-search', searchQuery],
     queryFn: async () => {
@@ -63,7 +85,7 @@ export const FoodLogForm = () => {
     }
   };
 
-  const handleFoodSelect = (food: { 
+  const handleFoodSelect = async (food: { 
     name: string; 
     calories: number;
     protein?: number;
@@ -76,6 +98,22 @@ export const FoodLogForm = () => {
     if (food.carbs) setCarbs(food.carbs.toString());
     if (food.fat) setFat(food.fat.toString());
     setOpen(false);
+
+    // Check if selected food is a favorite
+    if (session?.user?.id) {
+      try {
+        const { data } = await supabase
+          .from('favorite_foods')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('food_name', food.name)
+          .maybeSingle();
+        
+        setIsFavorite(!!data);
+      } catch (error) {
+        console.error('Error checking favorite status:', error);
+      }
+    }
   };
 
   const toggleFavorite = async () => {
@@ -87,7 +125,7 @@ export const FoodLogForm = () => {
         .select('*')
         .eq('user_id', session.user.id)
         .eq('food_name', foodName)
-        .single();
+        .maybeSingle();
 
       if (existingFavorite) {
         // Remove from favorites
@@ -167,14 +205,22 @@ export const FoodLogForm = () => {
         imageUrl = publicUrl;
 
         setIsAnalyzing(true);
-        const { data: analysisData, error: analysisError } = await supabase.functions
-          .invoke('analyze-food', {
-            body: { imageUrl, mealType }
+        try {
+          const { data: analysisData, error: analysisError } = await supabase.functions
+            .invoke('analyze-food', {
+              body: { imageUrl, mealType }
+            });
+
+          if (analysisError) throw analysisError;
+          aiAnalysis = analysisData.analysis;
+        } catch (analysisError) {
+          console.error('Error analyzing food image:', analysisError);
+          toast({
+            title: "Warning",
+            description: "Food logged successfully, but image analysis failed",
+            variant: "default",
           });
-
-        if (analysisError) throw analysisError;
-
-        aiAnalysis = analysisData.analysis;
+        }
       }
 
       const { error: logError } = await supabase
