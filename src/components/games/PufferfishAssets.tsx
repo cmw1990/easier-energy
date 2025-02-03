@@ -32,34 +32,35 @@ export const usePufferfishAssets = () => {
       try {
         const loadedAssets: Partial<GameAssets> = {};
         let loadedCount = 0;
-        let attempt = 1;
-        const maxAttempts = 3;
 
         for (const type of assetTypes) {
-          let success = false;
-          while (!success && attempt <= maxAttempts) {
-            try {
-              console.log(`Loading ${type}, attempt ${attempt}`);
-              const { data, error } = await supabase.functions.invoke('generate-pufferfish-assets', {
-                body: { assetType: type }
-              });
+          try {
+            console.log(`Loading ${type} from storage`);
+            const { data: publicUrl } = await supabase
+              .storage
+              .from('game-assets')
+              .getPublicUrl(`pufferfish/${type}.png`);
 
-              if (error) throw error;
-              if (!data?.image) throw new Error('No image data received');
-
-              loadedAssets[type as keyof GameAssets] = `data:image/png;base64,${data.image}`;
-              loadedCount++;
-              success = true;
-              console.log(`Successfully generated ${type} asset`);
-            } catch (err) {
-              console.error(`Error loading ${type} on attempt ${attempt}:`, err);
-              attempt++;
-              if (attempt <= maxAttempts) {
-                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
-              }
+            if (!publicUrl.publicUrl) {
+              throw new Error('No public URL received');
             }
+
+            // Pre-load the image to ensure it's cached
+            const img = new Image();
+            await new Promise((resolve, reject) => {
+              img.onload = resolve;
+              img.onerror = reject;
+              img.src = publicUrl.publicUrl;
+            });
+
+            loadedAssets[type as keyof GameAssets] = publicUrl.publicUrl;
+            loadedCount++;
+            console.log(`Successfully loaded ${type} asset`);
+          } catch (err) {
+            console.error(`Error loading ${type}:`, err);
+            // Use placeholder for failed assets
+            loadedAssets[type as keyof GameAssets] = '/placeholder.svg';
           }
-          attempt = 1; // Reset for next asset
         }
 
         setAssets(loadedAssets as GameAssets);
@@ -68,7 +69,7 @@ export const usePufferfishAssets = () => {
           console.warn(`Only ${loadedCount} of ${assetTypes.length} assets loaded successfully`);
           toast({
             title: "Some Assets Failed to Load",
-            description: "The game will work, but some visuals might be missing. Try refreshing.",
+            description: "The game will work with placeholder images. Try refreshing if assets are missing.",
             variant: "destructive",
           });
         }
