@@ -96,7 +96,8 @@ export class PufferfishScene extends Phaser.Scene {
   }
 
   private createBubbleEmitter(x: number, y: number): Phaser.GameObjects.Particles.ParticleEmitter {
-    const particles = this.add.particles(x, y, 'bubbles', {
+    const particles = this.add.particles(x, y, 'bubbles');
+    return particles.createEmitter({
       speed: { min: 50, max: 100 },
       angle: { min: 260, max: 280 },
       scale: { start: 0.4, end: 0.1 },
@@ -106,7 +107,5 @@ export class PufferfishScene extends Phaser.Scene {
       quantity: 1,
       frequency: 100
     });
-    
-    return particles.createEmitter();
   }
 }
