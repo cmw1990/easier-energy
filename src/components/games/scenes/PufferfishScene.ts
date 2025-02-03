@@ -72,18 +72,20 @@ export class PufferfishScene extends BreathingBaseScene {
 
     // Setup particle system for bubbles
     const particles = this.add.particles('bubbles');
-    this.bubbles = particles.createEmitter({
-      x: 0,
-      y: 0,
-      speed: { min: 50, max: 100 },
-      angle: { min: -85, max: -95 },
-      scale: { start: 0.4, end: 0.2 },
-      alpha: { start: 0.8, end: 0 },
-      lifespan: 2000,
-      quantity: 1,
-      frequency: 100,
-      on: false
-    });
+    if (particles) {
+      this.bubbles = particles.createEmitter({
+        x: 0,
+        y: 0,
+        speed: { min: 50, max: 100 },
+        angle: { min: -85, max: -95 },
+        scale: { start: 0.4, end: 0.2 },
+        alpha: { start: 0.8, end: 0 },
+        lifespan: 2000,
+        quantity: 1,
+        frequency: 100,
+        on: false
+      });
+    }
 
     // Start spawning game objects
     this.time.addEvent({
