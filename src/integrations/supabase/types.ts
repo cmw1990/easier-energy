@@ -278,6 +278,39 @@ export type Database = {
         }
         Relationships: []
       }
+      favorite_foods: {
+        Row: {
+          calories: number | null
+          carbs_grams: number | null
+          created_at: string | null
+          fat_grams: number | null
+          food_name: string
+          id: string
+          protein_grams: number | null
+          user_id: string
+        }
+        Insert: {
+          calories?: number | null
+          carbs_grams?: number | null
+          created_at?: string | null
+          fat_grams?: number | null
+          food_name: string
+          id?: string
+          protein_grams?: number | null
+          user_id: string
+        }
+        Update: {
+          calories?: number | null
+          carbs_grams?: number | null
+          created_at?: string | null
+          fat_grams?: number | null
+          food_name?: string
+          id?: string
+          protein_grams?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       financial_tracking: {
         Row: {
           amount: number

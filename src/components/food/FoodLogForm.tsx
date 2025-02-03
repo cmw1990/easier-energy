@@ -82,24 +82,47 @@ export const FoodLogForm = () => {
     if (!session?.user?.id || !foodName) return;
     
     try {
-      const { error } = await supabase
+      const { data: existingFavorite } = await supabase
         .from('favorite_foods')
-        .upsert({
-          user_id: session.user.id,
-          food_name: foodName,
-          calories: calories ? parseInt(calories) : null,
-          protein_grams: protein ? parseFloat(protein) : null,
-          carbs_grams: carbs ? parseFloat(carbs) : null,
-          fat_grams: fat ? parseFloat(fat) : null,
-        });
+        .select('*')
+        .eq('user_id', session.user.id)
+        .eq('food_name', foodName)
+        .single();
 
-      if (error) throw error;
-      
-      setIsFavorite(!isFavorite);
-      toast({
-        title: isFavorite ? "Removed from favorites" : "Added to favorites",
-        description: `${foodName} has been ${isFavorite ? "removed from" : "added to"} your favorites`,
-      });
+      if (existingFavorite) {
+        // Remove from favorites
+        const { error } = await supabase
+          .from('favorite_foods')
+          .delete()
+          .eq('user_id', session.user.id)
+          .eq('food_name', foodName);
+
+        if (error) throw error;
+        setIsFavorite(false);
+        toast({
+          title: "Removed from favorites",
+          description: `${foodName} has been removed from your favorites`,
+        });
+      } else {
+        // Add to favorites
+        const { error } = await supabase
+          .from('favorite_foods')
+          .insert({
+            user_id: session.user.id,
+            food_name: foodName,
+            calories: calories ? parseInt(calories) : null,
+            protein_grams: protein ? parseFloat(protein) : null,
+            carbs_grams: carbs ? parseFloat(carbs) : null,
+            fat_grams: fat ? parseFloat(fat) : null,
+          });
+
+        if (error) throw error;
+        setIsFavorite(true);
+        toast({
+          title: "Added to favorites",
+          description: `${foodName} has been added to your favorites`,
+        });
+      }
     } catch (error) {
       console.error('Error toggling favorite:', error);
       toast({
