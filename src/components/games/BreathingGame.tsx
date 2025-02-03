@@ -7,48 +7,32 @@ import { useAuth } from "@/components/AuthProvider";
 import { Brain, Loader2 } from "lucide-react";
 import { usePufferfishAssets } from "./PufferfishAssets";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
-
-interface GameState {
-  score: number;
-  isPlaying: boolean;
-  fishPosition: number;
-  fishSize: number;
-  obstacles: Array<{
-    x: number;
-    y: number;
-    type: 'coral' | 'seaweed' | 'predator' | 'smallFish';
-    passed: boolean;
-  }>;
-  bubbles: Array<{
-    x: number;
-    y: number;
-    size: number;
-    speed: number;
-  }>;
-}
+import { usePhaserGame } from "@/hooks/use-phaser-game";
+import { PufferfishScene } from "./scenes/PufferfishScene";
 
 const BreathingGame = () => {
-  const [gameState, setGameState] = useState<GameState>({
-    score: 0,
-    isPlaying: false,
-    fishPosition: 50,
-    fishSize: 1,
-    obstacles: [],
-    bubbles: [],
-  });
+  const [score, setScore] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
-  const [phaseTime, setPhaseTime] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [audioSupported, setAudioSupported] = useState<boolean | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const gameContainerRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<PufferfishScene | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const animationFrameRef = useRef<number>();
   const { toast } = useToast();
   const { session } = useAuth();
   const { assets, isLoading } = usePufferfishAssets();
+
+  // Initialize Phaser game
+  const game = usePhaserGame({
+    width: 800,
+    height: 400,
+    parent: 'game-container',
+    scene: new PufferfishScene(setScore)
+  });
 
   useEffect(() => {
     const checkAudioSupport = async () => {
@@ -68,36 +52,20 @@ const BreathingGame = () => {
   }, []);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (gameState.isPlaying && selectedTechnique) {
-      interval = setInterval(() => {
-        setPhaseTime(prev => prev + 1);
-        const { pattern } = selectedTechnique;
-        const totalCycleLength = (pattern.inhale + (pattern.hold || 0) + pattern.exhale + (pattern.holdAfterExhale || 0));
-        
-        setPhaseTime(prev => {
-          if (prev >= totalCycleLength) {
-            return 0;
-          }
-          return prev + 1;
-        });
-
-        // Update breath phase based on timing
-        if (phaseTime < pattern.inhale) {
-          setBreathPhase('inhale');
-        } else if (phaseTime < (pattern.inhale + (pattern.hold || 0))) {
-          setBreathPhase('hold');
-        } else if (phaseTime < (pattern.inhale + (pattern.hold || 0) + pattern.exhale)) {
-          setBreathPhase('exhale');
-        } else {
-          setBreathPhase('rest');
-        }
-      }, 1000);
+    if (game.current && !sceneRef.current) {
+      const scene = game.current.scene.getScene('PufferfishScene') as PufferfishScene;
+      if (scene) {
+        sceneRef.current = scene;
+        scene.setAssets(assets);
+      }
     }
+  }, [game, assets]);
 
-    return () => clearInterval(interval);
-  }, [gameState.isPlaying, selectedTechnique, phaseTime]);
+  useEffect(() => {
+    if (sceneRef.current) {
+      sceneRef.current.setBreathPhase(breathPhase);
+    }
+  }, [breathPhase]);
 
   const startGame = async () => {
     if (!selectedTechnique) {
@@ -129,8 +97,7 @@ const BreathingGame = () => {
       source.connect(analyserRef.current);
       analyserRef.current.fftSize = 256;
 
-      setGameState(prev => ({ ...prev, isPlaying: true }));
-      gameLoop();
+      setIsPlaying(true);
       toast({
         title: "Game Started!",
         description: "Breathe in to make the fish expand and rise, breathe out to shrink and descend.",
@@ -145,166 +112,8 @@ const BreathingGame = () => {
     }
   };
 
-  const detectBreathing = (): number => {
-    if (!analyserRef.current) return 0;
-    
-    const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-    analyserRef.current.getByteFrequencyData(dataArray);
-    
-    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-    return average;
-  };
-
-  const updateGameState = () => {
-    const breathingIntensity = detectBreathing();
-    
-    setGameState(prev => {
-      let newSize = prev.fishSize;
-      if (breathPhase === 'inhale') {
-        newSize = Math.min(1.5, prev.fishSize + 0.05);
-      } else if (breathPhase === 'exhale') {
-        newSize = Math.max(0.8, prev.fishSize - 0.05);
-      }
-
-      let newPosition = prev.fishPosition;
-      if (newSize > 1.2) {
-        newPosition = Math.max(0, prev.fishPosition - 2);
-      } else if (newSize < 1) {
-        newPosition = Math.min(100, prev.fishPosition + 2);
-      }
-
-      const newObstacles = prev.obstacles
-        .map(obs => ({
-          ...obs,
-          x: obs.x - 2,
-          passed: obs.passed || (obs.x < 20 && !obs.passed),
-        }))
-        .filter(obs => obs.x > -20);
-
-      if (Math.random() < 0.02) {
-        const types: Array<'coral' | 'seaweed' | 'predator' | 'smallFish'> = 
-          ['coral', 'seaweed', 'predator', 'smallFish'];
-        newObstacles.push({
-          x: 100,
-          y: Math.random() * 80 + 10,
-          type: types[Math.floor(Math.random() * types.length)],
-          passed: false,
-        });
-      }
-
-      const newBubbles = [...prev.bubbles]
-        .map(bubble => ({
-          ...bubble,
-          y: bubble.y - bubble.speed,
-          x: bubble.x + Math.sin(bubble.y / 30) * 0.5,
-        }))
-        .filter(bubble => bubble.y > -10);
-
-      if (Math.random() < 0.1) {
-        newBubbles.push({
-          x: Math.random() * 100,
-          y: 110,
-          size: Math.random() * 20 + 10,
-          speed: Math.random() * 2 + 1,
-        });
-      }
-
-      const newScore = prev.score + 
-        newObstacles.filter(obs => obs.x < 20 && !obs.passed).length +
-        (Math.abs(1 - newSize) < 0.1 ? 0.1 : 0);
-
-      const collision = newObstacles.some(obs => {
-        const hitbox = obs.type === 'predator' ? 15 : 10;
-        return (
-          obs.x < 30 && obs.x > 10 &&
-          Math.abs(newPosition - obs.y) < hitbox * newSize
-        );
-      });
-
-      if (collision) {
-        endGame(newScore);
-        return prev;
-      }
-
-      return {
-        ...prev,
-        fishPosition: newPosition,
-        fishSize: newSize,
-        obstacles: newObstacles,
-        bubbles: newBubbles,
-        score: Math.floor(newScore),
-      };
-    });
-  };
-
-  const gameLoop = () => {
-    if (!canvasRef.current) return;
-    
-    updateGameState();
-    drawGame();
-    
-    animationFrameRef.current = requestAnimationFrame(gameLoop);
-  };
-
-  const drawGame = () => {
-    if (!canvasRef.current || !assets.background) return;
-    const ctx = canvasRef.current.getContext('2d');
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, 800, 400);
-    const bgImage = new Image();
-    bgImage.src = assets.background;
-    ctx.drawImage(bgImage, 0, 0, 800, 400);
-
-    if (assets.bubbles) {
-      const bubbleImage = new Image();
-      bubbleImage.src = assets.bubbles;
-      gameState.bubbles.forEach(bubble => {
-        ctx.drawImage(
-          bubbleImage,
-          bubble.x * 8 - bubble.size/2,
-          bubble.y * 4 - bubble.size/2,
-          bubble.size,
-          bubble.size
-        );
-      });
-    }
-
-    gameState.obstacles.forEach(obstacle => {
-      if (assets[obstacle.type]) {
-        const obstacleImage = new Image();
-        obstacleImage.src = assets[obstacle.type];
-        const size = obstacle.type === 'predator' ? 60 : 40;
-        ctx.drawImage(
-          obstacleImage,
-          obstacle.x * 8 - size/2,
-          obstacle.y * 4 - size/2,
-          size,
-          size
-        );
-      }
-    });
-
-    if (assets.pufferfish) {
-      const fishImage = new Image();
-      fishImage.src = assets.pufferfish;
-      const fishSize = 40 * gameState.fishSize;
-      ctx.drawImage(
-        fishImage,
-        100 - fishSize/2,
-        gameState.fishPosition * 4 - fishSize/2,
-        fishSize,
-        fishSize
-      );
-    }
-
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '24px Arial';
-    ctx.fillText(`Score: ${gameState.score}`, 20, 30);
-  };
-
-  const endGame = async (finalScore: number) => {
-    setGameState(prev => ({ ...prev, isPlaying: false }));
+  const endGame = async () => {
+    setIsPlaying(false);
     setIsSubmitting(true);
     
     if (streamRef.current) {
@@ -315,9 +124,6 @@ const BreathingGame = () => {
       audioContextRef.current.close();
       audioContextRef.current = null;
     }
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
     
     if (session?.user) {
       try {
@@ -325,17 +131,17 @@ const BreathingGame = () => {
           user_id: session.user.id,
           activity_type: "breathing",
           activity_name: "Puffer Fish",
-          duration_minutes: Math.ceil(finalScore / 10),
-          focus_rating: Math.min(Math.round((finalScore / 100) * 10), 10),
+          duration_minutes: Math.ceil(score / 10),
+          focus_rating: Math.min(Math.round((score / 100) * 10), 10),
           energy_rating: null,
-          notes: `Completed breathing game with score: ${finalScore}`
+          notes: `Completed breathing game with score: ${score}`
         });
 
         if (error) throw error;
 
         toast({
           title: "Game Over!",
-          description: `Final score: ${finalScore}. Great job!`,
+          description: `Final score: ${score}. Great job!`,
         });
       } catch (error) {
         console.error("Error saving game results:", error);
@@ -358,9 +164,6 @@ const BreathingGame = () => {
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
     };
   }, []);
 
@@ -373,7 +176,7 @@ const BreathingGame = () => {
           </div>
           <h2 className="text-2xl font-bold">Pufferfish Adventure</h2>
         </div>
-        <div className="text-lg">Score: {gameState.score}</div>
+        <div className="text-lg">Score: {score}</div>
       </div>
 
       <div className="flex flex-col items-center gap-4">
@@ -384,7 +187,7 @@ const BreathingGame = () => {
           </div>
         ) : (
           <>
-            {!gameState.isPlaying && (
+            {!isPlaying && (
               <div className="w-full max-w-xl mb-4">
                 <BreathingTechniques
                   onSelectTechnique={setSelectedTechnique}
@@ -393,14 +196,9 @@ const BreathingGame = () => {
               </div>
             )}
             
-            <canvas
-              ref={canvasRef}
-              width={800}
-              height={400}
-              className="border border-gray-200 rounded-lg w-full max-w-3xl bg-blue-50"
-            />
+            <div id="game-container" ref={gameContainerRef} className="w-full max-w-3xl" />
             
-            {!gameState.isPlaying && (
+            {!isPlaying && (
               <Button 
                 onClick={startGame}
                 className="w-40"
