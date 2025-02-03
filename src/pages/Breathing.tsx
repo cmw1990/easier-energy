@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +16,7 @@ const Breathing = () => {
   const { session } = useAuth();
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
   const [phaseSeconds, setPhaseSeconds] = useState(0);
+  const hapticTimeoutRef = useRef<NodeJS.Timeout[]>([]);
 
   const { data: recentSessions, refetch } = useQuery({
     queryKey: ["breathingSessions"],
@@ -34,6 +35,24 @@ const Breathing = () => {
     enabled: !!session?.user?.id,
   });
 
+  // Clear any pending haptic timeouts
+  const clearHapticTimeouts = () => {
+    hapticTimeoutRef.current.forEach(timeout => clearTimeout(timeout));
+    hapticTimeoutRef.current = [];
+  };
+
+  // Schedule a haptic impact with delay
+  const scheduleHapticImpact = (style: ImpactStyle, delay: number) => {
+    const timeout = setTimeout(async () => {
+      try {
+        await Haptics.impact({ style });
+      } catch (error) {
+        console.warn('Haptic impact failed:', error);
+      }
+    }, delay);
+    hapticTimeoutRef.current.push(timeout);
+  };
+
   useEffect(() => {
     let interval: number | undefined;
     
@@ -47,49 +66,47 @@ const Breathing = () => {
         const phaseLength = 4; // Each phase is 4 seconds
         const currentPhase = Math.floor((seconds % totalCycleLength) / phaseLength);
         
-        // Determine the breath phase and create haptic patterns
         let newPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
         switch (currentPhase) {
           case 0:
             newPhase = 'inhale';
             if (breathPhase !== 'inhale') {
-              // Start inhale pattern
+              clearHapticTimeouts();
+              // Crescendo pattern for inhale
               for (let i = 0; i < 3; i++) {
-                await new Promise(resolve => setTimeout(resolve, 200));
-                await Haptics.impact({ style: ImpactStyle.Light });
-                await new Promise(resolve => setTimeout(resolve, 200));
-                await Haptics.impact({ style: ImpactStyle.Medium });
-                await new Promise(resolve => setTimeout(resolve, 200));
-                await Haptics.impact({ style: ImpactStyle.Heavy });
+                const baseDelay = i * 1200;
+                scheduleHapticImpact(ImpactStyle.Light, baseDelay);
+                scheduleHapticImpact(ImpactStyle.Medium, baseDelay + 200);
+                scheduleHapticImpact(ImpactStyle.Heavy, baseDelay + 400);
               }
             }
             break;
           case 1:
             newPhase = 'hold';
             if (breathPhase !== 'hold') {
-              // Rhythmic pulses for hold
+              clearHapticTimeouts();
+              // Evenly spaced pulses for hold
               for (let i = 0; i < 4; i++) {
-                await Haptics.impact({ style: ImpactStyle.Medium });
-                await new Promise(resolve => setTimeout(resolve, 800));
+                scheduleHapticImpact(ImpactStyle.Medium, i * 800);
               }
             }
             break;
           case 2:
             newPhase = 'exhale';
             if (breathPhase !== 'exhale') {
-              // Decreasing intensity for exhale
+              clearHapticTimeouts();
+              // Diminuendo pattern for exhale
               for (let i = 0; i < 3; i++) {
-                await Haptics.impact({ style: ImpactStyle.Heavy });
-                await new Promise(resolve => setTimeout(resolve, 200));
-                await Haptics.impact({ style: ImpactStyle.Medium });
-                await new Promise(resolve => setTimeout(resolve, 200));
-                await Haptics.impact({ style: ImpactStyle.Light });
-                await new Promise(resolve => setTimeout(resolve, 200));
+                const baseDelay = i * 1200;
+                scheduleHapticImpact(ImpactStyle.Heavy, baseDelay);
+                scheduleHapticImpact(ImpactStyle.Medium, baseDelay + 200);
+                scheduleHapticImpact(ImpactStyle.Light, baseDelay + 400);
               }
             }
             break;
           default:
             newPhase = 'rest';
+            clearHapticTimeouts();
         }
         
         if (newPhase !== breathPhase) {
@@ -103,13 +120,18 @@ const Breathing = () => {
       if (interval) {
         clearInterval(interval);
       }
+      clearHapticTimeouts();
     };
   }, [isActive, seconds, breathPhase]);
 
   const handleStartStop = async () => {
     if (!isActive) {
       setIsActive(true);
-      await Haptics.notification({ type: NotificationType.Success });
+      try {
+        await Haptics.notification({ type: NotificationType.Success });
+      } catch (error) {
+        console.warn('Haptic notification failed:', error);
+      }
       const interval = setInterval(() => {
         setSeconds((prev) => prev + 1);
       }, 1000);
@@ -117,6 +139,7 @@ const Breathing = () => {
       window.breathingInterval = interval;
     } else {
       setIsActive(false);
+      clearHapticTimeouts();
       // @ts-ignore - we know this exists
       clearInterval(window.breathingInterval);
       handleSaveSession();
