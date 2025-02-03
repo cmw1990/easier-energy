@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useQuery } from "@tanstack/react-query";
 import { Heart, Play, Pause, History } from "lucide-react";
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import BreathingGame from "@/components/games/BreathingGame";
 
 const Breathing = () => {
   const [isActive, setIsActive] = useState(false);
@@ -275,6 +276,10 @@ const Breathing = () => {
             </Table>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="mt-8">
+        <BreathingGame />
       </div>
     </div>
   );
