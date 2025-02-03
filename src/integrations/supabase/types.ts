@@ -308,6 +308,57 @@ export type Database = {
         }
         Relationships: []
       }
+      food_logs: {
+        Row: {
+          ai_analysis: string | null
+          calories: number | null
+          carbs_grams: number | null
+          created_at: string | null
+          fat_grams: number | null
+          food_name: string
+          id: string
+          image_url: string | null
+          meal_time: string | null
+          meal_type: string | null
+          notes: string | null
+          protein_grams: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          ai_analysis?: string | null
+          calories?: number | null
+          carbs_grams?: number | null
+          created_at?: string | null
+          fat_grams?: number | null
+          food_name: string
+          id?: string
+          image_url?: string | null
+          meal_time?: string | null
+          meal_type?: string | null
+          notes?: string | null
+          protein_grams?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          ai_analysis?: string | null
+          calories?: number | null
+          carbs_grams?: number | null
+          created_at?: string | null
+          fat_grams?: number | null
+          food_name?: string
+          id?: string
+          image_url?: string | null
+          meal_time?: string | null
+          meal_type?: string | null
+          notes?: string | null
+          protein_grams?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       free_samples: {
         Row: {
           active: boolean | null
