@@ -66,19 +66,12 @@ export const GameAssetsGenerator = () => {
 
           console.log(`Invoking edge function for ${batch}...`);
           
-          // Create a proper request body object
-          const requestBody = {
-            batch: batch
-          };
-          
-          console.log('Request body:', JSON.stringify(requestBody));
-          
           const { data, error } = await supabase.functions.invoke(
             'generate-initial-game-assets',
             {
-              body: requestBody,
-              headers: {
-                'Content-Type': 'application/json',
+              body: {
+                batch: batch,
+                type: 'game-assets'
               }
             }
           );
