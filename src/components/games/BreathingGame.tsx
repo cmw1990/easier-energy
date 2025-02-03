@@ -9,6 +9,7 @@ import { usePufferfishAssets } from "./PufferfishAssets";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
 import { usePhaserGame } from "@/hooks/use-phaser-game";
 import { PufferfishScene } from "./scenes/PufferfishScene";
+import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 
 const BreathingGame = () => {
   const [score, setScore] = useState(0);
@@ -186,6 +187,7 @@ const BreathingGame = () => {
           <h2 className="text-2xl font-bold">Pufferfish Adventure</h2>
         </div>
         <div className="flex items-center gap-4">
+          <GameAssetsGenerator />
           <Button 
             variant="outline"
             onClick={generateAssets}
@@ -196,7 +198,7 @@ const BreathingGame = () => {
             ) : (
               <RefreshCw className="h-4 w-4" />
             )}
-            Generate Visuals
+            Refresh Assets
           </Button>
           <div className="text-lg">Score: {score}</div>
         </div>

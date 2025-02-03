@@ -4,62 +4,70 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Flame, Loader2 } from "lucide-react";
+import { Cloud, Loader2, RefreshCw } from "lucide-react";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
-import { useBalloonAssets } from "./BalloonAssets";
+import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 
 const BalloonJourney = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
   const [score, setScore] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
+  const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [audioSupported, setAudioSupported] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const animationFrameRef = useRef<number>();
   const { toast } = useToast();
   const { session } = useAuth();
-  const gameLoopRef = useRef<number>();
-  const balloonPositionRef = useRef({ x: 100, y: 200 });
-  const obstaclesRef = useRef<Array<{ x: number, y: number }>>([]);
-  const breathPhaseRef = useRef<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
-  const phaseTimeRef = useRef(0);
-  const imagesRef = useRef<{ [key: string]: HTMLImageElement }>({});
-  
-  const { assets, isLoading, error } = useBalloonAssets();
 
-  // Load images when assets are available
-  useEffect(() => {
-    if (assets) {
-      const loadImage = (key: string, src: string) => {
-        const img = new Image();
-        img.src = src;
-        return new Promise<void>((resolve, reject) => {
-          img.onload = () => {
-            imagesRef.current[key] = img;
-            resolve();
-          };
-          img.onerror = reject;
-        });
-      };
+  const generateAssets = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-balloon-assets', {
+        body: { type: 'game-assets' }
+      });
 
-      Promise.all([
-        loadImage('balloon', assets.balloon),
-        loadImage('background', assets.background)
-      ]).catch(console.error);
-    }
-  }, [assets]);
+      if (error) throw error;
 
-  useEffect(() => {
-    if (error) {
-      console.error("Error loading game assets:", error);
       toast({
-        title: "Error Loading Game Assets",
-        description: error,
+        title: "Assets Generated",
+        description: "New balloon game assets have been created",
+      });
+    } catch (error) {
+      console.error('Error generating assets:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate game assets",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-  }, [error, toast]);
+  };
 
-  const startGame = () => {
-    if (!canvasRef.current || !selectedTechnique) {
+  useEffect(() => {
+    const checkAudioSupport = async () => {
+      try {
+        const supported = !!(
+          navigator.mediaDevices &&
+          navigator.mediaDevices.getUserMedia &&
+          window.AudioContext
+        );
+        setAudioSupported(supported);
+      } catch (error) {
+        console.error("Error checking audio support:", error);
+        setAudioSupported(false);
+      }
+    };
+    checkAudioSupport();
+  }, []);
+
+  const startGame = async () => {
+    if (!selectedTechnique) {
       toast({
         title: "Please select a breathing technique",
         description: "Choose a breathing technique before starting the game",
@@ -67,84 +75,55 @@ const BalloonJourney = () => {
       });
       return;
     }
-    
-    setIsPlaying(true);
-    setScore(0);
-    balloonPositionRef.current = { x: 100, y: 200 };
-    obstaclesRef.current = [];
-    breathPhaseRef.current = 'inhale';
-    phaseTimeRef.current = 0;
-    gameLoop();
-  };
 
-  const gameLoop = () => {
-    if (!canvasRef.current || !isPlaying || !selectedTechnique) return;
-    
-    const ctx = canvasRef.current.getContext('2d');
-    if (!ctx) return;
+    try {
+      if (!audioSupported) {
+        throw new Error("Audio input is not supported on this device/browser");
+      }
 
-    // Update breath phase
-    phaseTimeRef.current += 1;
-    const { pattern } = selectedTechnique;
-    const totalCycleLength = (pattern.inhale + (pattern.hold || 0) + pattern.exhale + (pattern.holdAfterExhale || 0));
-    
-    if (breathPhaseRef.current === 'inhale' && phaseTimeRef.current >= pattern.inhale) {
-      breathPhaseRef.current = pattern.hold ? 'hold' : 'exhale';
-      phaseTimeRef.current = 0;
-    } else if (breathPhaseRef.current === 'hold' && phaseTimeRef.current >= (pattern.hold || 0)) {
-      breathPhaseRef.current = 'exhale';
-      phaseTimeRef.current = 0;
-    } else if (breathPhaseRef.current === 'exhale' && phaseTimeRef.current >= pattern.exhale) {
-      breathPhaseRef.current = pattern.holdAfterExhale ? 'rest' : 'inhale';
-      phaseTimeRef.current = 0;
-    } else if (breathPhaseRef.current === 'rest' && phaseTimeRef.current >= (pattern.holdAfterExhale || 0)) {
-      breathPhaseRef.current = 'inhale';
-      phaseTimeRef.current = 0;
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+      
+      streamRef.current = stream;
+      audioContextRef.current = new AudioContext();
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      const source = audioContextRef.current.createMediaStreamSource(stream);
+      source.connect(analyserRef.current);
+      analyserRef.current.fftSize = 256;
+
+      setIsPlaying(true);
+      toast({
+        title: "Game Started!",
+        description: "Breathe to control your balloon's altitude.",
+      });
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+      toast({
+        title: "Error Starting Game",
+        description: error.message || "Could not access microphone. Please check permissions.",
+        variant: "destructive",
+      });
     }
-
-    // Update balloon position based on breath phase
-    if (breathPhaseRef.current === 'inhale') {
-      balloonPositionRef.current.y = Math.max(50, balloonPositionRef.current.y - 2);
-    } else if (breathPhaseRef.current === 'exhale') {
-      balloonPositionRef.current.y = Math.min(350, balloonPositionRef.current.y + 2);
-    }
-
-    // Clear canvas and draw
-    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-    // Draw background
-    const bgImage = imagesRef.current.background;
-    if (bgImage) {
-      ctx.drawImage(bgImage, 0, 0, canvasRef.current.width, canvasRef.current.height);
-    }
-
-    // Draw balloon
-    const balloonImage = imagesRef.current.balloon;
-    if (balloonImage) {
-      ctx.drawImage(
-        balloonImage,
-        balloonPositionRef.current.x,
-        balloonPositionRef.current.y,
-        50,
-        70
-      );
-    }
-
-    // Update score
-    setScore(prev => prev + 1);
-
-    // Request next frame
-    gameLoopRef.current = requestAnimationFrame(gameLoop);
   };
 
   const endGame = async () => {
     setIsPlaying(false);
     setIsSubmitting(true);
-
-    if (gameLoopRef.current) {
-      cancelAnimationFrame(gameLoopRef.current);
+    
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
     }
-
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+    
     if (session?.user) {
       try {
         const { error } = await supabase.from("energy_focus_logs").insert({
@@ -154,13 +133,13 @@ const BalloonJourney = () => {
           duration_minutes: Math.ceil(score / 10),
           focus_rating: Math.min(Math.round((score / 100) * 10), 10),
           energy_rating: null,
-          notes: `Completed balloon journey with score: ${score}`
+          notes: `Completed balloon game with score: ${score}`
         });
 
         if (error) throw error;
 
         toast({
-          title: "Journey Complete!",
+          title: "Game Over!",
           description: `Final score: ${score}. Great job!`,
         });
       } catch (error) {
@@ -176,69 +155,99 @@ const BalloonJourney = () => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+
   return (
     <Card className="p-6">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-full">
-            <Flame className="h-5 w-5 text-primary" />
+            <Cloud className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold">Balloon Journey</h2>
         </div>
-        <div className="text-lg">Score: {score}</div>
+        <div className="flex items-center gap-4">
+          <GameAssetsGenerator />
+          <Button 
+            variant="outline"
+            onClick={generateAssets}
+            className="gap-2"
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
+            Refresh Assets
+          </Button>
+          <div className="text-lg">Score: {score}</div>
+        </div>
       </div>
 
       <div className="flex flex-col items-center gap-4">
-        {isLoading ? (
-          <div className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Loading game assets...</span>
-          </div>
-        ) : error ? (
-          <div className="text-destructive">
-            {error}
-          </div>
-        ) : (
-          <>
-            {!isPlaying && (
-              <div className="w-full max-w-xl mb-4">
-                <BreathingTechniques
-                  onSelectTechnique={setSelectedTechnique}
-                  className="mb-4"
-                />
-              </div>
-            )}
-            
-            <canvas
-              ref={canvasRef}
-              width={800}
-              height={400}
-              className="border border-gray-200 rounded-lg w-full max-w-3xl bg-blue-50"
+        {!isPlaying && (
+          <div className="w-full max-w-xl mb-4">
+            <BreathingTechniques
+              onSelectTechnique={setSelectedTechnique}
+              className="mb-4"
             />
-            
-            {!isPlaying && (
-              <Button 
-                onClick={startGame}
-                className="w-40"
-                disabled={isSubmitting || !selectedTechnique}
-              >
-                Start Journey
-              </Button>
-            )}
-          </>
+          </div>
+        )}
+        
+        <canvas
+          ref={canvasRef}
+          width={800}
+          height={400}
+          className="border border-primary/10 rounded-lg w-full max-w-3xl bg-gradient-to-b from-blue-50 to-blue-100"
+        />
+        
+        {!isPlaying ? (
+          <Button 
+            onClick={startGame}
+            className="w-40"
+            disabled={isSubmitting || audioSupported === false || !selectedTechnique}
+          >
+            Start Game
+          </Button>
+        ) : (
+          <Button 
+            onClick={endGame}
+            variant="outline"
+            className="w-40"
+            disabled={isSubmitting}
+          >
+            End Game
+          </Button>
+        )}
+        
+        {audioSupported === false && (
+          <p className="text-destructive text-sm">
+            Audio input is not supported on your device or browser.
+            Please try using a different browser or device.
+          </p>
         )}
       </div>
 
       <div className="mt-6 text-sm text-muted-foreground">
-        <p>Welcome to Balloon Journey! Control your hot air balloon through beautiful landscapes:</p>
+        <p>Welcome to Balloon Journey! Control your hot air balloon by breathing:</p>
         <ul className="list-disc list-inside mt-2">
-          <li>Follow the breathing pattern to control your balloon</li>
-          <li>Inhale to rise higher</li>
-          <li>Exhale to descend</li>
-          <li>Hold your breath to maintain position</li>
-          <li>Avoid obstacles and mountains</li>
-          <li>Collect clouds for extra points</li>
-          <li>Enjoy the peaceful journey</li>
+          <li>Breathe in deeply to make your balloon rise</li>
+          <li>Breathe out slowly to descend gently</li>
+          <li>Avoid obstacles and collect stars</li>
+          <li>Follow the breathing pattern for bonus points</li>
+          <li>Stay calm and maintain steady breathing</li>
         </ul>
       </div>
     </Card>

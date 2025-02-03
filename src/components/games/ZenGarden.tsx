@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Flower, Loader2 } from "lucide-react";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
+import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 
 interface Particle {
   x: number;
@@ -383,8 +384,20 @@ const ZenGarden = () => {
             Zen Garden
           </h2>
         </div>
-        <div className="text-lg font-medium text-secondary">
-          Time: {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
+        <div className="flex items-center gap-4">
+          <GameAssetsGenerator />
+          <Button 
+            variant="outline"
+            onClick={loadZenElements}
+            className="gap-2"
+          >
+            {isLoadingAssets ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
+            Refresh Assets
+          </Button>
         </div>
       </div>
 
