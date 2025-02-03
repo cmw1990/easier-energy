@@ -6,8 +6,7 @@ const openai = new OpenAI({
   apiKey: Deno.env.get('OPENAI_API_KEY')!,
 });
 
-// Immediately invoke the function
-(async () => {
+async function generateAssets() {
   console.log('Starting asset generation process...');
   
   try {
@@ -81,20 +80,33 @@ const openai = new OpenAI({
 
     console.log('Asset generation completed successfully!');
     console.log('Generated assets:', results);
+    return results;
 
   } catch (error) {
     console.error('Error in asset generation process:', error);
+    throw error;
   }
-})();
+}
 
-// Keep the original serve handler for HTTP requests
+// Start generating assets immediately when the function is deployed
+generateAssets().catch(console.error);
+
+// Also handle HTTP requests
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
-  return new Response(JSON.stringify({ message: 'Asset generation process started' }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    status: 200,
-  })
+  try {
+    const results = await generateAssets();
+    return new Response(JSON.stringify({ message: 'Asset generation completed', results }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    })
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+    })
+  }
 })
