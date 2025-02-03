@@ -117,7 +117,7 @@ async function generateAssets() {
   }
 }
 
-// Serve HTTP requests
+// Create a Deno server to handle HTTP requests
 Deno.serve(async (req) => {
   console.log(`Received ${req.method} request to generate assets`);
 
