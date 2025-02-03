@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LocalNotifications, PendingLocalNotificationsResult } from '@capacitor/local-notifications';
+import { LocalNotifications, PendingResult } from '@capacitor/local-notifications';
 import { Motion } from '@capacitor/motion';
 import { Device, DeviceInfo } from '@capacitor/device';
 import { Button } from "@/components/ui/button";
@@ -115,7 +115,7 @@ export const SmartAlarm = () => {
 
   const loadSavedAlarms = async () => {
     try {
-      const pendingResult: PendingLocalNotificationsResult = await LocalNotifications.getPending();
+      const pendingResult: PendingResult = await LocalNotifications.getPending();
       if (pendingResult.notifications) {
         const savedAlarms = pendingResult.notifications.map(notification => ({
           id: notification.id.toString(),
