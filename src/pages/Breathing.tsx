@@ -11,6 +11,7 @@ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import BreathingGame from "@/components/games/BreathingGame";
 import BalloonJourney from "@/components/games/BalloonJourney";
 import ZenGarden from "@/components/games/ZenGarden";
+import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
 import {
   Tabs,
   TabsContent,
@@ -26,6 +27,7 @@ const Breathing = () => {
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
   const [phaseSeconds, setPhaseSeconds] = useState(0);
   const hapticTimeoutRef = useRef<NodeJS.Timeout[]>([]);
+  const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
 
   const { data: recentSessions, refetch } = useQuery({
     queryKey: ["breathingSessions"],
@@ -63,58 +65,50 @@ const Breathing = () => {
   useEffect(() => {
     let interval: number | undefined;
     
-    if (isActive) {
-      interval = window.setInterval(async () => {
+    if (isActive && selectedTechnique) {
+      interval = window.setInterval(() => {
         setSeconds((prev) => prev + 1);
         setPhaseSeconds((prev) => prev + 1);
         
-        const totalCycleLength = 12; // 4s inhale + 4s hold + 4s exhale
-        const phaseLength = 4; // Each phase is 4 seconds
-        const currentPhase = Math.floor((seconds % totalCycleLength) / phaseLength);
+        const { pattern } = selectedTechnique;
+        const totalCycleLength = (pattern.inhale + (pattern.hold || 0) + pattern.exhale + (pattern.holdAfterExhale || 0));
+        const currentPhase = Math.floor((seconds % totalCycleLength));
         
         let newPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
-        switch (currentPhase) {
-          case 0:
-            newPhase = 'inhale';
-            if (breathPhase !== 'inhale') {
-              clearHapticTimeouts();
-              for (let i = 0; i < 3; i++) {
-                const baseDelay = i * 1200;
-                scheduleHapticImpact(ImpactStyle.Light, baseDelay);
-                scheduleHapticImpact(ImpactStyle.Medium, baseDelay + 200);
-                scheduleHapticImpact(ImpactStyle.Heavy, baseDelay + 400);
-              }
-            }
-            break;
-          case 1:
-            newPhase = 'hold';
-            if (breathPhase !== 'hold') {
-              clearHapticTimeouts();
-              for (let i = 0; i < 4; i++) {
-                scheduleHapticImpact(ImpactStyle.Medium, i * 800);
-              }
-            }
-            break;
-          case 2:
-            newPhase = 'exhale';
-            if (breathPhase !== 'exhale') {
-              clearHapticTimeouts();
-              for (let i = 0; i < 3; i++) {
-                const baseDelay = i * 1200;
-                scheduleHapticImpact(ImpactStyle.Heavy, baseDelay);
-                scheduleHapticImpact(ImpactStyle.Medium, baseDelay + 200);
-                scheduleHapticImpact(ImpactStyle.Light, baseDelay + 400);
-              }
-            }
-            break;
-          default:
-            newPhase = 'rest';
-            clearHapticTimeouts();
+        if (currentPhase < pattern.inhale) {
+          newPhase = 'inhale';
+        } else if (pattern.hold && currentPhase < (pattern.inhale + pattern.hold)) {
+          newPhase = 'hold';
+        } else if (currentPhase < (pattern.inhale + (pattern.hold || 0) + pattern.exhale)) {
+          newPhase = 'exhale';
+        } else {
+          newPhase = 'rest';
         }
         
         if (newPhase !== breathPhase) {
           setBreathPhase(newPhase);
           setPhaseSeconds(0);
+          
+          // Schedule haptic feedback based on the phase
+          clearHapticTimeouts();
+          switch (newPhase) {
+            case 'inhale':
+              for (let i = 0; i < 3; i++) {
+                scheduleHapticImpact(ImpactStyle.Light, i * 200);
+              }
+              break;
+            case 'hold':
+              scheduleHapticImpact(ImpactStyle.Medium, 0);
+              break;
+            case 'exhale':
+              for (let i = 0; i < 3; i++) {
+                scheduleHapticImpact(ImpactStyle.Heavy, i * 200);
+              }
+              break;
+            case 'rest':
+              scheduleHapticImpact(ImpactStyle.Light, 0);
+              break;
+          }
         }
       }, 1000);
     }
@@ -125,9 +119,18 @@ const Breathing = () => {
       }
       clearHapticTimeouts();
     };
-  }, [isActive, seconds, breathPhase]);
+  }, [isActive, seconds, breathPhase, selectedTechnique]);
 
   const handleStartStop = async () => {
+    if (!selectedTechnique) {
+      toast({
+        title: "Please select a breathing technique",
+        description: "Choose a breathing technique before starting the exercise",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!isActive) {
       setIsActive(true);
       try {
@@ -180,15 +183,19 @@ const Breathing = () => {
   };
 
   const getBreathPhaseText = () => {
+    if (!selectedTechnique) return 'Select a technique';
+    
     switch (breathPhase) {
       case 'inhale':
-        return 'Breathe In';
+        return `Breathe In (${selectedTechnique.pattern.inhale}s)`;
       case 'hold':
-        return 'Hold';
+        return `Hold (${selectedTechnique.pattern.hold}s)`;
       case 'exhale':
-        return 'Breathe Out';
+        return `Breathe Out (${selectedTechnique.pattern.exhale}s)`;
       default:
-        return 'Get Ready';
+        return selectedTechnique.pattern.holdAfterExhale 
+          ? `Rest (${selectedTechnique.pattern.holdAfterExhale}s)`
+          : 'Get Ready';
     }
   };
 
@@ -217,81 +224,88 @@ const Breathing = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="exercise">
-          <Card className="relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 z-0" />
-            <CardHeader className="relative z-10">
-              <CardTitle className="flex items-center justify-between">
-                <span>Current Session</span>
-                <Heart className={`h-5 w-5 text-primary ${isActive ? 'animate-pulse' : ''}`} />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="relative z-10">
-              <div className={`text-6xl font-bold text-primary transition-all duration-300 ${isActive ? 'scale-110' : ''}`}>
-                {formatTime(seconds)}
-              </div>
-              {isActive && (
-                <div className="text-2xl font-semibold text-primary/80 animate-fade-in">
-                  {getBreathPhaseText()}
+        <TabsContent value="exercise" className="space-y-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            <BreathingTechniques 
+              onSelectTechnique={setSelectedTechnique}
+              className="md:row-span-2"
+            />
+            
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 z-0" />
+              <CardHeader className="relative z-10">
+                <CardTitle className="flex items-center justify-between">
+                  <span>Current Session</span>
+                  <Heart className={`h-5 w-5 text-primary ${isActive ? 'animate-pulse' : ''}`} />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="relative z-10">
+                <div className={`text-6xl font-bold text-primary transition-all duration-300 ${isActive ? 'scale-110' : ''}`}>
+                  {formatTime(seconds)}
                 </div>
-              )}
-              <Button
-                onClick={handleStartStop}
-                size="lg"
-                className={`w-40 h-40 rounded-full transition-transform duration-300 ${
-                  isActive ? 'bg-destructive hover:bg-destructive/90' : 'bg-primary hover:bg-primary/90'
-                } ${isActive ? 'scale-95' : 'hover:scale-105'}`}
-              >
-                {isActive ? (
-                  <div className="flex flex-col items-center">
-                    <Pause className="h-8 w-8 mb-2" />
-                    <span>Stop</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <Play className="h-8 w-8 mb-2" />
-                    <span>Start</span>
+                {isActive && (
+                  <div className="text-2xl font-semibold text-primary/80 animate-fade-in">
+                    {getBreathPhaseText()}
                   </div>
                 )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <History className="h-5 w-5" />
-                Recent Sessions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Duration</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentSessions?.map((session) => (
-                    <TableRow key={session.id}>
-                      <TableCell>
-                        {new Date(session.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>{session.duration_minutes} minutes</TableCell>
-                    </TableRow>
-                  ))}
-                  {(!recentSessions || recentSessions.length === 0) && (
-                    <TableRow>
-                      <TableCell colSpan={2} className="text-center text-muted-foreground">
-                        No recent sessions
-                      </TableCell>
-                    </TableRow>
+                <Button
+                  onClick={handleStartStop}
+                  size="lg"
+                  className={`w-40 h-40 rounded-full transition-transform duration-300 ${
+                    isActive ? 'bg-destructive hover:bg-destructive/90' : 'bg-primary hover:bg-primary/90'
+                  } ${isActive ? 'scale-95' : 'hover:scale-105'}`}
+                >
+                  {isActive ? (
+                    <div className="flex flex-col items-center">
+                      <Pause className="h-8 w-8 mb-2" />
+                      <span>Stop</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <Play className="h-8 w-8 mb-2" />
+                      <span>Start</span>
+                    </div>
                   )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5" />
+                  Recent Sessions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Duration</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recentSessions?.map((session) => (
+                      <TableRow key={session.id}>
+                        <TableCell>
+                          {new Date(session.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>{session.duration_minutes} minutes</TableCell>
+                      </TableRow>
+                    ))}
+                    {(!recentSessions || recentSessions.length === 0) && (
+                      <TableRow>
+                        <TableCell colSpan={2} className="text-center text-muted-foreground">
+                          No recent sessions
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="pufferfish">
