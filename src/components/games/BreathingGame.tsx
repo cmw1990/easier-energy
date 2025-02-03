@@ -56,7 +56,16 @@ const BreathingGame = () => {
       const scene = game.current.scene.getScene('PufferfishScene') as PufferfishScene;
       if (scene) {
         sceneRef.current = scene;
-        scene.setAssets(assets);
+        // Convert GameAssets to Record<string, string>
+        const assetMap: Record<string, string> = {};
+        if (assets) {
+          Object.entries(assets).forEach(([key, value]) => {
+            if (typeof value === 'string') {
+              assetMap[key] = value;
+            }
+          });
+        }
+        scene.setAssets(assetMap);
       }
     }
   }, [game, assets]);

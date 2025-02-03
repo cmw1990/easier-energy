@@ -19,7 +19,7 @@ export const usePhaserGame = (config: GameConfig) => {
         physics: {
           default: 'arcade',
           arcade: {
-            gravity: { y: 0 },
+            gravity: { x: 0, y: 0 },
             debug: false
           }
         },
