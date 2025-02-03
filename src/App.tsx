@@ -16,6 +16,7 @@ import Food from "@/pages/Food";
 import NotFound from "@/pages/NotFound";
 import ChessGame from "@/components/games/ChessGame";
 import GoGame from "@/components/games/GoGame";
+import ReversiGame from "@/components/games/ReversiGame";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ function App() {
               <Route path="/distraction-blocker" element={<DistractionBlocker />} />
               <Route path="/games/chess" element={<ChessGame />} />
               <Route path="/games/go" element={<GoGame />} />
+              <Route path="/games/reversi" element={<ReversiGame />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
