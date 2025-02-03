@@ -54,6 +54,26 @@ export const BlockingStats = () => {
         .eq('date', today.toISOString().split('T')[0])
         .maybeSingle();
 
+      // If no metrics exist for today, create a default record
+      if (!metrics) {
+        const { data: newMetrics } = await supabase
+          .from('productivity_metrics')
+          .insert({
+            user_id: session.user.id,
+            date: today.toISOString().split('T')[0],
+            focus_duration: 0,
+            distractions_blocked: todayBlocked || 0,
+            productivity_score: 0,
+            focus_sessions: 0
+          })
+          .select()
+          .maybeSingle();
+
+        if (newMetrics) {
+          console.log('Created new metrics record:', newMetrics);
+        }
+      }
+
       // Calculate streak days
       const { data: streakData } = await supabase
         .from('productivity_metrics')
