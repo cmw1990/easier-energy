@@ -79,7 +79,7 @@ async function generateBatch(assets: Array<{ name: string, prompt: string }>, ga
     try {
       await generateAndUploadAsset(asset, gameType);
       // Add delay between assets to manage resource usage
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
     } catch (error) {
       console.error(`Failed to generate ${asset.name} for ${gameType}:`, error);
       // Continue with next asset even if one fails
@@ -97,21 +97,39 @@ async function generateAssets(req: Request) {
     { name: 'pufferfish', prompt: 'A cute cartoon pufferfish character, simple design, transparent background, cheerful expression' },
     { name: 'bubbles', prompt: 'Simple blue cartoon bubbles, transparent background, playful design' },
     { name: 'coral', prompt: 'Colorful cartoon coral reef element, transparent background, vibrant colors' },
+    { name: 'seaweed', prompt: 'Simple seaweed plant design, transparent background, shades of green' },
+    { name: 'smallFish', prompt: 'Small cute tropical fish, transparent background, bright colors' },
+    { name: 'predator', prompt: 'Cartoon shark character, transparent background, slightly menacing but cute' },
+    { name: 'background', prompt: 'Serene underwater background, blue gradient with distant coral silhouettes' }
   ];
 
   const balloonAssets = [
     { name: 'balloon', prompt: 'A cute hot air balloon with pastel colors, simple cartoon style, centered on transparent background' },
     { name: 'clouds', prompt: 'Fluffy white cloud, simple cartoon style, on transparent background' },
-    { name: 'background', prompt: 'Peaceful sky gradient from light blue to white, simple style for game background' },
+    { name: 'mountains', prompt: 'Simple mountain silhouettes, cartoon style, on transparent background' },
+    { name: 'birds', prompt: 'Simple cartoon birds silhouettes, transparent background' },
+    { name: 'background', prompt: 'Peaceful sky gradient from light blue to white, simple style for game background' }
+  ];
+
+  const colorMatchAssets = [
+    { name: 'background', prompt: 'Abstract geometric pattern with soft colors for a game background' },
+    { name: 'particle', prompt: 'Simple colorful particle effect, transparent background' }
   ];
 
   try {
     if (batch === 'all' || batch === 'pufferfish') {
       await generateBatch(pufferfishAssets, 'pufferfish');
+      // Add delay between batches
+      await new Promise(resolve => setTimeout(resolve, 5000));
     }
     
     if (batch === 'all' || batch === 'balloon') {
       await generateBatch(balloonAssets, 'balloon');
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+
+    if (batch === 'all' || batch === 'color-match') {
+      await generateBatch(colorMatchAssets, 'color-match');
     }
 
     console.log('Asset generation completed successfully!');
