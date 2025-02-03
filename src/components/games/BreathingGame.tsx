@@ -175,7 +175,7 @@ const BreathingGame = () => {
       try {
         const { error } = await supabase.from("energy_focus_logs").insert({
           user_id: session.user.id,
-          activity_type: "breathing_game",
+          activity_type: "breathing", // Changed from "breathing_game" to "breathing"
           activity_name: "Puffer Fish",
           duration_minutes: Math.ceil(finalScore / 10),
           focus_rating: Math.round((finalScore / 100) * 10),
