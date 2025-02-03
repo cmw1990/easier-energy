@@ -185,36 +185,54 @@ export type Database = {
       distraction_blocking: {
         Row: {
           block_type: Database["public"]["Enums"]["distraction_type"]
+          break_duration: number | null
           created_at: string | null
           days_active: string[] | null
           id: string
           is_active: boolean | null
+          last_break_at: string | null
+          pattern_data: Json | null
+          priority: number | null
+          productivity_score: number | null
           schedule_end: string | null
           schedule_start: string | null
+          schedule_type: string | null
           target: string
           updated_at: string | null
           user_id: string
         }
         Insert: {
           block_type: Database["public"]["Enums"]["distraction_type"]
+          break_duration?: number | null
           created_at?: string | null
           days_active?: string[] | null
           id?: string
           is_active?: boolean | null
+          last_break_at?: string | null
+          pattern_data?: Json | null
+          priority?: number | null
+          productivity_score?: number | null
           schedule_end?: string | null
           schedule_start?: string | null
+          schedule_type?: string | null
           target: string
           updated_at?: string | null
           user_id: string
         }
         Update: {
           block_type?: Database["public"]["Enums"]["distraction_type"]
+          break_duration?: number | null
           created_at?: string | null
           days_active?: string[] | null
           id?: string
           is_active?: boolean | null
+          last_break_at?: string | null
+          pattern_data?: Json | null
+          priority?: number | null
+          productivity_score?: number | null
           schedule_end?: string | null
           schedule_start?: string | null
+          schedule_type?: string | null
           target?: string
           updated_at?: string | null
           user_id?: string
@@ -696,6 +714,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      productivity_metrics: {
+        Row: {
+          created_at: string | null
+          date: string
+          distractions_blocked: number | null
+          focus_duration: number | null
+          focus_sessions: number | null
+          id: string
+          productivity_score: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string
+          distractions_blocked?: number | null
+          focus_duration?: number | null
+          focus_sessions?: number | null
+          id?: string
+          productivity_score?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          distractions_blocked?: number | null
+          focus_duration?: number | null
+          focus_sessions?: number | null
+          id?: string
+          productivity_score?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       products: {
         Row: {
