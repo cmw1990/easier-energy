@@ -1,0 +1,14 @@
+import { Card } from '@/components/ui/card';
+
+export const ShogiGame = () => {
+  return (
+    <Card className="p-6">
+      <div className="text-center py-8">
+        <h2 className="text-2xl font-bold mb-4">Shogi (Japanese Chess)</h2>
+        <p className="text-muted-foreground">
+          Coming soon! This traditional Japanese chess variant will be implemented in a future update.
+        </p>
+      </div>
+    </Card>
+  );
+};

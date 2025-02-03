@@ -18,6 +18,9 @@ import ChessGame from "@/components/games/ChessGame";
 import GoGame from "@/components/games/GoGame";
 import { ReversiGame } from "@/components/games/ReversiGame";
 import { ConnectFourGame } from "@/components/games/ConnectFourGame";
+import { TicTacToeGame } from "@/components/games/TicTacToeGame";
+import { XiangqiGame } from "@/components/games/XiangqiGame";
+import { ShogiGame } from "@/components/games/ShogiGame";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +45,9 @@ function App() {
               <Route path="/games/go" element={<GoGame />} />
               <Route path="/games/reversi" element={<ReversiGame />} />
               <Route path="/games/connect-four" element={<ConnectFourGame />} />
+              <Route path="/games/tic-tac-toe" element={<TicTacToeGame />} />
+              <Route path="/games/xiangqi" element={<XiangqiGame />} />
+              <Route path="/games/shogi" element={<ShogiGame />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
