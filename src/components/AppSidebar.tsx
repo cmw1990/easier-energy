@@ -10,7 +10,10 @@ import {
   ShieldBan,
   Utensils,
   BarChart3,
-  Settings,
+  ChessKing,
+  CircleDot,
+  Grid3X3,
+  Gamepad2,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -66,6 +69,31 @@ const navigationGroups = [
         to: "/analytics",
         icon: BarChart3,
         label: "Analytics",
+      },
+    ]
+  },
+  {
+    label: "Board Games",
+    links: [
+      {
+        to: "/games/chess",
+        icon: ChessKing,
+        label: "Chess",
+      },
+      {
+        to: "/games/go",
+        icon: CircleDot,
+        label: "Go",
+      },
+      {
+        to: "/games/checkers",
+        icon: Grid3X3,
+        label: "Checkers",
+      },
+      {
+        to: "/games/reversi",
+        icon: Gamepad2,
+        label: "Reversi",
       },
     ]
   }
