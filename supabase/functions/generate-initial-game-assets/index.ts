@@ -2,18 +2,36 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 import { OpenAI } from 'https://esm.sh/openai@4.20.1'
 import { corsHeaders } from '../_shared/cors.ts'
 
+console.log('Edge function is loading...');
+
+// Immediately check if we have the OpenAI API key
+const openAiKey = Deno.env.get('OPENAI_API_KEY');
+if (!openAiKey) {
+  console.error('OPENAI_API_KEY is not set!');
+  throw new Error('OPENAI_API_KEY is not set');
+}
+
+console.log('OpenAI API key is present');
+
 const openai = new OpenAI({
-  apiKey: Deno.env.get('OPENAI_API_KEY')!,
+  apiKey: openAiKey,
 });
 
 async function generateAssets() {
   console.log('Starting asset generation process...');
   
   try {
+    console.log('Setting up Supabase client...');
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    )
+      Deno.env.get('SUPABASE_URL') || '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+    );
+
+    if (!supabase) {
+      throw new Error('Failed to initialize Supabase client');
+    }
+
+    console.log('Supabase client initialized');
 
     // Define all the assets we need
     const assets = {
@@ -28,6 +46,8 @@ async function generateAssets() {
       ]
     };
 
+    console.log('Starting to generate assets...');
+
     const results = {
       pufferfish: {},
     };
@@ -40,6 +60,7 @@ async function generateAssets() {
         console.log(`Generating ${asset.name}...`);
         
         try {
+          console.log(`Making OpenAI API call for ${asset.name}...`);
           const response = await openai.images.generate({
             model: "dall-e-3",
             prompt: asset.prompt,
@@ -48,32 +69,36 @@ async function generateAssets() {
             response_format: "b64_json",
           });
 
-          if (response.data[0].b64_json) {
-            console.log(`Successfully generated ${asset.name}, uploading to storage...`);
-            
-            const buffer = Uint8Array.from(atob(response.data[0].b64_json), c => c.charCodeAt(0));
-            
-            const { data, error } = await supabase.storage
-              .from('game-assets')
-              .upload(`${game}/${asset.name}.png`, buffer, {
-                contentType: 'image/png',
-                upsert: true
-              });
-
-            if (error) {
-              throw error;
-            }
-
-            console.log(`Successfully uploaded ${asset.name} to storage`);
-
-            const { data: { publicUrl } } = supabase.storage
-              .from('game-assets')
-              .getPublicUrl(`${game}/${asset.name}.png`);
-
-            results[game][asset.name] = publicUrl;
+          if (!response.data[0].b64_json) {
+            throw new Error(`No image data received for ${asset.name}`);
           }
+
+          console.log(`Successfully generated ${asset.name}, uploading to storage...`);
+          
+          const buffer = Uint8Array.from(atob(response.data[0].b64_json), c => c.charCodeAt(0));
+          
+          const { data, error } = await supabase.storage
+            .from('game-assets')
+            .upload(`${game}/${asset.name}.png`, buffer, {
+              contentType: 'image/png',
+              upsert: true
+            });
+
+          if (error) {
+            throw error;
+          }
+
+          console.log(`Successfully uploaded ${asset.name} to storage`);
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('game-assets')
+            .getPublicUrl(`${game}/${asset.name}.png`);
+
+          results[game][asset.name] = publicUrl;
+          console.log(`Asset ${asset.name} completed successfully`);
         } catch (error) {
           console.error(`Error generating ${asset.name} for ${game}:`, error);
+          throw error; // Re-throw to stop the process
         }
       }
     }
@@ -88,11 +113,20 @@ async function generateAssets() {
   }
 }
 
-// Start generating assets immediately when the function is deployed
-generateAssets().catch(console.error);
+// Immediately invoke generateAssets when the function is deployed
+console.log('Attempting to start asset generation...');
+generateAssets()
+  .then(results => {
+    console.log('Asset generation completed with results:', results);
+  })
+  .catch(error => {
+    console.error('Failed to generate assets:', error);
+  });
 
 // Also handle HTTP requests
 Deno.serve(async (req) => {
+  console.log(`Received ${req.method} request`);
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -104,6 +138,7 @@ Deno.serve(async (req) => {
       status: 200,
     })
   } catch (error) {
+    console.error('Error handling request:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
