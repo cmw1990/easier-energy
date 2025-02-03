@@ -27,6 +27,8 @@ export const BlockingStats = () => {
     if (!session?.user?.id) return;
 
     try {
+      console.log('Loading stats for user:', session.user.id);
+
       // Get total blocked attempts
       const { count: totalBlocked } = await supabase
         .from('distraction_block_logs')
@@ -50,16 +52,21 @@ export const BlockingStats = () => {
         .eq('user_id', session.user.id)
         .eq('is_active', true);
 
+      console.log('Fetching metrics for date:', today.toISOString().split('T')[0]);
+
       // Get today's productivity metrics
-      const { data: metrics } = await supabase
+      const { data: metrics, error: metricsError } = await supabase
         .from('productivity_metrics')
         .select('*')
         .eq('user_id', session.user.id)
         .eq('date', today.toISOString().split('T')[0])
         .maybeSingle();
 
+      console.log('Metrics query result:', { metrics, metricsError });
+
       // If no metrics exist for today, create a default record
       if (!metrics) {
+        console.log('No metrics found for today, creating default record');
         const { data: newMetrics, error: insertError } = await supabase
           .from('productivity_metrics')
           .insert({
