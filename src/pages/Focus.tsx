@@ -13,6 +13,9 @@ import MathSpeed from "@/components/games/MathSpeed";
 import SimonSays from "@/components/games/SimonSays";
 import SpeedTyping from "@/components/games/SpeedTyping";
 import VisualMemory from "@/components/games/VisualMemory";
+import PatternRecognition from "@/components/games/PatternRecognition";
+import SequenceMemory from "@/components/games/SequenceMemory";
+import WordAssociation from "@/components/games/WordAssociation";
 
 const NumberSequence = () => {
   const [isActive, setIsActive] = useState(false);
@@ -183,6 +186,9 @@ const Focus = () => {
         <SimonSays />
         <SpeedTyping />
         <VisualMemory />
+        <PatternRecognition />
+        <SequenceMemory />
+        <WordAssociation />
       </div>
 
       <Card className="p-6">
@@ -197,6 +203,9 @@ const Focus = () => {
           <li>• <strong>Simon Says:</strong> Test your memory and sequence recall with color patterns</li>
           <li>• <strong>Speed Typing:</strong> Improve typing speed and accuracy while maintaining focus</li>
           <li>• <strong>Visual Memory:</strong> Enhance spatial memory by remembering grid patterns</li>
+          <li>• <strong>Pattern Recognition:</strong> Train your brain to recognize and complete visual patterns</li>
+          <li>• <strong>Sequence Memory:</strong> Challenge your working memory with growing number sequences</li>
+          <li>• <strong>Word Association:</strong> Build cognitive connections through word relationships</li>
           <li>• All results are saved to track your progress over time</li>
           <li>• Regular practice can help improve concentration and cognitive function</li>
         </ul>
