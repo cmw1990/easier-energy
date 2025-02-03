@@ -12,7 +12,7 @@ import WordScramble from '@/components/games/WordScramble';
 import WordMemoryChain from '@/components/games/WordMemoryChain';
 import BreathingGame from '@/components/games/BreathingGame';
 import BalloonJourney from '@/components/games/BalloonJourney';
-import { Brain, Crown, Circle, King, Wind } from 'lucide-react';
+import { Brain, Crown, Circle, Wind } from 'lucide-react';
 
 const Dashboard = () => {
   return (
@@ -25,7 +25,7 @@ const Dashboard = () => {
       <Tabs defaultValue="board" className="space-y-4">
         <TabsList className="grid grid-cols-3 lg:grid-cols-5 gap-4">
           <TabsTrigger value="board" className="flex items-center gap-2">
-            <King className="h-4 w-4" />
+            <Crown className="h-4 w-4" />
             Board Games
           </TabsTrigger>
           <TabsTrigger value="brain" className="flex items-center gap-2">
