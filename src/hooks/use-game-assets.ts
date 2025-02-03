@@ -81,12 +81,14 @@ export const useGameAssets = (gameType: string) => {
     } catch (err) {
       console.error(`Error loading ${type}, attempt ${retryCount + 1}:`, err);
       
-      if (retryCount < 2) {
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
+      // Only retry once to avoid infinite loops
+      if (retryCount < 1) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
         return fetchAsset(type, retryCount + 1);
       }
       
-      throw err;
+      // Return placeholder URL after retry fails
+      return '/placeholder.svg';
     }
   };
 
@@ -96,7 +98,7 @@ export const useGameAssets = (gameType: string) => {
       setError(null);
       
       try {
-        const assetTypes = await getAssetTypesForGame(gameType);
+        const assetTypes = getAssetTypesForGame(gameType);
         const loadedAssets: Record<string, GameAsset> = {};
         let failedCount = 0;
 
@@ -104,19 +106,13 @@ export const useGameAssets = (gameType: string) => {
           assetTypes.map(async (type) => {
             try {
               const url = await fetchAsset(type);
-              if (url) {
-                loadedAssets[type] = {
-                  url,
-                  type,
-                  loaded: true
-                };
-              } else {
+              loadedAssets[type] = {
+                url: url || '/placeholder.svg',
+                type,
+                loaded: !!url && url !== '/placeholder.svg'
+              };
+              if (!url || url === '/placeholder.svg') {
                 failedCount++;
-                loadedAssets[type] = {
-                  url: '/placeholder.svg',
-                  type,
-                  loaded: false
-                };
               }
             } catch (assetError) {
               console.error(`Failed to load ${type} asset:`, assetError);
@@ -133,25 +129,21 @@ export const useGameAssets = (gameType: string) => {
         setAssets(loadedAssets);
         
         if (failedCount > 0) {
-          const message = `Some game assets failed to load. Try using the "Generate Game Assets" button in the top menu to fix this.`;
-          console.error(message);
+          const message = `Some game assets failed to load. The game will continue with placeholder images.`;
+          console.warn(message);
           toast({
-            title: "Missing Game Assets",
+            title: "Some Assets Missing",
             description: message,
-            variant: "destructive",
+            variant: "default",
           });
           setError(message);
         }
       } catch (err) {
-        const message = 'Failed to load game assets. Try using the "Generate Game Assets" button to fix this.';
-        console.error(message, err);
-        setError(message);
-        toast({
-          title: "Error Loading Game Assets",
-          description: message,
-          variant: "destructive",
-        });
+        console.error('Failed to load game assets:', err);
+        // Don't block the game from starting, just show a warning
+        setError('Some assets failed to load but the game can still be played.');
       } finally {
+        // Always set loading to false so games can start
         setIsLoading(false);
       }
     };
@@ -162,7 +154,7 @@ export const useGameAssets = (gameType: string) => {
   return { assets, isLoading, error };
 };
 
-const getAssetTypesForGame = async (gameType: string): Promise<string[]> => {
+const getAssetTypesForGame = (gameType: string): string[] => {
   switch (gameType) {
     case 'balloon':
       return ['balloon', 'background'];
