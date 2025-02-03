@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Brain, Shield, Activity, Ban, Clock, Bell, BellOff, Heart, Battery, Focus } from "lucide-react";
+import { Brain, Shield, Activity, Ban, Clock, Bell, BellOff, Heart, Battery, Focus, Gamepad } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BlockingStats } from "@/components/distraction/BlockingStats";
 import { useAuth } from "@/components/AuthProvider";
@@ -94,6 +94,63 @@ const Index = () => {
       </Card>
 
       <BlockingStats />
+
+      {/* Games Section */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">Focus Games</h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          <Card 
+            className="p-6 hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/breathing')}
+          >
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="p-3 bg-primary/10 rounded-full">
+                <Gamepad className="h-8 w-8 text-primary animate-bounce" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Pufferfish Adventure</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Control your breathing with a fun underwater game
+                </p>
+              </div>
+            </div>
+          </Card>
+
+          <Card 
+            className="p-6 hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/focus')}
+          >
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="p-3 bg-primary/10 rounded-full">
+                <Gamepad className="h-8 w-8 text-primary animate-pulse" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Balloon Journey</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Navigate through peaceful landscapes
+                </p>
+              </div>
+            </div>
+          </Card>
+
+          <Card 
+            className="p-6 hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/focus')}
+          >
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="p-3 bg-primary/10 rounded-full">
+                <Gamepad className="h-8 w-8 text-primary animate-float" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Zen Garden</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Create your peaceful Japanese garden
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="p-6">
