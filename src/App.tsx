@@ -23,6 +23,7 @@ import { XiangqiGame } from "@/components/games/XiangqiGame";
 import { ShogiGame } from "@/components/games/ShogiGame";
 import { CheckersGame } from "@/components/games/CheckersGame";
 import GomokuGame from "@/components/games/GomokuGame";
+import { ZenDrift } from "@/components/games/ZenDrift";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ function App() {
               <Route path="/games/shogi" element={<ShogiGame />} />
               <Route path="/games/checkers" element={<CheckersGame />} />
               <Route path="/games/gomoku" element={<GomokuGame />} />
+              <Route path="/games/zen-drift" element={<ZenDrift />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Brain, Gamepad, Puzzle, Zap, Flower2, Music, Cloud, Waves } from "lucide-react";
+import { Brain, Gamepad, Puzzle, Zap, Flower2, Music, Cloud, Waves, Wind } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const GamesSection = () => {
@@ -7,10 +7,10 @@ export const GamesSection = () => {
 
   const games = [
     {
-      title: "Memory Cards",
-      description: "Test and improve your memory with this classic card matching game",
-      icon: Brain,
-      route: "/games/memory-cards"
+      title: "Zen Drift",
+      description: "Find peace in motion with this meditative driving experience",
+      icon: Wind,
+      route: "/games/zen-drift"
     },
     {
       title: "Color Match",
