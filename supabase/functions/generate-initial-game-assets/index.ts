@@ -50,7 +50,6 @@ async function retryOperation<T>(
         throw error;
       }
       
-      // If it's a rate limit error, wait longer
       const delay = error.message?.includes('rate limit') ? 
         RETRY_DELAY * attempt * 2 : 
         RETRY_DELAY * attempt;
@@ -62,12 +61,29 @@ async function retryOperation<T>(
 }
 
 serve(async (req) => {
+  // Handle CORS
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const requestData = await req.json();
+    let requestData;
+    try {
+      requestData = await req.json();
+    } catch (error) {
+      console.error('Error parsing request JSON:', error);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid JSON in request body',
+          details: error.message 
+        }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
     console.log('Received request data:', requestData);
 
     const { batch } = requestData;
@@ -160,14 +176,15 @@ serve(async (req) => {
               throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
             }
 
-            return response.json();
+            const data = await response.json();
+            if (!data?.data?.[0]?.url) {
+              throw new Error('Invalid response format from OpenAI API');
+            }
+
+            return data;
           },
           `generating ${asset.name}`
         );
-
-        if (!imageResponse.data?.[0]?.url) {
-          throw new Error(`No image URL received for ${asset.name}`);
-        }
 
         const imageUrl = imageResponse.data[0].url;
         console.log(`Successfully generated image for ${asset.name}`);
@@ -222,7 +239,16 @@ serve(async (req) => {
 
       } catch (error) {
         console.error(`Error generating ${asset.name}:`, error);
-        throw error;
+        return new Response(
+          JSON.stringify({ 
+            error: `Failed to generate ${asset.name}`,
+            details: error.message
+          }),
+          { 
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
       }
     }
 
@@ -233,10 +259,7 @@ serve(async (req) => {
       }),
       { 
         status: 200,
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        } 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     );
 
@@ -249,10 +272,7 @@ serve(async (req) => {
       }),
       { 
         status: 500,
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     );
   }
