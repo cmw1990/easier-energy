@@ -6,6 +6,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { AIAssistant } from "@/components/AIAssistant";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { MoodOverview } from "@/components/MoodOverview";
 import {
   Tooltip,
   TooltipContent,
@@ -70,6 +71,8 @@ const Dashboard = () => {
   return (
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+
+      <MoodOverview />
 
       {shiftData?.is_shift_worker && (
         <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10">
