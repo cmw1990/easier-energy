@@ -398,6 +398,33 @@ export const StressScanner = () => {
     };
   }, []);
 
+  const calculateSDNN = (intervals: number[]): number => {
+    if (intervals.length < 2) return 0;
+    const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+    const squaredDiffs = intervals.map(interval => Math.pow(interval - mean, 2));
+    return Math.sqrt(squaredDiffs.reduce((a, b) => a + b, 0) / (intervals.length - 1));
+  };
+
+  const calculateRMSSD = (intervals: number[]): number => {
+    if (intervals.length < 2) return 0;
+    let sumSquaredDiffs = 0;
+    for (let i = 1; i < intervals.length; i++) {
+      const diff = intervals[i] - intervals[i-1];
+      sumSquaredDiffs += diff * diff;
+    }
+    return Math.sqrt(sumSquaredDiffs / (intervals.length - 1));
+  };
+
+  const calculatePNN50 = (intervals: number[]): number => {
+    if (intervals.length < 2) return 0;
+    let nn50Count = 0;
+    for (let i = 1; i < intervals.length; i++) {
+      const diff = Math.abs(intervals[i] - intervals[i-1]);
+      if (diff > 50) nn50Count++;
+    }
+    return (nn50Count / (intervals.length - 1)) * 100;
+  };
+
   return (
     <Card>
       <CardHeader>
