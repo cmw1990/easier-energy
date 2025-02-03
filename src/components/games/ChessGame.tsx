@@ -215,8 +215,18 @@ const ChessGame = () => {
     });
   };
 
+  const customTheme = {
+    boardStyle: {
+      borderRadius: '4px',
+      boxShadow: 'none',
+    },
+    lightSquareStyle: { backgroundColor: '#FFFFFF' },
+    darkSquareStyle: { backgroundColor: '#E2E8F0' },
+    dragOverlay: false,
+  };
+
   return (
-    <Card className="p-6 w-full max-w-3xl mx-auto">
+    <Card className="p-6 w-full max-w-3xl mx-auto bg-white/50 backdrop-blur-sm">
       <div className="flex justify-between items-center mb-4">
         <Select
           value={difficulty}
@@ -235,6 +245,8 @@ const ChessGame = () => {
         <Button
           onClick={createNewGame}
           disabled={isThinking}
+          variant="outline"
+          className="border-gray-200 hover:bg-gray-50"
         >
           New Game
         </Button>
@@ -244,6 +256,11 @@ const ChessGame = () => {
           position={game.fen()}
           onPieceDrop={onDrop}
           boardWidth={Math.min(600, window.innerWidth - 40)}
+          customBoardStyle={customTheme.boardStyle}
+          customLightSquareStyle={customTheme.lightSquareStyle}
+          customDarkSquareStyle={customTheme.darkSquareStyle}
+          showBoardNotation={false}
+          animationDuration={200}
         />
       </div>
       {gameState.status === 'completed' && (
