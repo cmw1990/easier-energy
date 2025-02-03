@@ -5,7 +5,16 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Coffee } from "lucide-react";
+import { Activity, User } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,11 +24,16 @@ export const Layout = ({ children }: LayoutProps) => {
   const { session } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      toast({
+        title: "Signed out successfully",
+        description: "Come back soon!",
+      });
     } catch (error) {
       toast({
         title: "Error signing out",
@@ -40,17 +54,23 @@ export const Layout = ({ children }: LayoutProps) => {
         <main className="flex-1 flex flex-col overflow-hidden">
           <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="flex items-center gap-2">
-              <Coffee className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold">The Well-Charged</h1>
+              <Activity className="h-5 w-5 text-primary" />
+              <h1 className="text-xl font-semibold">Energy Dashboard</h1>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={handleSignOut} 
-              size={isMobile ? "sm" : "default"}
-              className="ml-auto"
-            >
-              Sign Out
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <User className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="flex-1 overflow-auto p-4 md:p-6 space-y-6">
             {children}
