@@ -35,21 +35,29 @@ export const usePufferfishAssets = () => {
 
         for (const type of assetTypes) {
           try {
-            console.log(`Loading ${type} from game-assets storage`);
+            console.log(`Attempting to load ${type} from game-assets/pufferfish/${type}.png`);
             const { data: publicUrl } = await supabase
               .storage
               .from('game-assets')
               .getPublicUrl(`pufferfish/${type}.png`);
 
             if (!publicUrl.publicUrl) {
-              throw new Error('No public URL received');
+              throw new Error(`No public URL received for ${type}`);
             }
+
+            console.log(`Successfully got URL for ${type}:`, publicUrl.publicUrl);
 
             // Pre-load the image to ensure it's cached
             const img = new Image();
             await new Promise((resolve, reject) => {
-              img.onload = resolve;
-              img.onerror = reject;
+              img.onload = () => {
+                console.log(`Successfully loaded image for ${type}`);
+                resolve(null);
+              };
+              img.onerror = (e) => {
+                console.error(`Failed to load image for ${type}:`, e);
+                reject(new Error(`Failed to load image for ${type}`));
+              };
               img.src = publicUrl.publicUrl;
             });
 
@@ -59,7 +67,7 @@ export const usePufferfishAssets = () => {
           } catch (err) {
             console.error(`Error loading ${type}:`, err);
             // Use placeholder for failed assets
-            loadedAssets[type as keyof GameAssets] = '/placeholder.svg';
+            loadedAssets[type as keyof GameAssets] = 'https://images.unsplash.com/photo-1501854140801-50d01698950b';
           }
         }
 
