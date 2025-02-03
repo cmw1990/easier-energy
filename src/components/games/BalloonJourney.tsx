@@ -6,6 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Circle } from "lucide-react";
 
+interface GameAssets {
+  balloon: string;
+  mountains: string;
+  clouds: string[];
+  obstacles: string[];
+  background: string;
+}
+
 interface GameState {
   balloonSize: number;
   balloonY: number;
@@ -13,9 +21,17 @@ interface GameState {
     x: number;
     gapY: number;
     passed: boolean;
+    image: string;
+  }>;
+  clouds: Array<{
+    x: number;
+    y: number;
+    speed: number;
+    image: string;
   }>;
   score: number;
   isPlaying: boolean;
+  mountainOffset: number;
 }
 
 const BalloonJourney = () => {
@@ -23,9 +39,13 @@ const BalloonJourney = () => {
     balloonSize: 30,
     balloonY: 200,
     obstacles: [],
+    clouds: [],
     score: 0,
     isPlaying: false,
+    mountainOffset: 0,
   });
+  const [assets, setAssets] = useState<GameAssets | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [audioSupported, setAudioSupported] = useState<boolean | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -34,9 +54,43 @@ const BalloonJourney = () => {
   const animationFrameRef = useRef<number>();
   const { toast } = useToast();
   const { session } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const loadGameAssets = async () => {
+    try {
+      const assetTypes = ['balloon', 'mountains', 'clouds', 'obstacles', 'background'];
+      const loadedAssets: Partial<GameAssets> = {
+        clouds: [],
+        obstacles: [],
+      };
+
+      for (const assetType of assetTypes) {
+        const { data, error } = await supabase.functions.invoke('generate-game-assets', {
+          body: { assetType }
+        });
+
+        if (error) throw error;
+
+        if (assetType === 'clouds' || assetType === 'obstacles') {
+          loadedAssets[assetType]?.push(data.image);
+        } else {
+          loadedAssets[assetType as keyof GameAssets] = data.image;
+        }
+      }
+
+      setAssets(loadedAssets as GameAssets);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error loading game assets:', error);
+      toast({
+        title: "Error Loading Assets",
+        description: "Failed to load game assets. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   useEffect(() => {
+    loadGameAssets();
     const checkAudioSupport = async () => {
       try {
         const supported = !!(
@@ -74,31 +128,34 @@ const BalloonJourney = () => {
       source.connect(analyserRef.current);
       analyserRef.current.fftSize = 256;
 
-      setGameState(prev => ({ ...prev, isPlaying: true }));
+      setGameState(prev => ({
+        ...prev,
+        isPlaying: true,
+        obstacles: [],
+        clouds: Array(3).fill(null).map(() => ({
+          x: Math.random() * 800,
+          y: Math.random() * 400,
+          speed: 0.5 + Math.random(),
+          image: assets?.clouds[0] || '',
+        })),
+        score: 0,
+        mountainOffset: 0,
+      }));
+      
       gameLoop();
       
       toast({
-        title: "Game Started!",
-        description: "Breathe in to inflate the balloon and rise, breathe out to deflate and descend.",
+        title: "Adventure Begins!",
+        description: "Breathe in to rise and inflate, breathe out to descend. Journey through the peaceful mountains.",
       });
     } catch (error) {
-      console.error("Error accessing microphone:", error);
+      console.error("Error starting game:", error);
       toast({
-        title: "Error Starting Game",
+        title: "Error Starting Journey",
         description: error.message || "Could not access microphone. Please check permissions.",
         variant: "destructive",
       });
     }
-  };
-
-  const detectBreathing = (): number => {
-    if (!analyserRef.current) return 0;
-    
-    const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-    analyserRef.current.getByteFrequencyData(dataArray);
-    
-    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-    return average;
   };
 
   const updateGameState = () => {
@@ -117,6 +174,20 @@ const BalloonJourney = () => {
         newY = Math.min(400, prev.balloonY + 2);
       }
 
+      // Update mountain scroll
+      const newMountainOffset = (prev.mountainOffset - 1) % 800;
+
+      // Update clouds
+      const newClouds = prev.clouds.map(cloud => ({
+        ...cloud,
+        x: cloud.x - cloud.speed,
+        y: cloud.y + Math.sin(Date.now() / 1000) * 0.5,
+      })).map(cloud => cloud.x < -100 ? {
+        ...cloud,
+        x: 900,
+        y: Math.random() * 400,
+      } : cloud);
+
       // Update obstacles
       const newObstacles = prev.obstacles
         .map(obs => ({
@@ -132,6 +203,7 @@ const BalloonJourney = () => {
           x: 800,
           gapY: Math.random() * 300 + 50,
           passed: false,
+          image: assets?.obstacles[0] || '',
         });
       }
 
@@ -154,9 +226,72 @@ const BalloonJourney = () => {
         balloonSize: newSize,
         balloonY: newY,
         obstacles: newObstacles,
+        clouds: newClouds,
         score: newScore,
+        mountainOffset: newMountainOffset,
       };
     });
+  };
+
+  const drawGame = () => {
+    if (!canvasRef.current || !assets) return;
+    const ctx = canvasRef.current.getContext('2d');
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, 800, 400);
+
+    // Draw background
+    const backgroundImage = new Image();
+    backgroundImage.src = `data:image/png;base64,${assets.background}`;
+    ctx.drawImage(backgroundImage, 0, 0, 800, 400);
+
+    // Draw mountains (parallax scrolling)
+    const mountainImage = new Image();
+    mountainImage.src = `data:image/png;base64,${assets.mountains}`;
+    ctx.drawImage(mountainImage, gameState.mountainOffset, 100, 800, 300);
+    ctx.drawImage(mountainImage, gameState.mountainOffset + 800, 100, 800, 300);
+
+    // Draw clouds
+    gameState.clouds.forEach(cloud => {
+      const cloudImage = new Image();
+      cloudImage.src = `data:image/png;base64,${cloud.image}`;
+      ctx.drawImage(cloudImage, cloud.x, cloud.y, 100, 60);
+    });
+
+    // Draw obstacles
+    gameState.obstacles.forEach(obstacle => {
+      const obstacleImage = new Image();
+      obstacleImage.src = `data:image/png;base64,${obstacle.image}`;
+      ctx.drawImage(obstacleImage, obstacle.x, 0, 20, obstacle.gapY - 40);
+      ctx.drawImage(obstacleImage, obstacle.x, obstacle.gapY + 40, 20, 400 - (obstacle.gapY + 40));
+    });
+
+    // Draw balloon
+    const balloonImage = new Image();
+    balloonImage.src = `data:image/png;base64,${assets.balloon}`;
+    ctx.drawImage(
+      balloonImage,
+      70,
+      gameState.balloonY - gameState.balloonSize,
+      gameState.balloonSize * 2,
+      gameState.balloonSize * 2
+    );
+
+    // Draw score
+    ctx.fillStyle = '#000';
+    ctx.font = '24px Arial';
+    ctx.fillText(`Score: ${gameState.score}`, 20, 30);
+  };
+
+  const detectBreathing = (): number => {
+    if (!analyserRef.current) return 0;
+    
+    const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+    analyserRef.current.getByteFrequencyData(dataArray);
+    
+    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+    return average;
   };
 
   const gameLoop = () => {
@@ -168,43 +303,8 @@ const BalloonJourney = () => {
     animationFrameRef.current = requestAnimationFrame(gameLoop);
   };
 
-  const drawGame = () => {
-    if (!canvasRef.current) return;
-    const ctx = canvasRef.current.getContext('2d');
-    if (!ctx) return;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, 800, 400);
-
-    // Draw balloon
-    ctx.fillStyle = '#FF6B6B';
-    ctx.beginPath();
-    ctx.arc(100, gameState.balloonY, gameState.balloonSize, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Draw string
-    ctx.strokeStyle = '#666';
-    ctx.beginPath();
-    ctx.moveTo(100, gameState.balloonY + gameState.balloonSize);
-    ctx.lineTo(100, gameState.balloonY + gameState.balloonSize + 20);
-    ctx.stroke();
-
-    // Draw obstacles
-    ctx.fillStyle = '#4A90E2';
-    gameState.obstacles.forEach(obstacle => {
-      ctx.fillRect(obstacle.x, 0, 20, obstacle.gapY - 40);
-      ctx.fillRect(obstacle.x, obstacle.gapY + 40, 20, 400 - (obstacle.gapY + 40));
-    });
-
-    // Draw score
-    ctx.fillStyle = '#000';
-    ctx.font = '24px Arial';
-    ctx.fillText(`Score: ${gameState.score}`, 20, 30);
-  };
-
   const endGame = async (finalScore: number) => {
     setGameState(prev => ({ ...prev, isPlaying: false }));
-    setIsSubmitting(true);
     
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
@@ -220,17 +320,12 @@ const BalloonJourney = () => {
     
     if (session?.user) {
       try {
-        // Normalize score to 0-100 range first
-        const normalizedScore = Math.min(Math.max(finalScore, 0), 100);
-        // Then convert to 0-10 range and ensure it's an integer
-        const focusRating = Math.min(Math.round((normalizedScore / 100) * 10), 10);
-
         const { error } = await supabase.from("energy_focus_logs").insert({
           user_id: session.user.id,
           activity_type: "breathing",
           activity_name: "Balloon Journey",
           duration_minutes: Math.ceil(finalScore / 10),
-          focus_rating: focusRating,
+          focus_rating: null,
           energy_rating: null,
           notes: `Completed Balloon Journey game with score: ${finalScore}`
         });
@@ -248,8 +343,6 @@ const BalloonJourney = () => {
           description: "There was a problem saving your game results.",
           variant: "destructive",
         });
-      } finally {
-        setIsSubmitting(false);
       }
     }
   };
@@ -281,36 +374,37 @@ const BalloonJourney = () => {
       </div>
 
       <div className="flex flex-col items-center gap-4">
-        <canvas
-          ref={canvasRef}
-          width={800}
-          height={400}
-          className="border border-gray-200 rounded-lg w-full max-w-3xl"
-        />
-        
-        {!gameState.isPlaying && (
+        {isLoading ? (
+          <div className="text-center p-4">
+            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mb-2"></div>
+            <p>Loading your adventure...</p>
+          </div>
+        ) : (
           <>
-            <Button 
-              onClick={startGame}
-              className="w-40"
-              disabled={isSubmitting || audioSupported === false}
-            >
-              Start Game
-            </Button>
-            {audioSupported === false && (
-              <p className="text-destructive text-sm">
-                Audio input is not supported on your device or browser.
-                Please try using a different browser or device.
-              </p>
+            <canvas
+              ref={canvasRef}
+              width={800}
+              height={400}
+              className="border border-gray-200 rounded-lg w-full max-w-3xl"
+            />
+            
+            {!gameState.isPlaying && (
+              <Button 
+                onClick={startGame}
+                className="w-40"
+                disabled={audioSupported === false}
+              >
+                Begin Journey
+              </Button>
             )}
           </>
         )}
       </div>
 
       <div className="mt-6 text-sm text-muted-foreground">
-        Control the balloon's inflation and height with your breath. 
-        Breathe in to rise and inflate, breathe out to descend and deflate. 
-        Navigate through the obstacles to score points!
+        Embark on a peaceful journey through serene mountains and clouds. 
+        Control your magical balloon with your breath - inhale to rise and inflate, 
+        exhale to descend and glide through the tranquil landscape.
       </div>
     </Card>
   );
