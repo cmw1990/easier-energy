@@ -32,6 +32,10 @@ const SequenceMemory = () => {
   const startGame = () => {
     setScore(0);
     addToSequence();
+    toast({
+      title: "Game Started!",
+      description: "Watch the sequence carefully and repeat it.",
+    });
   };
 
   const addToSequence = () => {
@@ -80,7 +84,7 @@ const SequenceMemory = () => {
         if (error) throw error;
 
         toast({
-          title: "Game Over!",
+          title: "Game Complete!",
           description: `Final score: ${score}. Well done!`,
         });
       } catch (error) {
@@ -104,18 +108,23 @@ const SequenceMemory = () => {
           <div className="p-2 bg-primary/10 rounded-full">
             <Zap className="h-5 w-5 text-primary animate-pulse" />
           </div>
-          <h2 className="text-2xl font-bold">Sequence Memory</h2>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Sequence Memory
+          </h2>
         </div>
-        <div className="text-lg">Score: {score}</div>
+        <div className="text-lg font-semibold">
+          Score: <span className="text-primary">{score}</span>
+        </div>
       </div>
 
       {sequence.length === 0 ? (
         <Button 
           onClick={startGame} 
-          className="w-full animate-pulse"
+          className="w-full group relative overflow-hidden"
           disabled={isSubmitting}
         >
-          Start Game
+          <span className="relative z-10">Start Game</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-primary opacity-75 group-hover:animate-shimmer" />
         </Button>
       ) : (
         <div className="grid grid-cols-3 gap-4">
@@ -125,7 +134,7 @@ const SequenceMemory = () => {
               onClick={() => handleNumberClick(number)}
               variant={playbackIndex >= 0 && sequence[playbackIndex] === number ? "default" : "outline"}
               className={`h-16 text-xl font-bold transition-all hover:scale-105 ${
-                playbackIndex >= 0 && sequence[playbackIndex] === number ? 'animate-breathe' : ''
+                playbackIndex >= 0 && sequence[playbackIndex] === number ? 'animate-breathe bg-primary' : ''
               }`}
               disabled={isPlaying || isSubmitting}
             >
@@ -135,8 +144,14 @@ const SequenceMemory = () => {
         </div>
       )}
 
-      <div className="mt-6 text-sm text-muted-foreground">
-        Watch the sequence of numbers and repeat it in the same order. The sequence gets longer with each successful round.
+      <div className="mt-6">
+        <div className="text-sm text-muted-foreground">
+          Watch the sequence of numbers and repeat it in the same order. The sequence gets longer with each successful round.
+        </div>
+        <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+          <Brain className="h-4 w-4" />
+          <span>Improves: Working Memory, Pattern Recognition, Concentration</span>
+        </div>
       </div>
     </Card>
   );
