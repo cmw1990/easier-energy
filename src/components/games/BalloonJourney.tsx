@@ -24,8 +24,20 @@ const BalloonJourney = () => {
   
   const { assets, isLoading, error } = useGameAssets('balloon');
 
+  // Ensure assets are loaded before starting
+  useEffect(() => {
+    if (error) {
+      console.error("Error loading game assets:", error);
+      toast({
+        title: "Error Loading Game Assets",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
+
   const startGame = () => {
-    if (!canvasRef.current || !assets.balloon || !selectedTechnique) {
+    if (!canvasRef.current || !assets.balloon?.url || !selectedTechnique) {
       toast({
         title: "Please select a breathing technique",
         description: "Choose a breathing technique before starting the game",
@@ -44,7 +56,7 @@ const BalloonJourney = () => {
   };
 
   const gameLoop = () => {
-    if (!canvasRef.current || !isPlaying || !selectedTechnique) return;
+    if (!canvasRef.current || !isPlaying || !selectedTechnique || !assets.balloon?.url) return;
     
     const ctx = canvasRef.current.getContext('2d');
     if (!ctx) return;
@@ -79,16 +91,16 @@ const BalloonJourney = () => {
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
     // Draw background
-    if (assets.background) {
+    if (assets.background?.url) {
       const bgImage = new Image();
-      bgImage.src = assets.background;
+      bgImage.src = assets.background.url;
       ctx.drawImage(bgImage, 0, 0, canvasRef.current.width, canvasRef.current.height);
     }
 
     // Draw balloon
-    if (assets.balloon) {
+    if (assets.balloon?.url) {
       const balloonImage = new Image();
-      balloonImage.src = assets.balloon;
+      balloonImage.src = assets.balloon.url;
       ctx.drawImage(
         balloonImage,
         balloonPositionRef.current.x,
