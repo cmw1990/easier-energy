@@ -1,5 +1,5 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
 const USDA_API_KEY = Deno.env.get('USDA_API_KEY');
 const USDA_API_ENDPOINT = 'https://api.nal.usda.gov/fdc/v1';
@@ -10,12 +10,14 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { query } = await req.json();
+    console.log('Searching USDA database for:', query);
     
     const response = await fetch(
       `${USDA_API_ENDPOINT}/foods/search?api_key=${USDA_API_KEY}&query=${encodeURIComponent(query)}&pageSize=10`,
@@ -28,6 +30,7 @@ serve(async (req) => {
     );
 
     const data = await response.json();
+    console.log('USDA API response received');
     
     // Transform the response to a simpler format
     const foods = data.foods?.map((food: any) => ({
