@@ -10,9 +10,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Upload } from "lucide-react";
+import { Loader2, Upload, Search } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 
 export const FoodLogForm = () => {
   const [isUploading, setIsUploading] = useState(false);
@@ -23,11 +37,32 @@ export const FoodLogForm = () => {
   const [calories, setCalories] = useState("");
   const [mealType, setMealType] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const { data: searchResults, isLoading: isSearching } = useQuery({
+    queryKey: ['food-search', searchQuery],
+    queryFn: async () => {
+      if (!searchQuery) return { foods: [] };
+      const { data, error } = await supabase.functions.invoke('food-database-search', {
+        body: { query: searchQuery }
+      });
+      if (error) throw error;
+      return data;
+    },
+    enabled: searchQuery.length > 2,
+  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
     }
+  };
+
+  const handleFoodSelect = (food: { name: string; calories: number }) => {
+    setFoodName(food.name);
+    setCalories(food.calories.toString());
+    setOpen(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,7 +98,6 @@ export const FoodLogForm = () => {
           
         imageUrl = publicUrl;
 
-        // Analyze the food image
         setIsAnalyzing(true);
         const { data: analysisData, error: analysisError } = await supabase.functions
           .invoke('analyze-food', {
@@ -75,7 +109,6 @@ export const FoodLogForm = () => {
         aiAnalysis = analysisData.analysis;
       }
 
-      // Log the food entry
       const { error: logError } = await supabase
         .from('food_logs')
         .insert({
@@ -99,6 +132,7 @@ export const FoodLogForm = () => {
       setCalories("");
       setMealType("");
       setSelectedFile(null);
+      setSearchQuery("");
     } catch (error) {
       console.error('Error logging food:', error);
       toast({
@@ -115,14 +149,47 @@ export const FoodLogForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="foodName">Food Name</Label>
-        <Input
-          id="foodName"
-          value={foodName}
-          onChange={(e) => setFoodName(e.target.value)}
-          placeholder="e.g., Grilled Chicken Salad"
-          required
-        />
+        <Label htmlFor="foodSearch">Search Food</Label>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className="w-full justify-between"
+            >
+              {foodName || "Search for food..."}
+              <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0">
+            <Command>
+              <CommandInput
+                placeholder="Search food database..."
+                value={searchQuery}
+                onValueChange={setSearchQuery}
+              />
+              <CommandEmpty>No food found.</CommandEmpty>
+              <CommandGroup>
+                {isSearching && (
+                  <CommandItem disabled>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Searching...
+                  </CommandItem>
+                )}
+                {searchResults?.foods?.map((food: any) => (
+                  <CommandItem
+                    key={food.name}
+                    value={food.name}
+                    onSelect={() => handleFoodSelect(food)}
+                  >
+                    {food.name} - {food.calories} kcal
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="space-y-2">
