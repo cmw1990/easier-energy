@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -7,12 +7,15 @@ import { useAuth } from "@/components/AuthProvider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
 import { Heart, Play, Pause, History } from "lucide-react";
+import { Haptics, ImpactStyle, NotificationImpact } from '@capacitor/haptics';
 
 const Breathing = () => {
   const [isActive, setIsActive] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const { toast } = useToast();
   const { session } = useAuth();
+  const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
+  const [phaseSeconds, setPhaseSeconds] = useState(0);
 
   const { data: recentSessions, refetch } = useQuery({
     queryKey: ["breathingSessions"],
@@ -31,9 +34,62 @@ const Breathing = () => {
     enabled: !!session?.user?.id,
   });
 
-  const handleStartStop = () => {
+  useEffect(() => {
+    let interval: number | undefined;
+    
+    if (isActive) {
+      interval = window.setInterval(async () => {
+        setSeconds((prev) => prev + 1);
+        setPhaseSeconds((prev) => prev + 1);
+        
+        // Breathing pattern: 4-4-4 (Box breathing)
+        const totalCycleLength = 12; // 4s inhale + 4s hold + 4s exhale
+        const phaseLength = 4; // Each phase is 4 seconds
+        const currentPhase = Math.floor((seconds % totalCycleLength) / phaseLength);
+        
+        // Determine the breath phase
+        let newPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
+        switch (currentPhase) {
+          case 0:
+            newPhase = 'inhale';
+            if (breathPhase !== 'inhale') {
+              await Haptics.impact({ style: ImpactStyle.Light });
+            }
+            break;
+          case 1:
+            newPhase = 'hold';
+            if (breathPhase !== 'hold') {
+              await Haptics.impact({ style: ImpactStyle.Medium });
+            }
+            break;
+          case 2:
+            newPhase = 'exhale';
+            if (breathPhase !== 'exhale') {
+              await Haptics.impact({ style: ImpactStyle.Heavy });
+            }
+            break;
+          default:
+            newPhase = 'rest';
+        }
+        
+        if (newPhase !== breathPhase) {
+          setBreathPhase(newPhase);
+          setPhaseSeconds(0);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isActive, seconds, breathPhase]);
+
+  const handleStartStop = async () => {
     if (!isActive) {
       setIsActive(true);
+      await Haptics.notification({ type: NotificationImpact.Success });
       const interval = setInterval(() => {
         setSeconds((prev) => prev + 1);
       }, 1000);
@@ -66,6 +122,8 @@ const Breathing = () => {
       });
 
       setSeconds(0);
+      setBreathPhase('rest');
+      setPhaseSeconds(0);
       refetch();
     } catch (error) {
       toast({
@@ -80,6 +138,19 @@ const Breathing = () => {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  const getBreathPhaseText = () => {
+    switch (breathPhase) {
+      case 'inhale':
+        return 'Breathe In';
+      case 'hold':
+        return 'Hold';
+      case 'exhale':
+        return 'Breathe Out';
+      default:
+        return 'Get Ready';
+    }
   };
 
   return (
@@ -105,10 +176,17 @@ const Breathing = () => {
               <div className={`text-6xl font-bold text-primary transition-all duration-300 ${isActive ? 'scale-110' : ''}`}>
                 {formatTime(seconds)}
               </div>
+              {isActive && (
+                <div className="text-2xl font-semibold text-primary/80 animate-fade-in">
+                  {getBreathPhaseText()}
+                </div>
+              )}
               <Button
                 onClick={handleStartStop}
                 size="lg"
-                className={`w-40 h-40 rounded-full transition-transform duration-300 ${isActive ? 'bg-destructive hover:bg-destructive/90' : 'bg-primary hover:bg-primary/90'} ${isActive ? 'scale-95' : 'hover:scale-105'}`}
+                className={`w-40 h-40 rounded-full transition-transform duration-300 ${
+                  isActive ? 'bg-destructive hover:bg-destructive/90' : 'bg-primary hover:bg-primary/90'
+                } ${isActive ? 'scale-95' : 'hover:scale-105'}`}
               >
                 {isActive ? (
                   <div className="flex flex-col items-center">
