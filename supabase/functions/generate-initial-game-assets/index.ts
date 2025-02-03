@@ -13,28 +13,6 @@ async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function checkExistingAssets(supabaseClient: any, batch: string) {
-  try {
-    console.log(`Checking storage for ${batch} assets...`);
-    const { data, error } = await supabaseClient
-      .storage
-      .from('game-assets')
-      .list(batch);
-
-    if (error) {
-      console.error(`Error checking existing assets for ${batch}:`, error);
-      throw error;
-    }
-    
-    const hasAssets = data && data.length > 0;
-    console.log(`${batch} assets exist:`, hasAssets);
-    return hasAssets;
-  } catch (error) {
-    console.error(`Error checking existing assets for ${batch}:`, error);
-    return false;
-  }
-}
-
 async function retryOperation<T>(
   operation: () => Promise<T>,
   description: string,
@@ -61,12 +39,12 @@ async function retryOperation<T>(
 }
 
 serve(async (req) => {
-  // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Parse request body
     let requestData;
     try {
       requestData = await req.json();
@@ -84,12 +62,9 @@ serve(async (req) => {
       );
     }
 
-    console.log('Received request data:', requestData);
-
     const { batch } = requestData;
     
     if (!batch) {
-      console.error('Missing batch parameter');
       return new Response(
         JSON.stringify({ error: 'Missing batch parameter' }),
         { 
@@ -99,10 +74,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Processing batch: ${batch}`);
-
     if (!GAME_ASSETS_CONFIG[batch]) {
-      console.error(`Invalid batch type: ${batch}`);
       return new Response(
         JSON.stringify({ error: `Invalid batch type: ${batch}` }),
         { 
@@ -112,31 +84,15 @@ serve(async (req) => {
       );
     }
 
+    // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Check if assets already exist
-    const hasExisting = await checkExistingAssets(supabaseClient, batch);
-    if (hasExisting) {
-      console.log(`Assets already exist for ${batch}, skipping generation`);
-      return new Response(
-        JSON.stringify({ 
-          message: `Assets already exist for ${batch}`,
-          skipped: true 
-        }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    // Verify OpenAI API key is set
+    // Verify OpenAI API key
     const openAIKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIKey) {
-      console.error('OpenAI API key not configured');
       return new Response(
         JSON.stringify({ error: 'OpenAI API key is not configured' }),
         { 
@@ -153,6 +109,7 @@ serve(async (req) => {
       console.log(`Generating asset: ${asset.name} for batch: ${batch}`);
       
       try {
+        // Generate image using OpenAI
         const imageResponse = await retryOperation(
           async () => {
             const response = await fetch('https://api.openai.com/v1/images/generations', {
@@ -172,22 +129,15 @@ serve(async (req) => {
 
             if (!response.ok) {
               const errorData = await response.json();
-              console.error('OpenAI API error:', errorData);
               throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
             }
 
-            const data = await response.json();
-            if (!data?.data?.[0]?.url) {
-              throw new Error('Invalid response format from OpenAI API');
-            }
-
-            return data;
+            return response.json();
           },
           `generating ${asset.name}`
         );
 
         const imageUrl = imageResponse.data[0].url;
-        console.log(`Successfully generated image for ${asset.name}`);
 
         // Download the image
         const imageBlob = await retryOperation(
@@ -203,7 +153,7 @@ serve(async (req) => {
 
         // Upload to Supabase Storage
         const filePath = `${batch}/${asset.name}.png`;
-        const { data: uploadData, error: uploadError } = await retryOperation(
+        const { error: uploadError } = await retryOperation(
           async () => supabaseClient
             .storage
             .from('game-assets')
@@ -214,12 +164,7 @@ serve(async (req) => {
           `uploading ${asset.name}`
         );
 
-        if (uploadError) {
-          console.error(`Upload error for ${asset.name}:`, uploadError);
-          throw uploadError;
-        }
-
-        console.log(`Successfully uploaded ${asset.name} to storage`);
+        if (uploadError) throw uploadError;
 
         // Get the public URL
         const { data: { publicUrl } } = supabaseClient
@@ -232,7 +177,7 @@ serve(async (req) => {
           url: publicUrl
         });
 
-        // Add a small delay between generations to avoid rate limits
+        // Add a small delay between generations
         if (asset !== assets[assets.length - 1]) {
           await sleep(1000);
         }
@@ -278,6 +223,7 @@ serve(async (req) => {
   }
 });
 
+// Configuration for different game assets
 const GAME_ASSETS_CONFIG = {
   'memory-cards': [
     {
@@ -403,6 +349,36 @@ const GAME_ASSETS_CONFIG = {
     {
       name: "progress-indicator",
       prompt: "Create a modern, minimal progress indicator showing typing speed and accuracy. Use subtle animations for updates.",
+    }
+  ],
+  'pufferfish': [
+    {
+      name: "pufferfish",
+      prompt: "Create a cute, cartoony pufferfish character with a friendly expression. Use bright, cheerful colors and smooth shading.",
+    },
+    {
+      name: "bubbles",
+      prompt: "Design a set of transparent, iridescent bubbles with subtle reflections and highlights. Vary the sizes for visual interest.",
+    },
+    {
+      name: "coral",
+      prompt: "Create colorful coral reef elements with soft, organic shapes. Use warm colors that complement the underwater theme.",
+    },
+    {
+      name: "seaweed",
+      prompt: "Design flowing seaweed elements with gentle movement. Use various shades of green and blue for depth.",
+    },
+    {
+      name: "smallFish",
+      prompt: "Create small, colorful tropical fish designs that complement the pufferfish. Use bright, playful colors.",
+    },
+    {
+      name: "predator",
+      prompt: "Design a slightly intimidating but not scary predator fish. Use darker colors but maintain a cartoonish style.",
+    },
+    {
+      name: "background",
+      prompt: "Create a serene underwater background with subtle light rays and gentle gradients. Use calming blues and aqua tones.",
     }
   ]
 };

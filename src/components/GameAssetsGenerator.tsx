@@ -85,6 +85,7 @@ export const GameAssetsGenerator = () => {
             description: `Generated assets for ${batch}`,
           });
           
+          // Add delay between batches to avoid rate limits
           if (batch !== batches[batches.length - 1]) {
             await new Promise(resolve => setTimeout(resolve, 5000));
           }
