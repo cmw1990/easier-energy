@@ -6,20 +6,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Flame, Loader2 } from "lucide-react";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
-
-interface GameAssets {
-  balloon: string;
-  mountains: string;
-  clouds: string;
-  obstacles: string;
-  background: string;
-}
+import { useGameAssets } from "@/hooks/use-game-assets";
 
 const BalloonJourney = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [score, setScore] = useState(0);
-  const [assets, setAssets] = useState<GameAssets>({} as GameAssets);
-  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -30,65 +21,8 @@ const BalloonJourney = () => {
   const obstaclesRef = useRef<Array<{ x: number, y: number }>>([]);
   const breathPhaseRef = useRef<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
   const phaseTimeRef = useRef(0);
-
-  useEffect(() => {
-    const loadAssets = async () => {
-      const assetTypes = ['balloon', 'mountains', 'clouds', 'obstacles', 'background'];
-      try {
-        const loadedAssets: Partial<GameAssets> = {};
-
-        for (const type of assetTypes) {
-          try {
-            const { data: publicUrl } = await supabase
-              .storage
-              .from('game-assets')
-              .getPublicUrl(`balloon/${type}.png`);
-
-            if (!publicUrl.publicUrl) {
-              throw new Error(`No public URL received for ${type}`);
-            }
-
-            // Pre-load the image
-            const img = new Image();
-            await new Promise((resolve, reject) => {
-              img.onload = resolve;
-              img.onerror = () => {
-                console.warn(`Failed to load ${type}, using fallback`);
-                reject(new Error(`Failed to load ${type}`));
-              };
-              img.src = publicUrl.publicUrl;
-            });
-
-            loadedAssets[type as keyof GameAssets] = publicUrl.publicUrl;
-            console.log(`Successfully loaded ${type}`);
-          } catch (err) {
-            console.warn(`Error loading ${type}, using fallback:`, err);
-            // Use placeholder for failed assets
-            loadedAssets[type as keyof GameAssets] = 'https://images.unsplash.com/photo-1501854140801-50d01698950b';
-          }
-        }
-
-        setAssets(loadedAssets as GameAssets);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error loading game assets:", error);
-        toast({
-          title: "Error Loading Game Assets",
-          description: "Using fallback images. You can still play the game.",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-      }
-    };
-
-    loadAssets();
-
-    return () => {
-      if (gameLoopRef.current) {
-        cancelAnimationFrame(gameLoopRef.current);
-      }
-    };
-  }, [toast]);
+  
+  const { assets, isLoading, error } = useGameAssets('balloon');
 
   const startGame = () => {
     if (!canvasRef.current || !assets.balloon || !selectedTechnique) {
@@ -227,6 +161,10 @@ const BalloonJourney = () => {
           <div className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
             <span>Loading game assets...</span>
+          </div>
+        ) : error ? (
+          <div className="text-destructive">
+            {error}
           </div>
         ) : (
           <>
