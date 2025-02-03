@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain, Target, Puzzle } from "lucide-react";
+import { Brain, Target, Puzzle, GamepadIcon } from "lucide-react";
 import MemoryCards from "@/components/games/MemoryCards";
 import PatternMatch from "@/components/games/PatternMatch";
+import WordScramble from "@/components/games/WordScramble";
+import ColorMatch from "@/components/games/ColorMatch";
+import MathSpeed from "@/components/games/MathSpeed";
 
 const NumberSequence = () => {
   const [isActive, setIsActive] = useState(false);
@@ -171,6 +174,9 @@ const Focus = () => {
         <NumberSequence />
         <MemoryCards />
         <PatternMatch />
+        <WordScramble />
+        <ColorMatch />
+        <MathSpeed />
       </div>
 
       <Card className="p-6">
@@ -179,6 +185,9 @@ const Focus = () => {
           <li>• <strong>Number Sequence:</strong> Test your quick thinking and focus by clicking numbers in order</li>
           <li>• <strong>Memory Cards:</strong> Challenge your memory by matching pairs of cards</li>
           <li>• <strong>Pattern Match:</strong> Improve pattern recognition by memorizing and recreating sequences</li>
+          <li>• <strong>Word Scramble:</strong> Enhance vocabulary and mental agility by unscrambling words</li>
+          <li>• <strong>Color Match:</strong> Test your reaction time and cognitive flexibility with color-word matching</li>
+          <li>• <strong>Math Speed:</strong> Sharpen your mental math skills with quick calculations</li>
           <li>• All results are saved to track your progress over time</li>
           <li>• Regular practice can help improve concentration and cognitive function</li>
         </ul>
