@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
-import { Heart, Play, Pause } from "lucide-react";
+import { Heart, Play, Pause, History } from "lucide-react";
 
 const Breathing = () => {
   const [isActive, setIsActive] = useState(false);
@@ -83,33 +83,43 @@ const Breathing = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Breathing Exercise</h1>
+    <div className="container mx-auto p-4 space-y-8">
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold text-primary">Breathing Exercise</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          Take a moment to breathe deeply and mindfully. Regular breathing exercises can help reduce stress and improve focus.
+        </p>
+      </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Session</CardTitle>
-            <Heart className="h-4 w-4 text-muted-foreground" />
+      <div className="grid gap-8 md:grid-cols-2">
+        <Card className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 z-0" />
+          <CardHeader className="relative z-10">
+            <CardTitle className="flex items-center justify-between">
+              <span>Current Session</span>
+              <Heart className={`h-5 w-5 text-primary ${isActive ? 'animate-pulse' : ''}`} />
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center space-y-4 py-6">
-              <div className="text-4xl font-bold">{formatTime(seconds)}</div>
+          <CardContent className="relative z-10">
+            <div className="flex flex-col items-center space-y-8 py-8">
+              <div className={`text-6xl font-bold text-primary transition-all duration-300 ${isActive ? 'scale-110' : ''}`}>
+                {formatTime(seconds)}
+              </div>
               <Button
                 onClick={handleStartStop}
                 size="lg"
-                className="w-32"
+                className={`w-40 h-40 rounded-full transition-transform duration-300 ${isActive ? 'bg-destructive hover:bg-destructive/90' : 'bg-primary hover:bg-primary/90'} ${isActive ? 'scale-95' : 'hover:scale-105'}`}
               >
                 {isActive ? (
-                  <>
-                    <Pause className="mr-2 h-4 w-4" />
-                    Stop
-                  </>
+                  <div className="flex flex-col items-center">
+                    <Pause className="h-8 w-8 mb-2" />
+                    <span>Stop</span>
+                  </div>
                 ) : (
-                  <>
-                    <Play className="mr-2 h-4 w-4" />
-                    Start
-                  </>
+                  <div className="flex flex-col items-center">
+                    <Play className="h-8 w-8 mb-2" />
+                    <span>Start</span>
+                  </div>
                 )}
               </Button>
             </div>
@@ -118,7 +128,10 @@ const Breathing = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent Sessions</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <History className="h-5 w-5" />
+              Recent Sessions
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -139,7 +152,7 @@ const Breathing = () => {
                 ))}
                 {(!recentSessions || recentSessions.length === 0) && (
                   <TableRow>
-                    <TableCell colSpan={2} className="text-center">
+                    <TableCell colSpan={2} className="text-center text-muted-foreground">
                       No recent sessions
                     </TableCell>
                   </TableRow>
