@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Alarm, Moon, Sun, Waves } from 'lucide-react';
+import { AlarmClock, Moon, Sun, Waves } from 'lucide-react';
 
 export const SmartAlarm = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -21,8 +21,8 @@ export const SmartAlarm = () => {
   useEffect(() => {
     const setupMotionTracking = async () => {
       try {
-        const { isSupported } = await Motion.isAccelerometerAvailable();
-        if (!isSupported) {
+        const available = await Motion.addListener('accel', () => {});
+        if (!available) {
           toast({
             title: "Device not supported",
             description: "Your device doesn't support motion tracking.",
@@ -65,12 +65,12 @@ export const SmartAlarm = () => {
 
   const startSleepTracking = async () => {
     try {
-      const { value } = await Device.getInfo();
-      if (value.platform === 'web') {
+      const info = await Device.getInfo();
+      if (info.platform === 'web') {
         toast({
           title: "Web platform detected",
           description: "Sleep tracking works best on mobile devices.",
-          variant: "warning",
+          variant: "default",
         });
       }
 
@@ -163,7 +163,7 @@ export const SmartAlarm = () => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Alarm className="h-5 w-5 text-primary" />
+          <AlarmClock className="h-5 w-5 text-primary" />
           Smart Sleep Tracking & Alarm
         </CardTitle>
       </CardHeader>
