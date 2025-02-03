@@ -7,12 +7,18 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+    
+    console.log('Generating zen garden element...');
     
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
@@ -30,10 +36,13 @@ serve(async (req) => {
     });
 
     const data = await response.json();
+    console.log('Successfully generated image');
+    
     return new Response(JSON.stringify({ image: data.data[0].b64_json }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error('Error generating zen element:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

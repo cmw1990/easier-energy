@@ -205,7 +205,6 @@ const BreathingGame = () => {
     setGameState(prev => ({ ...prev, isPlaying: false }));
     setIsSubmitting(true);
     
-    // Clean up audio resources
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
@@ -220,8 +219,9 @@ const BreathingGame = () => {
     
     if (session?.user) {
       try {
-        // Calculate focus rating between 0 and 10
+        // Normalize score to 0-100 range first
         const normalizedScore = Math.min(Math.max(finalScore, 0), 100);
+        // Then convert to 0-10 range and ensure it's an integer
         const focusRating = Math.min(Math.round((normalizedScore / 100) * 10), 10);
 
         const { error } = await supabase.from("energy_focus_logs").insert({

@@ -231,12 +231,15 @@ const ZenGarden = () => {
     
     if (session?.user) {
       try {
+        // Calculate focus rating based on duration (max 10 for sessions >= 5 minutes)
+        const focusRating = Math.min(Math.round((duration / 300) * 10), 10);
+
         const { error } = await supabase.from("energy_focus_logs").insert({
           user_id: session.user.id,
           activity_type: "breathing",
           activity_name: "Zen Garden",
           duration_minutes: Math.ceil(duration / 60),
-          focus_rating: Math.round((duration / 300) * 10), // 5 minutes = max score
+          focus_rating: focusRating,
           energy_rating: null,
           notes: `Completed Zen Garden meditation for ${Math.ceil(duration / 60)} minutes`
         });
