@@ -13,6 +13,12 @@ type SmartBlockingSettings = {
   learningEnabled: boolean;
   productivityThreshold: number;
   autoAdjust: boolean;
+  focusTimeBlocking: boolean;
+  aiSuggestions: boolean;
+  strictMode: boolean;
+  allowedBreakTime: number;
+  customPatterns: boolean;
+  timeBoxing: boolean;
 };
 
 export const SmartBlockingRules = () => {
@@ -22,7 +28,13 @@ export const SmartBlockingRules = () => {
     adaptiveMode: false,
     learningEnabled: true,
     productivityThreshold: 70,
-    autoAdjust: true
+    autoAdjust: true,
+    focusTimeBlocking: true,
+    aiSuggestions: true,
+    strictMode: false,
+    allowedBreakTime: 5,
+    customPatterns: true,
+    timeBoxing: false
   });
 
   useEffect(() => {
@@ -123,6 +135,76 @@ export const SmartBlockingRules = () => {
           />
         </div>
 
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <Label>Focus Time Blocking</Label>
+            <p className="text-sm text-muted-foreground">
+              Block distractions during scheduled focus time periods
+            </p>
+          </div>
+          <Switch
+            checked={settings.focusTimeBlocking}
+            onCheckedChange={(checked) => 
+              setSettings(prev => ({ ...prev, focusTimeBlocking: checked }))}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <Label>AI Suggestions</Label>
+            <p className="text-sm text-muted-foreground">
+              Get AI-powered suggestions for improving your focus and productivity
+            </p>
+          </div>
+          <Switch
+            checked={settings.aiSuggestions}
+            onCheckedChange={(checked) => 
+              setSettings(prev => ({ ...prev, aiSuggestions: checked }))}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <Label>Strict Mode</Label>
+            <p className="text-sm text-muted-foreground">
+              Prevent override of blocking rules during focus sessions
+            </p>
+          </div>
+          <Switch
+            checked={settings.strictMode}
+            onCheckedChange={(checked) => 
+              setSettings(prev => ({ ...prev, strictMode: checked }))}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <Label>Custom Patterns</Label>
+            <p className="text-sm text-muted-foreground">
+              Create custom blocking patterns based on time, activity, or location
+            </p>
+          </div>
+          <Switch
+            checked={settings.customPatterns}
+            onCheckedChange={(checked) => 
+              setSettings(prev => ({ ...prev, customPatterns: checked }))}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <Label>Time Boxing</Label>
+            <p className="text-sm text-muted-foreground">
+              Automatically schedule focused work periods with breaks
+            </p>
+          </div>
+          <Switch
+            checked={settings.timeBoxing}
+            onCheckedChange={(checked) => 
+              setSettings(prev => ({ ...prev, timeBoxing: checked }))}
+          />
+        </div>
+
         <div className="space-y-2">
           <Label>Productivity Threshold</Label>
           <input
@@ -143,18 +225,24 @@ export const SmartBlockingRules = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <Label>Auto-Adjust Breaks</Label>
-            <p className="text-sm text-muted-foreground">
-              Automatically adjust break duration based on focus sessions
-            </p>
-          </div>
-          <Switch
-            checked={settings.autoAdjust}
-            onCheckedChange={(checked) => 
-              setSettings(prev => ({ ...prev, autoAdjust: checked }))}
+        <div className="space-y-2">
+          <Label>Break Duration (minutes)</Label>
+          <input
+            type="range"
+            min="1"
+            max="30"
+            value={settings.allowedBreakTime}
+            onChange={(e) => setSettings(prev => ({ 
+              ...prev, 
+              allowedBreakTime: parseInt(e.target.value) 
+            }))}
+            className="w-full"
           />
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <span>Short</span>
+            <span>{settings.allowedBreakTime} min</span>
+            <span>Long</span>
+          </div>
         </div>
 
         <Button onClick={saveSettings} className="w-full">

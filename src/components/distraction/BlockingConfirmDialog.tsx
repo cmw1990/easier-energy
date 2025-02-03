@@ -30,16 +30,50 @@ export function BlockingConfirmDialog({
     if (!session?.user?.id) return;
 
     try {
+      // First, get the current smart blocking settings
+      const { data: smartSettings } = await supabase
+        .from('distraction_blocking')
+        .select('pattern_data')
+        .eq('user_id', session.user.id)
+        .eq('block_type', 'website')
+        .eq('target', 'smart-rules')
+        .maybeSingle();
+
+      const isStrictMode = smartSettings?.pattern_data?.strictMode;
+
+      // Update all blocking rules
       const { error } = await supabase
         .from('distraction_blocking')
-        .update({ is_active: action === 'block' })
+        .update({ 
+          is_active: action === 'block',
+          // If in strict mode and blocking, set a minimum duration
+          break_duration: action === 'block' && isStrictMode ? 
+            Math.max(smartSettings?.pattern_data?.allowedBreakTime || 5, 5) : 5
+        })
         .eq('user_id', session.user.id);
 
       if (error) throw error;
 
+      // Log the action for productivity metrics
+      if (action === 'block') {
+        const { error: logError } = await supabase
+          .from('productivity_metrics')
+          .upsert({
+            user_id: session.user.id,
+            date: new Date().toISOString().split('T')[0],
+            focus_sessions: 1,
+            distractions_blocked: 0,
+            productivity_score: smartSettings?.pattern_data?.productivityThreshold || 70
+          });
+
+        if (logError) throw logError;
+      }
+
       toast({
         title: `${action === 'block' ? 'Blocked' : 'Allowed'} all distractions`,
-        description: `Successfully ${action === 'block' ? 'blocked' : 'allowed'} all distractions.`,
+        description: `Successfully ${action === 'block' ? 'blocked' : 'allowed'} all distractions.${
+          action === 'block' && isStrictMode ? ' Strict mode is enabled.' : ''
+        }`,
       });
     } catch (error) {
       console.error('Error updating blocking rules:', error);
