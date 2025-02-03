@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { Brain, Battery, Activity } from "lucide-react";
+import { Brain, Battery, Activity, BookOpen } from "lucide-react";
 
 export const TailoredRecommendations = () => {
   const { session } = useAuth();
@@ -34,6 +34,19 @@ export const TailoredRecommendations = () => {
 
   if (!recommendations?.length) return null;
 
+  const getIcon = (category: string) => {
+    switch (category) {
+      case 'energy':
+        return <Battery className="h-5 w-5 text-yellow-500 mt-1" />;
+      case 'memory':
+        return <BookOpen className="h-5 w-5 text-purple-500 mt-1" />;
+      case 'focus':
+        return <Brain className="h-5 w-5 text-blue-500 mt-1" />;
+      default:
+        return <Activity className="h-5 w-5 text-green-500 mt-1" />;
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -46,11 +59,7 @@ export const TailoredRecommendations = () => {
         <div className="space-y-4">
           {recommendations.map((rec) => (
             <div key={rec.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-              {rec.category === 'energy' ? (
-                <Battery className="h-5 w-5 text-yellow-500 mt-1" />
-              ) : (
-                <Brain className="h-5 w-5 text-blue-500 mt-1" />
-              )}
+              {getIcon(rec.category)}
               <div>
                 <h4 className="font-medium">{rec.title}</h4>
                 <p className="text-sm text-muted-foreground">{rec.description}</p>

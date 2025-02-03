@@ -1457,6 +1457,8 @@ export type Database = {
         | "multiple_sclerosis"
         | "other_fatigue"
         | "other_focus_issue"
+        | "short_term_memory"
+        | "long_term_memory"
       quit_strategy_type:
         | "cold_turkey"
         | "taper_down"

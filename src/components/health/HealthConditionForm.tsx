@@ -5,9 +5,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { Brain, Activity, Heart } from "lucide-react";
+import { Brain, Activity, Heart, Memory } from "lucide-react";
 
-type HealthCondition = 'adhd' | 'chronic_fatigue' | 'multiple_sclerosis' | 'other_fatigue' | 'other_focus_issue';
+type HealthCondition = 'adhd' | 'chronic_fatigue' | 'multiple_sclerosis' | 'other_fatigue' | 'other_focus_issue' | 'short_term_memory' | 'long_term_memory';
 
 const CONDITIONS: { id: HealthCondition; label: string; icon: JSX.Element }[] = [
   { id: 'adhd', label: 'ADHD', icon: <Brain className="h-4 w-4" /> },
@@ -15,6 +15,8 @@ const CONDITIONS: { id: HealthCondition; label: string; icon: JSX.Element }[] = 
   { id: 'multiple_sclerosis', label: 'Multiple Sclerosis', icon: <Heart className="h-4 w-4" /> },
   { id: 'other_fatigue', label: 'Other Fatigue Issues', icon: <Activity className="h-4 w-4" /> },
   { id: 'other_focus_issue', label: 'Other Focus Issues', icon: <Brain className="h-4 w-4" /> },
+  { id: 'short_term_memory', label: 'Short-term Memory Issues', icon: <Brain className="h-4 w-4" /> },
+  { id: 'long_term_memory', label: 'Long-term Memory Issues', icon: <Brain className="h-4 w-4" /> },
 ];
 
 export const HealthConditionForm = () => {
@@ -34,7 +36,7 @@ export const HealthConditionForm = () => {
           user_id: session.user.id,
           conditions: selectedConditions,
           needs_energy_support: selectedConditions.some(c => ['chronic_fatigue', 'multiple_sclerosis', 'other_fatigue'].includes(c)),
-          needs_focus_support: selectedConditions.some(c => ['adhd', 'other_focus_issue'].includes(c))
+          needs_focus_support: selectedConditions.some(c => ['adhd', 'other_focus_issue', 'short_term_memory', 'long_term_memory'].includes(c))
         });
 
       if (error) throw error;
