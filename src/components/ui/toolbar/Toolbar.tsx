@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Button } from "@/components/ui/button";
-import { Shield, Activity, Brain, Heart, Moon, Coffee, Zap, Target, Clock, ChevronDown } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Shield, Activity, Brain, Heart, Moon, Coffee, Zap, Target, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // Define all available tools
@@ -23,49 +17,34 @@ const allTools = [
   { id: 'schedule', icon: Clock, label: 'Schedule', route: '/schedule' },
 ];
 
-// Default tools to show in the toolbar
-const defaultToolIds = ['blocking', 'energy', 'focus', 'mood'];
-
 export const Toolbar = () => {
   const navigate = useNavigate();
-  const [visibleTools, setVisibleTools] = useState(() => 
-    allTools.filter(tool => defaultToolIds.includes(tool.id))
-  );
+  const [tools, setTools] = useState(allTools);
   
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
     
-    const items = Array.from(visibleTools);
+    const items = Array.from(tools);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     
-    setVisibleTools(items);
-  };
-
-  const handleToolAdd = (tool: typeof allTools[0]) => {
-    if (!visibleTools.find(t => t.id === tool.id)) {
-      setVisibleTools([...visibleTools, tool]);
-    }
-  };
-
-  const handleToolRemove = (toolId: string) => {
-    setVisibleTools(tools => tools.filter(t => t.id !== toolId));
+    setTools(items);
   };
 
   return (
     <div className="w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
-      <div className="container flex h-14 items-center gap-4">
+      <div className="container h-14">
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="toolbar" direction="horizontal">
             {(provided) => (
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className="flex items-center gap-2 overflow-x-auto"
+                className="flex items-center gap-2 overflow-x-auto h-full px-2 scrollbar-thin scrollbar-thumb-secondary/20 scrollbar-track-transparent hover:scrollbar-thumb-secondary/30 transition-colors"
               >
-                {visibleTools.map((tool, index) => (
+                {tools.map((tool, index) => (
                   <Draggable key={tool.id} draggableId={tool.id} index={index}>
-                    {(provided) => (
+                    {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
@@ -75,22 +54,11 @@ export const Toolbar = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="gap-2 group relative"
+                          className={`gap-2 transition-all ${snapshot.isDragging ? 'scale-105 bg-accent/50' : ''}`}
                           onClick={() => navigate(tool.route)}
                         >
                           <tool.icon className="h-4 w-4" />
                           {tool.label}
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-4 w-4 absolute -right-1 -top-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleToolRemove(tool.id);
-                            }}
-                          >
-                            ×
-                          </Button>
                         </Button>
                       </div>
                     )}
@@ -101,29 +69,6 @@ export const Toolbar = () => {
             )}
           </Droppable>
         </DragDropContext>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm">
-              <ChevronDown className="h-4 w-4 mr-2" />
-              More Tools
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px]">
-            {allTools
-              .filter(tool => !visibleTools.find(t => t.id === tool.id))
-              .map(tool => (
-                <DropdownMenuItem
-                  key={tool.id}
-                  onClick={() => handleToolAdd(tool)}
-                  className="gap-2 cursor-pointer"
-                >
-                  <tool.icon className="h-4 w-4" />
-                  {tool.label}
-                </DropdownMenuItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </div>
   );
