@@ -220,12 +220,16 @@ const BalloonJourney = () => {
     
     if (session?.user) {
       try {
+        // Calculate focus rating between 0 and 10
+        const normalizedScore = Math.min(Math.max(finalScore, 0), 100);
+        const focusRating = Math.min(Math.round((normalizedScore / 100) * 10), 10);
+
         const { error } = await supabase.from("energy_focus_logs").insert({
           user_id: session.user.id,
           activity_type: "breathing",
           activity_name: "Balloon Journey",
           duration_minutes: Math.ceil(finalScore / 10),
-          focus_rating: Math.round((finalScore / 100) * 10),
+          focus_rating: focusRating,
           energy_rating: null,
           notes: `Completed Balloon Journey game with score: ${finalScore}`
         });
