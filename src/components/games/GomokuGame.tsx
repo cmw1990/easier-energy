@@ -4,6 +4,7 @@ import GomokuBoard from './gomoku/GomokuBoard';
 import GomokuSettings from './gomoku/GomokuSettings';
 import GomokuStatus from './gomoku/GomokuStatus';
 import { useGomokuGame } from './gomoku/hooks/useGomokuGame';
+import { isValidMove } from './gomoku/rules';
 
 const GomokuGame = () => {
   const { gameState, settings, setSettings, makeMove, createNewGame } = useGomokuGame();
