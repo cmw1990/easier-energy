@@ -19,6 +19,34 @@ serve(async (req) => {
     let userPrompt = '';
 
     switch (type) {
+      case 'sleep_habit_comparison':
+        systemPrompt = 'You are a sleep pattern analyst specializing in comparing sleep habits with healthy benchmarks.';
+        userPrompt = `Compare these sleep patterns with healthy benchmarks: ${JSON.stringify(data)}. Include specific areas of improvement and highlight positive habits.`;
+        break;
+      case 'sleep_environment_analysis':
+        systemPrompt = 'You are an environmental sleep expert focusing on optimizing sleep spaces.';
+        userPrompt = `Analyze the sleep environment factors from this data: ${JSON.stringify(data)}. Provide specific recommendations for creating an optimal sleep environment.`;
+        break;
+      case 'sleep_cycle_optimization':
+        systemPrompt = 'You are a sleep cycle specialist focusing on optimizing sleep phases.';
+        userPrompt = `Based on this sleep data: ${JSON.stringify(data)}, analyze sleep cycles and recommend optimal bedtime and wake times to maximize restorative sleep.`;
+        break;
+      case 'cognitive_impact_analysis':
+        systemPrompt = 'You are a cognitive performance analyst specializing in sleep-cognition relationships.';
+        userPrompt = `Analyze how sleep patterns are affecting cognitive performance: ${JSON.stringify(data)}. Provide insights on memory, focus, and decision-making impacts.`;
+        break;
+      case 'lifestyle_correlation':
+        systemPrompt = 'You are a lifestyle-sleep correlation expert.';
+        userPrompt = `Analyze correlations between lifestyle factors and sleep quality: ${JSON.stringify(data)}. Identify patterns and suggest lifestyle adjustments.`;
+        break;
+      case 'recovery_suggestions':
+        systemPrompt = 'You are a sleep recovery specialist.';
+        userPrompt = `Based on this sleep debt data: ${JSON.stringify(data)}, provide a detailed recovery plan to restore healthy sleep patterns.`;
+        break;
+      case 'next_day_preparation':
+        systemPrompt = 'You are a next-day optimization specialist.';
+        userPrompt = `Based on today's sleep data: ${JSON.stringify(data)}, provide recommendations for optimizing tomorrow's performance and well-being.`;
+        break;
       case 'analyze_sleep':
         systemPrompt = 'You are a sleep analysis expert. Analyze the sleep data and provide actionable insights.';
         userPrompt = `Analyze this sleep data: ${JSON.stringify(data)}. Focus on patterns, duration, and quality. Provide specific recommendations for improvement.`;
