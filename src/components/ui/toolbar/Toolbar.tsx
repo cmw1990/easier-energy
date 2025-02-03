@@ -54,6 +54,7 @@ export const Toolbar = () => {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 className="flex items-center gap-2 overflow-x-auto h-full px-2 pr-20 scrollbar-thin scrollbar-thumb-secondary/20 scrollbar-track-transparent hover:scrollbar-thumb-secondary/30 transition-colors"
+                style={{ touchAction: isEditing ? 'none' : 'auto' }}
               >
                 {tools.map((tool, index) => (
                   <Draggable 
@@ -68,6 +69,10 @@ export const Toolbar = () => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         className="flex items-center touch-manipulation"
+                        style={{
+                          ...provided.draggableProps.style,
+                          touchAction: isEditing ? 'none' : 'auto'
+                        }}
                       >
                         <Button
                           variant="ghost"
