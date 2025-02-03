@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 
 export const GameAssetsGenerator = () => {
   const { toast } = useToast();
@@ -12,7 +12,17 @@ export const GameAssetsGenerator = () => {
     setIsGenerating(true);
     try {
       // Generate all assets in sequence
-      const batches = ['pufferfish', 'balloon', 'zen-garden'];
+      const batches = [
+        'memory-cards',
+        'sequence-memory',
+        'visual-memory',
+        'pattern-match',
+        'color-match',
+        'word-scramble',
+        'math-speed',
+        'simon-says',
+        'speed-typing'
+      ];
       
       for (const batch of batches) {
         console.log(`Starting generation for ${batch} assets...`);
@@ -61,10 +71,11 @@ export const GameAssetsGenerator = () => {
     <Button 
       onClick={generateAssets} 
       disabled={isGenerating}
-      className="gap-2"
+      className="gap-2 bg-gradient-to-r from-primary via-secondary to-accent hover:shadow-lg transition-all duration-300"
     >
       {isGenerating && <Loader2 className="h-4 w-4 animate-spin" />}
-      {isGenerating ? 'Generating Assets...' : 'Generate Game Assets'}
+      {!isGenerating && <Sparkles className="h-4 w-4 animate-pulse" />}
+      {isGenerating ? 'Generating Game Assets...' : 'Generate Game Assets'}
     </Button>
   );
 };

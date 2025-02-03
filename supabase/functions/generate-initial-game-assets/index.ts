@@ -1,171 +1,241 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
-import { OpenAI } from 'https://esm.sh/openai@4.20.1'
-import { corsHeaders } from '../_shared/cors.ts'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 
-console.log('Edge function starting...');
-
-const openAiKey = Deno.env.get('OPENAI_API_KEY');
-if (!openAiKey) {
-  console.error('OPENAI_API_KEY is not set');
-  throw new Error('OPENAI_API_KEY is not set');
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const openai = new OpenAI({
-  apiKey: openAiKey,
-});
-
-const supabaseUrl = Deno.env.get('SUPABASE_URL');
-const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Supabase credentials not found');
-  throw new Error('Supabase credentials not found');
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-async function generateAndUploadAsset(asset: { name: string, prompt: string }, gameType: string, retryCount = 0) {
-  const maxRetries = 2;
-  try {
-    console.log(`Generating ${asset.name} for ${gameType}...`);
-    
-    const response = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: asset.prompt,
-      n: 1,
-      size: "1024x1024",
-      response_format: "b64_json",
-    });
-
-    if (!response.data[0].b64_json) {
-      throw new Error(`No image data received for ${asset.name}`);
+const GAME_ASSETS_CONFIG = {
+  'memory-cards': [
+    {
+      name: "background",
+      prompt: "Create a serene, abstract background with subtle memory-related symbols like neurons and synapses. Use soft, calming colors that won't distract from the game elements.",
+    },
+    {
+      name: "card-back",
+      prompt: "Design an elegant, minimalist card back pattern with abstract geometric shapes suggesting memory and cognition. Use a cohesive color scheme with our app's primary colors.",
+    },
+    {
+      name: "success-animation",
+      prompt: "Create a celebratory burst of particles and stars for matching cards correctly. Use bright, cheerful colors that complement our app's color scheme.",
     }
-
-    console.log(`Successfully generated ${asset.name}, uploading to storage...`);
-    
-    const buffer = Uint8Array.from(atob(response.data[0].b64_json), c => c.charCodeAt(0));
-    
-    const { error: uploadError } = await supabase.storage
-      .from('game-assets')
-      .upload(`${gameType}/${asset.name}.png`, buffer, {
-        contentType: 'image/png',
-        upsert: true
-      });
-
-    if (uploadError) {
-      throw uploadError;
+  ],
+  'sequence-memory': [
+    {
+      name: "background",
+      prompt: "Design a modern, minimal background with subtle connected dots and lines suggesting sequences and patterns. Use soft, muted colors.",
+    },
+    {
+      name: "number-tiles",
+      prompt: "Create a set of modern, clean number tiles (1-9) with a consistent design style. Use gradients and subtle shadows for depth.",
+    },
+    {
+      name: "highlight-effect",
+      prompt: "Design a glowing highlight effect for when numbers are revealed in the sequence. Use bright, attention-grabbing colors.",
     }
-
-    console.log(`Successfully uploaded ${asset.name} to ${gameType} folder`);
-    return true;
-  } catch (error) {
-    console.error(`Error processing ${asset.name} (attempt ${retryCount + 1}):`, error);
-    
-    if (retryCount < maxRetries) {
-      const delay = (retryCount + 1) * 2000;
-      console.log(`Retrying ${asset.name} in ${delay/1000} seconds...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return generateAndUploadAsset(asset, gameType, retryCount + 1);
+  ],
+  'visual-memory': [
+    {
+      name: "background",
+      prompt: "Create an abstract grid pattern background with subtle visual elements suggesting memory and focus. Use very light, neutral colors.",
+    },
+    {
+      name: "grid-cell",
+      prompt: "Design a clean, minimal grid cell with subtle borders and a soft hover effect. Include both active and inactive states.",
+    },
+    {
+      name: "success-indicator",
+      prompt: "Create a simple, elegant checkmark or success indicator that appears when patterns are correctly remembered.",
     }
-    
-    throw error;
-  }
-}
-
-async function generateBatch(assets: Array<{ name: string, prompt: string }>, gameType: string) {
-  console.log(`Starting batch generation for ${gameType} with ${assets.length} assets`);
-  
-  for (const asset of assets) {
-    try {
-      await generateAndUploadAsset(asset, gameType);
-      // Add delay between assets to manage resource usage
-      await new Promise(resolve => setTimeout(resolve, 3000));
-    } catch (error) {
-      console.error(`Failed to generate ${asset.name} for ${gameType}:`, error);
-      // Continue with next asset even if one fails
-      continue;
+  ],
+  'pattern-match': [
+    {
+      name: "background",
+      prompt: "Design a subtle, geometric background with repeating patterns that don't interfere with the game elements. Use soft, calming colors.",
+    },
+    {
+      name: "pattern-elements",
+      prompt: "Create a set of distinct geometric shapes and patterns that will be used for matching. Use clear, bold colors that are easily distinguishable.",
+    },
+    {
+      name: "match-animation",
+      prompt: "Design a satisfying animation effect for when patterns are successfully matched. Include sparkles and smooth transitions.",
     }
-  }
-}
-
-async function generateAssets(req: Request) {
-  console.log('Starting asset generation process...');
-  
-  const { batch = 'all' } = await req.json().catch(() => ({ batch: 'all' }));
-  
-  const pufferfishAssets = [
-    { name: 'pufferfish', prompt: 'A cute cartoon pufferfish character, simple design, transparent background, cheerful expression' },
-    { name: 'bubbles', prompt: 'Simple blue cartoon bubbles, transparent background, playful design' },
-    { name: 'coral', prompt: 'Colorful cartoon coral reef element, transparent background, vibrant colors' },
-    { name: 'seaweed', prompt: 'Simple seaweed plant design, transparent background, shades of green' },
-    { name: 'smallFish', prompt: 'Small cute tropical fish, transparent background, bright colors' },
-    { name: 'predator', prompt: 'Cartoon shark character, transparent background, slightly menacing but cute' },
-    { name: 'background', prompt: 'Serene underwater background, blue gradient with distant coral silhouettes' }
-  ];
-
-  const balloonAssets = [
-    { name: 'balloon', prompt: 'A cute hot air balloon with pastel colors, simple cartoon style, centered on transparent background' },
-    { name: 'clouds', prompt: 'Fluffy white cloud, simple cartoon style, on transparent background' },
-    { name: 'mountains', prompt: 'Simple mountain silhouettes, cartoon style, on transparent background' },
-    { name: 'birds', prompt: 'Simple cartoon birds silhouettes, transparent background' },
-    { name: 'background', prompt: 'Peaceful sky gradient from light blue to white, simple style for game background' }
-  ];
-
-  const zenGardenAssets = [
-    { name: 'stone', prompt: 'Minimalist Japanese zen garden stone in soft pastel colors, elegant with subtle shadows, watercolor style, transparent background' },
-    { name: 'sand-pattern', prompt: 'Delicate zen sand pattern showing gentle ripples like those made by a rake in a Japanese rock garden, minimal lines in pale beige, transparent background' },
-    { name: 'bonsai', prompt: 'Simple zen garden bonsai tree in minimalist style, graceful branches with few leaves in pale pink and mint green, transparent background' },
-    { name: 'moss', prompt: 'Minimal zen garden moss element in soft watercolor style, subtle texture in sage and moss green, transparent background' },
-    { name: 'bamboo', prompt: 'Simple zen garden bamboo element, few elegant stalks with minimal leaves in soft greens and pale gold, transparent background' },
-    { name: 'lantern', prompt: 'Minimalist zen garden lantern with simple geometric shapes and subtle glow, warm gray and soft yellow tones, transparent background' },
-    { name: 'bridge', prompt: 'Minimal zen garden bridge element in soft watercolor style, graceful curves and simple wooden texture in warm browns, transparent background' },
-    { name: 'koi', prompt: 'Abstract zen garden koi fish design showing flowing movement, soft pinks and blues, transparent background' }
-  ];
-
-  try {
-    if (batch === 'all' || batch === 'pufferfish') {
-      await generateBatch(pufferfishAssets, 'pufferfish');
-      // Add delay between batches
-      await new Promise(resolve => setTimeout(resolve, 5000));
+  ],
+  'color-match': [
+    {
+      name: "background",
+      prompt: "Create a clean, minimal background with subtle color theory elements. Use neutral tones that won't interfere with the color matching gameplay.",
+    },
+    {
+      name: "color-buttons",
+      prompt: "Design a set of modern, attractive buttons in primary and secondary colors. Include hover and active states.",
+    },
+    {
+      name: "success-effect",
+      prompt: "Create a colorful celebration effect for correct color matches. Use complementary colors and dynamic particles.",
     }
-    
-    if (batch === 'all' || batch === 'balloon') {
-      await generateBatch(balloonAssets, 'balloon');
-      await new Promise(resolve => setTimeout(resolve, 5000));
+  ],
+  'word-scramble': [
+    {
+      name: "background",
+      prompt: "Design a playful background with floating letters and typography elements. Use soft, warm colors that enhance readability.",
+    },
+    {
+      name: "letter-tiles",
+      prompt: "Create attractive letter tiles with a modern, clean design. Include subtle shadows and depth effects.",
+    },
+    {
+      name: "success-animation",
+      prompt: "Design a word completion animation with letters coming together. Use dynamic movement and celebratory effects.",
     }
-
-    if (batch === 'all' || batch === 'zen-garden') {
-      await generateBatch(zenGardenAssets, 'zen-garden');
+  ],
+  'math-speed': [
+    {
+      name: "background",
+      prompt: "Create an energetic background with subtle mathematical symbols and patterns. Use colors that promote focus and quick thinking.",
+    },
+    {
+      name: "number-pad",
+      prompt: "Design a modern, clean number pad interface with clear, readable numbers. Include hover and active states.",
+    },
+    {
+      name: "timer-animation",
+      prompt: "Create a smooth, non-distracting timer animation that shows remaining time. Use calming colors that don't induce stress.",
     }
+  ],
+  'simon-says': [
+    {
+      name: "background",
+      prompt: "Design a fun, engaging background that complements the classic Simon Says game. Use subtle patterns that don't compete with the game elements.",
+    },
+    {
+      name: "game-buttons",
+      prompt: "Create four distinct, colorful game buttons with clear active and inactive states. Include lighting effects for when buttons are pressed.",
+    },
+    {
+      name: "sequence-animation",
+      prompt: "Design smooth transition effects for button sequences. Include both pressed and released states with appropriate lighting.",
+    }
+  ],
+  'speed-typing': [
+    {
+      name: "background",
+      prompt: "Create a clean, distraction-free background with subtle keyboard and typography elements. Use colors that reduce eye strain.",
+    },
+    {
+      name: "word-display",
+      prompt: "Design an attractive text display area with clear typography and smooth transitions between words.",
+    },
+    {
+      name: "progress-indicator",
+      prompt: "Create a modern, minimal progress indicator showing typing speed and accuracy. Use subtle animations for updates.",
+    }
+  ]
+};
 
-    console.log('Asset generation completed successfully!');
-    return { success: true, message: 'Assets generated successfully' };
-  } catch (error) {
-    console.error('Error in generateAssets:', error);
-    throw error;
-  }
-}
-
-// Create a Deno server to handle HTTP requests
-Deno.serve(async (req) => {
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const result = await generateAssets(req);
-    return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    });
+    const { batch } = await req.json()
+    
+    if (!GAME_ASSETS_CONFIG[batch]) {
+      throw new Error(`Invalid batch type: ${batch}`);
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    const assets = GAME_ASSETS_CONFIG[batch];
+    const generatedAssets = [];
+
+    for (const asset of assets) {
+      console.log(`Generating asset: ${asset.name} for batch: ${batch}`);
+      
+      try {
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: asset.prompt,
+            n: 1,
+            size: "1024x1024",
+            response_format: "url"
+          })
+        });
+
+        const data = await response.json();
+        
+        if (!data.data?.[0]?.url) {
+          throw new Error(`No image URL received for ${asset.name}`);
+        }
+
+        const imageUrl = data.data[0].url;
+        console.log(`Successfully generated image for ${asset.name}`);
+
+        // Download the image
+        const imageResponse = await fetch(imageUrl);
+        const imageBlob = await imageResponse.blob();
+
+        // Upload to Supabase Storage
+        const filePath = `${batch}/${asset.name}.png`;
+        const { data: uploadData, error: uploadError } = await supabaseClient
+          .storage
+          .from('game-assets')
+          .upload(filePath, imageBlob, {
+            contentType: 'image/png',
+            upsert: true
+          });
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        // Get the public URL
+        const { data: { publicUrl } } = supabaseClient
+          .storage
+          .from('game-assets')
+          .getPublicUrl(filePath);
+
+        generatedAssets.push({
+          name: asset.name,
+          url: publicUrl
+        });
+
+        console.log(`Successfully uploaded ${asset.name} to storage`);
+        
+        // Add a small delay between generations to avoid rate limits
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+      } catch (error) {
+        console.error(`Error generating ${asset.name}:`, error);
+        throw error;
+      }
+    }
+
+    return new Response(
+      JSON.stringify({ 
+        message: `${batch} assets generated and uploaded successfully`,
+        assets: generatedAssets 
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
   } catch (error) {
-    console.error('Error handling request:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      details: 'Check function logs for more information'
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    });
+    console.error('Error:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    )
   }
-});
+})
