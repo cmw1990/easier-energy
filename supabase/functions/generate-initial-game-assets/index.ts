@@ -37,7 +37,13 @@ async function generateAssets() {
       { name: 'seaweed', prompt: 'Green cartoon seaweed, simple design, transparent background, wavy shape' },
       { name: 'smallFish', prompt: 'Tiny cute cartoon fish, simple design, transparent background, friendly appearance' },
       { name: 'predator', prompt: 'Cartoon shark character, not too scary, transparent background, playful design' },
-      { name: 'background', prompt: 'Underwater ocean scene, cartoon style, blue water background, peaceful atmosphere' }
+      { name: 'background', prompt: 'Underwater ocean scene, cartoon style, blue water background, peaceful atmosphere' },
+      // Add balloon journey assets
+      { name: 'balloon', prompt: 'Colorful hot air balloon, cartoon style, transparent background' },
+      { name: 'mountains', prompt: 'Cartoon mountain range, scenic view, transparent background' },
+      { name: 'clouds', prompt: 'White fluffy cartoon clouds, transparent background' },
+      { name: 'obstacles', prompt: 'Various cartoon obstacles for a balloon game (birds, planes, etc), transparent background' },
+      { name: 'sky_background', prompt: 'Beautiful sky background with gradient colors, suitable for a balloon game' }
     ];
 
     for (const asset of assets) {
