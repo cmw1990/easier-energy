@@ -12,8 +12,25 @@ serve(async (req) => {
   }
 
   try {
-    const { type, data } = await req.json();
+    const body = await req.text();
+    let requestData;
+    
+    try {
+      requestData = JSON.parse(body);
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      throw new Error('Invalid JSON in request body');
+    }
+
+    const { type, data } = requestData;
+    if (!type || !data) {
+      throw new Error('Missing required fields: type and data');
+    }
+
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
 
     // Enhanced system prompts for shift work analysis
     const systemPrompts: Record<string, string> = {
@@ -48,7 +65,17 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('OpenAI API error:', errorData);
+      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
+    }
+
     const result = await response.json();
+    if (!result.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response format from OpenAI API');
+    }
+
     return new Response(JSON.stringify({
       analysis: result.choices[0].message.content
     }), {
@@ -56,7 +83,10 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Error in AI assistant:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      details: error.toString()
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

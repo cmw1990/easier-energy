@@ -141,9 +141,19 @@ serve(async (req) => {
   }
 
   try {
-    const { batch } = await req.json()
+    const body = await req.text();
+    let requestData;
     
-    if (!GAME_ASSETS_CONFIG[batch]) {
+    try {
+      requestData = JSON.parse(body);
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      throw new Error('Invalid JSON in request body');
+    }
+
+    const { batch } = requestData;
+    
+    if (!batch || !GAME_ASSETS_CONFIG[batch]) {
       throw new Error(`Invalid batch type: ${batch}`);
     }
 
@@ -159,7 +169,7 @@ serve(async (req) => {
       console.log(`Generating asset: ${asset.name} for batch: ${batch}`);
       
       try {
-        const response = await fetch('https://api.openai.com/v1/images/generations', {
+        const openAIResponse = await fetch('https://api.openai.com/v1/images/generations', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
@@ -174,7 +184,13 @@ serve(async (req) => {
           })
         });
 
-        const data = await response.json();
+        if (!openAIResponse.ok) {
+          const errorData = await openAIResponse.json();
+          console.error('OpenAI API error:', errorData);
+          throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
+        }
+
+        const data = await openAIResponse.json();
         
         if (!data.data?.[0]?.url) {
           throw new Error(`No image URL received for ${asset.name}`);
@@ -185,6 +201,10 @@ serve(async (req) => {
 
         // Download the image
         const imageResponse = await fetch(imageUrl);
+        if (!imageResponse.ok) {
+          throw new Error(`Failed to download image for ${asset.name}`);
+        }
+        
         const imageBlob = await imageResponse.blob();
 
         // Upload to Supabase Storage
@@ -228,14 +248,28 @@ serve(async (req) => {
         message: `${batch} assets generated and uploaded successfully`,
         assets: generatedAssets 
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        } 
+      }
     )
 
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      JSON.stringify({ 
+        error: error.message,
+        details: error.toString()
+      }),
+      { 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        }, 
+        status: 500 
+      }
     )
   }
 })
