@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { MoveHistory } from './shared/MoveHistory';
 import { CapturedPieces } from './shared/CapturedPieces';
 import { GameStatus as GameStatusDisplay } from './shared/GameStatus';
-import { GameStatus } from '@/types/boardGames';
+import { GameStatus, GameMove } from '@/types/boardGames';
 
 type Piece = {
   type: string;
@@ -22,7 +22,7 @@ export const ShogiGame = () => {
   const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
   const [currentPlayer, setCurrentPlayer] = useState<'black' | 'white'>('black');
   const [gameStatus, setGameStatus] = useState<GameStatus>('not_started');
-  const [moveHistory, setMoveHistory] = useState<string[]>([]);
+  const [moveHistory, setMoveHistory] = useState<GameMove[]>([]);
   const [capturedPieces, setCapturedPieces] = useState<{
     black: Piece[];
     white: Piece[];
@@ -107,16 +107,20 @@ export const ShogiGame = () => {
         }));
       }
 
-      // Record move in history
-      const moveNotation = `${board[selectedRow][selectedCol]?.type} ${String.fromCharCode(97 + selectedCol)}${9 - selectedRow} to ${String.fromCharCode(97 + col)}${9 - row}${capturedPiece ? ' captures ' + capturedPiece.type : ''}`;
-      setMoveHistory(prev => [...prev, moveNotation]);
+      // Create move history entry
+      const move: GameMove = {
+        from: [selectedRow, selectedCol],
+        to: [row, col],
+        piece: board[selectedRow][selectedCol]?.type,
+        capture: capturedPiece?.type,
+        notation: `${board[selectedRow][selectedCol]?.type} ${String.fromCharCode(97 + selectedCol)}${9 - selectedRow} to ${String.fromCharCode(97 + col)}${9 - row}${capturedPiece ? ' captures ' + capturedPiece.type : ''}`
+      };
+      
+      setMoveHistory(prev => [...prev, move]);
       
       newBoard[row][col] = board[selectedRow][selectedCol];
       newBoard[selectedRow][selectedCol] = null;
       
-      setBoard(newBoard);
-      setCurrentPlayer(currentPlayer === 'black' ? 'white' : 'black');
-
       // Save game state to Supabase
       try {
         const { error } = await supabase
