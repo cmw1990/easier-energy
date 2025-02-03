@@ -14,6 +14,8 @@ import Caffeine from "@/pages/Caffeine";
 import DistractionBlocker from "@/pages/DistractionBlocker";
 import Food from "@/pages/Food";
 import NotFound from "@/pages/NotFound";
+import ChessGame from "@/components/games/ChessGame";
+import GoGame from "@/components/games/GoGame";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,8 @@ function App() {
               <Route path="/caffeine" element={<Caffeine />} />
               <Route path="/food" element={<Food />} />
               <Route path="/distraction-blocker" element={<DistractionBlocker />} />
+              <Route path="/games/chess" element={<ChessGame />} />
+              <Route path="/games/go" element={<GoGame />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
