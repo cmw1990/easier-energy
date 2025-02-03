@@ -31,6 +31,7 @@ async function generateAssets() {
   
   try {
     const assets = [
+      // Pufferfish game assets
       { name: 'pufferfish', prompt: 'A cute cartoon pufferfish character, simple design, transparent background, cheerful expression' },
       { name: 'bubbles', prompt: 'Simple blue cartoon bubbles, transparent background, playful design' },
       { name: 'coral', prompt: 'Colorful cartoon coral reef element, transparent background, vibrant colors' },
@@ -38,7 +39,7 @@ async function generateAssets() {
       { name: 'smallFish', prompt: 'Tiny cute cartoon fish, simple design, transparent background, friendly appearance' },
       { name: 'predator', prompt: 'Cartoon shark character, not too scary, transparent background, playful design' },
       { name: 'background', prompt: 'Underwater ocean scene, cartoon style, blue water background, peaceful atmosphere' },
-      // Add balloon journey assets
+      // Balloon journey assets
       { name: 'balloon', prompt: 'Colorful hot air balloon, cartoon style, transparent background' },
       { name: 'mountains', prompt: 'Cartoon mountain range, scenic view, transparent background' },
       { name: 'clouds', prompt: 'White fluffy cartoon clouds, transparent background' },
@@ -66,9 +67,12 @@ async function generateAssets() {
         
         const buffer = Uint8Array.from(atob(response.data[0].b64_json), c => c.charCodeAt(0));
         
+        // Upload to appropriate folder based on game type
+        const folder = asset.name.includes('balloon') ? 'balloon' : 'pufferfish';
+        
         const { error: uploadError } = await supabase.storage
           .from('game-assets')
-          .upload(`pufferfish/${asset.name}.png`, buffer, {
+          .upload(`${folder}/${asset.name}.png`, buffer, {
             contentType: 'image/png',
             upsert: true
           });
@@ -78,6 +82,10 @@ async function generateAssets() {
         }
 
         console.log(`Successfully uploaded ${asset.name} to storage`);
+        
+        // Add a small delay between requests to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
       } catch (error) {
         console.error(`Error processing ${asset.name}:`, error);
         throw error;
