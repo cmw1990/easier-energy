@@ -20,6 +20,18 @@ serve(async (req) => {
     
     console.log('Generating zen garden element...');
     
+    const prompts = [
+      "Create a minimalist Japanese zen garden element with soft pastel colors. A single, elegant stone or pebble with subtle shadows, rendered in a watercolor style with transparent background. Use muted tones of sage green, dusty rose, and lavender.",
+      "Design a delicate zen sand pattern in soft pastel colors, showing gentle ripples like those made by a rake in a Japanese rock garden. Use minimal lines in pale beige and cream tones, with a transparent background.",
+      "Illustrate a simple zen garden bonsai tree in a minimalist style, using soft pastel colors. Show graceful branches with a few leaves, rendered in gentle strokes of pale pink and mint green against a transparent background.",
+      "Create a minimal zen garden moss element in soft watercolor style, showing subtle texture and depth. Use gentle shades of sage and moss green with transparent background, perfect for digital layering.",
+      "Design a simple zen garden bamboo element in delicate pastel colors. Show a few elegant stalks with minimal leaves, using soft greens and pale gold tones, with a transparent background."
+    ];
+    
+    // Randomly select a prompt
+    const prompt = prompts[Math.floor(Math.random() * prompts.length)];
+    console.log('Using prompt:', prompt);
+    
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
@@ -28,7 +40,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "dall-e-3",
-        prompt: "Create a minimalist zen garden element in soft pastel colors, like a stone, plant, or sand pattern. Use a simple, clean style with transparent background, suitable for layering in a digital garden.",
+        prompt: prompt,
         n: 1,
         size: "1024x1024",
         response_format: "b64_json"
