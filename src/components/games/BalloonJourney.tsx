@@ -21,10 +21,32 @@ const BalloonJourney = () => {
   const obstaclesRef = useRef<Array<{ x: number, y: number }>>([]);
   const breathPhaseRef = useRef<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
   const phaseTimeRef = useRef(0);
+  const imagesRef = useRef<{ [key: string]: HTMLImageElement }>({});
   
   const { assets, isLoading, error } = useBalloonAssets();
 
-  // Ensure assets are loaded before starting
+  // Load images when assets are available
+  useEffect(() => {
+    if (assets) {
+      const loadImage = (key: string, src: string) => {
+        const img = new Image();
+        img.src = src;
+        return new Promise<void>((resolve, reject) => {
+          img.onload = () => {
+            imagesRef.current[key] = img;
+            resolve();
+          };
+          img.onerror = reject;
+        });
+      };
+
+      Promise.all([
+        loadImage('balloon', assets.balloon),
+        loadImage('background', assets.background)
+      ]).catch(console.error);
+    }
+  }, [assets]);
+
   useEffect(() => {
     if (error) {
       console.error("Error loading game assets:", error);
@@ -37,7 +59,7 @@ const BalloonJourney = () => {
   }, [error, toast]);
 
   const startGame = () => {
-    if (!canvasRef.current || !assets.balloon || !selectedTechnique) {
+    if (!canvasRef.current || !selectedTechnique) {
       toast({
         title: "Please select a breathing technique",
         description: "Choose a breathing technique before starting the game",
@@ -56,7 +78,7 @@ const BalloonJourney = () => {
   };
 
   const gameLoop = () => {
-    if (!canvasRef.current || !isPlaying || !selectedTechnique || !assets.balloon) return;
+    if (!canvasRef.current || !isPlaying || !selectedTechnique) return;
     
     const ctx = canvasRef.current.getContext('2d');
     if (!ctx) return;
@@ -91,16 +113,14 @@ const BalloonJourney = () => {
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
     // Draw background
-    if (assets.background) {
-      const bgImage = new Image();
-      bgImage.src = assets.background;
+    const bgImage = imagesRef.current.background;
+    if (bgImage) {
       ctx.drawImage(bgImage, 0, 0, canvasRef.current.width, canvasRef.current.height);
     }
 
     // Draw balloon
-    if (assets.balloon) {
-      const balloonImage = new Image();
-      balloonImage.src = assets.balloon;
+    const balloonImage = imagesRef.current.balloon;
+    if (balloonImage) {
       ctx.drawImage(
         balloonImage,
         balloonPositionRef.current.x,
