@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain, Target, Puzzle, GamepadIcon, Zap, Clock, BookOpen } from "lucide-react";
+import { Brain, Target, Puzzle, GamepadIcon, Zap, Clock, BookOpen, Moon, Flower2 } from "lucide-react";
 import {
   Tabs,
   TabsContent,
@@ -23,6 +23,8 @@ import PatternRecognition from "@/components/games/PatternRecognition";
 import SequenceMemory from "@/components/games/SequenceMemory";
 import WordAssociation from "@/components/games/WordAssociation";
 import BrainMatch3 from "@/components/games/BrainMatch3";
+import { ZenDrift } from "@/components/games/ZenDrift";
+import { BreathingTechniques } from "@/components/breathing/BreathingTechniques";
 
 const Focus = () => {
   const { session } = useAuth();
@@ -69,14 +71,18 @@ const Focus = () => {
       </div>
 
       <Tabs defaultValue="quick" className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <TabsTrigger value="quick" className="flex items-center gap-2">
             <Zap className="h-4 w-4" />
-            Quick Exercises
+            Quick
           </TabsTrigger>
           <TabsTrigger value="memory" className="flex items-center gap-2">
             <Brain className="h-4 w-4" />
             Memory
+          </TabsTrigger>
+          <TabsTrigger value="relax" className="flex items-center gap-2">
+            <Flower2 className="h-4 w-4" />
+            Relax
           </TabsTrigger>
           <TabsTrigger value="cognitive" className="flex items-center gap-2">
             <Puzzle className="h-4 w-4" />
@@ -84,7 +90,7 @@ const Focus = () => {
           </TabsTrigger>
           <TabsTrigger value="timed" className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
-            Timed Tests
+            Timed
           </TabsTrigger>
         </TabsList>
 
@@ -98,6 +104,24 @@ const Focus = () => {
           <MemoryCards />
           <SequenceMemory />
           <VisualMemory />
+        </TabsContent>
+
+        <TabsContent value="relax" className="space-y-4">
+          <Card className="p-6 bg-primary/5 border-2 border-primary/20">
+            <div className="flex flex-col items-center text-center space-y-6">
+              <div className="p-4 bg-primary/10 rounded-full">
+                <Moon className="h-12 w-12 text-primary animate-pulse" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold mb-2">Relaxation Tools</h2>
+                <p className="text-muted-foreground mb-6">
+                  Take a moment to unwind with these calming activities
+                </p>
+              </div>
+            </div>
+          </Card>
+          <ZenDrift />
+          <BreathingTechniques />
         </TabsContent>
 
         <TabsContent value="cognitive" className="space-y-4">
@@ -136,19 +160,19 @@ const Focus = () => {
             </ul>
           </div>
           <div className="space-y-2">
+            <h3 className="font-medium text-primary">Relaxation Tools</h3>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Zen Drift: Find peace in meditative motion</li>
+              <li>• Breathing Techniques: Guide your breath for calmness</li>
+              <li>• Mindful Activities: Center your focus and reduce stress</li>
+            </ul>
+          </div>
+          <div className="space-y-2">
             <h3 className="font-medium text-primary">Cognitive Development</h3>
             <ul className="text-sm text-muted-foreground space-y-1">
               <li>• Word Scramble: Build vocabulary and mental agility</li>
               <li>• Pattern Match: Strengthen pattern recognition</li>
               <li>• Word Association: Develop cognitive connections</li>
-            </ul>
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-medium text-primary">Timed Challenges</h3>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Simon Says: Test memory and sequence recall</li>
-              <li>• Speed Typing: Improve typing speed and accuracy</li>
-              <li>• Pattern Recognition: Train visual processing</li>
             </ul>
           </div>
         </div>
