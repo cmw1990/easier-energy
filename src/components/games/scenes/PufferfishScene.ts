@@ -24,6 +24,7 @@ export class PufferfishScene extends BreathingBaseScene {
   private seaweed: Phaser.GameObjects.Image[];
   private lastBubbleTime: number;
   private background: Phaser.GameObjects.Image | null;
+  private sprites: Map<string, Phaser.GameObjects.Image>;
 
   constructor(onScoreUpdate: (score: number) => void) {
     super({ key: 'PufferfishScene' });
@@ -42,6 +43,7 @@ export class PufferfishScene extends BreathingBaseScene {
     this.bubbles = null;
     this.lastBubbleTime = 0;
     this.background = null;
+    this.sprites = new Map();
   }
 
   setBreathPhase(phase: 'inhale' | 'hold' | 'exhale' | 'rest') {
@@ -87,14 +89,13 @@ export class PufferfishScene extends BreathingBaseScene {
       lifespan: 2000,
       quantity: 1,
       frequency: 100,
-      on: false
+      active: false
     });
     
     this.bubbles = particles.createEmitter();
 
     this.gameState.isPlaying = true;
 
-    // Start spawning game objects
     this.time.addEvent({
       delay: 2000,
       callback: this.spawnSmallFish,
@@ -223,7 +224,7 @@ export class PufferfishScene extends BreathingBaseScene {
     this.gameState.fishPosition += (targetY - this.gameState.fishPosition) * 0.1;
 
     // Update player fish sprite
-    const fish = this.getSprite('pufferfish');
+    const fish = this.sprites.get('pufferfish');
     if (fish) {
       fish.setPosition(100, this.gameState.fishPosition)
           .setScale(this.gameState.fishSize)
@@ -239,8 +240,8 @@ export class PufferfishScene extends BreathingBaseScene {
   }
 
   private emitBubbles() {
-    if (this.bubbles && this.getSprite('pufferfish')) {
-      const fish = this.getSprite('pufferfish');
+    if (this.bubbles && this.sprites.get('pufferfish')) {
+      const fish = this.sprites.get('pufferfish');
       if (fish) {
         this.bubbles.setPosition(fish.x, fish.y);
         this.bubbles.explode();
