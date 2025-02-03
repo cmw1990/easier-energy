@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Button } from "@/components/ui/button";
-import { Shield, Activity, Brain, Heart, Moon, Coffee, Zap, Target, Clock, Pencil, Check } from "lucide-react";
+import { Shield, Activity, Brain, Heart, Moon, Coffee, Zap, Target, Clock, MoreHorizontal, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -53,7 +53,7 @@ export const Toolbar = () => {
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className="flex items-center gap-2 overflow-x-auto h-full px-2 pr-16 scrollbar-thin scrollbar-thumb-secondary/20 scrollbar-track-transparent hover:scrollbar-thumb-secondary/30 transition-colors"
+                className="flex items-center gap-2 overflow-x-auto h-full px-2 pr-20 scrollbar-thin scrollbar-thumb-secondary/20 scrollbar-track-transparent hover:scrollbar-thumb-secondary/30 transition-colors"
               >
                 {tools.map((tool, index) => (
                   <Draggable 
@@ -67,7 +67,7 @@ export const Toolbar = () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="flex items-center"
+                        className="flex items-center touch-manipulation"
                       >
                         <Button
                           variant="ghost"
@@ -93,20 +93,14 @@ export const Toolbar = () => {
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={toggleEditMode}
-            className="gap-2"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
           >
             {isEditing ? (
-              <>
-                <Check className="h-4 w-4" />
-                Done
-              </>
+              <Check className="h-4 w-4" />
             ) : (
-              <>
-                <Pencil className="h-4 w-4" />
-                Edit
-              </>
+              <MoreHorizontal className="h-4 w-4" />
             )}
           </Button>
         </div>
