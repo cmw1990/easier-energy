@@ -1,12 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Battery, Brain, Moon } from "lucide-react";
+import { Battery, Brain, Moon, AlarmClock } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { AIAssistant } from "@/components/AIAssistant";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { session } = useAuth();
+  const navigate = useNavigate();
 
   const { data: recentLogs } = useQuery({
     queryKey: ["energyFocusLogs"],
@@ -42,8 +45,8 @@ const Dashboard = () => {
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-4">
+        <Card className="relative group cursor-pointer hover:shadow-lg transition-all" onClick={() => navigate("/sleep")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Sleep Duration</CardTitle>
             <Moon className="h-4 w-4 text-muted-foreground" />
@@ -55,6 +58,26 @@ const Dashboard = () => {
             <p className="text-xs text-muted-foreground">
               Latest sleep session
             </p>
+          </CardContent>
+        </Card>
+
+        <Card className="relative group cursor-pointer hover:shadow-lg transition-all" onClick={() => navigate("/sleep")}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Smart Alarm</CardTitle>
+            <AlarmClock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              Set Alarm
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Configure your wake-up routine
+            </p>
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <Button variant="ghost" className="text-primary">
+                Configure →
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
