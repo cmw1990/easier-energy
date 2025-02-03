@@ -23,7 +23,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Upload, Search } from "lucide-react";
+import { Loader2, Upload, Search, Heart } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -35,10 +35,14 @@ export const FoodLogForm = () => {
   const { session } = useAuth();
   const [foodName, setFoodName] = useState("");
   const [calories, setCalories] = useState("");
+  const [protein, setProtein] = useState("");
+  const [carbs, setCarbs] = useState("");
+  const [fat, setFat] = useState("");
   const [mealType, setMealType] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const { data: searchResults, isLoading: isSearching } = useQuery({
     queryKey: ['food-search', searchQuery],
@@ -59,10 +63,51 @@ export const FoodLogForm = () => {
     }
   };
 
-  const handleFoodSelect = (food: { name: string; calories: number }) => {
+  const handleFoodSelect = (food: { 
+    name: string; 
+    calories: number;
+    protein?: number;
+    carbs?: number;
+    fat?: number;
+  }) => {
     setFoodName(food.name);
     setCalories(food.calories.toString());
+    if (food.protein) setProtein(food.protein.toString());
+    if (food.carbs) setCarbs(food.carbs.toString());
+    if (food.fat) setFat(food.fat.toString());
     setOpen(false);
+  };
+
+  const toggleFavorite = async () => {
+    if (!session?.user?.id || !foodName) return;
+    
+    try {
+      const { error } = await supabase
+        .from('favorite_foods')
+        .upsert({
+          user_id: session.user.id,
+          food_name: foodName,
+          calories: calories ? parseInt(calories) : null,
+          protein_grams: protein ? parseFloat(protein) : null,
+          carbs_grams: carbs ? parseFloat(carbs) : null,
+          fat_grams: fat ? parseFloat(fat) : null,
+        });
+
+      if (error) throw error;
+      
+      setIsFavorite(!isFavorite);
+      toast({
+        title: isFavorite ? "Removed from favorites" : "Added to favorites",
+        description: `${foodName} has been ${isFavorite ? "removed from" : "added to"} your favorites`,
+      });
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update favorites",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,6 +160,9 @@ export const FoodLogForm = () => {
           user_id: session.user.id,
           food_name: foodName,
           calories: calories ? parseInt(calories) : null,
+          protein_grams: protein ? parseFloat(protein) : null,
+          carbs_grams: carbs ? parseFloat(carbs) : null,
+          fat_grams: fat ? parseFloat(fat) : null,
           meal_type: mealType,
           image_url: imageUrl || null,
           ai_analysis: aiAnalysis
@@ -130,9 +178,13 @@ export const FoodLogForm = () => {
       // Reset form
       setFoodName("");
       setCalories("");
+      setProtein("");
+      setCarbs("");
+      setFat("");
       setMealType("");
       setSelectedFile(null);
       setSearchQuery("");
+      setIsFavorite(false);
     } catch (error) {
       console.error('Error logging food:', error);
       toast({
@@ -183,7 +235,12 @@ export const FoodLogForm = () => {
                     value={food.name}
                     onSelect={() => handleFoodSelect(food)}
                   >
-                    {food.name} - {food.calories} kcal
+                    <div className="flex flex-col">
+                      <span>{food.name}</span>
+                      <span className="text-sm text-gray-500">
+                        {food.calories} kcal | P: {food.protein}g | C: {food.carbs}g | F: {food.fat}g
+                      </span>
+                    </div>
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -192,15 +249,50 @@ export const FoodLogForm = () => {
         </Popover>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="calories">Calories (optional)</Label>
-        <Input
-          id="calories"
-          type="number"
-          value={calories}
-          onChange={(e) => setCalories(e.target.value)}
-          placeholder="e.g., 500"
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="calories">Calories</Label>
+          <Input
+            id="calories"
+            type="number"
+            value={calories}
+            onChange={(e) => setCalories(e.target.value)}
+            placeholder="e.g., 500"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="protein">Protein (g)</Label>
+          <Input
+            id="protein"
+            type="number"
+            value={protein}
+            onChange={(e) => setProtein(e.target.value)}
+            placeholder="e.g., 20"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="carbs">Carbs (g)</Label>
+          <Input
+            id="carbs"
+            type="number"
+            value={carbs}
+            onChange={(e) => setCarbs(e.target.value)}
+            placeholder="e.g., 50"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="fat">Fat (g)</Label>
+          <Input
+            id="fat"
+            type="number"
+            value={fat}
+            onChange={(e) => setFat(e.target.value)}
+            placeholder="e.g., 15"
+          />
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -229,23 +321,38 @@ export const FoodLogForm = () => {
         />
       </div>
 
-      <Button 
-        type="submit" 
-        className="w-full"
-        disabled={isUploading || isAnalyzing || !foodName || !mealType}
-      >
-        {isUploading || isAnalyzing ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {isAnalyzing ? 'Analyzing...' : 'Uploading...'}
-          </>
-        ) : (
-          <>
-            <Upload className="mr-2 h-4 w-4" />
-            Log Food
-          </>
-        )}
-      </Button>
+      <div className="flex gap-4">
+        <Button 
+          type="submit" 
+          className="flex-1"
+          disabled={isUploading || isAnalyzing || !foodName || !mealType}
+        >
+          {isUploading || isAnalyzing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {isAnalyzing ? 'Analyzing...' : 'Uploading...'}
+            </>
+          ) : (
+            <>
+              <Upload className="mr-2 h-4 w-4" />
+              Log Food
+            </>
+          )}
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={toggleFavorite}
+          disabled={!foodName}
+          className={cn(
+            "w-12",
+            isFavorite && "bg-pink-100 hover:bg-pink-200"
+          )}
+        >
+          <Heart className={cn("h-4 w-4", isFavorite && "fill-current text-pink-500")} />
+        </Button>
+      </div>
     </form>
   );
 };
