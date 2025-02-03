@@ -58,7 +58,7 @@ const GoGame = () => {
         .maybeSingle();
 
       if (existingGame) {
-        const gameState = existingGame.game_state as GameState;
+        const gameState = existingGame.game_state as unknown as GameState;
         if (isValidGameState(gameState)) {
           setGameState(gameState);
           setDifficulty(existingGame.difficulty_level.toString());
@@ -108,7 +108,10 @@ const GoGame = () => {
     try {
       const { error } = await supabase
         .from('board_games')
-        .insert([newGame]);
+        .insert([{
+          ...newGame,
+          game_state: newGameState as unknown as Json
+        }]);
 
       if (error) throw error;
 
@@ -143,11 +146,10 @@ const GoGame = () => {
 
       setGameState(newGameState);
 
-      // Update game in database
       const { error } = await supabase
         .from('board_games')
         .update({
-          game_state: newGameState,
+          game_state: newGameState as unknown as Json,
           updated_at: new Date().toISOString()
         })
         .eq('game_type', 'go')
@@ -155,11 +157,9 @@ const GoGame = () => {
 
       if (error) throw error;
 
-      // AI move simulation
       if (newGameState.currentPlayer === 'white') {
         setIsThinking(true);
         setTimeout(() => {
-          // Simple AI: random valid move
           const validMoves = [];
           for (let i = 0; i < BOARD_SIZE; i++) {
             for (let j = 0; j < BOARD_SIZE; j++) {
