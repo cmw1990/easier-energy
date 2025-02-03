@@ -12,6 +12,8 @@ Deno.serve(async (req) => {
   }
 
   try {
+    console.log('Starting asset generation process...');
+    
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -20,34 +22,18 @@ Deno.serve(async (req) => {
     // Define all the assets we need
     const assets = {
       pufferfish: [
-        { name: 'pufferfish', prompt: 'A cute cartoon pufferfish character, simple design, transparent background' },
-        { name: 'bubbles', prompt: 'Simple blue cartoon bubbles, transparent background' },
-        { name: 'coral', prompt: 'Colorful cartoon coral reef element, transparent background' },
-        { name: 'seaweed', prompt: 'Green cartoon seaweed, simple design, transparent background' },
-        { name: 'smallFish', prompt: 'Tiny cute cartoon fish, simple design, transparent background' },
-        { name: 'predator', prompt: 'Cartoon shark character, not too scary, transparent background' },
-        { name: 'background', prompt: 'Underwater ocean scene, cartoon style, blue water background' }
-      ],
-      zen: [
-        { name: 'flower1', prompt: 'Simple zen flower element, minimal design, transparent background' },
-        { name: 'flower2', prompt: 'Japanese style cherry blossom, minimal design, transparent background' },
-        { name: 'leaf', prompt: 'Zen garden leaf element, minimal design, transparent background' },
-        { name: 'stone', prompt: 'Zen garden stone element, minimal design, transparent background' },
-        { name: 'bamboo', prompt: 'Simple bamboo element, minimal design, transparent background' }
-      ],
-      balloon: [
-        { name: 'balloon', prompt: 'Colorful hot air balloon, cartoon style, transparent background' },
-        { name: 'cloud1', prompt: 'White fluffy cartoon cloud, simple design, transparent background' },
-        { name: 'cloud2', prompt: 'Simple white cartoon cloud, different shape, transparent background' },
-        { name: 'mountain', prompt: 'Cartoon mountain silhouette, simple design, transparent background' },
-        { name: 'background', prompt: 'Peaceful sky background, gradient from light to darker blue' }
+        { name: 'pufferfish', prompt: 'A cute cartoon pufferfish character, simple design, transparent background, cheerful expression' },
+        { name: 'bubbles', prompt: 'Simple blue cartoon bubbles, transparent background, playful design' },
+        { name: 'coral', prompt: 'Colorful cartoon coral reef element, transparent background, vibrant colors' },
+        { name: 'seaweed', prompt: 'Green cartoon seaweed, simple design, transparent background, wavy shape' },
+        { name: 'smallFish', prompt: 'Tiny cute cartoon fish, simple design, transparent background, friendly appearance' },
+        { name: 'predator', prompt: 'Cartoon shark character, not too scary, transparent background, playful design' },
+        { name: 'background', prompt: 'Underwater ocean scene, cartoon style, blue water background, peaceful atmosphere' }
       ]
     };
 
     const results = {
       pufferfish: {},
-      zen: {},
-      balloon: {}
     };
 
     // Generate and store assets for each game
@@ -67,6 +53,8 @@ Deno.serve(async (req) => {
           });
 
           if (response.data[0].b64_json) {
+            console.log(`Successfully generated ${asset.name}, uploading to storage...`);
+            
             const buffer = Uint8Array.from(atob(response.data[0].b64_json), c => c.charCodeAt(0));
             
             const { data, error } = await supabase.storage
@@ -79,6 +67,8 @@ Deno.serve(async (req) => {
             if (error) {
               throw error;
             }
+
+            console.log(`Successfully uploaded ${asset.name} to storage`);
 
             const { data: { publicUrl } } = supabase.storage
               .from('game-assets')
