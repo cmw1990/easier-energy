@@ -25,16 +25,50 @@ const BreathingGame = () => {
     obstacles: [],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [audioSupported, setAudioSupported] = useState<boolean | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const animationFrameRef = useRef<number>();
   const { toast } = useToast();
   const { session } = useAuth();
 
+  // Check audio support on mount
+  useEffect(() => {
+    const checkAudioSupport = async () => {
+      try {
+        // Check if the browser supports the required APIs
+        const supported = !!(
+          navigator.mediaDevices &&
+          navigator.mediaDevices.getUserMedia &&
+          window.AudioContext
+        );
+        setAudioSupported(supported);
+      } catch (error) {
+        console.error("Error checking audio support:", error);
+        setAudioSupported(false);
+      }
+    };
+    checkAudioSupport();
+  }, []);
+
   const startGame = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (!audioSupported) {
+        throw new Error("Audio input is not supported on this device/browser");
+      }
+
+      // Request microphone access with constraints for voice optimization
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+      
+      streamRef.current = stream;
       audioContextRef.current = new AudioContext();
       analyserRef.current = audioContextRef.current.createAnalyser();
       const source = audioContextRef.current.createMediaStreamSource(stream);
@@ -51,7 +85,7 @@ const BreathingGame = () => {
       console.error("Error accessing microphone:", error);
       toast({
         title: "Error Starting Game",
-        description: "Could not access microphone. Please check permissions.",
+        description: error.message || "Could not access microphone. Please check permissions.",
         variant: "destructive",
       });
     }
@@ -171,11 +205,24 @@ const BreathingGame = () => {
     setGameState(prev => ({ ...prev, isPlaying: false }));
     setIsSubmitting(true);
     
+    // Clean up audio resources
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    
     if (session?.user) {
       try {
         const { error } = await supabase.from("energy_focus_logs").insert({
           user_id: session.user.id,
-          activity_type: "breathing", // Changed from "breathing_game" to "breathing"
+          activity_type: "breathing",
           activity_name: "Puffer Fish",
           duration_minutes: Math.ceil(finalScore / 10),
           focus_rating: Math.round((finalScore / 100) * 10),
@@ -200,18 +247,14 @@ const BreathingGame = () => {
         setIsSubmitting(false);
       }
     }
-
-    // Cleanup
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-    }
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
   };
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
@@ -242,13 +285,21 @@ const BreathingGame = () => {
         />
         
         {!gameState.isPlaying && (
-          <Button 
-            onClick={startGame}
-            className="w-40"
-            disabled={isSubmitting}
-          >
-            Start Game
-          </Button>
+          <>
+            <Button 
+              onClick={startGame}
+              className="w-40"
+              disabled={isSubmitting || audioSupported === false}
+            >
+              Start Game
+            </Button>
+            {audioSupported === false && (
+              <p className="text-destructive text-sm">
+                Audio input is not supported on your device or browser.
+                Please try using a different browser or device.
+              </p>
+            )}
+          </>
         )}
       </div>
 
