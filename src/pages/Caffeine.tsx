@@ -12,7 +12,7 @@ const Caffeine = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: caffeineHistory } = useQuery({
+  const { data: caffeineHistory, isLoading: isHistoryLoading } = useQuery({
     queryKey: ["caffeineHistory"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -29,7 +29,7 @@ const Caffeine = () => {
     enabled: !!session?.user?.id,
   });
 
-  const { data: chartData } = useQuery({
+  const { data: chartData, isLoading: isChartLoading } = useQuery({
     queryKey: ["caffeineChartData"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -124,7 +124,7 @@ const Caffeine = () => {
             <CardTitle>Caffeine Intake Trends (Last 7 Days)</CardTitle>
           </CardHeader>
           <CardContent>
-            <CaffeineChart data={chartData || []} />
+            <CaffeineChart data={chartData || []} isLoading={isChartLoading} />
           </CardContent>
         </Card>
       </div>

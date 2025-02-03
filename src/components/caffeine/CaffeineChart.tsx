@@ -1,5 +1,11 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from "recharts";
-import { Coffee, Zap } from "lucide-react";
+import { Coffee, Zap, Info } from "lucide-react";
+import {
+  Tooltip as UITooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CaffeineChartProps {
   data: Array<{
@@ -7,6 +13,7 @@ interface CaffeineChartProps {
     amount: number;
     energy: number;
   }>;
+  isLoading?: boolean;
 }
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
@@ -29,9 +36,42 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
   );
 };
 
-export const CaffeineChart = ({ data }: CaffeineChartProps) => {
+export const CaffeineChart = ({ data, isLoading }: CaffeineChartProps) => {
+  if (isLoading) {
+    return (
+      <div className="h-[300px] w-full flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading data...</div>
+      </div>
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <div className="h-[300px] w-full flex items-center justify-center">
+        <div className="text-center space-y-2">
+          <p className="text-muted-foreground">No caffeine intake data available</p>
+          <p className="text-sm text-muted-foreground">Start logging your caffeine intake to see trends</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-[300px] w-full">
+      <div className="flex justify-end mb-2">
+        <TooltipProvider>
+          <UITooltip>
+            <TooltipTrigger asChild>
+              <button className="p-1 hover:bg-accent rounded-full">
+                <Info className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Track your caffeine intake and energy levels over time</p>
+            </TooltipContent>
+          </UITooltip>
+        </TooltipProvider>
+      </div>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart 
           data={data}
