@@ -3,9 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Ban, Clock, Shield, Activity } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export const BlockingStats = () => {
   const { session } = useAuth();
+  const { toast } = useToast();
   const [stats, setStats] = useState({
     totalBlocked: 0,
     todayBlocked: 0,
@@ -16,7 +18,9 @@ export const BlockingStats = () => {
   });
 
   useEffect(() => {
-    loadStats();
+    if (session?.user?.id) {
+      loadStats();
+    }
   }, [session?.user?.id]);
 
   const loadStats = async () => {
@@ -47,16 +51,20 @@ export const BlockingStats = () => {
         .eq('is_active', true);
 
       // Get today's productivity metrics
-      const { data: metrics } = await supabase
+      const { data: metrics, error: metricsError } = await supabase
         .from('productivity_metrics')
         .select('*')
         .eq('user_id', session.user.id)
         .eq('date', today.toISOString().split('T')[0])
         .maybeSingle();
 
+      if (metricsError && metricsError.code !== 'PGRST116') {
+        throw metricsError;
+      }
+
       // If no metrics exist for today, create a default record
       if (!metrics) {
-        const { data: newMetrics } = await supabase
+        const { data: newMetrics, error: insertError } = await supabase
           .from('productivity_metrics')
           .insert({
             user_id: session.user.id,
@@ -67,7 +75,16 @@ export const BlockingStats = () => {
             focus_sessions: 0
           })
           .select()
-          .maybeSingle();
+          .single();
+
+        if (insertError) {
+          console.error('Error creating metrics:', insertError);
+          toast({
+            title: "Error creating metrics",
+            description: "Your stats may be incomplete",
+            variant: "destructive"
+          });
+        }
 
         if (newMetrics) {
           console.log('Created new metrics record:', newMetrics);
@@ -107,6 +124,11 @@ export const BlockingStats = () => {
       });
     } catch (error) {
       console.error('Error loading stats:', error);
+      toast({
+        title: "Error loading stats",
+        description: "Please try again later",
+        variant: "destructive"
+      });
     }
   };
 
