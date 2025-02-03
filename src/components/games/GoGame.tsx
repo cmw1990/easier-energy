@@ -64,7 +64,7 @@ const GoGame = () => {
         .maybeSingle();
 
       if (existingGame) {
-        const loadedGameState = existingGame.game_state as GameState;
+        const loadedGameState = existingGame.game_state as unknown as GameState;
         setGameState(loadedGameState);
         setDifficulty(existingGame.difficulty_level.toString());
       } else {
@@ -82,17 +82,19 @@ const GoGame = () => {
 
   const createNewGame = async () => {
     const user = await supabase.auth.getUser();
-    const newGame: BoardGame = {
-      game_type: 'go',
-      difficulty_level: parseInt(difficulty),
-      game_state: {
-        board: Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill('')),
-        currentPlayer: 'black',
-        captures: { black: 0, white: 0 },
-        status: 'in_progress',
-        winner: null
-      },
+    const initialGameState: GameState = {
+      board: Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill('')),
+      currentPlayer: 'black',
+      captures: { black: 0, white: 0 },
       status: 'in_progress',
+      winner: null
+    };
+
+    const newGame = {
+      game_type: 'go' as GameType,
+      difficulty_level: parseInt(difficulty),
+      game_state: initialGameState,
+      status: 'in_progress' as GameStatus,
       user_id: user.data.user?.id,
     };
 
@@ -103,7 +105,7 @@ const GoGame = () => {
       
       if (error) throw error;
       
-      setGameState(newGame.game_state);
+      setGameState(initialGameState);
     } catch (error) {
       console.error('Error creating new game:', error);
       toast({
@@ -134,7 +136,7 @@ const GoGame = () => {
       const { error } = await supabase
         .from('board_games')
         .update({
-          game_state: newGameState,
+          game_state: newGameState as unknown as Json,
           last_move_at: new Date().toISOString(),
         })
         .eq('game_type', 'go')
