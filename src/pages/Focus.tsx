@@ -106,17 +106,25 @@ const NumberSequence = () => {
   };
 
   return (
-    <Card className="p-6">
+    <Card className="p-6 hover:shadow-lg transition-shadow">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-full">
-            <Puzzle className="h-5 w-5 text-primary" />
+            <Puzzle className="h-5 w-5 text-primary animate-pulse" />
           </div>
-          <h2 className="text-2xl font-bold">Number Sequence</h2>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Number Sequence
+          </h2>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-lg font-medium">Score: {score}</div>
-          <div className="text-lg font-medium">Time: {timeLeft}s</div>
+          <div className="text-lg font-medium">
+            Score: <span className="text-primary">{score}</span>
+          </div>
+          <div className="text-lg font-medium">
+            Time: <span className={`${timeLeft <= 10 ? 'text-energy-low animate-pulse' : 'text-secondary'}`}>
+              {timeLeft}s
+            </span>
+          </div>
         </div>
       </div>
 
@@ -127,8 +135,8 @@ const NumberSequence = () => {
             onClick={() => handleNumberClick(number)}
             variant={number === currentTarget ? "default" : "outline"}
             className={`h-16 text-xl font-bold transition-all ${
-              number === currentTarget ? 'ring-2 ring-primary ring-offset-2' : ''
-            } ${!isActive || number !== currentTarget ? 'opacity-80' : ''}`}
+              number === currentTarget ? 'ring-2 ring-primary ring-offset-2 animate-breathe' : ''
+            } hover:scale-105`}
             disabled={!isActive || number !== currentTarget || isSubmitting}
           >
             {number}
@@ -140,27 +148,34 @@ const NumberSequence = () => {
         {!isActive ? (
           <Button 
             onClick={startTest} 
-            className="w-full" 
+            className="w-full group relative overflow-hidden" 
             size="lg"
             disabled={isSubmitting}
           >
-            Start Test
+            <span className="relative z-10">Start Test</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-primary opacity-75 group-hover:animate-shimmer" />
           </Button>
         ) : (
           <Button 
             variant="destructive" 
             onClick={endTest} 
-            className="w-full"
+            className="w-full hover:scale-105 transition-transform"
             size="lg"
             disabled={isSubmitting}
           >
             End Test
           </Button>
         )}
-      </div>
 
-      <div className="mt-4 text-sm text-muted-foreground">
-        Click numbers in ascending order (1-9). Complete as many sequences as possible in 30 seconds.
+        <div className="mt-4">
+          <div className="text-sm text-muted-foreground">
+            Click numbers in ascending order (1-9). Complete as many sequences as possible in 30 seconds.
+          </div>
+          <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+            <Brain className="h-4 w-4" />
+            <span>Improves: Quick Thinking, Pattern Recognition, Focus</span>
+          </div>
+        </div>
       </div>
     </Card>
   );
@@ -170,10 +185,12 @@ const Focus = () => {
   return (
     <div className="container max-w-4xl mx-auto space-y-8 p-4">
       <div className="flex items-center gap-3">
-        <div className="p-2 bg-primary/10 rounded-full">
+        <div className="p-2 bg-primary/10 rounded-full animate-float">
           <Brain className="h-6 w-6 text-primary" />
         </div>
-        <h1 className="text-3xl font-bold">Brain & Focus Exercises</h1>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          Brain & Focus Exercises
+        </h1>
       </div>
 
       <div className="grid gap-8">
@@ -191,8 +208,10 @@ const Focus = () => {
         <WordAssociation />
       </div>
 
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">About These Exercises</h2>
+      <Card className="p-6 hover:shadow-lg transition-shadow">
+        <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          About These Exercises
+        </h2>
         <ul className="space-y-2 text-muted-foreground">
           <li>• <strong>Number Sequence:</strong> Test your quick thinking and focus by clicking numbers in order</li>
           <li>• <strong>Memory Cards:</strong> Challenge your memory by matching pairs of cards</li>
