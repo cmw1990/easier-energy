@@ -14,9 +14,9 @@ export const ZenDriftAssetsGenerator = () => {
       const { data, error } = await supabase.functions.invoke(
         'generate-zen-drift-assets',
         {
-          headers: {
-            'Content-Type': 'application/json',
-          }
+          body: JSON.stringify({
+            type: 'zen-drift'
+          })
         }
       );
 
