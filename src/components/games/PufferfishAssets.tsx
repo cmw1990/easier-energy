@@ -24,7 +24,7 @@ export const usePufferfishAssets = () => {
     seaweed: seaweedImage,
     smallFish: smallFishImage,
     predator: predatorImage,
-    background: backgroundImage,
+    background: backgroundImage
   };
 
   return {
