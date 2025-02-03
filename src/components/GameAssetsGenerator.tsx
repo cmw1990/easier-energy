@@ -8,10 +8,24 @@ export const GameAssetsGenerator = () => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const checkExistingAssets = async (batch: string) => {
+    try {
+      const { data, error } = await supabase
+        .storage
+        .from('game-assets')
+        .list(batch);
+
+      if (error) throw error;
+      return data && data.length > 0;
+    } catch (error) {
+      console.error(`Error checking existing assets for ${batch}:`, error);
+      return false;
+    }
+  };
+
   const generateAssets = async () => {
     setIsGenerating(true);
     try {
-      // Generate all assets in sequence
       const batches = [
         'memory-cards',
         'sequence-memory',
@@ -21,10 +35,19 @@ export const GameAssetsGenerator = () => {
         'word-scramble',
         'math-speed',
         'simon-says',
-        'speed-typing'
+        'speed-typing',
+        'pufferfish'
       ];
       
       for (const batch of batches) {
+        console.log(`Checking existing assets for ${batch}...`);
+        const hasExisting = await checkExistingAssets(batch);
+        
+        if (hasExisting) {
+          console.log(`Skipping ${batch} - assets already exist`);
+          continue;
+        }
+
         console.log(`Starting generation for ${batch} assets...`);
         
         const { data, error } = await supabase.functions.invoke(
