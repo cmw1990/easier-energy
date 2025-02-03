@@ -20,7 +20,10 @@ export const OpenAITest = () => {
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase Function Error:', error);
+        throw new Error(error.message || 'Failed to test OpenAI connection');
+      }
       
       console.log('Test response:', data);
       
@@ -30,9 +33,21 @@ export const OpenAITest = () => {
       });
     } catch (error) {
       console.error('Error testing OpenAI:', error);
+      
+      // Extract the error message from the response if available
+      let errorMessage = error.message;
+      try {
+        if (error.message.includes('{')) {
+          const errorData = JSON.parse(error.message);
+          errorMessage = errorData.message || errorMessage;
+        }
+      } catch (e) {
+        // If parsing fails, use the original error message
+      }
+
       toast({
         title: 'Error',
-        description: error.message || 'Failed to test OpenAI connection',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {

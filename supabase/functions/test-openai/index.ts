@@ -14,7 +14,7 @@ serve(async (req) => {
   try {
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
     if (!openAIApiKey) {
-      throw new Error('OPENAI_API_KEY is not configured')
+      throw new Error('OPENAI_API_KEY is not configured in Supabase')
     }
 
     console.log('Testing OpenAI connection...')
@@ -38,7 +38,9 @@ serve(async (req) => {
     console.log('OpenAI API Response:', data)
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${data.error?.message || 'Unknown error'}`)
+      const errorMessage = data.error?.message || 'Unknown OpenAI API error'
+      console.error('OpenAI API error:', errorMessage)
+      throw new Error(errorMessage)
     }
 
     return new Response(
