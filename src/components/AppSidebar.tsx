@@ -1,92 +1,80 @@
-import { Battery, Coffee, Heart, Moon, Brain, Activity, BarChart } from "lucide-react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+import {
+  Brain,
+  Moon,
+  Focus,
+  Wind,
+  Coffee,
+  ShieldBan,
+  Utensils,
+  Activity,
+} from "lucide-react";
 
-const menuItems = [
-  { 
-    title: "Dashboard",
-    icon: BarChart,
-    path: "/",
-    description: "Overview of your energy and activities"
-  },
+const links = [
   {
-    title: "Sleep",
-    icon: Moon,
-    path: "/sleep",
-    description: "Track sleep and set smart alarms"
-  },
-  {
-    title: "Breathing",
-    icon: Heart,
-    path: "/breathing",
-    description: "Guided breathing exercises"
-  },
-  {
-    title: "Focus",
-    icon: Brain,
-    path: "/focus",
-    description: "Test and track your focus"
-  },
-  {
-    title: "Energy",
-    icon: Battery,
-    path: "/caffeine",
-    description: "Track caffeine and energy levels"
-  },
-  {
-    title: "Activity",
+    to: "/dashboard",
     icon: Activity,
-    path: "/sleep-track",
-    description: "Track daily activities"
+    label: "Dashboard",
+  },
+  {
+    to: "/sleep",
+    icon: Moon,
+    label: "Sleep",
+  },
+  {
+    to: "/focus",
+    icon: Focus,
+    label: "Focus",
+  },
+  {
+    to: "/breathing",
+    icon: Wind,
+    label: "Breathing",
+  },
+  {
+    to: "/caffeine",
+    icon: Coffee,
+    label: "Caffeine",
+  },
+  {
+    to: "/food",
+    icon: Utensils,
+    label: "Food",
+  },
+  {
+    to: "/distraction-blocker",
+    icon: ShieldBan,
+    label: "Distraction Blocker",
   },
 ];
 
-export function AppSidebar() {
+export const AppSidebar = () => {
   const location = useLocation();
-  const isMobile = useIsMobile();
 
   return (
-    <Sidebar variant={isMobile ? "floating" : "sidebar"}>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="hidden md:flex">Energy Dashboard</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link 
-                      to={item.path} 
-                      className="flex items-center gap-2 group relative"
-                      data-active={location.pathname === item.path}
-                    >
-                      <item.icon className="h-5 w-5 transition-colors" />
-                      <div>
-                        <span className="font-medium">{item.title}</span>
-                        {!isMobile && (
-                          <p className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    <div className="pb-12 w-full">
+      <div className="space-y-4 py-4">
+        <div className="px-3 py-2">
+          <div className="space-y-1">
+            {links.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={cn(
+                  "flex items-center rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-all",
+                  location.pathname === link.to
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground"
+                )}
+              >
+                <link.icon className="mr-2 h-4 w-4" />
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+};

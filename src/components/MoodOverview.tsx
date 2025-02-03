@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Brain, Heart, Moon, Sun, Battery, Activity } from "lucide-react";
+import { Brain, Heart, Moon, Sun, Battery, Activity, Utensils } from "lucide-react";
 import { AIAssistant } from "@/components/AIAssistant";
 import {
   LineChart,
@@ -27,6 +27,22 @@ export const MoodOverview = () => {
         .eq('user_id', session?.user?.id)
         .order('created_at', { ascending: false })
         .limit(7);
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id,
+  });
+
+  const { data: foodLogs } = useQuery({
+    queryKey: ['recent-food-logs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('food_logs')
+        .select('*')
+        .eq('user_id', session?.user?.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
 
       if (error) throw error;
       return data;
@@ -104,6 +120,21 @@ export const MoodOverview = () => {
             </p>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Latest Meal</CardTitle>
+            <Utensils className="h-4 w-4 text-emerald-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {foodLogs?.[0]?.food_name || '-'}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {foodLogs?.[0]?.calories ? `${foodLogs[0].calories} calories` : 'No recent meals'}
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
@@ -166,6 +197,7 @@ export const MoodOverview = () => {
           type="analyze_energy"
           data={{
             moodLogs,
+            foodLogs,
             currentMood: moodLogs?.[0]?.mood_score,
             currentEnergy: moodLogs?.[0]?.energy_level,
             currentStress: moodLogs?.[0]?.stress_level,
@@ -177,6 +209,7 @@ export const MoodOverview = () => {
           type="wellness_correlation"
           data={{
             moodLogs,
+            foodLogs,
             recentActivities: moodLogs?.[0]?.activities,
             environmentalFactors: moodLogs?.[0]?.environmental_factors,
             copingStrategies: moodLogs?.[0]?.coping_strategies
