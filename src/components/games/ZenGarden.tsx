@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Flower } from "lucide-react";
+import { Flower, Loader2 } from "lucide-react";
 
 interface Particle {
   x: number;
@@ -13,6 +13,7 @@ interface Particle {
   color: string;
   speed: number;
   angle: number;
+  image?: HTMLImageElement;
 }
 
 const ZenGarden = () => {
@@ -21,6 +22,8 @@ const ZenGarden = () => {
   const [particles, setParticles] = useState<Particle[]>([]);
   const [duration, setDuration] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingAssets, setIsLoadingAssets] = useState(false);
+  const [zenElements, setZenElements] = useState<HTMLImageElement[]>([]);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -33,15 +36,41 @@ const ZenGarden = () => {
   const { session } = useAuth();
 
   const colors = [
-    '#FF9AA2', // Soft red
-    '#FFB7B2', // Coral
-    '#FFDAC1', // Peach
+    '#ffdde1', // Soft pink
     '#E2F0CB', // Mint
     '#B5EAD7', // Sage
     '#C7CEEA', // Periwinkle
+    '#F7D794', // Soft yellow
+    '#DAE3F3', // Soft blue
   ];
 
+  const loadZenElements = async () => {
+    setIsLoadingAssets(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-zen-elements');
+      if (error) throw error;
+
+      const img = new Image();
+      img.src = `data:image/png;base64,${data.image}`;
+      await new Promise((resolve) => {
+        img.onload = resolve;
+      });
+
+      setZenElements(prev => [...prev, img]);
+    } catch (error) {
+      console.error('Error loading zen elements:', error);
+      toast({
+        title: "Error Loading Assets",
+        description: "Could not load zen garden elements. Using default particles.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingAssets(false);
+    }
+  };
+
   useEffect(() => {
+    loadZenElements();
     const checkAudioSupport = async () => {
       try {
         const supported = !!(
@@ -101,16 +130,6 @@ const ZenGarden = () => {
     }
   };
 
-  const detectBreathing = (): number => {
-    if (!analyserRef.current) return 0;
-    
-    const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-    analyserRef.current.getByteFrequencyData(dataArray);
-    
-    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-    return average;
-  };
-
   const createParticle = (breathIntensity: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -121,8 +140,11 @@ const ZenGarden = () => {
     const color = colors[Math.floor(Math.random() * colors.length)];
     const speed = 0.5 + (breathIntensity / 100);
     const angle = Math.random() * Math.PI * 2;
+    const image = zenElements.length > 0 ? 
+      zenElements[Math.floor(Math.random() * zenElements.length)] : 
+      undefined;
 
-    setParticles(prev => [...prev.slice(-50), { x, y, size, color, speed, angle }]);
+    setParticles(prev => [...prev.slice(-50), { x, y, size, color, speed, angle, image }]);
   };
 
   const updateParticles = (breathIntensity: number) => {
@@ -134,6 +156,16 @@ const ZenGarden = () => {
         size: particle.size + (breathIntensity > 50 ? 0.1 : -0.1),
       })).filter(particle => particle.size > 0)
     );
+  };
+
+  const detectBreathing = (): number => {
+    if (!analyserRef.current) return 0;
+    
+    const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+    analyserRef.current.getByteFrequencyData(dataArray);
+    
+    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+    return average;
   };
 
   const animationLoop = () => {
@@ -158,10 +190,23 @@ const ZenGarden = () => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     particles.forEach(particle => {
-      ctx.beginPath();
-      ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-      ctx.fillStyle = particle.color;
-      ctx.fill();
+      if (particle.image) {
+        const size = particle.size * 5; // Adjust size for images
+        ctx.globalAlpha = 0.8;
+        ctx.drawImage(
+          particle.image,
+          particle.x - size/2,
+          particle.y - size/2,
+          size,
+          size
+        );
+        ctx.globalAlpha = 1;
+      } else {
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = particle.color;
+        ctx.fill();
+      }
     });
   };
 
@@ -252,7 +297,7 @@ const ZenGarden = () => {
           ref={canvasRef}
           width={800}
           height={400}
-          className="border border-gray-200 rounded-lg w-full max-w-3xl bg-gradient-to-b from-blue-50 to-green-50"
+          className="border border-gray-200 rounded-lg w-full max-w-3xl bg-gradient-to-b from-[#faf5ff] to-[#f0f7ff]"
         />
         
         {!isPlaying ? (
@@ -260,9 +305,16 @@ const ZenGarden = () => {
             <Button 
               onClick={startExperience}
               className="w-40"
-              disabled={isSubmitting || audioSupported === false}
+              disabled={isSubmitting || audioSupported === false || isLoadingAssets}
             >
-              Start Experience
+              {isLoadingAssets ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                'Start Experience'
+              )}
             </Button>
             {audioSupported === false && (
               <p className="text-destructive text-sm">
