@@ -5,6 +5,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { GameStatus } from '@/types/boardGames';
+import { MoveHistory } from './shared/MoveHistory';
+import { CapturedPieces } from './shared/CapturedPieces';
+import { GameStatus as GameStatusDisplay } from './shared/GameStatus';
 
 type Piece = {
   type: string;
@@ -18,6 +21,11 @@ export const XiangqiGame = () => {
   const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
   const [currentPlayer, setCurrentPlayer] = useState<'red' | 'black'>('red');
   const [gameStatus, setGameStatus] = useState<GameStatus>('not_started');
+  const [moveHistory, setMoveHistory] = useState<string[]>([]);
+  const [capturedPieces, setCapturedPieces] = useState<{
+    red: Piece[];
+    black: Piece[];
+  }>({ red: [], black: [] });
   const { session } = useAuth();
   const { toast } = useToast();
 
@@ -223,6 +231,20 @@ export const XiangqiGame = () => {
       
       if (isValidMove(selectedPosition, [row, col])) {
         const newBoard = board.map(row => [...row]);
+        const capturedPiece = newBoard[row][col];
+        
+        // Handle capture
+        if (capturedPiece) {
+          setCapturedPieces(prev => ({
+            ...prev,
+            [currentPlayer]: [...prev[currentPlayer], capturedPiece]
+          }));
+        }
+
+        // Record move in history
+        const moveNotation = `${board[selectedRow][selectedCol]?.type} ${String.fromCharCode(97 + selectedCol)}${9 - selectedRow} to ${String.fromCharCode(97 + col)}${9 - row}${capturedPiece ? ' captures ' + capturedPiece.type : ''}`;
+        setMoveHistory(prev => [...prev, moveNotation]);
+
         newBoard[row][col] = board[selectedRow][selectedCol];
         newBoard[selectedRow][selectedCol] = null;
         
@@ -237,7 +259,9 @@ export const XiangqiGame = () => {
               game_state: {
                 board: newBoard,
                 currentPlayer: currentPlayer === 'red' ? 'black' : 'red',
-                status: gameStatus
+                status: gameStatus,
+                moveHistory,
+                capturedPieces
               },
               last_move_at: new Date().toISOString(),
             })
@@ -266,6 +290,8 @@ export const XiangqiGame = () => {
     setCurrentPlayer('red');
     setGameStatus('in_progress');
     setSelectedPosition(null);
+    setMoveHistory([]);
+    setCapturedPieces({ red: [], black: [] });
 
     try {
       const { error } = await supabase
@@ -275,7 +301,9 @@ export const XiangqiGame = () => {
           game_state: {
             board: newBoard,
             currentPlayer: 'red',
-            status: 'in_progress'
+            status: 'in_progress',
+            moveHistory: [],
+            capturedPieces: { red: [], black: [] }
           },
           status: 'in_progress',
           user_id: session?.user?.id,
@@ -298,35 +326,56 @@ export const XiangqiGame = () => {
   };
 
   return (
-    <Card className="p-6">
-      <div className="flex flex-col items-center">
-        <h2 className="text-2xl font-bold mb-4">Xiangqi (Chinese Chess)</h2>
-        <div className="mb-4">Current Player: {currentPlayer === 'red' ? 'Red' : 'Black'}</div>
-        <div className="grid grid-cols-9 gap-1 bg-amber-100 p-4 rounded-lg">
-          {board.map((row, rowIndex) => (
-            row.map((piece, colIndex) => (
-              <button
-                key={`${rowIndex}-${colIndex}`}
-                className={`w-12 h-12 border border-amber-900 flex items-center justify-center
-                  ${selectedPosition && selectedPosition[0] === rowIndex && selectedPosition[1] === colIndex
-                    ? 'bg-amber-300'
-                    : 'bg-amber-50'}`}
-                onClick={() => handleSquareClick(rowIndex, colIndex)}
-              >
-                <span className={`text-xl ${piece?.color === 'red' ? 'text-red-600' : 'text-gray-900'}`}>
-                  {piece?.type}
-                </span>
-              </button>
-            ))
-          ))}
+    <div className="p-6 space-y-6">
+      <GameStatusDisplay 
+        status={gameStatus}
+        currentPlayer={currentPlayer}
+      />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <CapturedPieces 
+            pieces={capturedPieces.red}
+            title="Captured by Black"
+          />
         </div>
-        <Button 
-          className="mt-4"
-          onClick={startNewGame}
-        >
-          New Game
-        </Button>
+        
+        <Card className="p-4">
+          <div className="grid grid-cols-9 gap-1 bg-amber-100 rounded-lg">
+            {board.map((row, rowIndex) => (
+              row.map((piece, colIndex) => (
+                <button
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`w-12 h-12 border border-amber-900 flex items-center justify-center
+                    ${selectedPosition && selectedPosition[0] === rowIndex && selectedPosition[1] === colIndex
+                      ? 'bg-amber-300'
+                      : piece ? 'bg-amber-50 hover:bg-amber-100' : 'bg-amber-50'}`}
+                  onClick={() => handleSquareClick(rowIndex, colIndex)}
+                >
+                  <span className={`text-xl ${piece?.color === 'red' ? 'text-red-600' : 'text-gray-900'}`}>
+                    {piece?.type}
+                  </span>
+                </button>
+              ))
+            ))}
+          </div>
+          
+          <Button 
+            className="mt-4 w-full"
+            onClick={startNewGame}
+          >
+            New Game
+          </Button>
+        </Card>
+        
+        <div className="space-y-4">
+          <CapturedPieces 
+            pieces={capturedPieces.black}
+            title="Captured by Red"
+          />
+          <MoveHistory moves={moveHistory} />
+        </div>
       </div>
-    </Card>
+    </div>
   );
 };

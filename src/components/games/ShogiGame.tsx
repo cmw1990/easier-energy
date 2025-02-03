@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
+import { MoveHistory } from './shared/MoveHistory';
+import { CapturedPieces } from './shared/CapturedPieces';
+import { GameStatus as GameStatusDisplay } from './shared/GameStatus';
+import { GameStatus } from '@/types/boardGames';
 
 type Piece = {
   type: string;
@@ -17,6 +21,12 @@ export const ShogiGame = () => {
   const [board, setBoard] = useState<(Piece | null)[][]>(initializeBoard());
   const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
   const [currentPlayer, setCurrentPlayer] = useState<'black' | 'white'>('black');
+  const [gameStatus, setGameStatus] = useState<GameStatus>('not_started');
+  const [moveHistory, setMoveHistory] = useState<string[]>([]);
+  const [capturedPieces, setCapturedPieces] = useState<{
+    black: Piece[];
+    white: Piece[];
+  }>({ black: [], white: [] });
   const { session } = useAuth();
   const { toast } = useToast();
 
@@ -71,6 +81,14 @@ export const ShogiGame = () => {
   }
 
   const handleSquareClick = async (row: number, col: number) => {
+    if (gameStatus !== 'in_progress') {
+      toast({
+        title: "Game not started",
+        description: "Please start a new game first.",
+      });
+      return;
+    }
+
     if (!selectedPosition) {
       const piece = board[row][col];
       if (piece && piece.color === currentPlayer) {
@@ -79,12 +97,25 @@ export const ShogiGame = () => {
     } else {
       const [selectedRow, selectedCol] = selectedPosition;
       const newBoard = board.map(row => [...row]);
+      const capturedPiece = newBoard[row][col];
+      
+      // Handle capture
+      if (capturedPiece) {
+        setCapturedPieces(prev => ({
+          ...prev,
+          [currentPlayer]: [...prev[currentPlayer], capturedPiece]
+        }));
+      }
+
+      // Record move in history
+      const moveNotation = `${board[selectedRow][selectedCol]?.type} ${String.fromCharCode(97 + selectedCol)}${9 - selectedRow} to ${String.fromCharCode(97 + col)}${9 - row}${capturedPiece ? ' captures ' + capturedPiece.type : ''}`;
+      setMoveHistory(prev => [...prev, moveNotation]);
+      
       newBoard[row][col] = board[selectedRow][selectedCol];
       newBoard[selectedRow][selectedCol] = null;
       
       setBoard(newBoard);
       setCurrentPlayer(currentPlayer === 'black' ? 'white' : 'black');
-      setSelectedPosition(null);
 
       // Save game state to Supabase
       try {
@@ -94,7 +125,9 @@ export const ShogiGame = () => {
             game_state: {
               board: newBoard,
               currentPlayer: currentPlayer === 'black' ? 'white' : 'black',
-              status: 'in_progress'
+              status: gameStatus,
+              moveHistory,
+              capturedPieces
             },
             last_move_at: new Date().toISOString(),
           })
@@ -111,6 +144,8 @@ export const ShogiGame = () => {
           variant: "destructive",
         });
       }
+      
+      setSelectedPosition(null);
     }
   };
 
@@ -118,7 +153,10 @@ export const ShogiGame = () => {
     const newBoard = initializeBoard();
     setBoard(newBoard);
     setCurrentPlayer('black');
+    setGameStatus('in_progress');
     setSelectedPosition(null);
+    setMoveHistory([]);
+    setCapturedPieces({ black: [], white: [] });
 
     try {
       const { error } = await supabase
@@ -128,7 +166,9 @@ export const ShogiGame = () => {
           game_state: {
             board: newBoard,
             currentPlayer: 'black',
-            status: 'in_progress'
+            status: 'in_progress',
+            moveHistory: [],
+            capturedPieces: { black: [], white: [] }
           },
           status: 'in_progress',
           user_id: session?.user?.id,
@@ -151,35 +191,56 @@ export const ShogiGame = () => {
   };
 
   return (
-    <Card className="p-6">
-      <div className="flex flex-col items-center">
-        <h2 className="text-2xl font-bold mb-4">Shogi (Japanese Chess)</h2>
-        <div className="mb-4">Current Player: {currentPlayer === 'black' ? 'Black' : 'White'}</div>
-        <div className="grid grid-cols-9 gap-1 bg-amber-100 p-4 rounded-lg">
-          {board.map((row, rowIndex) => (
-            row.map((piece, colIndex) => (
-              <button
-                key={`${rowIndex}-${colIndex}`}
-                className={`w-12 h-12 border border-amber-900 flex items-center justify-center
-                  ${selectedPosition && selectedPosition[0] === rowIndex && selectedPosition[1] === colIndex
-                    ? 'bg-amber-300'
-                    : 'bg-amber-50'}`}
-                onClick={() => handleSquareClick(rowIndex, colIndex)}
-              >
-                <span className={`text-xl ${piece?.color === 'black' ? 'text-gray-900' : 'text-red-600'}`}>
-                  {piece?.type}
-                </span>
-              </button>
-            ))
-          ))}
+    <div className="p-6 space-y-6">
+      <GameStatusDisplay 
+        status={gameStatus}
+        currentPlayer={currentPlayer}
+      />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <CapturedPieces 
+            pieces={capturedPieces.white}
+            title="Captured by Black"
+          />
         </div>
-        <Button 
-          className="mt-4"
-          onClick={startNewGame}
-        >
-          New Game
-        </Button>
+        
+        <Card className="p-4">
+          <div className="grid grid-cols-9 gap-1 bg-amber-100 rounded-lg">
+            {board.map((row, rowIndex) => (
+              row.map((piece, colIndex) => (
+                <button
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`w-12 h-12 border border-amber-900 flex items-center justify-center
+                    ${selectedPosition && selectedPosition[0] === rowIndex && selectedPosition[1] === colIndex
+                      ? 'bg-amber-300'
+                      : piece ? 'bg-amber-50 hover:bg-amber-100' : 'bg-amber-50'}`}
+                  onClick={() => handleSquareClick(rowIndex, colIndex)}
+                >
+                  <span className={`text-xl ${piece?.color === 'black' ? 'text-gray-900' : 'text-red-600'}`}>
+                    {piece?.type}
+                  </span>
+                </button>
+              ))
+            ))}
+          </div>
+          
+          <Button 
+            className="mt-4 w-full"
+            onClick={startNewGame}
+          >
+            New Game
+          </Button>
+        </Card>
+        
+        <div className="space-y-4">
+          <CapturedPieces 
+            pieces={capturedPieces.black}
+            title="Captured by White"
+          />
+          <MoveHistory moves={moveHistory} />
+        </div>
       </div>
-    </Card>
+    </div>
   );
 };
