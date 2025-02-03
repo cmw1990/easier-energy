@@ -32,12 +32,11 @@ export const BlockingSchedule = () => {
         .from('distraction_blocking')
         .select('*')
         .eq('user_id', session.user.id)
-        .eq('block_type', 'schedule')
-        .single();
+        .eq('block_type', 'website')
+        .eq('target', 'schedule')
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
-        throw error;
-      }
+      if (error) throw error;
 
       if (data) {
         setSchedule({
@@ -65,7 +64,8 @@ export const BlockingSchedule = () => {
         .from('distraction_blocking')
         .upsert({
           user_id: session.user.id,
-          block_type: 'schedule',
+          block_type: 'website',
+          target: 'schedule',
           schedule_start: schedule.start_time,
           schedule_end: schedule.end_time,
           days_active: schedule.days,
