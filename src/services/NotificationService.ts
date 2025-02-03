@@ -49,10 +49,9 @@ export class NotificationService {
       if (this.permissionGranted) {
         await PushNotifications.register();
         
-        // Listen for push notifications
         PushNotifications.addListener('pushNotificationReceived', notification => {
           console.log('Push notification received:', notification);
-          this.showLocalNotification({
+          this.scheduleLocalNotification({
             title: notification.title || '',
             body: notification.body || '',
             id: Math.floor(Math.random() * 10000)
@@ -61,7 +60,6 @@ export class NotificationService {
 
         PushNotifications.addListener('pushNotificationActionPerformed', notification => {
           console.log('Push notification action performed:', notification);
-          // Handle notification action (e.g., navigate to specific screen)
         });
       }
     } catch (error) {
@@ -77,7 +75,7 @@ export class NotificationService {
     }
   }
 
-  async scheduleNotification(options: {
+  async scheduleLocalNotification(options: {
     title: string;
     body: string;
     id: number;

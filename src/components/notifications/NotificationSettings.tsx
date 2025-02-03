@@ -26,6 +26,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
+import { Json } from "@/integrations/supabase/types";
 
 interface NotificationPreferences {
   moodReminders: boolean;
@@ -75,9 +76,9 @@ export const NotificationSettings = () => {
     }
 
     if (data) {
-      setPreferences(prev => ({
-        ...prev,
-        ...data.preferences
+      setPreferences(prevPrefs => ({
+        ...prevPrefs,
+        ...(data.preferences as NotificationPreferences)
       }));
     }
   };
@@ -89,7 +90,7 @@ export const NotificationSettings = () => {
       .from('notification_preferences')
       .upsert({
         user_id: session.user.id,
-        preferences: newPreferences,
+        preferences: newPreferences as Json,
         updated_at: new Date().toISOString()
       });
 
