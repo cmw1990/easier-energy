@@ -4,10 +4,19 @@ import { Brain, Shield, Activity, Ban, Clock, Bell, BellOff } from "lucide-react
 import { useNavigate } from "react-router-dom";
 import { BlockingStats } from "@/components/distraction/BlockingStats";
 import { useAuth } from "@/components/AuthProvider";
+import { useState } from "react";
+import { BlockingConfirmDialog } from "@/components/distraction/BlockingConfirmDialog";
 
 const Index = () => {
   const navigate = useNavigate();
   const { session } = useAuth();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [blockingAction, setBlockingAction] = useState<"block" | "allow">("block");
+
+  const handleBlockingAction = (action: "block" | "allow") => {
+    setBlockingAction(action);
+    setDialogOpen(true);
+  };
 
   if (!session) {
     return (
@@ -75,7 +84,7 @@ const Index = () => {
           <Button
             variant="outline"
             className="h-24 flex flex-col items-center justify-center gap-2"
-            onClick={() => navigate('/distraction-blocker')}
+            onClick={() => handleBlockingAction("block")}
           >
             <BellOff className="h-6 w-6" />
             <span>Block All</span>
@@ -83,7 +92,7 @@ const Index = () => {
           <Button
             variant="outline"
             className="h-24 flex flex-col items-center justify-center gap-2"
-            onClick={() => navigate('/distraction-blocker')}
+            onClick={() => handleBlockingAction("allow")}
           >
             <Bell className="h-6 w-6" />
             <span>Allow All</span>
@@ -146,6 +155,12 @@ const Index = () => {
           Get Started →
         </Button>
       </div>
+
+      <BlockingConfirmDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        action={blockingAction}
+      />
     </div>
   );
 };
