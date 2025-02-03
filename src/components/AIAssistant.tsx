@@ -31,7 +31,9 @@ export const AIAssistant = ({ type, data }: AIAssistantProps) => {
       'lifestyle_correlation',
       'recovery_suggestions',
       'behavioral_patterns',
-      'cognitive_load_analysis'
+      'cognitive_load_analysis',
+      'energy_pattern_analysis',
+      'circadian_rhythm_analysis'
     ];
     return aiRequiredTypes.includes(type);
   };

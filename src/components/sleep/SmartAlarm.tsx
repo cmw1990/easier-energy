@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { 
   AlarmClock, Moon, Sun, Waves, Volume2, BedDouble, 
   Calendar, Repeat, Bell, Activity, Vibrate, Shield,
-  CloudMoon, Sunrise, Music, Settings, Info 
+  CloudMoon, Sunrise, Music, Settings, Info, Battery 
 } from 'lucide-react';
 import { SleepAnalysis } from './SleepAnalysis';
 import {
@@ -34,6 +34,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AIAssistant } from "@/components/AIAssistant";
+import { supabase } from "@/integrations/supabase/client";
 
 export const SmartAlarm = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -49,6 +51,11 @@ export const SmartAlarm = () => {
   const [backupAlarm, setBackupAlarm] = useState(true);
   const { toast } = useToast();
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [shiftPattern, setShiftPattern] = useState('regular');
+  const [shiftStartTime, setShiftStartTime] = useState('09:00');
+  const [shiftEndTime, setShiftEndTime] = useState('17:00');
+  const [rotationDays, setRotationDays] = useState(0);
+  const [lastSleepScore, setLastSleepScore] = useState(0);
 
   const [weekdayAlarms, setWeekdayAlarms] = useState({
     monday: { enabled: false, time: '07:00' },
@@ -121,6 +128,23 @@ export const SmartAlarm = () => {
 
     setupMotionTracking();
   }, [isTracking]);
+
+  useEffect(() => {
+    const fetchLastSleepScore = async () => {
+      const { data, error } = await supabase
+        .from('energy_focus_logs')
+        .select('energy_rating')
+        .eq('activity_type', 'sleep')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (data && data.length > 0) {
+        setLastSleepScore(data[0].energy_rating);
+      }
+    };
+
+    fetchLastSleepScore();
+  }, []);
 
   const analyzeSleepMovement = (
     acceleration: { x: number; y: number; z: number },
@@ -487,6 +511,121 @@ export const SmartAlarm = () => {
                     With Smart Wake
                   </span>
                 </Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="shift-work">
+            <AccordionTrigger>
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Shift Work Schedule
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Shift Pattern</Label>
+                  <Select value={shiftPattern} onValueChange={setShiftPattern}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select shift pattern" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="regular">Regular (9-5)</SelectItem>
+                      <SelectItem value="early">Early Shift</SelectItem>
+                      <SelectItem value="late">Late Shift</SelectItem>
+                      <SelectItem value="night">Night Shift</SelectItem>
+                      <SelectItem value="rotating">Rotating Shifts</SelectItem>
+                      <SelectItem value="custom">Custom Schedule</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {shiftPattern === 'custom' && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Shift Start Time</Label>
+                      <Input
+                        type="time"
+                        value={shiftStartTime}
+                        onChange={(e) => setShiftStartTime(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Shift End Time</Label>
+                      <Input
+                        type="time"
+                        value={shiftEndTime}
+                        onChange={(e) => setShiftEndTime(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {shiftPattern === 'rotating' && (
+                  <div className="space-y-2">
+                    <Label>Rotation Days</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="30"
+                      value={rotationDays}
+                      onChange={(e) => setRotationDays(parseInt(e.target.value))}
+                      placeholder="Days before shift change"
+                    />
+                  </div>
+                )}
+
+                <AIAssistant
+                  type="circadian_rhythm_analysis"
+                  data={{
+                    shiftPattern,
+                    shiftStartTime,
+                    shiftEndTime,
+                    rotationDays,
+                    lastSleepScore,
+                    naturalLightExposure: true
+                  }}
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="energy-guide">
+            <AccordionTrigger>
+              <div className="flex items-center gap-2">
+                <Battery className="h-4 w-4" />
+                Energy Management
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-4">
+                <Card className="bg-muted/50">
+                  <CardContent className="pt-6">
+                    <div className="text-sm text-muted-foreground mb-4">
+                      Our recommendations are based on circadian rhythm science, sleep-wake homeostasis, 
+                      and the three-process model of alertness regulation. We analyze your:
+                      <ul className="list-disc list-inside mt-2 space-y-1">
+                        <li>Shift schedule and rotation pattern</li>
+                        <li>Previous sleep quality and duration</li>
+                        <li>Caffeine intake timing and amount</li>
+                        <li>Energy and focus ratings</li>
+                        <li>Natural light exposure windows</li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <AIAssistant
+                  type="energy_pattern_analysis"
+                  data={{
+                    shiftPattern,
+                    shiftStartTime,
+                    shiftEndTime,
+                    lastSleepScore,
+                    caffeineIntake: true
+                  }}
+                />
               </div>
             </AccordionContent>
           </AccordionItem>
