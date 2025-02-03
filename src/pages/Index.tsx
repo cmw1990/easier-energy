@@ -35,6 +35,23 @@ const Index = () => {
     enabled: !!session?.user?.id,
   });
 
+  const { data: latestMood } = useQuery({
+    queryKey: ['latest-mood'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('mood_logs')
+        .select('*')
+        .eq('user_id', session?.user?.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id,
+  });
+
   const handleBlockingAction = (action: "block" | "allow") => {
     setBlockingAction(action);
     setDialogOpen(true);
