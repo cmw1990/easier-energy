@@ -15,7 +15,10 @@ export const GameAssetsGenerator = () => {
         .from('game-assets')
         .list(batch);
 
-      if (error) throw error;
+      if (error) {
+        console.error(`Error checking existing assets for ${batch}:`, error);
+        throw error;
+      }
       return data && data.length > 0;
     } catch (error) {
       console.error(`Error checking existing assets for ${batch}:`, error);
@@ -40,49 +43,64 @@ export const GameAssetsGenerator = () => {
       ];
       
       for (const batch of batches) {
-        console.log(`Checking existing assets for ${batch}...`);
-        const hasExisting = await checkExistingAssets(batch);
-        
-        if (hasExisting) {
-          console.log(`Skipping ${batch} - assets already exist`);
-          continue;
-        }
-
-        console.log(`Starting generation for ${batch} assets...`);
-        
-        const { data, error } = await supabase.functions.invoke(
-          'generate-initial-game-assets',
-          { 
-            body: { batch },
-            headers: {
-              'Content-Type': 'application/json',
-            }
+        try {
+          console.log(`Checking existing assets for ${batch}...`);
+          const hasExisting = await checkExistingAssets(batch);
+          
+          if (hasExisting) {
+            console.log(`Skipping ${batch} - assets already exist`);
+            continue;
           }
-        );
-        
-        if (error) {
-          console.error(`Error generating ${batch} assets:`, error);
-          throw error;
-        }
-        
-        console.log(`${batch} Asset Generation Response:`, data);
-        
-        // Wait between batches to avoid resource limits
-        if (batch !== batches[batches.length - 1]) {
-          await new Promise(resolve => setTimeout(resolve, 5000));
+
+          console.log(`Starting generation for ${batch} assets...`);
+          
+          const { data, error } = await supabase.functions.invoke(
+            'generate-initial-game-assets',
+            { 
+              body: JSON.stringify({ batch }),
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            }
+          );
+          
+          if (error) {
+            console.error(`Error generating ${batch} assets:`, error);
+            toast({
+              title: `Error generating ${batch} assets`,
+              description: error.message || 'Unknown error occurred',
+              variant: 'destructive',
+            });
+            continue; // Continue with next batch even if this one fails
+          }
+          
+          console.log(`${batch} Asset Generation Response:`, data);
+          
+          // Wait between batches to avoid resource limits
+          if (batch !== batches[batches.length - 1]) {
+            await new Promise(resolve => setTimeout(resolve, 5000));
+          }
+        } catch (batchError) {
+          console.error(`Error processing batch ${batch}:`, batchError);
+          toast({
+            title: `Error with ${batch}`,
+            description: batchError.message || 'Failed to process batch',
+            variant: 'destructive',
+          });
+          continue; // Continue with next batch even if this one fails
         }
       }
       
       toast({
         title: 'Success!',
-        description: 'All game assets generated successfully!',
+        description: 'Game assets generation completed!',
         variant: 'default',
       });
     } catch (error) {
       console.error('Error generating game assets:', error);
       toast({
         title: 'Error',
-        description: 'Failed to generate game assets. Check console for details.',
+        description: error.message || 'Failed to generate game assets. Check console for details.',
         variant: 'destructive',
       });
     } finally {
