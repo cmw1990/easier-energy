@@ -102,13 +102,13 @@ export const Toolbar = () => {
 
   return (
     <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex items-center gap-4 px-4 overflow-x-auto">
+      <div className="flex items-center gap-4 px-6 py-3 overflow-x-auto">
         {toolbarItems.map((item) => (
           <Link
             key={item.to}
             to={item.to}
             className={cn(
-              "flex flex-col items-center gap-1.5 py-3 px-3 rounded-xl transition-all",
+              "flex flex-col items-center gap-2 py-3.5 px-4 rounded-xl transition-all",
               "hover:bg-accent/20 hover:scale-105 hover:shadow-lg",
               location.pathname === item.to
                 ? "bg-accent/25 shadow-md ring-1 ring-accent/10"
@@ -117,7 +117,7 @@ export const Toolbar = () => {
           >
             <div
               className={cn(
-                "p-2.5 rounded-xl transition-colors",
+                "p-3 rounded-xl transition-colors",
                 location.pathname === item.to
                   ? "bg-background shadow-md ring-1 ring-accent/20"
                   : "bg-background/80",
