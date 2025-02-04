@@ -13,8 +13,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     
-    /* Slightly more energizing battery green as primary color */
-    --primary: 142 55% 65%;
+    /* More energizing battery green as primary color */
+    --primary: 142 65% 65%;
     --primary-foreground: 0 0% 98%;
     
     --secondary: 240 5% 96%;
@@ -23,7 +23,7 @@
     --muted: 240 5% 96%;
     --muted-foreground: 240 3.8% 46.1%;
     
-    --accent: 142 55% 65%;
+    --accent: 142 65% 65%;
     --accent-foreground: 240 10% 3.9%;
     
     --destructive: 0 84.2% 60.2%;
@@ -31,7 +31,7 @@
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 142 55% 65%;
+    --ring: 142 65% 65%;
 
     --radius: 1rem;
   }
@@ -46,8 +46,8 @@
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
     
-    /* Slightly more energizing battery green in dark mode */
-    --primary: 142 55% 65%;
+    /* More energizing battery green in dark mode */
+    --primary: 142 65% 65%;
     --primary-foreground: 240 5.9% 10%;
     
     --secondary: 240 3.7% 15.9%;
@@ -56,7 +56,7 @@
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
     
-    --accent: 142 55% 65%;
+    --accent: 142 65% 65%;
     --accent-foreground: 0 0% 98%;
     
     --destructive: 0 62.8% 30.6%;
@@ -64,7 +64,7 @@
     
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 142 55% 65%;
+    --ring: 142 65% 65%;
   }
 }
 
