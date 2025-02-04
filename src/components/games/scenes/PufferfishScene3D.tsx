@@ -140,7 +140,11 @@ export function PufferfishScene3D({
           height={480}
         />
         <Bloom luminanceThreshold={0.5} intensity={2} />
-        <ChromaticAberration offset={new THREE.Vector2(0.002, 0.002)} />
+        <ChromaticAberration 
+          offset={new THREE.Vector2(0.002, 0.002)}
+          radialModulation={false}
+          modulationOffset={0.5}
+        />
       </EffectComposer>
       <OrbitControls
         enableZoom={false}
