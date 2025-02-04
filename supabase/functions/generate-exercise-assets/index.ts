@@ -7,11 +7,17 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    console.log('Edge function called with request:', {
+      method: req.method,
+      headers: Object.fromEntries(req.headers.entries())
+    });
+
     // Initialize OpenAI API key
     const openAIKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIKey) {
@@ -20,6 +26,7 @@ serve(async (req) => {
 
     // Parse request body
     const { batch, type, description } = await req.json();
+    console.log('Received parameters:', { batch, type, description });
     
     if (!batch || !type || !description) {
       return new Response(
@@ -31,8 +38,6 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Generating assets for ${batch}, type: ${type}`);
-
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -40,6 +45,7 @@ serve(async (req) => {
     );
 
     // Generate image using OpenAI
+    console.log('Calling OpenAI API with description:', description);
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
@@ -59,6 +65,8 @@ serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.json();
+      console.error('OpenAI API error:', error);
+      
       // Check specifically for billing errors
       if (error.error?.message?.includes('billing')) {
         return new Response(
@@ -73,13 +81,16 @@ serve(async (req) => {
           }
         );
       }
+      
       throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
     }
 
     const imageData = await response.json();
+    console.log('OpenAI response received');
     const imageUrl = imageData.data[0].url;
 
     // Download the image
+    console.log('Downloading generated image');
     const imageResponse = await fetch(imageUrl);
     if (!imageResponse.ok) {
       throw new Error('Failed to download generated image');
@@ -87,6 +98,7 @@ serve(async (req) => {
     const imageBlob = await imageResponse.blob();
 
     // Upload to Supabase Storage
+    console.log('Uploading to Supabase Storage');
     const filePath = `${batch}/asset.png`;
     const { error: uploadError } = await supabaseClient
       .storage
@@ -96,13 +108,18 @@ serve(async (req) => {
         upsert: true
       });
 
-    if (uploadError) throw uploadError;
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      throw uploadError;
+    }
 
     // Get the public URL
     const { data: { publicUrl } } = supabaseClient
       .storage
       .from('exercise-assets')
       .getPublicUrl(filePath);
+
+    console.log('Successfully generated and uploaded asset:', publicUrl);
 
     return new Response(
       JSON.stringify({ 
