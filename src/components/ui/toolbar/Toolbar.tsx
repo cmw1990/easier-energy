@@ -58,6 +58,7 @@ const toolbarItems = [
     to: "/eye-exercises",
     icon: Eye,
     label: "Eye Care",
+    iconClassName: "text-sky-500",
   },
   {
     to: "/breathing",
@@ -108,7 +109,7 @@ export const Toolbar = () => {
                 : "text-muted-foreground"
             )}
           >
-            <item.icon className="h-4 w-4" />
+            <item.icon className={cn("h-4 w-4", item.iconClassName)} />
             <span className="hidden sm:inline">{item.label}</span>
           </Link>
         ))}

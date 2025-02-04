@@ -2270,6 +2270,7 @@ export type Database = {
         | "yoga"
         | "stretching"
         | "desk_exercise"
+        | "eye_exercise"
       game_type:
         | "chess"
         | "go"
