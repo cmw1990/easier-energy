@@ -21,6 +21,24 @@ export const DeskExercises = () => {
       duration: "30 seconds",
       icon: Dumbbell,
     },
+    {
+      title: "Desk Stretches",
+      description: "Stretch arms overhead and lean side to side",
+      duration: "45 seconds",
+      icon: Activity,
+    },
+    {
+      title: "Seated Leg Stretches",
+      description: "Extend legs and point/flex feet",
+      duration: "30 seconds",
+      icon: Activity,
+    },
+    {
+      title: "Back Twist",
+      description: "Gentle seated spinal twist, both sides",
+      duration: "45 seconds",
+      icon: Activity,
+    }
   ];
 
   return (

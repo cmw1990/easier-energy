@@ -20,6 +20,7 @@ import { MeditationRecommendations } from "@/components/meditation/MeditationRec
 import { DeskExercises } from "@/components/exercises/DeskExercises";
 import { WalkingExercise } from "@/components/exercises/WalkingExercise";
 import { RunningExercise } from "@/components/exercises/RunningExercise";
+import { StretchExercise } from "@/components/exercises/StretchExercise";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -107,6 +108,9 @@ const Index = () => {
             <WalkingExercise />
             <RunningExercise />
             <DeskExercises />
+          </div>
+          <div className="mb-8">
+            <StretchExercise />
           </div>
           <div className="mb-8">
             <MeditationRecommendations />
