@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, Float, MeshDistortMaterial, useGLTF, Stars } from '@react-three/drei';
+import { OrbitControls, Environment, Float, MeshDistortMaterial, Stars } from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField, ChromaticAberration } from '@react-three/postprocessing';
 import { Physics, RigidBody, CuboidCollider } from '@react-three/rapier';
 import * as THREE from 'three';
@@ -140,7 +140,7 @@ export function PufferfishScene3D({
           height={480}
         />
         <Bloom luminanceThreshold={0.5} intensity={2} />
-        <ChromaticAberration offset={[0.002, 0.002]} />
+        <ChromaticAberration offset={new THREE.Vector2(0.002, 0.002)} />
       </EffectComposer>
       <OrbitControls
         enableZoom={false}

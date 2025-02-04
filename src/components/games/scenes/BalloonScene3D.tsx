@@ -4,6 +4,7 @@ import { OrbitControls, Environment, Stars, Cloud, Float } from '@react-three/dr
 import { EffectComposer, Bloom, DepthOfField, GodRays } from '@react-three/postprocessing';
 import { Physics, RigidBody, CuboidCollider } from '@react-three/rapier';
 import * as THREE from 'three';
+import { KernelSize } from 'postprocessing';
 
 function Balloon({ breathPhase }: { breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest' }) {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -140,8 +141,8 @@ export function BalloonScene3D({
           weight={0.4}
           exposure={0.6}
           clampMax={1}
-          width={Bloom.DEFAULT_RESOLUTION}
-          height={Bloom.DEFAULT_RESOLUTION}
+          width={1024}
+          height={1024}
           kernelSize={KernelSize.SMALL}
           blur={true}
         />
