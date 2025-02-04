@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dumbbell, Yoga, Stretch } from "lucide-react";
+import { Dumbbell, Activity } from "lucide-react";
 
 export const DeskExercises = () => {
   const exercises = [
@@ -7,13 +7,13 @@ export const DeskExercises = () => {
       title: "Neck Rolls",
       description: "Gently roll your neck in circles, 5 times each direction",
       duration: "30 seconds",
-      icon: Yoga,
+      icon: Activity,
     },
     {
       title: "Shoulder Stretches",
       description: "Roll shoulders backwards and forwards",
       duration: "30 seconds",
-      icon: Stretch,
+      icon: Activity,
     },
     {
       title: "Wrist Exercises",

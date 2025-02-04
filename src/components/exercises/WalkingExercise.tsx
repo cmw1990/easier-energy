@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Walk, Timer, Activity } from "lucide-react";
+import { PersonStanding, Timer, Activity } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -38,7 +38,7 @@ export const WalkingExercise = () => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Walk className="h-5 w-5 text-primary" />
+          <PersonStanding className="h-5 w-5 text-primary" />
           Walking Exercise
         </CardTitle>
       </CardHeader>
