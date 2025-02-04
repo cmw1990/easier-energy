@@ -11,6 +11,7 @@ import { CarPhysics } from "./physics/CarPhysics";
 import { ZenDriftAssetsGenerator } from "./ZenDriftAssetsGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 interface GameAsset {
   type: 'car' | 'background' | 'effect';
