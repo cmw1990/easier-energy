@@ -25,10 +25,11 @@ export const GamesSection = () => {
       route: "/games/color-match"
     },
     {
-      title: "Pattern Match",
-      description: "Enhance pattern recognition with sequence memorization",
+      title: "Pattern Recognition",
+      description: "Test your memory by reproducing visual patterns",
       icon: Puzzle,
-      route: "/games/pattern-match"
+      route: "/games/pattern-recognition",
+      isNew: true
     },
     {
       title: "Math Speed",
@@ -52,8 +53,7 @@ export const GamesSection = () => {
       title: "Number Memory",
       description: "Test and improve your working memory capacity",
       icon: Hash,
-      route: "/games/number-memory",
-      isNew: true
+      route: "/games/number-memory"
     }
   ];
 
