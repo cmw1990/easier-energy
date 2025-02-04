@@ -4,14 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles, Brain, Heart, Focus, Sun } from "lucide-react";
+import { Loader2, Brain, Heart, Focus, Sun } from "lucide-react";
 
 const Meditation = () => {
-  const { toast } = useToast();
-  const [selectedSession, setSelectedSession] = useState<string | null>(null);
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-
   const { data: sessions, isLoading } = useQuery({
     queryKey: ['meditation-sessions'],
     queryFn: async () => {
@@ -24,43 +19,6 @@ const Meditation = () => {
       return data;
     },
   });
-
-  const handleGenerateImage = async (prompt: string) => {
-    setIsGeneratingImage(true);
-    try {
-      const response = await fetch('/api/generate-meditation-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
-      });
-
-      if (!response.ok) throw new Error('Failed to generate image');
-
-      const data = await response.json();
-      toast({
-        title: "Image generated successfully",
-        description: "Your meditation background has been updated.",
-      });
-
-      // Update the session with the new image URL
-      if (selectedSession) {
-        const { error } = await supabase
-          .from('meditation_sessions')
-          .update({ background_image_url: data.url })
-          .eq('id', selectedSession);
-
-        if (error) throw error;
-      }
-    } catch (error) {
-      toast({
-        title: "Error generating image",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGeneratingImage(false);
-    }
-  };
 
   const sessionTypes = [
     { id: 'mindfulness', icon: Brain, label: 'Mindfulness' },
@@ -104,30 +62,11 @@ const Meditation = () => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {sessions?.filter(session => session.type === type.id).map((session) => (
                 <Card key={session.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  {session.background_image_url && (
-                    <div className="aspect-video relative">
-                      <img
-                        src={session.background_image_url}
-                        alt={session.title}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                  )}
+                  <div className="bg-muted aspect-video flex items-center justify-center">
+                    <type.icon className="h-12 w-12 text-muted-foreground" />
+                  </div>
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>{session.title}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setSelectedSession(session.id);
-                          handleGenerateImage(`Serene meditation scene for ${session.title}, peaceful and calming atmosphere`);
-                        }}
-                        disabled={isGeneratingImage}
-                      >
-                        <Sparkles className="h-4 w-4" />
-                      </Button>
-                    </CardTitle>
+                    <CardTitle>{session.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <p className="text-sm text-muted-foreground">{session.description}</p>
