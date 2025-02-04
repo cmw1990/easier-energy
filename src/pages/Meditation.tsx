@@ -11,10 +11,9 @@ const Meditation = () => {
   const { toast } = useToast();
   const [activeSession, setActiveSession] = useState<string | null>(null);
   const [breathCount, setBreathCount] = useState(0);
-  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
-  const { data: sessions, isLoading } = useQuery({
+  const { data: sessions, isLoading, refetch } = useQuery({
     queryKey: ['meditation-sessions'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -68,34 +67,51 @@ const Meditation = () => {
     },
   });
 
-  const generateImageMutation = useMutation({
-    mutationFn: async () => {
-      const currentSession = sessions?.find(s => s.id === activeSession);
-      const response = await supabase.functions.invoke('generate-meditation-image', {
-        body: {
-          prompt: `Meditation scene for ${currentSession?.type || 'mindfulness'} meditation. ${currentSession?.title || 'Peaceful meditation scene'}`,
-        },
+  const generateBackgroundMutation = useMutation({
+    mutationFn: async (sessionId: string) => {
+      const response = await supabase.functions.invoke('generate-meditation-backgrounds', {
+        body: { sessionId },
       });
 
       if (response.error) throw response.error;
-      return response.data.url;
+      return response.data;
     },
-    onSuccess: (imageUrl) => {
-      setBackgroundImage(imageUrl);
+    onSuccess: () => {
+      refetch();
       toast({
-        title: "Image Generated",
-        description: "New meditation background has been created.",
+        title: "Background Generated",
+        description: "New meditation background has been created and saved.",
       });
     },
     onError: (error) => {
-      console.error('Image generation error:', error);
+      console.error('Background generation error:', error);
       toast({
-        title: "Error Generating Image",
+        title: "Error Generating Background",
         description: "Unable to generate meditation background. Please try again.",
         variant: "destructive",
       });
     },
   });
+
+  const handleEndSession = () => {
+    setActiveSession(null);
+    setBreathCount(0);
+    toast({
+      title: "Session Ended",
+      description: "Your meditation session has ended. Great job!",
+    });
+  };
+
+  const handleGenerateBackground = async (sessionId: string) => {
+    if (!isGeneratingImage) {
+      setIsGeneratingImage(true);
+      try {
+        await generateBackgroundMutation.mutateAsync(sessionId);
+      } finally {
+        setIsGeneratingImage(false);
+      }
+    }
+  };
 
   const sessionTypes = [
     { id: 'mindfulness', icon: Brain, label: 'Mindfulness' },
@@ -103,25 +119,6 @@ const Meditation = () => {
     { id: 'focus', icon: Focus, label: 'Focus' },
     { id: 'morning', icon: Sun, label: 'Morning' },
   ];
-
-  const handleEndSession = () => {
-    setActiveSession(null);
-    setBreathCount(0);
-    setBackgroundImage(null);
-    toast({
-      title: "Session Ended",
-      description: "Your meditation session has ended. Great job!",
-    });
-  };
-
-  const handleGenerateImage = () => {
-    if (!isGeneratingImage) {
-      setIsGeneratingImage(true);
-      generateImageMutation.mutate(undefined, {
-        onSettled: () => setIsGeneratingImage(false),
-      });
-    }
-  };
 
   if (isLoading) {
     return (
@@ -133,8 +130,8 @@ const Meditation = () => {
 
   if (activeSession) {
     const currentSession = sessions?.find(s => s.id === activeSession);
-    const backgroundStyle = backgroundImage ? {
-      backgroundImage: `url(${backgroundImage})`,
+    const backgroundStyle = currentSession?.background_image_url ? {
+      backgroundImage: `url(${currentSession.background_image_url})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     } : {};
@@ -145,29 +142,14 @@ const Meditation = () => {
         <div className="max-w-2xl w-full mx-auto p-6 space-y-8 relative">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold text-white">{currentSession?.title}</h2>
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleGenerateImage}
-                disabled={isGeneratingImage}
-                className="text-white hover:text-primary hover:bg-white/10"
-              >
-                {isGeneratingImage ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Image className="h-5 w-5" />
-                )}
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleEndSession}
-                className="text-white hover:text-primary hover:bg-white/10"
-              >
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleEndSession}
+              className="text-white hover:text-primary hover:bg-white/10"
+            >
+              <X className="h-5 w-5" />
+            </Button>
           </div>
           <div className="relative aspect-square max-w-md mx-auto bg-accent/20 rounded-full flex items-center justify-center backdrop-blur-md">
             <div className={`absolute inset-4 rounded-full border-4 border-primary transition-transform duration-4000 animate-breathe flex items-center justify-center`}>
@@ -209,31 +191,53 @@ const Meditation = () => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {sessions?.filter(session => session.type === type.id).map((session) => (
                 <Card key={session.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="bg-muted aspect-video flex items-center justify-center">
-                    <type.icon className="h-12 w-12 text-muted-foreground" />
+                  <div className="bg-muted aspect-video flex items-center justify-center relative">
+                    {session.background_image_url ? (
+                      <img 
+                        src={session.background_image_url} 
+                        alt={session.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    ) : (
+                      <type.icon className="h-12 w-12 text-muted-foreground" />
+                    )}
                   </div>
                   <CardHeader>
                     <CardTitle>{session.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <p className="text-sm text-muted-foreground">{session.description}</p>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-medium">{session.duration_minutes} minutes</span>
-                      <Button 
-                        variant="secondary" 
-                        size="sm"
-                        onClick={() => startSessionMutation.mutate(session.id)}
-                        disabled={startSessionMutation.isPending || activeSession !== null}
-                      >
-                        {startSessionMutation.isPending && activeSession === session.id ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Starting...
-                          </>
-                        ) : (
-                          'Start Session'
-                        )}
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleGenerateBackground(session.id)}
+                          disabled={isGeneratingImage}
+                        >
+                          {isGeneratingImage ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Image className="h-4 w-4" />
+                          )}
+                        </Button>
+                        <Button 
+                          variant="secondary" 
+                          size="sm"
+                          onClick={() => startSessionMutation.mutate(session.id)}
+                          disabled={startSessionMutation.isPending || activeSession !== null}
+                        >
+                          {startSessionMutation.isPending && activeSession === session.id ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Starting...
+                            </>
+                          ) : (
+                            'Start Session'
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
