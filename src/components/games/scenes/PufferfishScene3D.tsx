@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, useGLTF, Float, MeshDistortMaterial } from '@react-three/drei';
-import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
+import { OrbitControls, Environment, Float, MeshDistortMaterial, useGLTF, Stars } from '@react-three/drei';
+import { EffectComposer, Bloom, DepthOfField, ChromaticAberration } from '@react-three/postprocessing';
+import { Physics, RigidBody, CuboidCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 
 function Pufferfish({ breathPhase }: { breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest' }) {
@@ -12,14 +13,14 @@ function Pufferfish({ breathPhase }: { breathPhase: 'inhale' | 'hold' | 'exhale'
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
-    // Pufferfish physics based on breath phase
+    // Physics-based movement based on breath phase
     switch (breathPhase) {
       case 'inhale':
         setScale(prev => THREE.MathUtils.lerp(prev, 1.5, delta * 2));
         meshRef.current.position.y = THREE.MathUtils.lerp(
           meshRef.current.position.y,
           2,
-          delta
+          delta * 0.5
         );
         break;
       case 'exhale':
@@ -27,7 +28,7 @@ function Pufferfish({ breathPhase }: { breathPhase: 'inhale' | 'hold' | 'exhale'
         meshRef.current.position.y = THREE.MathUtils.lerp(
           meshRef.current.position.y,
           -1,
-          delta
+          delta * 0.5
         );
         break;
       case 'hold':
@@ -37,7 +38,7 @@ function Pufferfish({ breathPhase }: { breathPhase: 'inhale' | 'hold' | 'exhale'
         meshRef.current.position.y = THREE.MathUtils.lerp(
           meshRef.current.position.y,
           -1,
-          delta * 0.5
+          delta * 0.3
         );
         break;
     }
@@ -47,59 +48,62 @@ function Pufferfish({ breathPhase }: { breathPhase: 'inhale' | 'hold' | 'exhale'
   });
 
   return (
-    <Float speed={2} rotationIntensity={1} floatIntensity={1}>
-      <mesh
-        ref={meshRef}
-        scale={[scale, scale, scale]}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-      >
-        <sphereGeometry args={[1, 32, 32]} />
-        <MeshDistortMaterial
-          color={hovered ? "#ffa502" : "#ff9f43"}
-          speed={5}
-          distort={0.3}
-          radius={1}
-        />
-      </mesh>
-    </Float>
+    <RigidBody type="dynamic" colliders="ball">
+      <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+        <mesh
+          ref={meshRef}
+          scale={[scale, scale, scale]}
+          onPointerOver={() => setHovered(true)}
+          onPointerOut={() => setHovered(false)}
+        >
+          <sphereGeometry args={[1, 32, 32]} />
+          <MeshDistortMaterial
+            color={hovered ? "#ffa502" : "#ff9f43"}
+            speed={2}
+            distort={0.4}
+            radius={1}
+          />
+        </mesh>
+      </Float>
+    </RigidBody>
   );
 }
 
 function Bubbles() {
-  const groupRef = useRef<THREE.Group>(null);
-  const [bubblePositions] = useState(() =>
-    Array.from({ length: 50 }, () => ({
-      x: (Math.random() - 0.5) * 10,
-      y: Math.random() * -10,
-      z: (Math.random() - 0.5) * 10,
+  const count = 50;
+  const positions = useRef(
+    Array.from({ length: count }, () => ({
+      position: [
+        (Math.random() - 0.5) * 10,
+        Math.random() * -10,
+        (Math.random() - 0.5) * 10
+      ],
       speed: 0.2 + Math.random() * 0.5
     }))
   );
 
   useFrame((state, delta) => {
-    if (!groupRef.current) return;
-    
-    groupRef.current.children.forEach((bubble, i) => {
-      bubble.position.y += bubblePositions[i].speed * delta;
-      if (bubble.position.y > 10) {
-        bubble.position.y = -10;
-      }
-      bubble.position.x += Math.sin(state.clock.elapsedTime + i) * delta * 0.1;
+    positions.current.forEach(bubble => {
+      bubble.position[1] += bubble.speed * delta;
+      if (bubble.position[1] > 10) bubble.position[1] = -10;
     });
   });
 
   return (
-    <group ref={groupRef}>
-      {bubblePositions.map((pos, i) => (
-        <mesh key={i} position={[pos.x, pos.y, pos.z]}>
-          <sphereGeometry args={[0.1, 16, 16]} />
-          <meshStandardMaterial
-            transparent
-            opacity={0.6}
-            color="#ffffff"
-          />
-        </mesh>
+    <group>
+      {positions.current.map((bubble, i) => (
+        <RigidBody key={i} type="dynamic" colliders="ball" position={bubble.position as [number, number, number]}>
+          <mesh>
+            <sphereGeometry args={[0.1, 16, 16]} />
+            <MeshDistortMaterial
+              transparent
+              opacity={0.6}
+              color="#ffffff"
+              speed={1}
+              distort={0.2}
+            />
+          </mesh>
+        </RigidBody>
       ))}
     </group>
   );
@@ -119,10 +123,14 @@ export function PufferfishScene3D({
         background: 'linear-gradient(to bottom, #1a5f7a, #2d3436)'
       }}
     >
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={1} />
-      <Pufferfish breathPhase={breathPhase} />
-      <Bubbles />
+      <Physics gravity={[0, -1, 0]}>
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1} />
+        <Pufferfish breathPhase={breathPhase} />
+        <Bubbles />
+        <CuboidCollider args={[20, 1, 20]} position={[0, -10, 0]} />
+      </Physics>
+      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
       <Environment preset="sunset" />
       <EffectComposer>
         <DepthOfField
@@ -132,6 +140,7 @@ export function PufferfishScene3D({
           height={480}
         />
         <Bloom luminanceThreshold={0.5} intensity={2} />
+        <ChromaticAberration offset={[0.002, 0.002]} />
       </EffectComposer>
       <OrbitControls
         enableZoom={false}
