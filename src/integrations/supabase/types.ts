@@ -335,6 +335,63 @@ export type Database = {
         }
         Relationships: []
       }
+      exercise_tracking: {
+        Row: {
+          average_speed: number | null
+          calories_burned: number | null
+          created_at: string | null
+          distance_meters: number | null
+          duration_seconds: number | null
+          elevation_data: Json | null
+          end_time: string | null
+          exercise_type: Database["public"]["Enums"]["exercise_type"]
+          heart_rate_data: Json | null
+          id: string
+          notes: string | null
+          route_coordinates: Json | null
+          start_time: string | null
+          updated_at: string | null
+          user_id: string | null
+          weather_conditions: Json | null
+        }
+        Insert: {
+          average_speed?: number | null
+          calories_burned?: number | null
+          created_at?: string | null
+          distance_meters?: number | null
+          duration_seconds?: number | null
+          elevation_data?: Json | null
+          end_time?: string | null
+          exercise_type: Database["public"]["Enums"]["exercise_type"]
+          heart_rate_data?: Json | null
+          id?: string
+          notes?: string | null
+          route_coordinates?: Json | null
+          start_time?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          weather_conditions?: Json | null
+        }
+        Update: {
+          average_speed?: number | null
+          calories_burned?: number | null
+          created_at?: string | null
+          distance_meters?: number | null
+          duration_seconds?: number | null
+          elevation_data?: Json | null
+          end_time?: string | null
+          exercise_type?: Database["public"]["Enums"]["exercise_type"]
+          heart_rate_data?: Json | null
+          id?: string
+          notes?: string | null
+          route_coordinates?: Json | null
+          start_time?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          weather_conditions?: Json | null
+        }
+        Relationships: []
+      }
       favorite_foods: {
         Row: {
           calories: number | null
@@ -1588,6 +1645,14 @@ export type Database = {
     Enums: {
       app_role: "admin" | "user"
       distraction_type: "app" | "website" | "notification" | "social_media"
+      exercise_type:
+        | "walking"
+        | "running"
+        | "cycling"
+        | "hiking"
+        | "yoga"
+        | "stretching"
+        | "desk_exercise"
       game_type:
         | "chess"
         | "go"
