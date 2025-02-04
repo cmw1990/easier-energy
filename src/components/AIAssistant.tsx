@@ -15,7 +15,8 @@ interface AIAssistantProps {
         'productivity_insights' | 'habit_formation_analysis' | 'wellness_correlation' |
         'circadian_rhythm_analysis' | 'stress_impact_analysis' | 'recovery_optimization' |
         'performance_prediction' | 'behavioral_patterns' | 'cognitive_load_analysis' |
-        'attention_span_optimization' | 'mental_stamina_tracking' | 'focus_fatigue_analysis';
+        'attention_span_optimization' | 'mental_stamina_tracking' | 'focus_fatigue_analysis' |
+        'weather_health_analysis'; // Added the new type here
   data: any;
 }
 
