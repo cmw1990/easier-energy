@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Brain, Gamepad, Puzzle, Zap, Flower2, Music, Cloud, Waves, Wind, BookOpen } from "lucide-react";
+import { Brain, Gamepad, Puzzle, Zap, Book, Music, Cloud, Waves, Wind } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const GamesSection = () => {
@@ -13,10 +13,10 @@ export const GamesSection = () => {
       route: "/games/logic-puzzles"
     },
     {
-      title: "Zen Drift",
-      description: "Find peace in motion with this meditative driving experience",
-      icon: Wind,
-      route: "/games/zen-drift"
+      title: "Reading Comprehension",
+      description: "Improve reading speed and understanding",
+      icon: Book,
+      route: "/games/reading-comprehension"
     },
     {
       title: "Color Match",
