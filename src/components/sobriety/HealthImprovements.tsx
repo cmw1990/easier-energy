@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Brain, Lungs } from "lucide-react";
+import { Heart, Brain, Wind } from "lucide-react";
 
 export function HealthImprovements() {
   const { session } = useAuth();
@@ -36,7 +36,7 @@ export function HealthImprovements() {
       timeframe: "1-4 weeks",
     },
     {
-      icon: Lungs,
+      icon: Wind,
       title: "Respiratory",
       description: "Breathing capacity increasing",
       timeframe: "1-9 months",
