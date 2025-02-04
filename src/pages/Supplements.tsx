@@ -2,11 +2,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { SupplementIntakeForm } from "@/components/supplements/SupplementIntakeForm";
 import { SupplementHistory } from "@/components/supplements/SupplementHistory";
 import { SupplementChart } from "@/components/supplements/SupplementChart";
 import { SupplementCorrelations } from "@/components/supplements/SupplementCorrelations";
+import { SupplementCategories } from "@/components/supplements/SupplementCategories";
+import { SupplementStats } from "@/components/supplements/SupplementStats";
 
 const Supplements = () => {
   const { session } = useAuth();
@@ -29,32 +32,7 @@ const Supplements = () => {
   });
 
   const logSupplementMutation = useMutation({
-    mutationFn: async (values: {
-      supplement_name: string;
-      dosage: string;
-      form?: string;
-      brand?: string;
-      cost?: number;
-      source?: string;
-      batch_number?: string;
-      expiration_date?: string;
-      storage_conditions?: string;
-      purchase_location?: string;
-      verified_purchase?: boolean;
-      effectiveness_rating?: number;
-      energy_impact?: number;
-      stress_impact?: number;
-      focus_impact?: number;
-      mood_impact?: number;
-      sleep_impact?: number;
-      side_effects?: string;
-      timing_notes?: string;
-      interaction_notes?: string;
-      notes?: string;
-      reminder_enabled?: boolean;
-      reminder_time?: string;
-      time_taken: string;
-    }) => {
+    mutationFn: async (values: any) => {
       const { error } = await supabase
         .from('supplement_logs')
         .insert({
@@ -85,43 +63,71 @@ const Supplements = () => {
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold mb-6">Supplement Tracker</h1>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Log Supplement Intake</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SupplementIntakeForm onSubmit={(values) => logSupplementMutation.mutate(values)} />
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="log" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="log">Log Intake</TabsTrigger>
+          <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="analysis">Analysis</TabsTrigger>
+          <TabsTrigger value="categories">Categories</TabsTrigger>
+        </TabsList>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SupplementHistory logs={supplementLogs || []} />
-          </CardContent>
-        </Card>
+        <TabsContent value="log">
+          <Card>
+            <CardHeader>
+              <CardTitle>Log Supplement Intake</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SupplementIntakeForm onSubmit={(values) => logSupplementMutation.mutate(values)} />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Supplement Impact Trends</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SupplementChart data={supplementLogs || []} />
-          </CardContent>
-        </Card>
+        <TabsContent value="history">
+          <Card>
+            <CardHeader>
+              <CardTitle>Supplement History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SupplementHistory logs={supplementLogs || []} />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Impact Correlations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SupplementCorrelations />
-          </CardContent>
-        </Card>
-      </div>
+        <TabsContent value="analysis">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Impact Trends</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SupplementChart data={supplementLogs || []} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Statistics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SupplementStats />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Correlations</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SupplementCorrelations />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="categories">
+          <SupplementCategories />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
