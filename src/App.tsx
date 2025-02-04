@@ -27,6 +27,7 @@ import BrainMatch3 from "@/components/games/BrainMatch3";
 import NumberMemoryGame from "@/components/games/number-memory/NumberMemoryGame";
 import { PatternRecognitionGame } from "@/components/games/pattern-recognition/PatternRecognitionGame";
 import { NBackGame } from "@/components/games/n-back/NBackGame";
+import SpeedTyping from "@/components/games/SpeedTyping";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ function App() {
               <Route path="/games/number-memory" element={<NumberMemoryGame />} />
               <Route path="/games/pattern-recognition" element={<PatternRecognitionGame />} />
               <Route path="/games/n-back" element={<NBackGame />} />
+              <Route path="/games/speed-typing" element={<SpeedTyping />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

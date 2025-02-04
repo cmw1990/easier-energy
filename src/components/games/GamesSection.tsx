@@ -83,6 +83,11 @@ const GamesSection = () => {
       title: 'Word Pairs',
       description: 'Memory game with word associations',
       path: '/games/word-pairs'
+    },
+    {
+      title: 'Speed Typing',
+      description: 'Test your typing speed and accuracy',
+      path: '/games/speed-typing'
     }
   ];
 
