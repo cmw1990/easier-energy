@@ -15,7 +15,7 @@ import { Brain, Loader2, RefreshCw } from "lucide-react";
 import { usePufferfishAssets } from "./PufferfishAssets";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
 import { usePhaserGame } from "@/hooks/use-phaser-game";
-import { PufferfishScene } from "./scenes/PufferfishScene";
+import { PufferfishScene3D } from "./scenes/PufferfishScene3D";
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 import { generateBinauralBeat, generateNatureSound } from "@/utils/audioGenerators";
 
@@ -30,21 +30,11 @@ const BreathingGame = () => {
   const [natureType, setNatureType] = useState<'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream'>('ocean');
   const soundRef = useRef<{ stop: () => void; setVolume: (v: number) => void } | null>(null);
   const gameContainerRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<PufferfishScene | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const { toast } = useToast();
   const { session } = useAuth();
   const { assets, isLoading, generateAssets } = usePufferfishAssets();
-
-  // Initialize Phaser game
-  const game = usePhaserGame({
-    width: 800,
-    height: 400,
-    parent: 'game-container',
-    scene: new PufferfishScene(setScore)
-  });
 
   useEffect(() => {
     const checkAudioSupport = async () => {
@@ -62,31 +52,6 @@ const BreathingGame = () => {
     };
     checkAudioSupport();
   }, []);
-
-  useEffect(() => {
-    if (game.current && !sceneRef.current) {
-      const scene = game.current.scene.getScene('PufferfishScene') as PufferfishScene;
-      if (scene) {
-        sceneRef.current = scene;
-        // Convert GameAssets to Record<string, string>
-        const assetMap: Record<string, string> = {};
-        if (assets) {
-          Object.entries(assets).forEach(([key, value]) => {
-            if (typeof value === 'string') {
-              assetMap[key] = value;
-            }
-          });
-        }
-        scene.setAssets(assetMap);
-      }
-    }
-  }, [game, assets]);
-
-  useEffect(() => {
-    if (sceneRef.current) {
-      sceneRef.current.setBreathPhase(breathPhase);
-    }
-  }, [breathPhase]);
 
   const startGame = async () => {
     if (!selectedTechnique) {
@@ -113,10 +78,8 @@ const BreathingGame = () => {
       
       streamRef.current = stream;
       audioContextRef.current = new AudioContext();
-      analyserRef.current = audioContextRef.current.createAnalyser();
       const source = audioContextRef.current.createMediaStreamSource(stream);
-      source.connect(analyserRef.current);
-      analyserRef.current.fftSize = 256;
+      source.connect(audioContextRef.current.destination);
 
       setIsPlaying(true);
       toast({
@@ -188,28 +151,6 @@ const BreathingGame = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (isPlaying && selectedTechnique) {
-      // Stop previous sound if any
-      if (soundRef.current) {
-        soundRef.current.stop();
-      }
-
-      // Generate new sound based on type
-      if (soundType === 'binaural') {
-        soundRef.current = generateBinauralBeat(432, 4, 0.5); // 4Hz theta waves for relaxation
-      } else {
-        soundRef.current = generateNatureSound(natureType, 0.5);
-      }
-    }
-
-    return () => {
-      if (soundRef.current) {
-        soundRef.current.stop();
-      }
-    };
-  }, [isPlaying, soundType, natureType, selectedTechnique]);
-
   return (
     <Card className="p-6">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
@@ -251,47 +192,12 @@ const BreathingGame = () => {
                   onSelectTechnique={setSelectedTechnique}
                   className="mb-4"
                 />
-                <div className="space-y-4">
-                  <div className="flex gap-4">
-                    <Select
-                      value={soundType}
-                      onValueChange={(value: 'binaural' | 'nature') => setSoundType(value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select sound type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="binaural">Binaural Beats</SelectItem>
-                        <SelectItem value="nature">Nature Sounds</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    
-                    {soundType === 'nature' && (
-                      <Select
-                        value={natureType}
-                        onValueChange={(value: 'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream') => setNatureType(value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select nature sound" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="ocean">Ocean Waves</SelectItem>
-                          <SelectItem value="rain">Gentle Rain</SelectItem>
-                          <SelectItem value="wind">Wind</SelectItem>
-                          <SelectItem value="forest">Forest</SelectItem>
-                          <SelectItem value="thunder">Distant Thunder</SelectItem>
-                          <SelectItem value="crickets">Night Crickets</SelectItem>
-                          <SelectItem value="birds">Bird Songs</SelectItem>
-                          <SelectItem value="stream">Mountain Stream</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-                </div>
               </div>
             )}
             
-            <div id="game-container" ref={gameContainerRef} className="w-full max-w-3xl" />
+            <div id="game-container" ref={gameContainerRef} className="w-full max-w-3xl">
+              <PufferfishScene3D breathPhase={breathPhase} />
+            </div>
             
             {!isPlaying && (
               <Button 
