@@ -95,7 +95,7 @@ export const MotivationQuote = () => {
               variant="outline"
               size="sm"
               onClick={handleGenerateQuote}
-              disabled={isGenerating || !userSubscription?.tier === 'premium'}
+              disabled={isGenerating || !(userSubscription?.tier === 'premium')}
             >
               {isGenerating ? (
                 <RefreshCw className="h-4 w-4 animate-spin mr-2" />
