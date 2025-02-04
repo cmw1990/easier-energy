@@ -24,7 +24,7 @@ import { XiangqiGame } from "@/components/games/XiangqiGame";
 import { ShogiGame } from "@/components/games/ShogiGame";
 import { CheckersGame } from "@/components/games/CheckersGame";
 import GomokuGame from "@/components/games/GomokuGame";
-import { ZenDrift } from "@/components/games/ZenDrift";
+import ZenDrift from "@/components/games/ZenDrift";
 
 const queryClient = new QueryClient();
 

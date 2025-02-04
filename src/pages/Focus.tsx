@@ -23,7 +23,7 @@ import PatternRecognition from "@/components/games/PatternRecognition";
 import SequenceMemory from "@/components/games/SequenceMemory";
 import WordAssociation from "@/components/games/WordAssociation";
 import BrainMatch3 from "@/components/games/BrainMatch3";
-import { ZenDrift } from "@/components/games/ZenDrift";
+import ZenDrift from "@/components/games/ZenDrift";
 import { BreathingTechniques } from "@/components/breathing/BreathingTechniques";
 
 const Focus = () => {
