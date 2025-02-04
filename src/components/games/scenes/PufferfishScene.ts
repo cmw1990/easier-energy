@@ -45,8 +45,8 @@ export class PufferfishScene extends Phaser.Scene {
     this.pufferfish.setScale(0.5);
 
     // Create particle system for bubbles
-    const particles = this.add.particles(0, 0, 'bubbles');
-    this.emitter = particles.createEmitter({
+    const particleManager = this.add.particles('bubbles');
+    this.emitter = particleManager.createEmitter({
       x: { min: 380, max: 420 },
       y: { min: 190, max: 210 },
       speedX: { min: 0, max: 0 },
@@ -56,8 +56,7 @@ export class PufferfishScene extends Phaser.Scene {
       alpha: { start: 0.8, end: 0 },
       lifespan: 2000,
       frequency: 100,
-      quantity: 1,
-      active: true
+      quantity: 1
     });
 
     // Start game loop

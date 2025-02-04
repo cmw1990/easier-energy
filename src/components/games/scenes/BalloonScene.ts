@@ -32,8 +32,8 @@ export class BalloonScene extends Phaser.Scene {
       .setScale(0.5);
 
     // Create particle system for clouds
-    const particles = this.add.particles(0, 0, 'cloud');
-    this.emitter = particles.createEmitter({
+    const particleManager = this.add.particles('cloud');
+    this.emitter = particleManager.createEmitter({
       x: { min: this.gameWidth, max: this.gameWidth + 50 },
       y: { min: 50, max: this.gameHeight - 50 },
       speedX: { min: -200, max: -150 },
@@ -45,7 +45,6 @@ export class BalloonScene extends Phaser.Scene {
       lifespan: { min: 2000, max: 3000 },
       frequency: 500,
       blendMode: Phaser.BlendModes.ADD,
-      active: true,
       quantity: 1
     });
 
