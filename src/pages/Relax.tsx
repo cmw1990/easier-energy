@@ -1,17 +1,49 @@
+import { Suspense, lazy } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Flower2, Wind, Car } from "lucide-react";
-import { ZenDrift } from "@/components/games/ZenDrift";
-import { BreathingTechniques } from "@/components/breathing/BreathingTechniques";
-import { OpenAITest } from "@/components/OpenAITest";
-import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ErrorBoundary } from "react-error-boundary";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy load heavy components
+const ZenDrift = lazy(() => import("@/components/games/ZenDrift"));
+const BreathingTechniques = lazy(() => import("@/components/breathing/BreathingTechniques"));
+const OpenAITest = lazy(() => import("@/components/OpenAITest"));
+const GameAssetsGenerator = lazy(() => import("@/components/GameAssetsGenerator"));
+
+// Loading fallbacks
+const LoadingCard = () => (
+  <Card>
+    <CardHeader>
+      <Skeleton className="h-4 w-[200px]" />
+    </CardHeader>
+    <CardContent>
+      <Skeleton className="h-[200px] w-full" />
+    </CardContent>
+  </Card>
+);
+
+// Error fallback
+const ErrorCard = ({ error, resetErrorBoundary }) => (
+  <Card className="border-destructive">
+    <CardHeader>
+      <CardTitle className="text-destructive">Something went wrong</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-sm text-muted-foreground mb-4">{error.message}</p>
+      <button 
+        onClick={resetErrorBoundary}
+        className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
+      >
+        Try again
+      </button>
+    </CardContent>
+  </Card>
+);
 
 const Relax = () => {
+  console.log("Rendering Relax page");
+
   return (
     <div className="container mx-auto p-4 space-y-8">
       <div className="text-center space-y-4">
@@ -25,8 +57,16 @@ const Relax = () => {
           Take a moment to unwind and find your inner peace through various relaxation techniques and mindful activities.
         </p>
         <div className="flex justify-center gap-4">
-          <OpenAITest />
-          <GameAssetsGenerator />
+          <ErrorBoundary FallbackComponent={ErrorCard}>
+            <Suspense fallback={<Skeleton className="h-10 w-[120px]" />}>
+              <OpenAITest />
+            </Suspense>
+          </ErrorBoundary>
+          <ErrorBoundary FallbackComponent={ErrorCard}>
+            <Suspense fallback={<Skeleton className="h-10 w-[120px]" />}>
+              <GameAssetsGenerator />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </div>
 
@@ -43,31 +83,39 @@ const Relax = () => {
         </TabsList>
 
         <TabsContent value="zendrift">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Car className="h-5 w-5" />
-                Zen Drift Experience
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ZenDrift />
-            </CardContent>
-          </Card>
+          <ErrorBoundary FallbackComponent={ErrorCard}>
+            <Suspense fallback={<LoadingCard />}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Car className="h-5 w-5" />
+                    Zen Drift Experience
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ZenDrift />
+                </CardContent>
+              </Card>
+            </Suspense>
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="breathing">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Wind className="h-5 w-5" />
-                Breathing Exercises
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BreathingTechniques />
-            </CardContent>
-          </Card>
+          <ErrorBoundary FallbackComponent={ErrorCard}>
+            <Suspense fallback={<LoadingCard />}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Wind className="h-5 w-5" />
+                    Breathing Exercises
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <BreathingTechniques />
+                </CardContent>
+              </Card>
+            </Suspense>
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
 
