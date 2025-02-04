@@ -19,36 +19,42 @@ export const DeskExercises = () => {
       description: "Gently roll your neck in circles, 5 times each direction",
       duration: "30 seconds",
       icon: Activity,
+      type: "stretch"
     },
     {
       title: "Shoulder Stretches",
       description: "Roll shoulders backwards and forwards",
       duration: "30 seconds",
       icon: Activity,
+      type: "stretch"
     },
     {
       title: "Wrist Exercises",
       description: "Rotate wrists and stretch fingers",
       duration: "30 seconds",
       icon: Dumbbell,
+      type: "strength"
     },
     {
       title: "Desk Stretches",
       description: "Stretch arms overhead and lean side to side",
       duration: "45 seconds",
       icon: Activity,
+      type: "stretch"
     },
     {
       title: "Seated Leg Stretches",
       description: "Extend legs and point/flex feet",
       duration: "30 seconds",
       icon: Activity,
+      type: "stretch"
     },
     {
       title: "Back Twist",
       description: "Gentle seated spinal twist, both sides",
       duration: "45 seconds",
       icon: Activity,
+      type: "stretch"
     }
   ];
 
@@ -116,7 +122,7 @@ export const DeskExercises = () => {
               <div className="w-32 h-32 flex-shrink-0">
                 <AnimatedExerciseDisplay
                   imageUrl={`/exercise-assets/${exercise.title.toLowerCase().replace(/\s+/g, '-')}.png`}
-                  exerciseType={exercise.type || 'stretch'}
+                  exerciseType={exercise.type}
                   animationType={activeExercise === index ? '3d' : 'css'}
                 />
               </div>
