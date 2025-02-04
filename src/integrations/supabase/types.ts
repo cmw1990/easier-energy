@@ -825,6 +825,7 @@ export type Database = {
           focus_level: number | null
           id: string
           meditation_minutes: number | null
+          migraine_intensity: number | null
           mood_score: number | null
           notes: string | null
           outdoor_time_minutes: number | null
@@ -836,6 +837,8 @@ export type Database = {
           thought_patterns: string[] | null
           updated_at: string | null
           user_id: string | null
+          weather_data: Json | null
+          weather_impact_score: number | null
         }
         Insert: {
           activities?: string[] | null
@@ -851,6 +854,7 @@ export type Database = {
           focus_level?: number | null
           id?: string
           meditation_minutes?: number | null
+          migraine_intensity?: number | null
           mood_score?: number | null
           notes?: string | null
           outdoor_time_minutes?: number | null
@@ -862,6 +866,8 @@ export type Database = {
           thought_patterns?: string[] | null
           updated_at?: string | null
           user_id?: string | null
+          weather_data?: Json | null
+          weather_impact_score?: number | null
         }
         Update: {
           activities?: string[] | null
@@ -877,6 +883,7 @@ export type Database = {
           focus_level?: number | null
           id?: string
           meditation_minutes?: number | null
+          migraine_intensity?: number | null
           mood_score?: number | null
           notes?: string | null
           outdoor_time_minutes?: number | null
@@ -888,6 +895,8 @@ export type Database = {
           thought_patterns?: string[] | null
           updated_at?: string | null
           user_id?: string | null
+          weather_data?: Json | null
+          weather_impact_score?: number | null
         }
         Relationships: []
       }
@@ -1451,6 +1460,8 @@ export type Database = {
           needs_focus_support: boolean | null
           updated_at: string | null
           user_id: string
+          weather_sensitive: boolean | null
+          weather_triggers: Json | null
         }
         Insert: {
           conditions?: Database["public"]["Enums"]["health_condition"][]
@@ -1460,6 +1471,8 @@ export type Database = {
           needs_focus_support?: boolean | null
           updated_at?: string | null
           user_id: string
+          weather_sensitive?: boolean | null
+          weather_triggers?: Json | null
         }
         Update: {
           conditions?: Database["public"]["Enums"]["health_condition"][]
@@ -1469,6 +1482,8 @@ export type Database = {
           needs_focus_support?: boolean | null
           updated_at?: string | null
           user_id?: string
+          weather_sensitive?: boolean | null
+          weather_triggers?: Json | null
         }
         Relationships: []
       }
@@ -1671,6 +1686,7 @@ export type Database = {
         | "other_focus_issue"
         | "short_term_memory"
         | "long_term_memory"
+        | "migraine"
       quit_strategy_type:
         | "cold_turkey"
         | "taper_down"

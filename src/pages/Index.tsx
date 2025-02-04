@@ -15,6 +15,7 @@ import { FocusExercises } from "@/components/health/FocusExercises";
 import { MoodOverview } from "@/components/MoodOverview";
 import { useToast } from "@/hooks/use-toast";
 import { ActivityTracker } from "@/components/health/ActivityTracker";
+import { WeatherHealthInsights } from "@/components/health/WeatherHealthInsights";
 import { GamesSection } from "@/components/games/GamesSection";
 import { MeditationRecommendations } from "@/components/meditation/MeditationRecommendations";
 import { DeskExercises } from "@/components/exercises/DeskExercises";
@@ -106,6 +107,11 @@ const Index = () => {
           <div className="mb-8">
             <MoodOverview />
           </div>
+          {healthConditions.weather_sensitive && (
+            <div className="mb-8">
+              <WeatherHealthInsights />
+            </div>
+          )}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
             <WalkingExercise />
             <RunningExercise />
