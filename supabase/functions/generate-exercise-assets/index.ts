@@ -59,6 +59,20 @@ serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.json();
+      // Check specifically for billing errors
+      if (error.error?.message?.includes('billing')) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'OpenAI billing limit reached',
+            details: 'Please check your OpenAI account billing status',
+            code: 'BILLING_LIMIT'
+          }),
+          { 
+            status: 402, // Payment Required
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
       throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
     }
 

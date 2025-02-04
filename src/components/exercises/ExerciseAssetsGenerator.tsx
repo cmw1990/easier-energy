@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, AlertTriangle } from "lucide-react";
 
 // Only show this component in development
 const isDevelopment = import.meta.env.DEV;
@@ -98,6 +98,20 @@ export const ExerciseAssetsGenerator = () => {
 
           if (error) {
             console.error(`Error generating ${batch.name} assets:`, error);
+            // Check for billing limit error
+            if (error.message?.includes('billing') || 
+                (typeof error === 'object' && 
+                 error.body && 
+                 JSON.parse(error.body)?.code === 'BILLING_LIMIT')) {
+              toast({
+                title: 'OpenAI Billing Limit Reached',
+                description: 'Please check your OpenAI account billing status before continuing.',
+                variant: 'destructive',
+              });
+              // Stop the entire process
+              return;
+            }
+            
             toast({
               title: `Error generating ${batch.name} assets`,
               description: error.message || 'Unknown error occurred',
