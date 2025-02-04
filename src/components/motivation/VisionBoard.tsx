@@ -14,10 +14,14 @@ export const VisionBoard = () => {
   const { data: visionItems } = useQuery({
     queryKey: ["visionBoard"],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
       const { data, error } = await supabase
         .from("goals")
         .select("*")
         .eq("goal_type", "vision")
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -26,12 +30,24 @@ export const VisionBoard = () => {
   });
 
   const addVisionItem = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to add vision items",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase
       .from("goals")
       .insert([{
         title: "Vision Board Item",
         goal_type: "vision",
-        description: imageUrl
+        description: imageUrl,
+        user_id: user.id
       }]);
 
     if (error) {

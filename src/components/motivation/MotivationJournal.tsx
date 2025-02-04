@@ -12,9 +12,24 @@ export const MotivationJournal = () => {
   const [entry, setEntry] = useState("");
 
   const saveJournalEntry = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to save journal entries",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase
       .from("journal_entries")
-      .insert([{ content: entry, entry_type: "motivation" }]);
+      .insert([{ 
+        content: entry, 
+        entry_type: "motivation",
+        user_id: user.id
+      }]);
 
     if (error) {
       toast({
