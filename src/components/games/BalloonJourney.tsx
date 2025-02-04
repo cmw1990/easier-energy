@@ -7,20 +7,21 @@ import { useAuth } from "@/components/AuthProvider";
 import { Cloud, Loader2, RefreshCw } from "lucide-react";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
+import Phaser from 'phaser';
+import { BalloonScene } from "./scenes/BalloonScene";
 
 const BalloonJourney = () => {
-  const [score, setScore] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [audioSupported, setAudioSupported] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const gameRef = useRef<Phaser.Game | null>(null);
+  const sceneRef = useRef<BalloonScene | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const animationFrameRef = useRef<number>();
   const { toast } = useToast();
   const { session } = useAuth();
 
@@ -96,13 +97,32 @@ const BalloonJourney = () => {
       source.connect(analyserRef.current);
       analyserRef.current.fftSize = 256;
 
+      if (!gameRef.current) {
+        gameRef.current = new Phaser.Game({
+          type: Phaser.AUTO,
+          parent: 'game-container',
+          width: 800,
+          height: 400,
+          scene: BalloonScene,
+          physics: {
+            default: 'arcade',
+            arcade: {
+              gravity: { y: 0 },
+              debug: false
+            }
+          }
+        });
+      }
+
+      sceneRef.current = gameRef.current.scene.getScene('BalloonScene') as BalloonScene;
       setIsPlaying(true);
+      
       toast({
         title: "Game Started!",
         description: "Breathe to control your balloon's altitude.",
       });
     } catch (error) {
-      console.error("Error accessing microphone:", error);
+      console.error("Error starting game:", error);
       toast({
         title: "Error Starting Game",
         description: error.message || "Could not access microphone. Please check permissions.",
@@ -112,6 +132,7 @@ const BalloonJourney = () => {
   };
 
   const endGame = async () => {
+    const finalScore = sceneRef.current?.getScore() || 0;
     setIsPlaying(false);
     setIsSubmitting(true);
     
@@ -123,6 +144,10 @@ const BalloonJourney = () => {
       audioContextRef.current.close();
       audioContextRef.current = null;
     }
+    if (gameRef.current) {
+      gameRef.current.destroy(true);
+      gameRef.current = null;
+    }
     
     if (session?.user) {
       try {
@@ -130,17 +155,17 @@ const BalloonJourney = () => {
           user_id: session.user.id,
           activity_type: "breathing",
           activity_name: "Balloon Journey",
-          duration_minutes: Math.ceil(score / 10),
-          focus_rating: Math.min(Math.round((score / 100) * 10), 10),
+          duration_minutes: Math.ceil(finalScore / 10),
+          focus_rating: Math.min(Math.round((finalScore / 100) * 10), 10),
           energy_rating: null,
-          notes: `Completed balloon game with score: ${score}`
+          notes: `Completed balloon game with score: ${finalScore}`
         });
 
         if (error) throw error;
 
         toast({
           title: "Game Over!",
-          description: `Final score: ${score}. Great job!`,
+          description: `Final score: ${finalScore}. Great job!`,
         });
       } catch (error) {
         console.error("Error saving game results:", error);
@@ -156,6 +181,12 @@ const BalloonJourney = () => {
   };
 
   useEffect(() => {
+    if (sceneRef.current) {
+      sceneRef.current.setBreathPhase(breathPhase);
+    }
+  }, [breathPhase]);
+
+  useEffect(() => {
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
@@ -163,8 +194,8 @@ const BalloonJourney = () => {
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+      if (gameRef.current) {
+        gameRef.current.destroy(true);
       }
     };
   }, []);
@@ -192,7 +223,6 @@ const BalloonJourney = () => {
             )}
             Refresh Assets
           </Button>
-          <div className="text-lg">Score: {score}</div>
         </div>
       </div>
 
@@ -206,11 +236,9 @@ const BalloonJourney = () => {
           </div>
         )}
         
-        <canvas
-          ref={canvasRef}
-          width={800}
-          height={400}
-          className="border border-primary/10 rounded-lg w-full max-w-3xl bg-gradient-to-b from-blue-50 to-blue-100"
+        <div 
+          id="game-container"
+          className="w-full max-w-3xl aspect-[2/1] bg-gradient-to-b from-blue-50 to-blue-100 rounded-lg overflow-hidden"
         />
         
         {!isPlaying ? (
