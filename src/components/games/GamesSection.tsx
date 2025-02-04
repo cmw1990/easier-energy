@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Brain, Gamepad, Puzzle, Zap, Book, Grid, Hash } from "lucide-react";
+import { Brain, Gamepad, Puzzle, Zap, Book, Grid, Hash, FlaskConical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const GamesSection = () => {
@@ -54,6 +54,13 @@ export const GamesSection = () => {
       description: "Test and improve your working memory capacity",
       icon: Hash,
       route: "/games/number-memory"
+    },
+    {
+      title: "Stroop Test",
+      description: "Challenge your mental flexibility and processing speed",
+      icon: FlaskConical,
+      route: "/games/stroop-test",
+      isNew: true
     }
   ];
 
