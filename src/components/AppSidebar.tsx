@@ -20,6 +20,7 @@ import {
   Pill,
   Cigarette,
   Heart,
+  Eye,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -55,6 +56,11 @@ const navigationGroups = [
         to: "/exercise",
         icon: Dumbbell,
         label: "Exercise",
+      },
+      {
+        to: "/eye-exercises",
+        icon: Eye,
+        label: "Eye Care",
       },
     ]
   },
