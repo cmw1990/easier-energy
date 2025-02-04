@@ -78,6 +78,11 @@ const GamesSection = () => {
       title: 'Mental Rotation',
       description: 'Test your spatial reasoning abilities',
       path: '/games/mental-rotation'
+    },
+    {
+      title: 'Word Pairs',
+      description: 'Memory game with word associations',
+      path: '/games/word-pairs'
     }
   ];
 

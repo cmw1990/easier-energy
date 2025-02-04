@@ -19,6 +19,7 @@ import { WeatherHealthInsights } from "@/components/health/WeatherHealthInsights
 import GamesSection from "@/components/games/GamesSection";
 import { MeditationRecommendations } from "@/components/meditation/MeditationRecommendations";
 import { MotivationQuote } from '@/components/motivation/MotivationQuote';
+import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -112,9 +113,6 @@ const Index = () => {
                   <WeatherHealthInsights />
                 </div>
               )}
-              <div className="mb-8">
-                <ExerciseAssetsGenerator />
-              </div>
               <div className="mb-8">
                 <GamesSection />
               </div>
