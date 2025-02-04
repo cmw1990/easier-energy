@@ -1,7 +1,20 @@
 import { Card } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-export function NicotineChart({ data = [] }: { data: any[] }) {
+interface NicotineChartProps {
+  data: any[];
+  isLoading?: boolean;
+}
+
+export function NicotineChart({ data = [], isLoading = false }: NicotineChartProps) {
+  if (isLoading) {
+    return (
+      <div className="text-center text-muted-foreground">
+        Loading data...
+      </div>
+    );
+  }
+
   if (data.length === 0) {
     return (
       <div className="text-center text-muted-foreground">
