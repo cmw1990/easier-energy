@@ -28,31 +28,37 @@ const toolbarItems = [
     to: "/dashboard",
     icon: Activity,
     label: "Overview",
+    iconClassName: "text-emerald-500",
   },
   {
     to: "/sleep",
     icon: Moon,
     label: "Sleep",
+    iconClassName: "text-indigo-500",
   },
   {
     to: "/relax",
     icon: Flower2,
     label: "Relax",
+    iconClassName: "text-pink-500",
   },
   {
     to: "/focus",
     icon: Focus,
     label: "Focus",
+    iconClassName: "text-amber-500",
   },
   {
     to: "/meditation",
     icon: Sparkles,
     label: "Meditation",
+    iconClassName: "text-purple-500",
   },
   {
     to: "/exercise",
     icon: Dumbbell,
     label: "Exercise",
+    iconClassName: "text-red-500",
   },
   {
     to: "/eye-exercises",
@@ -64,31 +70,37 @@ const toolbarItems = [
     to: "/breathing",
     icon: Wind,
     label: "Breathing",
+    iconClassName: "text-teal-500",
   },
   {
     to: "/caffeine",
     icon: Coffee,
     label: "Caffeine",
+    iconClassName: "text-orange-500",
   },
   {
     to: "/nicotine",
     icon: Cigarette,
     label: "Nicotine",
+    iconClassName: "text-zinc-500",
   },
   {
     to: "/supplements",
     icon: Pill,
     label: "Supplements",
+    iconClassName: "text-blue-500",
   },
   {
     to: "/food",
     icon: Utensils,
     label: "Nutrition",
+    iconClassName: "text-lime-500",
   },
   {
     to: "/sobriety",
     icon: Heart,
     label: "Sobriety",
+    iconClassName: "text-rose-500",
   },
 ];
 
