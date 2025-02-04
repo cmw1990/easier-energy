@@ -1,55 +1,14 @@
-import { useState, useEffect, useRef, Suspense } from 'react';
-import * as THREE from 'three';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { useState, useEffect } from 'react';
 import { Trophy, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ErrorBoundary } from 'react-error-boundary';
 
 interface AnimatedExerciseDisplayProps {
   imageUrl: string;
   exerciseType: string;
-  animationType?: 'css' | 'svg' | '3d';
+  animationType?: 'css' | 'svg';
   isActive?: boolean;
   progress?: number;
 }
-
-const ExerciseScene = ({ imageUrl }: { imageUrl: string }) => {
-  const [texture, setTexture] = useState<THREE.Texture | null>(null);
-  const materialRef = useRef<THREE.MeshBasicMaterial>(null);
-
-  useEffect(() => {
-    const loader = new THREE.TextureLoader();
-    loader.load(imageUrl, (loadedTexture) => {
-      setTexture(loadedTexture);
-    });
-
-    return () => {
-      if (texture) {
-        texture.dispose();
-      }
-    };
-  }, [imageUrl]);
-
-  if (!texture) {
-    return null;
-  }
-
-  return (
-    <mesh position={[0, 0, 0]}>
-      <planeGeometry args={[3, 3]} />
-      <meshBasicMaterial ref={materialRef} map={texture} transparent />
-    </mesh>
-  );
-};
-
-const Fallback = ({ imageUrl }: { imageUrl: string }) => (
-  <img 
-    src={imageUrl} 
-    alt="Exercise" 
-    className="w-full h-full object-contain animate-pulse"
-  />
-);
 
 const SVGAnimation = ({ exerciseType, progress = 0 }: { exerciseType: string; progress?: number }) => {
   const getAnimationPath = () => {
@@ -96,9 +55,6 @@ export const AnimatedExerciseDisplay = ({
 }: AnimatedExerciseDisplayProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showAchievement, setShowAchievement] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
-  const [nextRippleId, setNextRippleId] = useState(0);
 
   useEffect(() => {
     if (progress >= 100 && !showAchievement) {
@@ -106,22 +62,6 @@ export const AnimatedExerciseDisplay = ({
       setTimeout(() => setShowAchievement(false), 2000);
     }
   }, [progress]);
-
-  const handleInteraction = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    const newRipple = { x, y, id: nextRippleId };
-    setRipples(prev => [...prev, newRipple]);
-    setNextRippleId(prev => prev + 1);
-    
-    setTimeout(() => {
-      setRipples(prev => prev.filter(ripple => ripple.id !== newRipple.id));
-    }, 1000);
-  };
 
   const getAnimationClass = () => {
     const baseAnimation = {
@@ -138,15 +78,12 @@ export const AnimatedExerciseDisplay = ({
 
   return (
     <div 
-      ref={containerRef}
       className={cn(
         "relative w-full aspect-square rounded-lg overflow-hidden",
         isActive ? "ring-2 ring-primary shadow-lg" : "hover:ring-1 hover:ring-primary/50",
-        "transition-all duration-300 cursor-pointer",
+        "transition-all duration-300",
         "bg-gradient-to-br from-primary/10 to-secondary/10"
       )}
-      onClick={handleInteraction}
-      onMouseMove={handleInteraction}
     >
       {animationType === 'css' && (
         <img
@@ -168,42 +105,6 @@ export const AnimatedExerciseDisplay = ({
           />
         </div>
       )}
-
-      {animationType === '3d' && (
-        <ErrorBoundary fallback={<Fallback imageUrl={imageUrl} />}>
-          <Canvas
-            camera={{ position: [0, 0, 5] }}
-            gl={{ 
-              antialias: true,
-              alpha: true,
-              preserveDrawingBuffer: true
-            }}
-          >
-            <Suspense fallback={null}>
-              <ambientLight intensity={0.5} />
-              <pointLight position={[10, 10, 10]} />
-              <ExerciseScene imageUrl={imageUrl} />
-              <OrbitControls 
-                enableZoom={false}
-                enablePan={false}
-                minPolarAngle={Math.PI / 2}
-                maxPolarAngle={Math.PI / 2}
-              />
-            </Suspense>
-          </Canvas>
-        </ErrorBoundary>
-      )}
-
-      {ripples.map(ripple => (
-        <div
-          key={ripple.id}
-          className="absolute w-4 h-4 bg-primary/20 rounded-full animate-ripple"
-          style={{
-            left: ripple.x - 8,
-            top: ripple.y - 8,
-          }}
-        />
-      ))}
 
       {!isLoaded && (
         <div className="absolute inset-0 flex items-center justify-center">
