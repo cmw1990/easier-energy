@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Brain, Heart, Focus, Sun, X, Image } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Meditation = () => {
   const { toast } = useToast();
   const [activeSession, setActiveSession] = useState<string | null>(null);
   const [breathCount, setBreathCount] = useState(0);
+  const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const { data: sessions, isLoading, refetch } = useQuery({
@@ -34,14 +36,12 @@ const Meditation = () => {
 
       const { data, error } = await supabase
         .from('meditation_progress')
-        .insert([
-          {
-            session_id: sessionId,
-            user_id: user.id,
-            completed_duration: 0,
-            mood_before: null,
-          }
-        ])
+        .insert([{
+          session_id: sessionId,
+          user_id: user.id,
+          completed_duration: 0,
+          mood_before: null,
+        }])
         .select()
         .single();
 
@@ -52,6 +52,7 @@ const Meditation = () => {
       const session = sessions?.find(s => s.id === sessionId);
       setActiveSession(sessionId);
       setBreathCount(0);
+      setBreathPhase('inhale');
       toast({
         title: "Session Started",
         description: `Starting ${session?.title}. Find a comfortable position and follow along.`,
@@ -96,6 +97,7 @@ const Meditation = () => {
   const handleEndSession = () => {
     setActiveSession(null);
     setBreathCount(0);
+    setBreathPhase('inhale');
     toast({
       title: "Session Ended",
       description: "Your meditation session has ended. Great job!",
@@ -137,30 +139,88 @@ const Meditation = () => {
     } : {};
 
     return (
-      <div className="fixed inset-0 bg-background/95 backdrop-blur-sm z-50 flex items-center justify-center" style={backgroundStyle}>
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
-        <div className="max-w-2xl w-full mx-auto p-6 space-y-8 relative">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-white">{currentSession?.title}</h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleEndSession}
-              className="text-white hover:text-primary hover:bg-white/10"
-            >
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-          <div className="relative aspect-square max-w-md mx-auto bg-accent/20 rounded-full flex items-center justify-center backdrop-blur-md">
-            <div className={`absolute inset-4 rounded-full border-4 border-primary transition-transform duration-4000 animate-breathe flex items-center justify-center`}>
-              <span className="text-4xl font-light text-white">{breathCount}</span>
+      <AnimatePresence>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-background/95 backdrop-blur-sm z-50 flex items-center justify-center"
+          style={backgroundStyle}
+        >
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+          <div className="max-w-2xl w-full mx-auto p-6 space-y-8 relative">
+            <div className="flex justify-between items-center">
+              <motion.h2 
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="text-2xl font-semibold text-white"
+              >
+                {currentSession?.title}
+              </motion.h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleEndSession}
+                className="text-white hover:text-primary hover:bg-white/10"
+              >
+                <X className="h-5 w-5" />
+              </Button>
             </div>
+            <div className="relative aspect-square max-w-md mx-auto">
+              <motion.div 
+                className="absolute inset-0 bg-primary/10 rounded-full"
+                animate={{
+                  scale: breathPhase === 'inhale' ? [1, 1.5] : breathPhase === 'exhale' ? [1.5, 1] : 1.5,
+                  opacity: [0.5, 0.8, 0.5],
+                }}
+                transition={{
+                  duration: breathPhase === 'hold' ? 0 : 4,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+              />
+              <motion.div 
+                className="absolute inset-4 rounded-full border-4 border-primary/50 flex items-center justify-center backdrop-blur-lg"
+                animate={{
+                  scale: breathPhase === 'inhale' ? [1, 1.2] : breathPhase === 'exhale' ? [1.2, 1] : 1.2,
+                  borderWidth: breathPhase === 'hold' ? 6 : 4,
+                }}
+                transition={{
+                  duration: breathPhase === 'hold' ? 0 : 4,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+              >
+                <motion.span 
+                  className="text-4xl font-light text-white"
+                  animate={{ 
+                    scale: [0.9, 1.1],
+                    opacity: [0.8, 1] 
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                  }}
+                >
+                  {breathCount}
+                </motion.span>
+              </motion.div>
+            </div>
+            <motion.p 
+              className="text-center text-lg text-white/90"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+            >
+              {breathPhase === 'inhale' ? 'Breathe in...' : 
+               breathPhase === 'hold' ? 'Hold...' : 
+               'Breathe out...'}
+            </motion.p>
           </div>
-          <p className="text-center text-lg text-white/90">
-            Focus on your breath. The circle expands on inhale, contracts on exhale.
-          </p>
-        </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
     );
   }
 
