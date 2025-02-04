@@ -150,9 +150,16 @@ const ZenDrift = () => {
           <Canvas
             ref={canvasRef}
             shadows
-            gl={{ antialias: true }}
+            gl={{ 
+              antialias: true,
+              alpha: true,
+              stencil: true,
+              depth: true,
+              powerPreference: "high-performance"
+            }}
             camera={{ position: [0, 15, 20], fov: 75 }}
             style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
+            dpr={[1, 2]}
           >
             <PerspectiveCamera makeDefault position={[0, 15, 20]} />
             
