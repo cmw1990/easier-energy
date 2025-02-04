@@ -23,6 +23,8 @@ import EyeExercises from "@/pages/EyeExercises";
 import Motivation from "@/pages/Motivation";
 import LogicPuzzles from "@/components/games/LogicPuzzles";
 import Sudoku from "@/components/games/Sudoku";
+import BrainMatch3 from "@/components/games/BrainMatch3";
+import NumberMemoryGame from "@/components/games/number-memory/NumberMemoryGame";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +54,8 @@ function App() {
               <Route path="/distraction-blocker" element={<DistractionBlocker />} />
               <Route path="/games/logic-puzzles" element={<LogicPuzzles />} />
               <Route path="/games/sudoku" element={<Sudoku />} />
+              <Route path="/games/brain-match-3" element={<BrainMatch3 />} />
+              <Route path="/games/number-memory" element={<NumberMemoryGame />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Brain, Gamepad, Puzzle, Zap, Book, Grid } from "lucide-react";
+import { Brain, Gamepad, Puzzle, Zap, Book, Grid, Hash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const GamesSection = () => {
@@ -46,7 +46,13 @@ export const GamesSection = () => {
       title: "Sudoku",
       description: "Classic number puzzle game to test your logic",
       icon: Grid,
-      route: "/games/sudoku",
+      route: "/games/sudoku"
+    },
+    {
+      title: "Number Memory",
+      description: "Test and improve your working memory capacity",
+      icon: Hash,
+      route: "/games/number-memory",
       isNew: true
     }
   ];
