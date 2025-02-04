@@ -26,11 +26,16 @@ const Meditation = () => {
 
   const startSessionMutation = useMutation({
     mutationFn: async (sessionId: string) => {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error('User not authenticated');
+
       const { data, error } = await supabase
         .from('meditation_progress')
         .insert([
           {
             session_id: sessionId,
+            user_id: user.id,
             completed_duration: 0, // Will be updated when session ends
             mood_before: null, // Could add mood tracking later
           }
@@ -49,7 +54,8 @@ const Meditation = () => {
         description: `Starting ${session?.title}. Find a comfortable position and follow along.`,
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Meditation session error:', error);
       toast({
         title: "Error Starting Session",
         description: "Unable to start meditation session. Please try again.",
