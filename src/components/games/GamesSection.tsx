@@ -73,6 +73,11 @@ const GamesSection = () => {
       title: 'Digit Span',
       description: 'Test your number memory',
       path: '/games/digit-span'
+    },
+    {
+      title: 'Mental Rotation',
+      description: 'Test your spatial reasoning abilities',
+      path: '/games/mental-rotation'
     }
   ];
 

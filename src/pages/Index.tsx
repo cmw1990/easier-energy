@@ -1,10 +1,10 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Brain, Shield, Activity, Ban, Clock, Bell, Heart, Battery } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BlockingStats } from "@/components/distraction/BlockingStats";
 import { useAuth } from "@/components/AuthProvider";
-import { useState } from "react";
 import { BlockingConfirmDialog } from "@/components/distraction/BlockingConfirmDialog";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,15 +16,8 @@ import { MoodOverview } from "@/components/MoodOverview";
 import { useToast } from "@/hooks/use-toast";
 import { ActivityTracker } from "@/components/health/ActivityTracker";
 import { WeatherHealthInsights } from "@/components/health/WeatherHealthInsights";
-import { GamesSection } from "@/components/games/GamesSection";
+import GamesSection from "@/components/games/GamesSection";
 import { MeditationRecommendations } from "@/components/meditation/MeditationRecommendations";
-import { DeskExercises } from "@/components/exercises/DeskExercises";
-import { WalkingExercise } from "@/components/exercises/WalkingExercise";
-import { RunningExercise } from "@/components/exercises/RunningExercise";
-import { StretchExercise } from "@/components/exercises/StretchExercise";
-import { DeskYoga } from "@/components/exercises/DeskYoga";
-import { YogaPoses } from "@/components/exercises/YogaPoses";
-import { ExerciseAssetsGenerator } from "@/components/exercises/ExerciseAssetsGenerator";
 import { MotivationQuote } from '@/components/motivation/MotivationQuote';
 
 const Index = () => {
