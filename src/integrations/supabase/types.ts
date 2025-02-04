@@ -924,6 +924,102 @@ export type Database = {
         }
         Relationships: []
       }
+      motivation_quotes: {
+        Row: {
+          author: string | null
+          category: string | null
+          content: string
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          author?: string | null
+          category?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          author?: string | null
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      motivation_streaks: {
+        Row: {
+          created_at: string | null
+          current_streak: number | null
+          id: string
+          last_check_in: string | null
+          longest_streak: number | null
+          streak_type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_check_in?: string | null
+          longest_streak?: number | null
+          streak_type: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_check_in?: string | null
+          longest_streak?: number | null
+          streak_type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      motivation_tracking: {
+        Row: {
+          created_at: string | null
+          daily_goal: string | null
+          date: string | null
+          energy_score: number | null
+          goal_achieved: boolean | null
+          id: string
+          mood_score: number | null
+          reflection: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          daily_goal?: string | null
+          date?: string | null
+          energy_score?: number | null
+          goal_achieved?: boolean | null
+          id?: string
+          mood_score?: number | null
+          reflection?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          daily_goal?: string | null
+          date?: string | null
+          energy_score?: number | null
+          goal_achieved?: boolean | null
+          id?: string
+          mood_score?: number | null
+          reflection?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           created_at: string | null
