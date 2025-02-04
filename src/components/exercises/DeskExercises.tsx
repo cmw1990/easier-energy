@@ -19,6 +19,7 @@ export const DeskExercises = () => {
   const [duration, setDuration] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
   const { toast } = useToast();
   const { session } = useAuth();
 
@@ -75,9 +76,23 @@ export const DeskExercises = () => {
   const startExercise = (index: number) => {
     setActiveExercise(index);
     setDuration(0);
+    setCurrentStep(0);
     setDialogOpen(true);
     const interval = setInterval(() => {
-      setDuration(prev => prev + 1);
+      setDuration(prev => {
+        const newDuration = prev + 1;
+        // Automatically advance to next step every 5 seconds
+        if (newDuration % 5 === 0) {
+          setCurrentStep(prevStep => {
+            const nextStep = prevStep + 1;
+            if (nextStep < exercises[index].instructions.length) {
+              return nextStep;
+            }
+            return prevStep;
+          });
+        }
+        return newDuration;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
@@ -114,6 +129,7 @@ export const DeskExercises = () => {
       setIsLoading(false);
       setActiveExercise(null);
       setDuration(0);
+      setCurrentStep(0);
       setDialogOpen(false);
     }
   };
@@ -163,7 +179,7 @@ export const DeskExercises = () => {
                   {isLoading ? (
                     <div className="h-5 w-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    "Start"
+                    activeExercise === index ? "Stop" : "Start"
                   )}
                 </Button>
               </div>
@@ -179,16 +195,7 @@ export const DeskExercises = () => {
               {activeExercise !== null ? exercises[activeExercise].title : ''}
             </DialogTitle>
             <DialogDescription>
-              {activeExercise !== null && (
-                <div className="text-sm text-muted-foreground space-y-2">
-                  <p className="font-medium">Follow these steps:</p>
-                  <ol className="list-decimal list-inside space-y-1">
-                    {exercises[activeExercise].instructions.map((instruction, i) => (
-                      <li key={i}>{instruction}</li>
-                    ))}
-                  </ol>
-                </div>
-              )}
+              Follow along with the animated guide below:
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4">
@@ -200,6 +207,9 @@ export const DeskExercises = () => {
                     exerciseType={exercises[activeExercise].type}
                     isActive={true}
                     progress={(duration / 30) * 100}
+                    instructions={exercises[activeExercise].instructions}
+                    currentStep={currentStep}
+                    onStepChange={setCurrentStep}
                   />
                 </div>
                 <div className="flex justify-between items-center">

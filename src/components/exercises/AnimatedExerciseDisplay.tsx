@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Trophy, Star } from 'lucide-react';
+import { Trophy, Star, ArrowRight, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface AnimatedExerciseDisplayProps {
   imageUrl: string;
@@ -8,6 +9,9 @@ interface AnimatedExerciseDisplayProps {
   animationType?: 'css' | 'svg';
   isActive?: boolean;
   progress?: number;
+  instructions?: string[];
+  currentStep?: number;
+  onStepChange?: (step: number) => void;
 }
 
 const SVGAnimation = ({ exerciseType, progress = 0 }: { exerciseType: string; progress?: number }) => {
@@ -51,10 +55,14 @@ export const AnimatedExerciseDisplay = ({
   exerciseType,
   animationType = 'css',
   isActive = false,
-  progress = 0
+  progress = 0,
+  instructions = [],
+  currentStep = 0,
+  onStepChange
 }: AnimatedExerciseDisplayProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showAchievement, setShowAchievement] = useState(false);
+  const [currentInstruction, setCurrentInstruction] = useState(0);
 
   useEffect(() => {
     if (progress >= 100 && !showAchievement) {
@@ -62,6 +70,12 @@ export const AnimatedExerciseDisplay = ({
       setTimeout(() => setShowAchievement(false), 2000);
     }
   }, [progress]);
+
+  useEffect(() => {
+    if (onStepChange) {
+      onStepChange(currentInstruction);
+    }
+  }, [currentInstruction, onStepChange]);
 
   const getAnimationClass = () => {
     const baseAnimation = {
@@ -74,6 +88,18 @@ export const AnimatedExerciseDisplay = ({
       isActive && 'scale-110 transition-transform duration-300',
       'hover:scale-105 transition-all duration-300'
     );
+  };
+
+  const handleNextStep = () => {
+    if (currentInstruction < instructions.length - 1) {
+      setCurrentInstruction(prev => prev + 1);
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (currentInstruction > 0) {
+      setCurrentInstruction(prev => prev - 1);
+    }
   };
 
   return (
@@ -112,8 +138,47 @@ export const AnimatedExerciseDisplay = ({
         </div>
       )}
 
+      {isActive && instructions.length > 0 && (
+        <div className="absolute inset-x-0 bottom-0 p-4 bg-background/95 backdrop-blur-sm">
+          <div className="flex items-center justify-between gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handlePrevStep}
+              disabled={currentInstruction === 0}
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <p className="text-sm font-medium text-center flex-1">
+              {instructions[currentInstruction]}
+            </p>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleNextStep}
+              disabled={currentInstruction === instructions.length - 1}
+            >
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="mt-2 flex justify-center gap-1">
+            {instructions.map((_, idx) => (
+              <div
+                key={idx}
+                className={cn(
+                  "w-2 h-2 rounded-full transition-all duration-300",
+                  idx === currentInstruction
+                    ? "bg-primary w-4"
+                    : "bg-primary/30"
+                )}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {isActive && (
-        <div className="absolute bottom-2 left-2 right-2">
+        <div className="absolute top-2 left-2 right-2">
           <div className="bg-background/80 backdrop-blur-sm rounded-full h-2 overflow-hidden">
             <div 
               className="h-full bg-primary transition-all duration-300 animate-pulse"
