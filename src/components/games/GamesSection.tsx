@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Brain, Gamepad, Puzzle, Zap, Book, Music, Cloud, Waves, Wind } from "lucide-react";
+import { Brain, Gamepad, Puzzle, Zap, Book } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const GamesSection = () => {
@@ -28,44 +28,21 @@ export const GamesSection = () => {
       title: "Pattern Match",
       description: "Enhance pattern recognition with sequence memorization",
       icon: Puzzle,
-      route: "/games/pattern-match",
-      isNew: true
+      route: "/games/pattern-match"
     },
     {
       title: "Math Speed",
       description: "Boost mental arithmetic in a relaxing environment",
       icon: Brain,
-      route: "/games/math-speed"
+      route: "/games/math-speed",
+      isNew: true
     },
     {
-      title: "Simon Says",
-      description: "Follow the pattern in this classic memory game",
-      icon: Gamepad,
-      route: "/games/simon-says"
-    },
-    {
-      title: "Word Scramble",
-      description: "Unscramble words to improve cognitive flexibility",
+      title: "Brain Match 3",
+      description: "Match tiles to create equations divisible by 3",
       icon: Puzzle,
-      route: "/games/word-scramble"
-    },
-    {
-      title: "Sequence Memory",
-      description: "Remember and repeat growing sequences",
-      icon: Brain,
-      route: "/games/sequence-memory"
-    },
-    {
-      title: "Visual Memory",
-      description: "Train your visual memory with grid patterns",
-      icon: Puzzle,
-      route: "/games/visual-memory"
-    },
-    {
-      title: "Speed Typing",
-      description: "Practice typing while staying calm and focused",
-      icon: Zap,
-      route: "/games/speed-typing"
+      route: "/games/brain-match-3",
+      isNew: true
     }
   ];
 
@@ -96,6 +73,11 @@ export const GamesSection = () => {
                 <p className="text-sm text-muted-foreground">
                   {game.description}
                 </p>
+                {game.isNew && (
+                  <span className="px-2 py-1 text-xs bg-primary/10 text-primary rounded-full">
+                    New!
+                  </span>
+                )}
               </div>
             </Card>
           ))}
