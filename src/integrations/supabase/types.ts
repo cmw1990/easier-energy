@@ -2211,6 +2211,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_subscriptions: {
+        Row: {
+          created_at: string | null
+          ends_at: string | null
+          id: string
+          starts_at: string
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          starts_at?: string
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          starts_at?: string
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       vendor_ratings: {
         Row: {
           comment: string | null
@@ -2394,6 +2424,7 @@ export type Database = {
       risk_level: "low" | "medium" | "high"
       smoking_log_type: "cigarette" | "cigar" | "vape" | "pouch" | "gum"
       strength_level: "light" | "medium" | "strong" | "extra_strong"
+      subscription_tier: "free" | "premium"
       substance_type: "alcohol" | "tobacco" | "other"
     }
     CompositeTypes: {

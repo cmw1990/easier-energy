@@ -25,6 +25,7 @@ import { StretchExercise } from "@/components/exercises/StretchExercise";
 import { DeskYoga } from "@/components/exercises/DeskYoga";
 import { YogaPoses } from "@/components/exercises/YogaPoses";
 import { ExerciseAssetsGenerator } from "@/components/exercises/ExerciseAssetsGenerator";
+import { MotivationQuote } from '@/components/motivation/MotivationQuote';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -108,26 +109,33 @@ const Index = () => {
           <div className="mb-8">
             <MoodOverview />
           </div>
-          {healthConditions.weather_sensitive && (
-            <div className="mb-8">
-              <WeatherHealthInsights />
-            </div>
+          <div className="mb-8">
+            <MotivationQuote />
+          </div>
+          {healthConditions && (
+            <>
+              {healthConditions.weather_sensitive && (
+                <div className="mb-8">
+                  <WeatherHealthInsights />
+                </div>
+              )}
+              <div className="mb-8">
+                <ExerciseAssetsGenerator />
+              </div>
+              <div className="mb-8">
+                <GamesSection />
+              </div>
+              <div className="mb-8">
+                <TailoredRecommendations />
+              </div>
+              <div className="mb-8">
+                <EnergyPatternAnalysis />
+              </div>
+              <div className="mb-8">
+                <FocusExercises />
+              </div>
+            </>
           )}
-          <div className="mb-8">
-            <ExerciseAssetsGenerator />
-          </div>
-          <div className="mb-8">
-            <GamesSection />
-          </div>
-          <div className="mb-8">
-            <TailoredRecommendations />
-          </div>
-          <div className="mb-8">
-            <EnergyPatternAnalysis />
-          </div>
-          <div className="mb-8">
-            <FocusExercises />
-          </div>
         </>
       )}
 
