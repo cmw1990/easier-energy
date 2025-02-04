@@ -2408,6 +2408,7 @@ export type Database = {
         | "connect_four"
         | "tic_tac_toe"
         | "pattern_recognition"
+        | "brain_match"
       health_condition:
         | "adhd"
         | "chronic_fatigue"

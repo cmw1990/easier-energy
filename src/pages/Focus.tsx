@@ -23,6 +23,7 @@ import PatternRecognition from "@/components/games/PatternRecognition";
 import SequenceMemory from "@/components/games/SequenceMemory";
 import WordAssociation from "@/components/games/WordAssociation";
 import BrainMatch3 from "@/components/games/BrainMatch3";
+import ReactionTimeTest from "@/components/games/ReactionTimeTest";
 import ZenDrift from "@/components/games/ZenDrift";
 import { BreathingTechniques } from "@/components/breathing/BreathingTechniques";
 
@@ -96,6 +97,7 @@ const Focus = () => {
 
         <TabsContent value="quick" className="space-y-4">
           <BrainMatch3 />
+          <ReactionTimeTest />
           <ColorMatch />
           <MathSpeed />
         </TabsContent>
