@@ -15,6 +15,7 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
   const velocityRef = useRef(new THREE.Vector3());
   const angularVelocityRef = useRef(0);
   const driftFactorRef = useRef(0);
+  const trailsRef = useRef<THREE.Points>();
 
   useFrame((state, delta) => {
     if (!meshRef.current) return;
@@ -27,48 +28,63 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
     const right = keys?.right || false;
     const drift = keys?.drift || false;
 
-    // Update physics
-    const acceleration = 20;
-    const deceleration = 0.95;
-    const turnSpeed = 2.5;
-    const maxSpeed = 30;
-    const driftDecay = 0.98;
+    // Update physics with dreamy values
+    const acceleration = 15; // Reduced for smoother acceleration
+    const deceleration = 0.98; // Increased for more floating feeling
+    const turnSpeed = 2.0; // Reduced for smoother turning
+    const maxSpeed = 25; // Reduced for better control
+    const driftDecay = 0.99; // Increased for longer drifts
+    const lateralFriction = drift ? 0.95 : 0.8; // More slide when drifting
 
-    // Handle acceleration
+    // Handle acceleration with smooth ramping
     if (forward) {
-      velocityRef.current.z -= acceleration * delta;
+      velocityRef.current.z -= acceleration * delta * (1 - Math.abs(driftFactorRef.current) * 0.3);
     } else if (backward) {
-      velocityRef.current.z += acceleration * delta;
+      velocityRef.current.z += acceleration * delta * (1 - Math.abs(driftFactorRef.current) * 0.3);
     }
+    
+    // Apply natural deceleration
     velocityRef.current.z *= deceleration;
+    velocityRef.current.x *= lateralFriction;
 
-    // Clamp speed
+    // Clamp speed with smooth transition
     const currentSpeed = velocityRef.current.length();
     if (currentSpeed > maxSpeed) {
-      velocityRef.current.multiplyScalar(maxSpeed / currentSpeed);
+      const scale = maxSpeed / currentSpeed;
+      velocityRef.current.multiplyScalar(scale);
     }
 
-    // Handle turning
-    if (left) angularVelocityRef.current -= turnSpeed * delta;
-    if (right) angularVelocityRef.current += turnSpeed * delta;
+    // Handle turning with drift influence
+    if (left) {
+      angularVelocityRef.current -= turnSpeed * delta * (1 + driftFactorRef.current * 0.5);
+    }
+    if (right) {
+      angularVelocityRef.current += turnSpeed * delta * (1 + driftFactorRef.current * 0.5);
+    }
     
-    // Handle drifting
+    // Enhanced drift mechanics
     if (drift && currentSpeed > 5) {
-      driftFactorRef.current = Math.min(driftFactorRef.current + delta * 2, 1);
+      driftFactorRef.current = Math.min(driftFactorRef.current + delta * 1.5, 1);
+      
+      // Add lateral force during drift
+      const driftForce = new THREE.Vector3(
+        -Math.sin(meshRef.current.rotation.y) * currentSpeed * driftFactorRef.current * 0.8,
+        0,
+        -Math.cos(meshRef.current.rotation.y) * currentSpeed * driftFactorRef.current * 0.3
+      );
+      velocityRef.current.add(driftForce);
     } else {
       driftFactorRef.current *= driftDecay;
     }
 
-    // Apply drift effect
-    const driftForce = new THREE.Vector3(
-      -Math.sin(meshRef.current.rotation.y) * currentSpeed * driftFactorRef.current,
-      0,
-      -Math.cos(meshRef.current.rotation.y) * currentSpeed * driftFactorRef.current
+    // Update position and rotation with smooth interpolation
+    meshRef.current.position.add(
+      velocityRef.current
+        .clone()
+        .applyAxisAngle(new THREE.Vector3(0, 1, 0), meshRef.current.rotation.y)
+        .multiplyScalar(delta)
     );
-    velocityRef.current.add(driftForce);
-
-    // Update position and rotation
-    meshRef.current.position.add(velocityRef.current.clone().multiplyScalar(delta));
+    
     meshRef.current.rotation.y += angularVelocityRef.current * delta;
 
     // Apply natural decay to angular velocity
@@ -95,8 +111,29 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
           roughness={0.4}
           clearcoat={0.5}
           clearcoatRoughness={0.1}
+          emissive="#ffffff"
+          emissiveIntensity={driftFactorRef.current * 0.2}
         />
       </mesh>
+      
+      {/* Ethereal trail effect */}
+      <points ref={trailsRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={1}
+            array={new Float32Array(3)}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          size={2}
+          color="#ffffff"
+          transparent
+          opacity={0.6}
+          sizeAttenuation
+        />
+      </points>
     </group>
   );
 };
