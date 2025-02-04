@@ -1,33 +1,26 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
-  Activity,
-  Brain,
+  BarChart3,
   Moon,
-  Focus,
+  Brain,
   Wind,
   Coffee,
-  ShieldBan,
-  Utensils,
-  BarChart3,
-  Crown,
-  CircleDot,
-  Grid3X3,
-  Gamepad2,
+  Eye,
   Flower2,
   Sparkles,
   Dumbbell,
   Pill,
   Cigarette,
+  Utensils,
   Heart,
-  Eye,
 } from "lucide-react";
 
 const toolbarItems = [
   {
     to: "/dashboard",
     icon: BarChart3,
-    label: "Overview",
+    label: "Stats",
     iconClassName: "text-emerald-500",
   },
   {
@@ -39,67 +32,67 @@ const toolbarItems = [
   {
     to: "/relax",
     icon: Flower2,
-    label: "Relax",
+    label: "Zen",
     iconClassName: "text-pink-500",
   },
   {
     to: "/focus",
     icon: Brain,
-    label: "Focus",
+    label: "Mind",
     iconClassName: "text-amber-500",
   },
   {
     to: "/meditation",
     icon: Sparkles,
-    label: "Meditation",
+    label: "Peace",
     iconClassName: "text-purple-500",
   },
   {
     to: "/exercise",
     icon: Dumbbell,
-    label: "Exercise",
+    label: "Move",
     iconClassName: "text-red-500",
   },
   {
     to: "/eye-exercises",
     icon: Eye,
-    label: "Eye Care",
+    label: "Eye",
     iconClassName: "text-sky-500",
   },
   {
     to: "/breathing",
     icon: Wind,
-    label: "Breathing",
+    label: "Air",
     iconClassName: "text-teal-500",
   },
   {
     to: "/caffeine",
     icon: Coffee,
-    label: "Caffeine",
+    label: "Boost",
     iconClassName: "text-orange-500",
   },
   {
     to: "/nicotine",
     icon: Cigarette,
-    label: "Nicotine",
+    label: "Quit",
     iconClassName: "text-zinc-500",
   },
   {
     to: "/supplements",
     icon: Pill,
-    label: "Supplements",
+    label: "Pills",
     iconClassName: "text-blue-500",
   },
   {
     to: "/food",
     icon: Utensils,
-    label: "Nutrition",
+    label: "Food",
     iconClassName: "text-lime-500",
   },
   {
     to: "/sobriety",
     icon: Heart,
-    label: "Sobriety",
+    label: "Life",
     iconClassName: "text-rose-500",
   },
 ];
@@ -115,19 +108,19 @@ export const Toolbar = () => {
             key={item.to}
             to={item.to}
             className={cn(
-              "flex flex-col items-center gap-1 py-3 px-3 rounded-lg transition-all",
-              "hover:bg-accent/10 hover:scale-105",
+              "flex flex-col items-center gap-1.5 py-3 px-3 rounded-xl transition-all",
+              "hover:bg-accent/20 hover:scale-105 hover:shadow-lg",
               location.pathname === item.to
-                ? "bg-accent/15 shadow-sm"
-                : "bg-accent/5",
+                ? "bg-accent/25 shadow-md ring-1 ring-accent/10"
+                : "bg-accent/10",
             )}
           >
             <div
               className={cn(
-                "p-2 rounded-lg transition-colors",
+                "p-2.5 rounded-xl transition-colors",
                 location.pathname === item.to
-                  ? "bg-background shadow-sm"
-                  : "bg-background/50",
+                  ? "bg-background shadow-md ring-1 ring-accent/20"
+                  : "bg-background/80",
               )}
             >
               <item.icon
@@ -136,13 +129,13 @@ export const Toolbar = () => {
                   item.iconClassName,
                   location.pathname === item.to
                     ? "opacity-100"
-                    : "opacity-70"
+                    : "opacity-80"
                 )}
               />
             </div>
             <span
               className={cn(
-                "text-xs font-medium transition-colors",
+                "text-xs font-medium transition-colors tracking-wide",
                 location.pathname === item.to
                   ? "text-foreground"
                   : "text-muted-foreground"
