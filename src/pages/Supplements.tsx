@@ -29,29 +29,37 @@ const Supplements = () => {
   });
 
   const logSupplementMutation = useMutation({
-    mutationFn: async (values: { 
-      supplement_name: string; 
-      dosage: string; 
-      effectiveness_rating: number;
-      energy_impact: number;
-      stress_impact: number;
-      focus_impact: number;
-      mood_impact: number;
-      sleep_impact: number;
-      side_effects?: string;
-      notes?: string;
+    mutationFn: async (values: {
+      supplement_name: string;
+      dosage: string;
+      form?: string;
       brand?: string;
+      cost?: number;
+      source?: string;
       batch_number?: string;
       expiration_date?: string;
+      storage_conditions?: string;
+      purchase_location?: string;
+      verified_purchase?: boolean;
+      effectiveness_rating?: number;
+      energy_impact?: number;
+      stress_impact?: number;
+      focus_impact?: number;
+      mood_impact?: number;
+      sleep_impact?: number;
+      side_effects?: string;
       timing_notes?: string;
       interaction_notes?: string;
+      notes?: string;
+      reminder_enabled?: boolean;
+      reminder_time?: string;
+      time_taken: string;
     }) => {
       const { error } = await supabase
         .from('supplement_logs')
         .insert({
           user_id: session?.user?.id,
           ...values,
-          time_taken: new Date().toISOString(),
         });
 
       if (error) throw error;

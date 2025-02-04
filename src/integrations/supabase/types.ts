@@ -1547,6 +1547,56 @@ export type Database = {
         }
         Relationships: []
       }
+      supplement_categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      supplement_category_mappings: {
+        Row: {
+          category_id: string
+          created_at: string | null
+          supplement_name: string
+          user_id: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string | null
+          supplement_name: string
+          user_id: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string | null
+          supplement_name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplement_category_mappings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "supplement_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       supplement_correlations: {
         Row: {
           analysis_period_days: number | null
@@ -1584,65 +1634,95 @@ export type Database = {
         Row: {
           batch_number: string | null
           brand: string | null
+          contraindications: string | null
+          cost: number | null
           created_at: string | null
           dosage: string
           effectiveness_rating: number | null
           energy_impact: number | null
           expiration_date: string | null
           focus_impact: number | null
+          form: string | null
           id: string
           interaction_notes: string | null
           mood_impact: number | null
           notes: string | null
+          purchase_location: string | null
+          recommended_timing: string[] | null
+          reminder_enabled: boolean | null
+          reminder_time: string | null
           side_effects: string | null
           sleep_impact: number | null
+          source: string | null
+          storage_conditions: string | null
           stress_impact: number | null
           supplement_name: string
           time_taken: string
           timing_notes: string | null
           user_id: string | null
+          verified_purchase: boolean | null
         }
         Insert: {
           batch_number?: string | null
           brand?: string | null
+          contraindications?: string | null
+          cost?: number | null
           created_at?: string | null
           dosage: string
           effectiveness_rating?: number | null
           energy_impact?: number | null
           expiration_date?: string | null
           focus_impact?: number | null
+          form?: string | null
           id?: string
           interaction_notes?: string | null
           mood_impact?: number | null
           notes?: string | null
+          purchase_location?: string | null
+          recommended_timing?: string[] | null
+          reminder_enabled?: boolean | null
+          reminder_time?: string | null
           side_effects?: string | null
           sleep_impact?: number | null
+          source?: string | null
+          storage_conditions?: string | null
           stress_impact?: number | null
           supplement_name: string
           time_taken: string
           timing_notes?: string | null
           user_id?: string | null
+          verified_purchase?: boolean | null
         }
         Update: {
           batch_number?: string | null
           brand?: string | null
+          contraindications?: string | null
+          cost?: number | null
           created_at?: string | null
           dosage?: string
           effectiveness_rating?: number | null
           energy_impact?: number | null
           expiration_date?: string | null
           focus_impact?: number | null
+          form?: string | null
           id?: string
           interaction_notes?: string | null
           mood_impact?: number | null
           notes?: string | null
+          purchase_location?: string | null
+          recommended_timing?: string[] | null
+          reminder_enabled?: boolean | null
+          reminder_time?: string | null
           side_effects?: string | null
           sleep_impact?: number | null
+          source?: string | null
+          storage_conditions?: string | null
           stress_impact?: number | null
           supplement_name?: string
           time_taken?: string
           timing_notes?: string | null
           user_id?: string | null
+          verified_purchase?: boolean | null
         }
         Relationships: []
       }

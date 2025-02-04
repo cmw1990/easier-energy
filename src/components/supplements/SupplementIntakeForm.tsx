@@ -1,18 +1,33 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import { Card } from "@/components/ui/card";
+import { BasicSupplementInfo } from "./form/BasicSupplementInfo";
+import { ImpactRatings } from "./form/ImpactRatings";
+import { AdditionalDetails } from "./form/AdditionalDetails";
+import { ReminderSettings } from "./form/ReminderSettings";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
-export function SupplementIntakeForm({ onSubmit }: { onSubmit: (values: any) => void }) {
+export function SupplementIntakeForm({
+  onSubmit,
+}: {
+  onSubmit: (values: any) => void;
+}) {
   const [supplementName, setSupplementName] = useState("");
   const [dosage, setDosage] = useState("");
+  const [form, setForm] = useState("pill");
   const [brand, setBrand] = useState("");
+  const [cost, setCost] = useState("");
+  const [source, setSource] = useState("");
   const [batchNumber, setBatchNumber] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
+  const [storageConditions, setStorageConditions] = useState("");
+  const [purchaseLocation, setPurchaseLocation] = useState("");
+  const [verifiedPurchase, setVerifiedPurchase] = useState(false);
   const [effectivenessRating, setEffectivenessRating] = useState(5);
   const [energyImpact, setEnergyImpact] = useState(5);
   const [stressImpact, setStressImpact] = useState(5);
@@ -23,6 +38,9 @@ export function SupplementIntakeForm({ onSubmit }: { onSubmit: (values: any) => 
   const [timingNotes, setTimingNotes] = useState("");
   const [interactionNotes, setInteractionNotes] = useState("");
   const [notes, setNotes] = useState("");
+  const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [reminderTime, setReminderTime] = useState("09:00");
+
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -39,9 +57,15 @@ export function SupplementIntakeForm({ onSubmit }: { onSubmit: (values: any) => 
     onSubmit({
       supplement_name: supplementName,
       dosage,
+      form,
       brand,
+      cost: cost ? parseFloat(cost) : null,
+      source,
       batch_number: batchNumber,
       expiration_date: expirationDate,
+      storage_conditions: storageConditions,
+      purchase_location: purchaseLocation,
+      verified_purchase: verifiedPurchase,
       effectiveness_rating: effectivenessRating,
       energy_impact: energyImpact,
       stress_impact: stressImpact,
@@ -52,15 +76,23 @@ export function SupplementIntakeForm({ onSubmit }: { onSubmit: (values: any) => 
       timing_notes: timingNotes,
       interaction_notes: interactionNotes,
       notes,
+      reminder_enabled: reminderEnabled,
+      reminder_time: reminderTime,
       time_taken: new Date().toISOString(),
     });
 
     // Reset form
     setSupplementName("");
     setDosage("");
+    setForm("pill");
     setBrand("");
+    setCost("");
+    setSource("");
     setBatchNumber("");
     setExpirationDate("");
+    setStorageConditions("");
+    setPurchaseLocation("");
+    setVerifiedPurchase(false);
     setEffectivenessRating(5);
     setEnergyImpact(5);
     setStressImpact(5);
@@ -71,155 +103,90 @@ export function SupplementIntakeForm({ onSubmit }: { onSubmit: (values: any) => 
     setTimingNotes("");
     setInteractionNotes("");
     setNotes("");
+    setReminderEnabled(false);
+    setReminderTime("09:00");
   };
 
-  const ImpactSlider = ({ value, onChange, label }: { value: number; onChange: (value: number) => void; label: string }) => (
-    <div className="space-y-2">
-      <div className="flex justify-between">
-        <Label>{label}</Label>
-        <span className="text-sm text-muted-foreground">{value}/10</span>
-      </div>
-      <Slider
-        value={[value]}
-        min={1}
-        max={10}
-        step={1}
-        onValueChange={(values) => onChange(values[0])}
-      />
-    </div>
-  );
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="supplementName">Supplement Name *</Label>
-          <Input
-            id="supplementName"
-            value={supplementName}
-            onChange={(e) => setSupplementName(e.target.value)}
-            placeholder="Enter supplement name"
-            required
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <Tabs defaultValue="basic" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="basic">Basic Info</TabsTrigger>
+          <TabsTrigger value="impact">Impact</TabsTrigger>
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="reminder">Reminder</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="basic" className="mt-4">
+          <BasicSupplementInfo
+            supplementName={supplementName}
+            setSupplementName={setSupplementName}
+            dosage={dosage}
+            setDosage={setDosage}
+            form={form}
+            setForm={setForm}
+            brand={brand}
+            setBrand={setBrand}
+            cost={cost}
+            setCost={setCost}
+            source={source}
+            setSource={setSource}
           />
-        </div>
+        </TabsContent>
 
-        <div className="space-y-2">
-          <Label htmlFor="dosage">Dosage *</Label>
-          <Input
-            id="dosage"
-            value={dosage}
-            onChange={(e) => setDosage(e.target.value)}
-            placeholder="e.g., 500mg"
-            required
+        <TabsContent value="impact" className="mt-4">
+          <ImpactRatings
+            effectivenessRating={effectivenessRating}
+            setEffectivenessRating={setEffectivenessRating}
+            energyImpact={energyImpact}
+            setEnergyImpact={setEnergyImpact}
+            stressImpact={stressImpact}
+            setStressImpact={setStressImpact}
+            focusImpact={focusImpact}
+            setFocusImpact={setFocusImpact}
+            moodImpact={moodImpact}
+            setMoodImpact={setMoodImpact}
+            sleepImpact={sleepImpact}
+            setSleepImpact={setSleepImpact}
           />
-        </div>
+        </TabsContent>
 
-        <div className="space-y-2">
-          <Label htmlFor="brand">Brand</Label>
-          <Input
-            id="brand"
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
-            placeholder="Enter brand name"
+        <TabsContent value="details" className="mt-4">
+          <AdditionalDetails
+            batchNumber={batchNumber}
+            setBatchNumber={setBatchNumber}
+            expirationDate={expirationDate}
+            setExpirationDate={setExpirationDate}
+            storageConditions={storageConditions}
+            setStorageConditions={setStorageConditions}
+            purchaseLocation={purchaseLocation}
+            setPurchaseLocation={setPurchaseLocation}
+            verifiedPurchase={verifiedPurchase}
+            setVerifiedPurchase={setVerifiedPurchase}
+            sideEffects={sideEffects}
+            setSideEffects={setSideEffects}
+            timingNotes={timingNotes}
+            setTimingNotes={setTimingNotes}
+            interactionNotes={interactionNotes}
+            setInteractionNotes={setInteractionNotes}
+            notes={notes}
+            setNotes={setNotes}
           />
-        </div>
+        </TabsContent>
 
-        <div className="space-y-2">
-          <Label htmlFor="batchNumber">Batch Number</Label>
-          <Input
-            id="batchNumber"
-            value={batchNumber}
-            onChange={(e) => setBatchNumber(e.target.value)}
-            placeholder="Enter batch number"
+        <TabsContent value="reminder" className="mt-4">
+          <ReminderSettings
+            reminderEnabled={reminderEnabled}
+            setReminderEnabled={setReminderEnabled}
+            reminderTime={reminderTime}
+            setReminderTime={setReminderTime}
           />
-        </div>
+        </TabsContent>
+      </Tabs>
 
-        <div className="space-y-2">
-          <Label htmlFor="expirationDate">Expiration Date</Label>
-          <Input
-            id="expirationDate"
-            type="date"
-            value={expirationDate}
-            onChange={(e) => setExpirationDate(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <Card className="p-4 space-y-4">
-        <h3 className="font-medium">Impact Ratings</h3>
-        <ImpactSlider
-          label="Overall Effectiveness"
-          value={effectivenessRating}
-          onChange={setEffectivenessRating}
-        />
-        <ImpactSlider
-          label="Energy Impact"
-          value={energyImpact}
-          onChange={setEnergyImpact}
-        />
-        <ImpactSlider
-          label="Stress Impact"
-          value={stressImpact}
-          onChange={setStressImpact}
-        />
-        <ImpactSlider
-          label="Focus Impact"
-          value={focusImpact}
-          onChange={setFocusImpact}
-        />
-        <ImpactSlider
-          label="Mood Impact"
-          value={moodImpact}
-          onChange={setMoodImpact}
-        />
-        <ImpactSlider
-          label="Sleep Impact"
-          value={sleepImpact}
-          onChange={setSleepImpact}
-        />
-      </Card>
-
-      <div className="space-y-2">
-        <Label htmlFor="sideEffects">Side Effects</Label>
-        <Input
-          id="sideEffects"
-          value={sideEffects}
-          onChange={(e) => setSideEffects(e.target.value)}
-          placeholder="Any side effects?"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="timingNotes">Timing Notes</Label>
-        <Textarea
-          id="timingNotes"
-          value={timingNotes}
-          onChange={(e) => setTimingNotes(e.target.value)}
-          placeholder="When did you take it? With food?"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="interactionNotes">Interaction Notes</Label>
-        <Textarea
-          id="interactionNotes"
-          value={interactionNotes}
-          onChange={(e) => setInteractionNotes(e.target.value)}
-          placeholder="Any interactions with other supplements or medications?"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="notes">Additional Notes</Label>
-        <Textarea
-          id="notes"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Additional observations or notes"
-        />
-      </div>
-
-      <Button type="submit" className="w-full">Log Supplement</Button>
+      <Button type="submit" className="w-full">
+        Log Supplement
+      </Button>
     </form>
   );
 }
