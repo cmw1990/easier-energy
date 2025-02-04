@@ -24,6 +24,7 @@ const ZenDrift = () => {
   const [isLoadingAssets, setIsLoadingAssets] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [assets, setAssets] = useState<GameAsset[]>([]);
+  const [hasError, setHasError] = useState(false);
   const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -31,6 +32,7 @@ const ZenDrift = () => {
     try {
       setIsLoadingAssets(true);
       setLoadingProgress(0);
+      setHasError(false);
       const newAssets: GameAsset[] = [];
       let totalAssets = 24;
       let loadedAssets = 0;
@@ -66,11 +68,13 @@ const ZenDrift = () => {
             }
           } catch (error) {
             console.error(`Error loading ${type}_${i}:`, error);
+            setHasError(true);
           }
         }
       }
 
       if (newAssets.length === 0) {
+        setHasError(true);
         throw new Error("No assets were loaded successfully");
       }
 
@@ -85,6 +89,7 @@ const ZenDrift = () => {
       }
     } catch (error) {
       console.error('Error loading assets:', error);
+      setHasError(true);
       toast({
         title: "Error Loading Assets",
         description: "Please try generating the assets first using the Generate Assets button.",
@@ -98,6 +103,16 @@ const ZenDrift = () => {
   useEffect(() => {
     loadAssets();
   }, []);
+
+  const handleError = (error: Error) => {
+    console.error('Three.js Error:', error);
+    setHasError(true);
+    toast({
+      title: "Rendering Error",
+      description: "There was an error rendering the game. Please try refreshing the page.",
+      variant: "destructive",
+    });
+  };
 
   return (
     <Card className="p-6 bg-gradient-to-r from-primary/5 to-accent/5 border-2 border-primary/20">
@@ -136,89 +151,105 @@ const ZenDrift = () => {
         <ZenDriftAssetsGenerator />
         
         <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-primary/20 shadow-lg">
-          {isLoadingAssets && (
+          {(isLoadingAssets || hasError) && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
-              <div className="text-primary mb-2">Loading assets... {loadingProgress}%</div>
-              <div className="w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary transition-all duration-300"
-                  style={{ width: `${loadingProgress}%` }}
-                />
-              </div>
+              {isLoadingAssets ? (
+                <>
+                  <div className="text-primary mb-2">Loading assets... {loadingProgress}%</div>
+                  <div className="w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-primary transition-all duration-300"
+                      style={{ width: `${loadingProgress}%` }}
+                    />
+                  </div>
+                </>
+              ) : hasError && (
+                <div className="text-center p-4">
+                  <p className="text-destructive mb-2">Failed to load game assets</p>
+                  <Button 
+                    variant="outline"
+                    onClick={() => loadAssets()}
+                  >
+                    Retry Loading
+                  </Button>
+                </div>
+              )}
             </div>
           )}
           
-          {!isLoadingAssets && (
-            <Suspense fallback={null}>
-              <Canvas
-                ref={canvasRef}
-                shadows
-                gl={{ 
-                  antialias: true,
-                  alpha: true,
-                  stencil: true,
-                  depth: true,
-                  powerPreference: "high-performance"
-                }}
-                camera={{ position: [0, 15, 20], fov: 75 }}
-                style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
-                dpr={[1, 2]}
-              >
-                <PerspectiveCamera makeDefault position={[0, 15, 20]} />
-                
-                <ambientLight intensity={0.5} />
-                <directionalLight
-                  castShadow
-                  position={[10, 10, 10]}
-                  intensity={1.5}
-                  shadow-mapSize={[2048, 2048]}
-                />
-                
-                <CarPhysics
-                  position={[0, 0, 0]}
-                  rotation={[0, 0, 0]}
-                  scale={1}
-                />
-
-                <mesh
-                  receiveShadow
-                  rotation={[-Math.PI / 2, 0, 0]}
-                  position={[0, -0.5, 0]}
+          {!isLoadingAssets && !hasError && (
+            <ErrorBoundary onError={handleError}>
+              <Suspense fallback={null}>
+                <Canvas
+                  ref={canvasRef}
+                  shadows
+                  gl={{ 
+                    antialias: true,
+                    alpha: true,
+                    stencil: true,
+                    depth: true,
+                    powerPreference: "high-performance"
+                  }}
+                  camera={{ position: [0, 15, 20], fov: 75 }}
+                  style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
+                  dpr={[1, 2]}
                 >
-                  <planeGeometry args={[100, 100]} />
-                  <meshStandardMaterial
-                    color="#a8e6cf"
-                    metalness={0.1}
-                    roughness={0.9}
+                  <PerspectiveCamera makeDefault position={[0, 15, 20]} />
+                  
+                  <ambientLight intensity={0.5} />
+                  <directionalLight
+                    castShadow
+                    position={[10, 10, 10]}
+                    intensity={1.5}
+                    shadow-mapSize={[2048, 2048]}
                   />
-                </mesh>
+                  
+                  <CarPhysics
+                    position={[0, 0, 0]}
+                    rotation={[0, 0, 0]}
+                    scale={1}
+                  />
 
-                <Environment preset="sunset" />
-                
-                {!isPaused && (
-                  <EffectComposer>
-                    <DepthOfField
-                      focusDistance={0}
-                      focalLength={0.02}
-                      bokehScale={2}
-                      height={480}
+                  <mesh
+                    receiveShadow
+                    rotation={[-Math.PI / 2, 0, 0]}
+                    position={[0, -0.5, 0]}
+                  >
+                    <planeGeometry args={[100, 100]} />
+                    <meshStandardMaterial
+                      color="#a8e6cf"
+                      metalness={0.1}
+                      roughness={0.9}
                     />
-                    <Bloom
-                      intensity={1.5}
-                      luminanceThreshold={0.5}
-                      luminanceSmoothing={0.9}
-                    />
-                  </EffectComposer>
-                )}
+                  </mesh>
 
-                <OrbitControls
-                  enableZoom={false}
-                  enablePan={false}
-                  maxPolarAngle={Math.PI / 2.5}
-                  minPolarAngle={Math.PI / 3}
-                />
-              </Canvas>
-            </Suspense>
+                  <Environment preset="sunset" />
+                  
+                  {!isPaused && (
+                    <EffectComposer>
+                      <DepthOfField
+                        focusDistance={0}
+                        focalLength={0.02}
+                        bokehScale={2}
+                        height={480}
+                      />
+                      <Bloom
+                        intensity={1.5}
+                        luminanceThreshold={0.5}
+                        luminanceSmoothing={0.9}
+                      />
+                    </EffectComposer>
+                  )}
+
+                  <OrbitControls
+                    enableZoom={false}
+                    enablePan={false}
+                    maxPolarAngle={Math.PI / 2.5}
+                    minPolarAngle={Math.PI / 3}
+                  />
+                </Canvas>
+              </Suspense>
+            </ErrorBoundary>
           )}
         </div>
 
