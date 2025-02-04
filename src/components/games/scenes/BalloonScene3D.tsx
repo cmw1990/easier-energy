@@ -96,7 +96,6 @@ function SkyEnvironment() {
           ]}
           opacity={0.5}
           speed={0.1}
-          width={10}
         />
       ))}
     </>

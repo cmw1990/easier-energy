@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, useGLTF, Float, MeshDistortMaterial } from '@react-three/drei';
-import { EffectComposer, Bloom, DepthOfField, Underwater } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
 function Pufferfish({ breathPhase }: { breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest' }) {
@@ -132,7 +132,6 @@ export function PufferfishScene3D({
           height={480}
         />
         <Bloom luminanceThreshold={0.5} intensity={2} />
-        <Underwater />
       </EffectComposer>
       <OrbitControls
         enableZoom={false}
