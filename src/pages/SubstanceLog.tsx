@@ -16,11 +16,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function SubstanceLog() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { session } = useAuth();
   const [formData, setFormData] = useState({
     substance_type: "",
     quantity: "",
@@ -49,7 +51,11 @@ export default function SubstanceLog() {
     mutationFn: async (data: typeof formData) => {
       const { error } = await supabase
         .from('substance_logs')
-        .insert([data]);
+        .insert([{
+          ...data,
+          quantity: Number(data.quantity),
+          user_id: session?.user.id
+        }]);
       
       if (error) throw error;
     },
@@ -81,6 +87,14 @@ export default function SubstanceLog() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!session?.user.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to create a log.",
+        variant: "destructive",
+      });
+      return;
+    }
     createLog.mutate(formData);
   };
 
