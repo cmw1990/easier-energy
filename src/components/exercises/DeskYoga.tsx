@@ -106,9 +106,15 @@ export const DeskYoga = () => {
           {poses.map((pose, index) => (
             <div
               key={index}
-              className="flex items-start space-x-4 p-4 rounded-lg bg-muted/50"
+              className={`flex items-start space-x-4 p-4 rounded-lg transition-all duration-300 ${
+                activePose === index 
+                  ? "bg-primary/10 shadow-lg scale-[1.02]" 
+                  : "bg-muted/50 hover:bg-muted/70"
+              }`}
             >
-              <Activity className="h-5 w-5 text-primary mt-1" />
+              <Activity className={`h-5 w-5 mt-1 transition-all duration-300 ${
+                activePose === index ? "text-primary animate-pulse" : "text-primary"
+              }`} />
               <div className="flex-1">
                 <h3 className="font-medium">{pose.title}</h3>
                 <p className="text-sm text-muted-foreground">
@@ -121,8 +127,8 @@ export const DeskYoga = () => {
                   </span>
                 </div>
                 {activePose === index && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <Timer className="h-4 w-4" />
+                  <div className="mt-2 flex items-center gap-2 animate-fade-in">
+                    <Timer className="h-4 w-4 animate-pulse" />
                     <span className="text-sm font-medium">
                       {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
                     </span>
@@ -133,6 +139,11 @@ export const DeskYoga = () => {
                 variant={activePose === index ? "destructive" : "default"}
                 onClick={() => activePose === index ? completePose(index) : startPose(index)}
                 disabled={activePose !== null && activePose !== index}
+                className={`transition-all duration-300 ${
+                  activePose === index 
+                    ? "animate-pulse" 
+                    : "hover:scale-105"
+                }`}
               >
                 {activePose === index ? "Complete" : "Start"}
               </Button>

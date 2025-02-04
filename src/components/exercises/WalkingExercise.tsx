@@ -76,9 +76,11 @@ export const WalkingExercise = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="flex justify-between items-center p-4 rounded-lg bg-muted/50">
+          <div className={`flex justify-between items-center p-4 rounded-lg transition-all duration-300 ${
+            isTracking ? "bg-primary/10 shadow-lg" : "bg-muted/50"
+          }`}>
             <div className="flex items-center gap-2">
-              <Timer className="h-5 w-5 text-primary" />
+              <Timer className={`h-5 w-5 text-primary ${isTracking ? "animate-pulse" : ""}`} />
               <span className="font-medium">
                 {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
               </span>
@@ -86,6 +88,9 @@ export const WalkingExercise = () => {
             <Button
               onClick={isTracking ? stopTracking : startTracking}
               variant={isTracking ? "destructive" : "default"}
+              className={`transition-all duration-300 ${
+                isTracking ? "animate-pulse" : "hover:scale-105"
+              }`}
             >
               {isTracking ? "Stop" : "Start"} Walking
             </Button>

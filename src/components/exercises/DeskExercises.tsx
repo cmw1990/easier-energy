@@ -58,7 +58,6 @@ export const DeskExercises = () => {
       setDuration(prev => prev + 1);
     }, 1000);
 
-    // Store the interval ID for cleanup
     return () => clearInterval(interval);
   };
 
@@ -107,9 +106,15 @@ export const DeskExercises = () => {
           {exercises.map((exercise, index) => (
             <div
               key={index}
-              className="flex items-start space-x-4 p-4 rounded-lg bg-muted/50"
+              className={`flex items-start space-x-4 p-4 rounded-lg transition-all duration-300 ${
+                activeExercise === index 
+                  ? "bg-primary/10 shadow-lg scale-[1.02]" 
+                  : "bg-muted/50 hover:bg-muted/70"
+              }`}
             >
-              <exercise.icon className="h-5 w-5 text-primary mt-1" />
+              <exercise.icon className={`h-5 w-5 mt-1 transition-all duration-300 ${
+                activeExercise === index ? "text-primary animate-pulse" : "text-primary"
+              }`} />
               <div className="flex-1">
                 <h3 className="font-medium">{exercise.title}</h3>
                 <p className="text-sm text-muted-foreground">
@@ -117,8 +122,8 @@ export const DeskExercises = () => {
                 </p>
                 <p className="text-sm text-primary mt-1">{exercise.duration}</p>
                 {activeExercise === index && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <Timer className="h-4 w-4" />
+                  <div className="mt-2 flex items-center gap-2 animate-fade-in">
+                    <Timer className="h-4 w-4 animate-pulse" />
                     <span className="text-sm font-medium">
                       {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
                     </span>
@@ -129,6 +134,11 @@ export const DeskExercises = () => {
                 variant={activeExercise === index ? "destructive" : "default"}
                 onClick={() => activeExercise === index ? completeExercise(index) : startExercise(index)}
                 disabled={activeExercise !== null && activeExercise !== index}
+                className={`transition-all duration-300 ${
+                  activeExercise === index 
+                    ? "animate-pulse" 
+                    : "hover:scale-105"
+                }`}
               >
                 {activeExercise === index ? "Complete" : "Start"}
               </Button>
