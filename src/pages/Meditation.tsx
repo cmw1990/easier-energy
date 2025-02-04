@@ -13,7 +13,7 @@ const Meditation = () => {
   const [activeSession, setActiveSession] = useState<string | null>(null);
   const [breathCount, setBreathCount] = useState(0);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [generatingImageId, setGeneratingImageId] = useState<string | null>(null);
 
   const { data: sessions, isLoading, refetch } = useQuery({
     queryKey: ['meditation-sessions'],
@@ -83,6 +83,7 @@ const Meditation = () => {
         title: "Background Generated",
         description: "New meditation background has been created and saved.",
       });
+      setGeneratingImageId(null);
     },
     onError: (error) => {
       console.error('Background generation error:', error);
@@ -91,6 +92,7 @@ const Meditation = () => {
         description: "Unable to generate meditation background. Please try again.",
         variant: "destructive",
       });
+      setGeneratingImageId(null);
     },
   });
 
@@ -105,12 +107,12 @@ const Meditation = () => {
   };
 
   const handleGenerateBackground = async (sessionId: string) => {
-    if (!isGeneratingImage) {
-      setIsGeneratingImage(true);
+    if (!generatingImageId) {
+      setGeneratingImageId(sessionId);
       try {
         await generateBackgroundMutation.mutateAsync(sessionId);
-      } finally {
-        setIsGeneratingImage(false);
+      } catch (error) {
+        setGeneratingImageId(null);
       }
     }
   };
@@ -274,9 +276,9 @@ const Meditation = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleGenerateBackground(session.id)}
-                          disabled={isGeneratingImage}
+                          disabled={generatingImageId === session.id}
                         >
-                          {isGeneratingImage ? (
+                          {generatingImageId === session.id ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
                             <Image className="h-4 w-4" />
