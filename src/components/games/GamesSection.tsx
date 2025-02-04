@@ -88,6 +88,11 @@ const GamesSection = () => {
       title: 'Speed Typing',
       description: 'Test your typing speed and accuracy',
       path: '/games/speed-typing'
+    },
+    {
+      title: 'Dual N-Back',
+      description: 'Advanced memory training with visual and audio',
+      path: '/games/dual-n-back'
     }
   ];
 

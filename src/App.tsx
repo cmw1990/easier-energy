@@ -1,73 +1,44 @@
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/components/AuthProvider";
-import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import Layout from "@/components/Layout";
-import Index from "@/pages/Index";
-import Auth from "@/pages/Auth";
-import Dashboard from "@/pages/Dashboard";
-import Sleep from "@/pages/Sleep";
-import SleepTrack from "@/pages/SleepTrack";
-import Focus from "@/pages/Focus";
-import Relax from "@/pages/Relax";
-import Breathing from "@/pages/Breathing";
-import Caffeine from "@/pages/Caffeine";
-import Nicotine from "@/pages/Nicotine";
-import Supplements from "@/pages/Supplements";
-import DistractionBlocker from "@/pages/DistractionBlocker";
-import Food from "@/pages/Food";
-import Meditation from "@/pages/Meditation";
-import Exercise from "@/pages/Exercise";
-import NotFound from "@/pages/NotFound";
-import EyeExercises from "@/pages/EyeExercises";
-import Motivation from "@/pages/Motivation";
-import LogicPuzzles from "@/components/games/LogicPuzzles";
-import Sudoku from "@/components/games/Sudoku";
-import BrainMatch3 from "@/components/games/BrainMatch3";
-import NumberMemoryGame from "@/components/games/number-memory/NumberMemoryGame";
-import { PatternRecognitionGame } from "@/components/games/pattern-recognition/PatternRecognitionGame";
-import { NBackGame } from "@/components/games/n-back/NBackGame";
-import SpeedTyping from "@/components/games/SpeedTyping";
+import NotFound from "@/components/NotFound";
+import DualNBackGame from "@/components/games/dual-n-back/DualNBackGame";
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <AuthProvider>
+      <AuthProvider>
+        <ThemeProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route element={<Layout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/motivation" element={<Motivation />} />
-              <Route path="/sleep" element={<Sleep />} />
-              <Route path="/sleep/track" element={<SleepTrack />} />
-              <Route path="/relax" element={<Relax />} />
-              <Route path="/focus" element={<Focus />} />
-              <Route path="/breathing" element={<Breathing />} />
-              <Route path="/meditation" element={<Meditation />} />
-              <Route path="/exercise" element={<Exercise />} />
-              <Route path="/eye-exercises" element={<EyeExercises />} />
-              <Route path="/caffeine" element={<Caffeine />} />
-              <Route path="/nicotine" element={<Nicotine />} />
-              <Route path="/supplements" element={<Supplements />} />
-              <Route path="/food" element={<Food />} />
-              <Route path="/distraction-blocker" element={<DistractionBlocker />} />
-              <Route path="/games/logic-puzzles" element={<LogicPuzzles />} />
-              <Route path="/games/sudoku" element={<Sudoku />} />
-              <Route path="/games/brain-match-3" element={<BrainMatch3 />} />
-              <Route path="/games/number-memory" element={<NumberMemoryGame />} />
+            <Route path="/" element={<Layout />}>
+              <Route path="/games/chess" element={<ChessGame />} />
+              <Route path="/games/go" element={<GoGame />} />
+              <Route path="/games/checkers" element={<CheckersGame />} />
+              <Route path="/games/reversi" element={<ReversiGame />} />
+              <Route path="/games/xiangqi" element={<XiangqiGame />} />
+              <Route path="/games/shogi" element={<ShogiGame />} />
+              <Route path="/games/gomoku" element={<GomokuGame />} />
+              <Route path="/games/connect-four" element={<ConnectFourGame />} />
+              <Route path="/games/tic-tac-toe" element={<TicTacToeGame />} />
               <Route path="/games/pattern-recognition" element={<PatternRecognitionGame />} />
+              <Route path="/games/brain-match" element={<BrainMatchGame />} />
               <Route path="/games/n-back" element={<NBackGame />} />
-              <Route path="/games/speed-typing" element={<SpeedTyping />} />
+              <Route path="/games/stroop-test" element={<StroopTestGame />} />
+              <Route path="/games/digit-span" element={<DigitSpanGame />} />
+              <Route path="/games/mental-rotation" element={<MentalRotationGame />} />
+              <Route path="/games/word-pairs" element={<WordPairsGame />} />
+              <Route path="/games/speed-typing" element={<SpeedTypingGame />} />
+              <Route path="/games/dual-n-back" element={<DualNBackGame />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <Toaster />
-        </AuthProvider>
-      </Router>
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
