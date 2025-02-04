@@ -68,6 +68,23 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-5px)" },
         },
+        "exercise-bounce": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-20px)" },
+        },
+        "exercise-rotate": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "exercise-stretch": {
+          "0%": { transform: "scaleY(1)" },
+          "50%": { transform: "scaleY(1.2)" },
+          "100%": { transform: "scaleY(1)" },
+        },
+        "exercise-pulse": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.1)" },
+        },
       },
       animation: {
         breathe: "breathe 4s ease-in-out infinite",
@@ -75,6 +92,10 @@ export default {
         pulse: "pulse 2s ease-in-out infinite",
         shimmer: "shimmer 2s linear infinite",
         bounce: "bounce 1s ease-in-out infinite",
+        "exercise-bounce": "exercise-bounce 2s ease-in-out infinite",
+        "exercise-rotate": "exercise-rotate 3s linear infinite",
+        "exercise-stretch": "exercise-stretch 2s ease-in-out infinite",
+        "exercise-pulse": "exercise-pulse 1.5s ease-in-out infinite",
       },
     },
   },

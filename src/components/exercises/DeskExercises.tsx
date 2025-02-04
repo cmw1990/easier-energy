@@ -5,6 +5,7 @@ import { Dumbbell, Activity, Timer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
+import { AnimatedExerciseDisplay } from "./AnimatedExerciseDisplay";
 
 export const DeskExercises = () => {
   const [activeExercise, setActiveExercise] = useState<number | null>(null);
@@ -112,9 +113,14 @@ export const DeskExercises = () => {
                   : "bg-muted/50 hover:bg-muted/70 hover:scale-[1.02]"
               }`}
             >
-              <exercise.icon className={`h-5 w-5 mt-1 transition-all duration-300 ${
-                activeExercise === index ? "text-primary animate-pulse" : "text-primary"
-              }`} />
+              <div className="w-32 h-32 flex-shrink-0">
+                <AnimatedExerciseDisplay
+                  imageUrl={`/exercise-assets/${exercise.title.toLowerCase().replace(/\s+/g, '-')}.png`}
+                  exerciseType={exercise.type || 'stretch'}
+                  animationType={activeExercise === index ? '3d' : 'css'}
+                />
+              </div>
+              
               <div className="flex-1">
                 <h3 className="font-medium">{exercise.title}</h3>
                 <p className="text-sm text-muted-foreground">
