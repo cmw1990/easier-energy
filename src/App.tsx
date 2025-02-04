@@ -6,6 +6,23 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import Layout from "@/components/Layout";
 import NotFound from "@/components/NotFound";
 import DualNBackGame from "@/components/games/dual-n-back/DualNBackGame";
+import ChessGame from "@/components/games/chess/ChessGame";
+import GoGame from "@/components/games/go/GoGame";
+import CheckersGame from "@/components/games/checkers/CheckersGame";
+import ReversiGame from "@/components/games/reversi/ReversiGame";
+import XiangqiGame from "@/components/games/xiangqi/XiangqiGame";
+import ShogiGame from "@/components/games/shogi/ShogiGame";
+import GomokuGame from "@/components/games/gomoku/GomokuGame";
+import ConnectFourGame from "@/components/games/connect-four/ConnectFourGame";
+import TicTacToeGame from "@/components/games/tic-tac-toe/TicTacToeGame";
+import PatternRecognitionGame from "@/components/games/pattern-recognition/PatternRecognitionGame";
+import BrainMatchGame from "@/components/games/brain-match/BrainMatchGame";
+import NBackGame from "@/components/games/n-back/NBackGame";
+import StroopTestGame from "@/components/games/stroop-test/StroopTestGame";
+import DigitSpanGame from "@/components/games/digit-span/DigitSpanGame";
+import MentalRotationGame from "@/components/games/mental-rotation/MentalRotationGame";
+import WordPairsGame from "@/components/games/word-pairs/WordPairsGame";
+import SpeedTypingGame from "@/components/games/speed-typing/SpeedTypingGame";
 
 const queryClient = new QueryClient();
 

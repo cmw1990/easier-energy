@@ -1211,6 +1211,8 @@ export type Database = {
           avatar_url: string | null
           created_at: string | null
           id: string
+          notification_settings: Json | null
+          push_token: string | null
           updated_at: string | null
           username: string | null
         }
@@ -1218,6 +1220,8 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           id: string
+          notification_settings?: Json | null
+          push_token?: string | null
           updated_at?: string | null
           username?: string | null
         }
@@ -1225,6 +1229,8 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           id?: string
+          notification_settings?: Json | null
+          push_token?: string | null
           updated_at?: string | null
           username?: string | null
         }
@@ -2035,6 +2041,86 @@ export type Database = {
           session_date?: string
           session_type?: string
           title?: string
+        }
+        Relationships: []
+      }
+      survey_responses: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          participant_id: string
+          responses: Json
+          survey_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          participant_id: string
+          responses: Json
+          survey_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          participant_id?: string
+          responses?: Json
+          survey_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_responses_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "surveys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      surveys: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          frequency: string | null
+          id: string
+          is_active: boolean | null
+          questions: Json
+          schedule_type: string
+          start_date: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          frequency?: string | null
+          id?: string
+          is_active?: boolean | null
+          questions?: Json
+          schedule_type?: string
+          start_date?: string | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          frequency?: string | null
+          id?: string
+          is_active?: boolean | null
+          questions?: Json
+          schedule_type?: string
+          start_date?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
