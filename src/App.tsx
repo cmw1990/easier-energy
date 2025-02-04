@@ -12,6 +12,8 @@ import Focus from "@/pages/Focus";
 import Relax from "@/pages/Relax";
 import Breathing from "@/pages/Breathing";
 import Caffeine from "@/pages/Caffeine";
+import Nicotine from "@/pages/Nicotine";
+import Supplements from "@/pages/Supplements";
 import DistractionBlocker from "@/pages/DistractionBlocker";
 import Food from "@/pages/Food";
 import Meditation from "@/pages/Meditation";
@@ -53,6 +55,8 @@ function App() {
               <Route path="/meditation" element={<Meditation />} />
               <Route path="/exercise" element={<Exercise />} />
               <Route path="/caffeine" element={<Caffeine />} />
+              <Route path="/nicotine" element={<Nicotine />} />
+              <Route path="/supplements" element={<Supplements />} />
               <Route path="/food" element={<Food />} />
               <Route path="/distraction-blocker" element={<DistractionBlocker />} />
               <Route path="/sobriety" element={<Sobriety />} />

@@ -17,6 +17,8 @@ import {
   Flower2,
   Sparkles,
   Dumbbell,
+  Pill,
+  Cigarette,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -69,52 +71,27 @@ const navigationGroups = [
         label: "Caffeine",
       },
       {
+        to: "/nicotine",
+        icon: Cigarette,
+        label: "Nicotine",
+      },
+      {
+        to: "/supplements",
+        icon: Pill,
+        label: "Supplements",
+      },
+      {
         to: "/food",
         icon: Utensils,
         label: "Nutrition",
       },
-    ]
-  },
-  {
-    label: "Productivity",
-    links: [
       {
-        to: "/distraction-blocker",
-        icon: ShieldBan,
-        label: "Focus Shield",
-      },
-      {
-        to: "/analytics",
-        icon: BarChart3,
-        label: "Analytics",
+        to: "/sobriety",
+        icon: Heart,
+        label: "Sobriety",
       },
     ]
   },
-  {
-    label: "Board Games",
-    links: [
-      {
-        to: "/games/chess",
-        icon: Crown,
-        label: "Chess",
-      },
-      {
-        to: "/games/go",
-        icon: CircleDot,
-        label: "Go",
-      },
-      {
-        to: "/games/checkers",
-        icon: Grid3X3,
-        label: "Checkers",
-      },
-      {
-        to: "/games/reversi",
-        icon: Gamepad2,
-        label: "Reversi",
-      },
-    ]
-  }
 ];
 
 export const AppSidebar = () => {
