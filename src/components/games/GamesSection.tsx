@@ -56,6 +56,13 @@ export const GamesSection = () => {
       route: "/games/number-memory"
     },
     {
+      title: "N-Back Test",
+      description: "Challenge your working memory and attention",
+      icon: Brain,
+      route: "/games/n-back",
+      isNew: true
+    },
+    {
       title: "Stroop Test",
       description: "Challenge your mental flexibility and processing speed",
       icon: FlaskConical,
