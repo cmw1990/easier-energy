@@ -102,6 +102,156 @@ export type Database = {
         }
         Relationships: []
       }
+      cbt_exercises: {
+        Row: {
+          alternative_thoughts: string | null
+          behaviors: string
+          created_at: string | null
+          emotions: string[]
+          exercise_type: Database["public"]["Enums"]["cbt_exercise_type"]
+          id: string
+          outcome: string | null
+          situation: string
+          thoughts: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          alternative_thoughts?: string | null
+          behaviors: string
+          created_at?: string | null
+          emotions: string[]
+          exercise_type: Database["public"]["Enums"]["cbt_exercise_type"]
+          id?: string
+          outcome?: string | null
+          situation: string
+          thoughts: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          alternative_thoughts?: string | null
+          behaviors?: string
+          created_at?: string | null
+          emotions?: string[]
+          exercise_type?: Database["public"]["Enums"]["cbt_exercise_type"]
+          id?: string
+          outcome?: string | null
+          situation?: string
+          thoughts?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      collection_products: {
+        Row: {
+          added_at: string | null
+          collection_id: string
+          product_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          collection_id: string
+          product_id: string
+        }
+        Update: {
+          added_at?: string | null
+          collection_id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_products_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collection_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collections: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          parent_id: string | null
+          product_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          parent_id?: string | null
+          product_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          parent_id?: string | null
+          product_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupons: {
         Row: {
           active: boolean | null
@@ -1155,6 +1305,36 @@ export type Database = {
           },
         ]
       }
+      product_topics: {
+        Row: {
+          product_id: string
+          topic_id: string
+        }
+        Insert: {
+          product_id: string
+          topic_id: string
+        }
+        Update: {
+          product_id?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_topics_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_topics_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       productivity_metrics: {
         Row: {
           created_at: string | null
@@ -2196,6 +2376,27 @@ export type Database = {
         }
         Relationships: []
       }
+      topics: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       trigger_patterns: {
         Row: {
           coping_strategies: string[] | null
@@ -2515,6 +2716,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      cbt_exercise_type:
+        | "thought_record"
+        | "behavioral_activation"
+        | "cognitive_restructuring"
+        | "problem_solving"
+        | "relaxation"
       distraction_type: "app" | "website" | "notification" | "social_media"
       exercise_type:
         | "walking"
