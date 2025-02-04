@@ -20,7 +20,8 @@ const createNoiseBuffer = (context: AudioContext) => {
   return buffer;
 };
 
-export type NatureSound = 'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream';
+export type NatureSound = 'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream' | 
+  'shower-relax' | 'shower-calm' | 'shower-creative' | 'shower-energy';
 
 // Frequency modulation for effects
 const createModulation = (context: AudioContext, frequency: number, depth: number) => {
@@ -198,6 +199,58 @@ export const generateNatureSound = (type: NatureSound, volume = 0.5) => {
       noiseSource.connect(filter2);
       filter1.connect(masterGain);
       filter2.connect(masterGain);
+      break;
+    }
+    case 'shower-relax': {
+      const filter = context.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 800;
+      filter.Q.value = 0.5;
+
+      const modulator = createModulation(context, 0.2, 100);
+      modulator.connect(filter.frequency);
+
+      noiseSource.connect(filter);
+      filter.connect(masterGain);
+      break;
+    }
+    case 'shower-calm': {
+      const filter = context.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1000;
+      filter.Q.value = 0.7;
+
+      const modulator = createModulation(context, 0.15, 150);
+      modulator.connect(filter.frequency);
+
+      noiseSource.connect(filter);
+      filter.connect(masterGain);
+      break;
+    }
+    case 'shower-creative': {
+      const filter = context.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1200;
+      filter.Q.value = 0.6;
+
+      const modulator = createModulation(context, 0.3, 200);
+      modulator.connect(filter.frequency);
+
+      noiseSource.connect(filter);
+      filter.connect(masterGain);
+      break;
+    }
+    case 'shower-energy': {
+      const filter = context.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1500;
+      filter.Q.value = 0.4;
+
+      const modulator = createModulation(context, 0.4, 250);
+      modulator.connect(filter.frequency);
+
+      noiseSource.connect(filter);
+      filter.connect(masterGain);
       break;
     }
   }

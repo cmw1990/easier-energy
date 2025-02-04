@@ -1,6 +1,7 @@
 import { generateBinauralBeat, generateNatureSound, type NatureSound } from './audioGenerators';
 
-type MeditationType = 'mindfulness' | 'focus' | 'energy' | 'stress-relief' | 'sleep' | 'advanced';
+type MeditationType = 'mindfulness' | 'focus' | 'energy' | 'stress-relief' | 'sleep' | 'advanced' | 
+  'shower-meditation';
 
 interface AudioState {
   binaural: ReturnType<typeof generateBinauralBeat> | null;
@@ -47,6 +48,39 @@ export const getMeditationAudioSettings = (type: MeditationType): {
       return {
         binauralFreq: 432,
         binauralBeat: 7.83, // Schumann resonance
+        natureSound: 'forest'
+      };
+    case 'shower-meditation':
+      const hour = new Date().getHours();
+      if (hour >= 5 && hour < 12) {
+        return {
+          binauralFreq: 528,
+          binauralBeat: 15,
+          natureSound: 'shower-energy'
+        };
+      } else if (hour >= 12 && hour < 17) {
+        return {
+          binauralFreq: 432,
+          binauralBeat: 10,
+          natureSound: 'shower-creative'
+        };
+      } else if (hour >= 17 && hour < 22) {
+        return {
+          binauralFreq: 396,
+          binauralBeat: 8,
+          natureSound: 'shower-calm'
+        };
+      } else {
+        return {
+          binauralFreq: 396,
+          binauralBeat: 4,
+          natureSound: 'shower-relax'
+        };
+      }
+    default:
+      return {
+        binauralFreq: 432,
+        binauralBeat: 7.83,
         natureSound: 'forest'
       };
   }
