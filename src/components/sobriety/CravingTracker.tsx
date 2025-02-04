@@ -6,8 +6,9 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ChartBar, Clock, MapPin } from "lucide-react";
+import { ChartBar, Clock, MapPin, Brain } from "lucide-react";
 
 export const CravingTracker = () => {
   const { toast } = useToast();
@@ -16,6 +17,7 @@ export const CravingTracker = () => {
   const [location, setLocation] = useState("");
   const [activity, setActivity] = useState("");
   const [notes, setNotes] = useState("");
+  const [triggerType, setTriggerType] = useState("emotional");
 
   const { data: recentCravings } = useQuery({
     queryKey: ['craving-logs'],
@@ -40,6 +42,8 @@ export const CravingTracker = () => {
           location,
           activity,
           notes,
+          trigger_type: triggerType,
+          user_id: (await supabase.auth.getUser()).data.user?.id
         }]);
 
       if (error) throw error;
@@ -54,6 +58,7 @@ export const CravingTracker = () => {
       setActivity("");
       setNotes("");
       setIntensity(5);
+      setTriggerType("emotional");
     },
     onError: (error) => {
       toast({
@@ -89,6 +94,25 @@ export const CravingTracker = () => {
             <span>Moderate</span>
             <span>Severe</span>
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="trigger-type" className="flex items-center gap-2">
+            <Brain className="h-4 w-4" />
+            Trigger Type
+          </Label>
+          <Select value={triggerType} onValueChange={setTriggerType}>
+            <SelectTrigger id="trigger-type">
+              <SelectValue placeholder="Select trigger type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="emotional">Emotional</SelectItem>
+              <SelectItem value="social">Social</SelectItem>
+              <SelectItem value="environmental">Environmental</SelectItem>
+              <SelectItem value="physical">Physical</SelectItem>
+              <SelectItem value="routine">Routine/Habit</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
@@ -145,6 +169,9 @@ export const CravingTracker = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-medium">Intensity: {craving.intensity}/10</p>
+                        <p className="text-sm text-muted-foreground">
+                          Type: {craving.trigger_type}
+                        </p>
                         {craving.location && (
                           <p className="text-sm text-muted-foreground">
                             Location: {craving.location}
