@@ -115,6 +115,19 @@ const ZenDrift = () => {
     });
   };
 
+  const ErrorFallback = ({ error, resetErrorBoundary }) => (
+    <div className="flex flex-col items-center justify-center p-4 text-destructive space-y-4">
+      <p className="font-semibold">Something went wrong with the game renderer:</p>
+      <p className="text-sm">{error.message}</p>
+      <Button 
+        variant="outline" 
+        onClick={resetErrorBoundary}
+      >
+        Try again
+      </Button>
+    </div>
+  );
+
   return (
     <Card className="p-6 bg-gradient-to-r from-primary/5 to-accent/5 border-2 border-primary/20">
       <div className="flex flex-col items-center space-y-4">
@@ -179,7 +192,10 @@ const ZenDrift = () => {
           )}
           
           {!isLoadingAssets && !hasError && (
-            <ErrorBoundary onError={handleError}>
+            <ErrorBoundary
+              fallbackRender={ErrorFallback}
+              onError={handleError}
+            >
               <Suspense fallback={null}>
                 <Canvas
                   ref={canvasRef}
