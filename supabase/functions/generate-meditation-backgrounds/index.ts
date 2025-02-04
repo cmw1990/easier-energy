@@ -8,32 +8,47 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
+    console.log('Starting background generation process')
     const { sessionId } = await req.json()
+    
+    if (!sessionId) {
+      throw new Error('Session ID is required')
+    }
+
     console.log('Generating background for session:', sessionId)
 
-    // Get session details to customize the prompt
+    // Initialize Supabase client
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { data: session } = await supabase
+    // Get session details
+    const { data: session, error: sessionError } = await supabase
       .from('meditation_sessions')
       .select('*')
       .eq('id', sessionId)
-      .single()
+      .maybeSingle()
+
+    if (sessionError) {
+      console.error('Error fetching session:', sessionError)
+      throw sessionError
+    }
 
     if (!session) {
       throw new Error('Session not found')
     }
 
+    console.log('Found session:', session.title)
+
     // Generate image with DALL-E
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
+    const openAiResponse = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
@@ -47,27 +62,40 @@ serve(async (req) => {
       }),
     })
 
-    const data = await response.json()
+    if (!openAiResponse.ok) {
+      const errorData = await openAiResponse.json()
+      console.error('OpenAI API error:', errorData)
+      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`)
+    }
+
+    const imageData = await openAiResponse.json()
     console.log('Image generated successfully')
 
     // Update the session with the new background
     const { error: updateError } = await supabase
       .from('meditation_sessions')
-      .update({ background_image_url: data.data[0].url })
+      .update({ background_image_url: imageData.data[0].url })
       .eq('id', sessionId)
 
-    if (updateError) throw updateError
+    if (updateError) {
+      console.error('Error updating session:', updateError)
+      throw updateError
+    }
+
     console.log('Session updated with new background')
 
     return new Response(
-      JSON.stringify({ success: true, url: data.data[0].url }),
+      JSON.stringify({ success: true, url: imageData.data[0].url }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
     console.error('Error generating meditation background:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500
+      }
     )
   }
 })
