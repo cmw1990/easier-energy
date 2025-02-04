@@ -13,16 +13,50 @@ export const MeditationRecommendations = () => {
   const { data: recommendations } = useQuery({
     queryKey: ['meditation-recommendations'],
     queryFn: async () => {
+      // Get user's health conditions
       const { data: conditions } = await supabase
         .from('user_health_conditions')
-        .select('conditions')
+        .select('conditions, needs_energy_support, needs_focus_support')
         .eq('user_id', session?.user?.id)
         .maybeSingle();
 
+      // Get current hour to recommend appropriate sessions
+      const currentHour = new Date().getHours();
+      let recommendedTypes = ['mindfulness']; // Default type
+
+      // Morning (5-11): Energy and Focus
+      if (currentHour >= 5 && currentHour < 11) {
+        recommendedTypes = ['energy', 'focus'];
+      }
+      // Afternoon (11-17): Focus and Stress-relief
+      else if (currentHour >= 11 && currentHour < 17) {
+        recommendedTypes = ['focus', 'stress-relief'];
+      }
+      // Evening (17-22): Stress-relief and Sleep
+      else if (currentHour >= 17 && currentHour < 22) {
+        recommendedTypes = ['stress-relief', 'sleep'];
+      }
+      // Night (22-5): Sleep and Mindfulness
+      else {
+        recommendedTypes = ['sleep', 'mindfulness'];
+      }
+
+      // If user needs energy support, always include energy sessions
+      if (conditions?.needs_energy_support) {
+        recommendedTypes.push('energy');
+      }
+
+      // If user needs focus support, always include focus sessions
+      if (conditions?.needs_focus_support) {
+        recommendedTypes.push('focus');
+      }
+
+      // Get personalized sessions based on time and user needs
       const { data: timeOfDay } = await supabase
         .from('meditation_sessions')
         .select('*')
-        .in('type', ['energy', 'focus', 'stress-relief'])
+        .in('type', recommendedTypes)
+        .order('duration_minutes')
         .limit(3);
 
       return {
@@ -41,8 +75,10 @@ export const MeditationRecommendations = () => {
         return <Brain className="h-5 w-5 text-blue-500" />;
       case 'stress-relief':
         return <Activity className="h-5 w-5 text-emerald-500" />;
+      case 'sleep':
+        return <Clock className="h-5 w-5 text-purple-500" />;
       default:
-        return <Clock className="h-5 w-5 text-primary" />;
+        return <Brain className="h-5 w-5 text-primary" />;
     }
   };
 
