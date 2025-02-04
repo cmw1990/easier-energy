@@ -1,14 +1,9 @@
-import type { Config } from "tailwindcss";
+import { type Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   darkMode: ["class"],
-  content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
-  ],
-  prefix: "",
+  content: ["./src/**/*.{ts,tsx}"],
   theme: {
     container: {
       center: true,
@@ -25,21 +20,32 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#ee9ca7",
-          foreground: "#ffffff",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#6b8cce",
-          foreground: "#ffffff",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "#ffdde1",
-          foreground: "#000000",
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
-        energy: {
-          low: "#ff7676",
-          medium: "#ffd076",
-          high: "#76ff7a",
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
       },
       borderRadius: {
@@ -47,55 +53,57 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+      },
       keyframes: {
-        breathe: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "exercise-stretch": {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.1)" },
         },
-        float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-10px)" },
-        },
-        pulse: {
+        "exercise-pulse": {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
-        },
-        shimmer: {
-          "0%": { backgroundPosition: "-200%" },
-          "100%": { backgroundPosition: "200%" },
-        },
-        bounce: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-5px)" },
-        },
-        "exercise-bounce": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-20px)" },
         },
         "exercise-rotate": {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
         },
-        "exercise-stretch": {
-          "0%": { transform: "scaleY(1)" },
-          "50%": { transform: "scaleY(1.2)" },
-          "100%": { transform: "scaleY(1)" },
+        ripple: {
+          "0%": { transform: "scale(0)", opacity: "0.5" },
+          "100%": { transform: "scale(4)", opacity: "0" },
         },
-        "exercise-pulse": {
+        "fade-in": {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        breathe: {
           "0%, 100%": { transform: "scale(1)" },
-          "50%": { transform: "scale(1.1)" },
+          "50%": { transform: "scale(1.05)" },
         },
       },
       animation: {
-        breathe: "breathe 4s ease-in-out infinite",
-        float: "float 3s ease-in-out infinite",
-        pulse: "pulse 2s ease-in-out infinite",
-        shimmer: "shimmer 2s linear infinite",
-        bounce: "bounce 1s ease-in-out infinite",
-        "exercise-bounce": "exercise-bounce 2s ease-in-out infinite",
-        "exercise-rotate": "exercise-rotate 3s linear infinite",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
         "exercise-stretch": "exercise-stretch 2s ease-in-out infinite",
-        "exercise-pulse": "exercise-pulse 1.5s ease-in-out infinite",
+        "exercise-pulse": "exercise-pulse 2s ease-in-out infinite",
+        "exercise-rotate": "exercise-rotate 10s linear infinite",
+        "ripple": "ripple 1s cubic-bezier(0, 0, 0.2, 1) forwards",
+        "fade-in": "fade-in 0.2s ease-out",
+        "scale-in": "scale-in 0.2s ease-out",
+        "breathe": "breathe 3s ease-in-out infinite",
       },
     },
   },
