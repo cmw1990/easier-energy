@@ -1,12 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, Clock, Battery, Activity, Sun, Moon, Heart, Sparkles, Waves } from "lucide-react";
+import { Brain, Clock, Battery, Activity, Sun, Moon, Heart, Sparkles } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { MeditationAudioControls } from "./MeditationAudioControls";
 import { useState } from "react";
+
+type MeditationSession = {
+  id: string;
+  title: string;
+  description: string | null;
+  duration_minutes: number;
+  type: string;
+  difficulty_level: string;
+  audio_url: string | null;
+  background_image_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
 export const MeditationRecommendations = () => {
   const { session } = useAuth();
@@ -58,11 +71,11 @@ export const MeditationRecommendations = () => {
 
       // Calculate streak
       let streak = 0;
-      const sessions = progressResponse.data || [];
+      const progressSessions = progressResponse.data || [];
       let currentDate = new Date();
       
-      for (const session of sessions) {
-        const sessionDate = new Date(session.created_at).toDateString();
+      for (const progressSession of progressSessions) {
+        const sessionDate = new Date(progressSession.created_at).toDateString();
         if (sessionDate === currentDate.toDateString()) {
           streak++;
           currentDate.setDate(currentDate.getDate() - 1);
@@ -71,7 +84,7 @@ export const MeditationRecommendations = () => {
         }
       }
 
-      const { data: sessions } = await supabase
+      const { data: meditationSessions } = await supabase
         .from('meditation_sessions')
         .select('*')
         .in('type', recommendedTypes)
@@ -79,7 +92,7 @@ export const MeditationRecommendations = () => {
         .order('duration_minutes');
 
       return {
-        sessions: sessions || [],
+        sessions: (meditationSessions || []) as MeditationSession[],
         streak,
         mood: moodResponse.data
       };

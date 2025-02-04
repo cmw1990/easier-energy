@@ -1,4 +1,3 @@
-// Audio Context singleton to prevent multiple instances
 let audioContextInstance: AudioContext | null = null;
 
 const getAudioContext = () => {
@@ -21,7 +20,7 @@ const createNoiseBuffer = (context: AudioContext) => {
   return buffer;
 };
 
-type NatureSound = 'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream';
+export type NatureSound = 'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream';
 
 // Frequency modulation for effects
 const createModulation = (context: AudioContext, frequency: number, depth: number) => {
