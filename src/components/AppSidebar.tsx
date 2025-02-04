@@ -16,6 +16,7 @@ import {
   Gamepad2,
   Flower2,
   Sparkles,
+  Dumbbell,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -46,6 +47,11 @@ const navigationGroups = [
         to: "/meditation",
         icon: Sparkles,
         label: "Meditation",
+      },
+      {
+        to: "/exercise",
+        icon: Dumbbell,
+        label: "Exercise",
       },
     ]
   },
