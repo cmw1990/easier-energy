@@ -1,88 +1,105 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
+import { OrbitControls, Environment, useGLTF, Stars, Cloud, Float } from '@react-three/drei';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
 function Balloon({ breathPhase }: { breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest' }) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
   
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
+    // Balloon physics based on breath phase
     switch (breathPhase) {
       case 'inhale':
-        meshRef.current.position.y = Math.min(
-          meshRef.current.position.y + delta * 2,
-          2
+        meshRef.current.position.y = THREE.MathUtils.lerp(
+          meshRef.current.position.y,
+          2,
+          delta * 2
         );
-        meshRef.current.scale.x = Math.min(meshRef.current.scale.x + delta * 0.2, 1.2);
-        meshRef.current.scale.y = Math.min(meshRef.current.scale.y + delta * 0.3, 1.5);
+        meshRef.current.scale.x = THREE.MathUtils.lerp(
+          meshRef.current.scale.x,
+          1.2,
+          delta * 2
+        );
+        meshRef.current.scale.y = THREE.MathUtils.lerp(
+          meshRef.current.scale.y,
+          1.5,
+          delta * 2
+        );
         break;
       case 'exhale':
-        meshRef.current.position.y = Math.max(
-          meshRef.current.position.y - delta * 1.5,
-          -2
+        meshRef.current.position.y = THREE.MathUtils.lerp(
+          meshRef.current.position.y,
+          -2,
+          delta * 1.5
         );
-        meshRef.current.scale.x = Math.max(meshRef.current.scale.x - delta * 0.2, 0.8);
-        meshRef.current.scale.y = Math.max(meshRef.current.scale.y - delta * 0.3, 1);
+        meshRef.current.scale.x = THREE.MathUtils.lerp(
+          meshRef.current.scale.x,
+          0.8,
+          delta * 2
+        );
+        meshRef.current.scale.y = THREE.MathUtils.lerp(
+          meshRef.current.scale.y,
+          1,
+          delta * 2
+        );
         break;
       case 'hold':
-        // Gentle floating
         meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 2) * delta * 0.1;
         break;
       case 'rest':
-        // Gentle descent
-        meshRef.current.position.y = Math.max(
-          meshRef.current.position.y - delta * 0.5,
-          -2
+        meshRef.current.position.y = THREE.MathUtils.lerp(
+          meshRef.current.position.y,
+          -2,
+          delta * 0.5
         );
         break;
     }
 
-    // Add gentle swaying
+    // Gentle swaying
     meshRef.current.rotation.z = Math.sin(state.clock.elapsedTime) * 0.1;
   });
 
   return (
-    <mesh ref={meshRef}>
-      <sphereGeometry args={[1, 32, 16]} />
-      <meshStandardMaterial
-        color="#ff4757"
-        roughness={0.3}
-        metalness={0.2}
-      />
-    </mesh>
+    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+      <mesh
+        ref={meshRef}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial
+          color={hovered ? "#ff6b6b" : "#ff4757"}
+          roughness={0.3}
+          metalness={0.2}
+          envMapIntensity={0.5}
+        />
+      </mesh>
+    </Float>
   );
 }
 
-function Clouds() {
-  const groupRef = useRef<THREE.Group>(null);
-
-  useFrame((state, delta) => {
-    if (!groupRef.current) return;
-    groupRef.current.rotation.y += delta * 0.1;
-  });
-
+function SkyEnvironment() {
   return (
-    <group ref={groupRef}>
+    <>
+      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
       {Array.from({ length: 20 }).map((_, i) => (
-        <mesh
+        <Cloud
           key={i}
           position={[
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 5 + 2,
-            (Math.random() - 0.5) * 10
+            (Math.random() - 0.5) * 20,
+            Math.random() * 10,
+            (Math.random() - 0.5) * 20
           ]}
-        >
-          <sphereGeometry args={[0.3 + Math.random() * 0.5, 16, 16]} />
-          <meshStandardMaterial
-            color="#ffffff"
-            transparent
-            opacity={0.6}
-          />
-        </mesh>
+          opacity={0.5}
+          speed={0.1}
+          width={10}
+        />
       ))}
-    </group>
+    </>
   );
 }
 
@@ -101,11 +118,14 @@ export function BalloonScene3D({
       }}
     >
       <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
+      <pointLight position={[10, 10, 10]} intensity={1} />
       <Balloon breathPhase={breathPhase} />
-      <Clouds />
-      <Environment preset="dawn" />
-      <OrbitControls enableZoom={false} />
+      <SkyEnvironment />
+      <Environment preset="sunset" />
+      <EffectComposer>
+        <Bloom luminanceThreshold={0.5} intensity={1.5} />
+      </EffectComposer>
+      <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2} minPolarAngle={Math.PI / 3} />
     </Canvas>
   );
 }

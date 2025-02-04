@@ -1,62 +1,79 @@
-import { useState, useEffect, useRef } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { Brain, Loader2, RefreshCw } from "lucide-react";
-import { useZenGardenAssets } from "./ZenGardenAssets";
-import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Environment, useGLTF, Stars, Cloud, Float } from '@react-three/drei';
+import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
+import { BreathingTechnique } from '@/components/breathing/BreathingTechniques';
+
+function ZenScene() {
+  return (
+    <Canvas
+      camera={{ position: [0, 5, 10], fov: 75 }}
+      style={{
+        width: '100%',
+        height: '400px',
+        background: 'linear-gradient(to bottom, #2c3e50, #34495e)'
+      }}
+    >
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} intensity={1} />
+      
+      <Float speed={1} rotationIntensity={0.5} floatIntensity={0.5}>
+        <mesh position={[0, 0, 0]}>
+          <torusGeometry args={[3, 0.5, 16, 100]} />
+          <meshStandardMaterial
+            color="#a8e6cf"
+            roughness={0.3}
+            metalness={0.2}
+            envMapIntensity={0.5}
+          />
+        </mesh>
+      </Float>
+
+      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+      
+      {Array.from({ length: 10 }).map((_, i) => (
+        <Cloud
+          key={i}
+          position={[
+            (Math.random() - 0.5) * 20,
+            Math.random() * 10,
+            (Math.random() - 0.5) * 20
+          ]}
+          opacity={0.5}
+          speed={0.1}
+          width={10}
+        />
+      ))}
+
+      <Environment preset="night" />
+      <EffectComposer>
+        <DepthOfField
+          focusDistance={0}
+          focalLength={0.02}
+          bokehScale={2}
+          height={480}
+        />
+        <Bloom luminanceThreshold={0.5} intensity={1.5} />
+      </EffectComposer>
+      <OrbitControls
+        enableZoom={false}
+        enablePan={false}
+        autoRotate
+        autoRotateSpeed={0.5}
+      />
+    </Canvas>
+  );
+}
 
 const ZenGarden = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [assets, setAssets] = useState<any>(null);
-  const { toast } = useToast();
-
-  const fetchAssets = async () => {
-    setIsLoading(true);
-    try {
-      const fetchedAssets = await useZenGardenAssets();
-      setAssets(fetchedAssets);
-    } catch (error) {
-      console.error("Error fetching assets:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load assets.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAssets();
-  }, []);
+  const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
 
   return (
     <Card className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Zen Garden</h2>
-        <GameAssetsGenerator />
-        <Button onClick={fetchAssets} variant="outline" className="gap-2">
-          <RefreshCw className="h-4 w-4" />
-          Refresh Assets
-        </Button>
+      <div className="space-y-4">
+        <ZenScene />
       </div>
-      {isLoading ? (
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span>Loading assets...</span>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-4">
-          {assets && assets.map((asset: any) => (
-            <div key={asset.id} className="border p-4 rounded">
-              <img src={asset.url} alt={asset.name} className="w-full h-auto" />
-              <h3 className="text-lg font-semibold">{asset.name}</h3>
-            </div>
-          ))}
-        </div>
-      )}
     </Card>
   );
 };

@@ -1,118 +1,145 @@
 import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
+import { OrbitControls, Environment, useGLTF, Float, MeshDistortMaterial } from '@react-three/drei';
+import { EffectComposer, Bloom, DepthOfField, Underwater } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
 function Pufferfish({ breathPhase }: { breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest' }) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
   const [scale, setScale] = useState(1);
 
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
-    // Animate based on breath phase
+    // Pufferfish physics based on breath phase
     switch (breathPhase) {
       case 'inhale':
-        setScale(prev => Math.min(prev + delta * 0.5, 1.5));
+        setScale(prev => THREE.MathUtils.lerp(prev, 1.5, delta * 2));
+        meshRef.current.position.y = THREE.MathUtils.lerp(
+          meshRef.current.position.y,
+          2,
+          delta
+        );
         break;
       case 'exhale':
-        setScale(prev => Math.max(prev - delta * 0.5, 0.8));
+        setScale(prev => THREE.MathUtils.lerp(prev, 0.8, delta * 2));
+        meshRef.current.position.y = THREE.MathUtils.lerp(
+          meshRef.current.position.y,
+          -1,
+          delta
+        );
         break;
       case 'hold':
-        // Gentle floating motion during hold
-        meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.1;
+        meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 2) * delta * 0.1;
         break;
       case 'rest':
-        // Gentle sinking motion during rest
-        meshRef.current.position.y = Math.max(
-          meshRef.current.position.y - delta * 0.1,
-          -0.5
+        meshRef.current.position.y = THREE.MathUtils.lerp(
+          meshRef.current.position.y,
+          -1,
+          delta * 0.5
         );
         break;
     }
 
-    // Add gentle rotation
-    meshRef.current.rotation.y += delta * 0.2;
+    // Gentle swimming motion
+    meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime) * 0.2;
   });
 
   return (
-    <mesh ref={meshRef} scale={[scale, scale, scale]}>
-      <sphereGeometry args={[1, 32, 32]} />
-      <meshStandardMaterial
-        color="#ff9f43"
-        roughness={0.5}
-        metalness={0.2}
-      />
-    </mesh>
+    <Float speed={2} rotationIntensity={1} floatIntensity={1}>
+      <mesh
+        ref={meshRef}
+        scale={[scale, scale, scale]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      >
+        <sphereGeometry args={[1, 32, 32]} />
+        <MeshDistortMaterial
+          color={hovered ? "#ffa502" : "#ff9f43"}
+          speed={5}
+          distort={0.3}
+          radius={1}
+        />
+      </mesh>
+    </Float>
   );
 }
 
 function Bubbles() {
-  const particles = useRef<THREE.Points>(null);
-  const [positions] = useState(() => {
-    const pos = new Float32Array(1000 * 3);
-    for (let i = 0; i < 1000; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 10;
-      pos[i * 3 + 1] = Math.random() * 10;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
-    }
-    return pos;
-  });
+  const groupRef = useRef<THREE.Group>(null);
+  const [bubblePositions] = useState(() =>
+    Array.from({ length: 50 }, () => ({
+      x: (Math.random() - 0.5) * 10,
+      y: Math.random() * -10,
+      z: (Math.random() - 0.5) * 10,
+      speed: 0.2 + Math.random() * 0.5
+    }))
+  );
 
   useFrame((state, delta) => {
-    if (!particles.current) return;
+    if (!groupRef.current) return;
     
-    const positions = particles.current.geometry.attributes.position.array as Float32Array;
-    for (let i = 0; i < positions.length; i += 3) {
-      positions[i + 1] += delta * 0.5; // Move up
-      if (positions[i + 1] > 5) {
-        positions[i + 1] = -5; // Reset to bottom
+    groupRef.current.children.forEach((bubble, i) => {
+      bubble.position.y += bubblePositions[i].speed * delta;
+      if (bubble.position.y > 10) {
+        bubble.position.y = -10;
       }
-    }
-    particles.current.geometry.attributes.position.needsUpdate = true;
+      bubble.position.x += Math.sin(state.clock.elapsedTime + i) * delta * 0.1;
+    });
   });
 
   return (
-    <points ref={particles}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={positions.length / 3}
-          array={positions}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.05}
-        color="#ffffff"
-        transparent
-        opacity={0.6}
-        blending={THREE.AdditiveBlending}
-      />
-    </points>
+    <group ref={groupRef}>
+      {bubblePositions.map((pos, i) => (
+        <mesh key={i} position={[pos.x, pos.y, pos.z]}>
+          <sphereGeometry args={[0.1, 16, 16]} />
+          <meshStandardMaterial
+            transparent
+            opacity={0.6}
+            color="#ffffff"
+          />
+        </mesh>
+      ))}
+    </group>
   );
 }
 
-export function PufferfishScene3D({ 
-  breathPhase 
-}: { 
-  breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest' 
+export function PufferfishScene3D({
+  breathPhase
+}: {
+  breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest'
 }) {
   return (
     <Canvas
-      camera={{ position: [0, 0, 5], fov: 75 }}
-      style={{ 
-        width: '100%', 
+      camera={{ position: [0, 0, 8], fov: 75 }}
+      style={{
+        width: '100%',
         height: '400px',
         background: 'linear-gradient(to bottom, #1a5f7a, #2d3436)'
       }}
     >
       <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
+      <pointLight position={[10, 10, 10]} intensity={1} />
       <Pufferfish breathPhase={breathPhase} />
       <Bubbles />
       <Environment preset="sunset" />
-      <OrbitControls enableZoom={false} />
+      <EffectComposer>
+        <DepthOfField
+          focusDistance={0}
+          focalLength={0.02}
+          bokehScale={2}
+          height={480}
+        />
+        <Bloom luminanceThreshold={0.5} intensity={2} />
+        <Underwater />
+      </EffectComposer>
+      <OrbitControls
+        enableZoom={false}
+        enablePan={false}
+        maxPolarAngle={Math.PI / 2}
+        minPolarAngle={Math.PI / 3}
+      />
     </Canvas>
   );
 }
