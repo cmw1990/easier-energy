@@ -46,7 +46,19 @@ export class PufferfishScene extends Phaser.Scene {
 
     // Create bubble particle emitter
     if (this.pufferfish) {
-      this.bubbleEmitter = this.createBubbleEmitter();
+      const particles = this.add.particles(0, 0, 'bubbles', {
+        speed: { min: 50, max: 100 },
+        angle: { min: 260, max: 280 },
+        scale: { start: 0.4, end: 0.1 },
+        alpha: { start: 0.8, end: 0 },
+        lifespan: 2000,
+        gravityY: -100,
+        frequency: 100,
+        quantity: 1,
+        emitting: true
+      });
+      
+      this.bubbleEmitter = particles.createEmitter();
       if (this.bubbleEmitter) {
         this.bubbleEmitter.setPosition(this.pufferfish.x, this.pufferfish.y + 20);
       }
@@ -93,19 +105,5 @@ export class PufferfishScene extends Phaser.Scene {
   private updateScore() {
     this.currentScore += 1;
     this.setScoreCallback(this.currentScore);
-  }
-
-  private createBubbleEmitter(): Phaser.GameObjects.Particles.ParticleEmitter {
-    const particles = this.add.particles('bubbles');
-    return particles.createEmitter({
-      speed: { min: 50, max: 100 },
-      angle: { min: 260, max: 280 },
-      scale: { start: 0.4, end: 0.1 },
-      alpha: { start: 0.8, end: 0 },
-      lifespan: 2000,
-      gravityY: -100,
-      quantity: 1,
-      frequency: 100
-    });
   }
 }
