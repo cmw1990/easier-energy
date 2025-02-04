@@ -4,71 +4,83 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain, Target } from "lucide-react";
+import { Brain } from "lucide-react";
 
-const PATTERNS = [
-  ["🔵", "🔴", "🔵", "🔴"],
-  ["🟡", "🟢", "🟡", "🟢", "🟡"],
-  ["🔺", "🔷", "🔺", "🔷", "🔺", "🔷"],
-  ["🌟", "⭐", "🌟", "⭐", "🌟", "⭐", "🌟"],
-];
+const COLORS = ["red", "blue", "green", "yellow"];
+const COLOR_CLASSES = {
+  red: "bg-red-500",
+  blue: "bg-blue-500",
+  green: "bg-green-500",
+  yellow: "bg-yellow-500"
+};
 
 const PatternMatch = () => {
-  const [currentPattern, setCurrentPattern] = useState<string[]>([]);
+  const [pattern, setPattern] = useState<string[]>([]);
   const [userPattern, setUserPattern] = useState<string[]>([]);
-  const [level, setLevel] = useState(0);
+  const [isShowingPattern, setIsShowingPattern] = useState(false);
   const [score, setScore] = useState(0);
-  const [showPattern, setShowPattern] = useState(true);
+  const [isActive, setIsActive] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { session } = useAuth();
 
   useEffect(() => {
-    startLevel();
-  }, [level]);
-
-  const startLevel = () => {
-    if (level >= PATTERNS.length) {
-      endGame();
-      return;
+    let timeout: NodeJS.Timeout;
+    if (isShowingPattern && pattern.length > 0) {
+      let i = 0;
+      const showNext = () => {
+        if (i < pattern.length) {
+          const button = document.getElementById(`pattern-${pattern[i]}`);
+          if (button) {
+            button.classList.add("opacity-100");
+            setTimeout(() => {
+              button.classList.remove("opacity-100");
+              i++;
+              timeout = setTimeout(showNext, 800);
+            }, 500);
+          }
+        } else {
+          setIsShowingPattern(false);
+        }
+      };
+      timeout = setTimeout(showNext, 1000);
     }
-    setCurrentPattern(PATTERNS[level]);
-    setUserPattern([]);
-    setShowPattern(true);
-    setTimeout(() => {
-      setShowPattern(false);
-    }, 3000);
+    return () => clearTimeout(timeout);
+  }, [isShowingPattern, pattern]);
+
+  const startGame = () => {
+    setIsActive(true);
+    setScore(0);
+    addToPattern();
   };
 
-  const handleSymbolClick = (symbol: string) => {
-    if (showPattern || isSubmitting) return;
+  const addToPattern = () => {
+    const newColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+    setPattern(prev => [...prev, newColor]);
+    setUserPattern([]);
+    setIsShowingPattern(true);
+  };
 
-    const newPattern = [...userPattern, symbol];
-    setUserPattern(newPattern);
+  const handleColorClick = (color: string) => {
+    if (isShowingPattern) return;
 
-    if (newPattern.length === currentPattern.length) {
-      const correct = newPattern.every((s, i) => s === currentPattern[i]);
-      if (correct) {
-        setScore(prev => prev + 10);
-        toast({
-          title: "Correct Pattern!",
-          description: "Moving to next level...",
-        });
-        setTimeout(() => {
-          setLevel(prev => prev + 1);
-        }, 1000);
-      } else {
-        toast({
-          title: "Incorrect Pattern",
-          description: "Try again!",
-          variant: "destructive",
-        });
-        setTimeout(startLevel, 1000);
-      }
+    const newUserPattern = [...userPattern, color];
+    setUserPattern(newUserPattern);
+
+    const isCorrect = newUserPattern.every(
+      (c, i) => c === pattern[i]
+    );
+
+    if (!isCorrect) {
+      endGame();
+    } else if (newUserPattern.length === pattern.length) {
+      setScore(prev => prev + 1);
+      setTimeout(addToPattern, 1000);
     }
   };
 
   const endGame = async () => {
+    setIsActive(false);
     setIsSubmitting(true);
     
     if (session?.user) {
@@ -76,21 +88,21 @@ const PatternMatch = () => {
         const { error } = await supabase.from("energy_focus_logs").insert({
           user_id: session.user.id,
           activity_type: "pattern_match",
-          activity_name: "Pattern Matching",
-          duration_minutes: 2,
-          focus_rating: Math.round((score / (PATTERNS.length * 10)) * 10),
+          activity_name: "Pattern Match",
+          duration_minutes: Math.ceil(score / 2),
+          focus_rating: Math.round((score / 10) * 10),
           energy_rating: null,
-          notes: `Completed pattern matching with score: ${score}`
+          notes: `Completed Pattern Match with score: ${score}`
         });
 
         if (error) throw error;
 
         toast({
-          title: "Game Complete!",
+          title: "Game Over!",
           description: `Final score: ${score}. Well done!`,
         });
       } catch (error) {
-        console.error("Error logging pattern match:", error);
+        console.error("Error logging Pattern Match:", error);
         toast({
           title: "Error Saving Results",
           description: "There was a problem saving your game results.",
@@ -98,60 +110,49 @@ const PatternMatch = () => {
         });
       } finally {
         setIsSubmitting(false);
-        setLevel(0);
-        setScore(0);
+        setPattern([]);
       }
     }
   };
 
-  const uniqueSymbols = Array.from(new Set(PATTERNS.flat()));
-
   return (
-    <Card className="p-6">
+    <Card className="p-6 hover:shadow-lg transition-shadow">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-full">
-            <Target className="h-5 w-5 text-primary" />
+          <div className="p-2 bg-primary/10 rounded-full animate-float">
+            <Brain className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold">Pattern Match</h2>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-lg">Level: {level + 1}/{PATTERNS.length}</div>
-          <div className="text-lg">Score: {score}</div>
-        </div>
+        <div className="text-lg">Score: {score}</div>
       </div>
 
-      <div className="flex justify-center mb-8">
-        <div className="grid grid-flow-col gap-4">
-          {currentPattern.map((symbol, index) => (
+      {!isActive ? (
+        <Button 
+          onClick={startGame} 
+          className="w-full animate-pulse"
+          disabled={isSubmitting}
+        >
+          Start Game
+        </Button>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          {COLORS.map((color) => (
             <Button
-              key={index}
-              variant="outline"
-              className="h-16 w-16 text-2xl"
-              disabled={true}
-            >
-              {showPattern ? symbol : "?"}
-            </Button>
+              key={color}
+              id={`pattern-${color}`}
+              onClick={() => handleColorClick(color)}
+              className={`h-24 transition-all duration-300 opacity-60 hover:opacity-100 ${COLOR_CLASSES[color as keyof typeof COLOR_CLASSES]} ${
+                isShowingPattern ? 'animate-breathe' : ''
+              }`}
+              disabled={isShowingPattern || isSubmitting}
+            />
           ))}
         </div>
-      </div>
-
-      <div className="grid grid-cols-4 gap-4">
-        {uniqueSymbols.map((symbol, index) => (
-          <Button
-            key={index}
-            onClick={() => handleSymbolClick(symbol)}
-            variant="outline"
-            className="h-16 text-2xl"
-            disabled={showPattern || isSubmitting}
-          >
-            {symbol}
-          </Button>
-        ))}
-      </div>
+      )}
 
       <div className="mt-6 text-sm text-muted-foreground">
-        Memorize the pattern shown, then recreate it using the symbols below. The pattern will be hidden after 3 seconds.
+        Watch the pattern of colors and repeat it by clicking the buttons in the same order.
       </div>
     </Card>
   );

@@ -28,7 +28,8 @@ export const GamesSection = () => {
       title: "Pattern Match",
       description: "Enhance pattern recognition with sequence memorization",
       icon: Puzzle,
-      route: "/games/pattern-match"
+      route: "/games/pattern-match",
+      isNew: true
     },
     {
       title: "Math Speed",
