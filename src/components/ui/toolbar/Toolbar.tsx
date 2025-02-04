@@ -26,7 +26,7 @@ import {
 const toolbarItems = [
   {
     to: "/dashboard",
-    icon: Activity,
+    icon: BarChart3,
     label: "Overview",
     iconClassName: "text-emerald-500",
   },
@@ -44,7 +44,7 @@ const toolbarItems = [
   },
   {
     to: "/focus",
-    icon: Focus,
+    icon: Brain,
     label: "Focus",
     iconClassName: "text-amber-500",
   },
@@ -115,14 +115,41 @@ export const Toolbar = () => {
             key={item.to}
             to={item.to}
             className={cn(
-              "flex items-center gap-2 py-4 text-sm font-medium transition-colors hover:text-primary",
+              "flex flex-col items-center gap-1 py-3 px-3 rounded-lg transition-all",
+              "hover:bg-accent/10 hover:scale-105",
               location.pathname === item.to
-                ? "box-border border-b-2 border-primary text-primary"
-                : "text-muted-foreground"
+                ? "bg-accent/15 shadow-sm"
+                : "bg-accent/5",
             )}
           >
-            <item.icon className={cn("h-4 w-4", item.iconClassName)} />
-            <span className="hidden sm:inline">{item.label}</span>
+            <div
+              className={cn(
+                "p-2 rounded-lg transition-colors",
+                location.pathname === item.to
+                  ? "bg-background shadow-sm"
+                  : "bg-background/50",
+              )}
+            >
+              <item.icon
+                className={cn(
+                  "h-5 w-5 transition-colors",
+                  item.iconClassName,
+                  location.pathname === item.to
+                    ? "opacity-100"
+                    : "opacity-70"
+                )}
+              />
+            </div>
+            <span
+              className={cn(
+                "text-xs font-medium transition-colors",
+                location.pathname === item.to
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              )}
+            >
+              {item.label}
+            </span>
           </Link>
         ))}
       </div>
