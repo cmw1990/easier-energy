@@ -45,12 +45,12 @@ export class PufferfishScene extends Phaser.Scene {
     this.pufferfish.setScale(0.5);
 
     // Create particle manager and emitter for bubbles
-    const particles = this.add.particles('bubbles');
+    const particles = this.add.particles(0, 0, 'bubbles');
     
     // Configure the particle emitter
     this.bubbleEmitter = particles.createEmitter({
-      x: this.pufferfish.x,
-      y: this.pufferfish.y + 20,
+      x: 400,
+      y: 220,
       speed: { min: 50, max: 100 },
       angle: { min: 260, max: 280 },
       scale: { start: 0.4, end: 0.1 },
