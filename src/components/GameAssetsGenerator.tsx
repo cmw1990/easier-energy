@@ -42,52 +42,63 @@ export const GameAssetsGenerator = () => {
     setIsGenerating(true);
     try {
       const batches = [
-        'balloon',
-        'pufferfish',
-        'zen-garden'
+        {
+          name: 'balloon',
+          description: '3D balloon game assets including a detailed hot air balloon model, dreamy sky environment, and particle effects',
+        },
+        {
+          name: 'pufferfish',
+          description: '3D pufferfish game assets including an animated pufferfish model, underwater environment, and bubble effects',
+        },
+        {
+          name: 'zen-garden',
+          description: '3D zen garden assets including stones, sand patterns, and atmospheric effects',
+        }
       ];
       
       for (const batch of batches) {
         try {
-          console.log(`Starting process for ${batch}...`);
-          const hasExisting = await checkExistingAssets(batch);
+          console.log(`Starting process for ${batch.name}...`);
+          const hasExisting = await checkExistingAssets(batch.name);
           
           if (hasExisting) {
-            console.log(`Skipping ${batch} - assets already exist`);
+            console.log(`Skipping ${batch.name} - assets already exist`);
             toast({
-              title: `${batch} assets exist`,
+              title: `${batch.name} assets exist`,
               description: "Skipping generation as assets already exist",
             });
             continue;
           }
 
-          console.log(`Invoking edge function for ${batch}...`);
+          console.log(`Invoking edge function for ${batch.name}...`);
           
           const { data, error } = await supabase.functions.invoke(
             'generate-initial-game-assets',
             {
               body: {
-                batch: batch,
-                type: 'game-assets'
+                batch: batch.name,
+                type: 'game-assets',
+                is3D: true,
+                description: batch.description
               }
             }
           );
 
           if (error) {
-            console.error(`Error generating ${batch} assets:`, error);
+            console.error(`Error generating ${batch.name} assets:`, error);
             toast({
-              title: `Error generating ${batch} assets`,
+              title: `Error generating ${batch.name} assets`,
               description: error.message || 'Unknown error occurred',
               variant: 'destructive',
             });
             continue;
           }
           
-          console.log(`${batch} generation response:`, data);
+          console.log(`${batch.name} generation response:`, data);
           
           toast({
             title: 'Success',
-            description: `Generated assets for ${batch}`,
+            description: `Generated 3D assets for ${batch.name}`,
           });
           
           // Add delay between batches to avoid rate limits
@@ -95,9 +106,9 @@ export const GameAssetsGenerator = () => {
             await new Promise(resolve => setTimeout(resolve, 5000));
           }
         } catch (batchError) {
-          console.error(`Error processing batch ${batch}:`, batchError);
+          console.error(`Error processing batch ${batch.name}:`, batchError);
           toast({
-            title: `Error with ${batch}`,
+            title: `Error with ${batch.name}`,
             description: batchError.message || 'Failed to process batch',
             variant: 'destructive',
           });
@@ -107,7 +118,7 @@ export const GameAssetsGenerator = () => {
       
       toast({
         title: 'Success!',
-        description: 'Game assets generation completed!',
+        description: 'All 3D game assets generation completed!',
       });
     } catch (error) {
       console.error('Error generating game assets:', error);
@@ -129,7 +140,7 @@ export const GameAssetsGenerator = () => {
     >
       {isGenerating && <Loader2 className="h-4 w-4 animate-spin" />}
       {!isGenerating && <Sparkles className="h-4 w-4 animate-pulse" />}
-      {isGenerating ? 'Generating Game Assets...' : 'Generate Game Assets'}
+      {isGenerating ? 'Generating 3D Game Assets...' : 'Generate 3D Game Assets'}
     </Button>
   );
 };
