@@ -10,6 +10,7 @@ import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing
 import { CarPhysics } from "./physics/CarPhysics";
 import { ZenDriftAssetsGenerator } from "./ZenDriftAssetsGenerator";
 import { supabase } from "@/integrations/supabase/client";
+import { Suspense } from "react";
 
 interface GameAsset {
   type: 'car' | 'background' | 'effect';
@@ -148,72 +149,76 @@ const ZenDrift = () => {
           )}
           
           {!isLoadingAssets && (
-            <Canvas
-              ref={canvasRef}
-              shadows
-              gl={{ 
-                antialias: true,
-                alpha: true,
-                stencil: true,
-                depth: true,
-                powerPreference: "high-performance"
-              }}
-              camera={{ position: [0, 15, 20], fov: 75 }}
-              style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
-              dpr={[1, 2]}
-            >
-              <PerspectiveCamera makeDefault position={[0, 15, 20]} />
-              
-              <ambientLight intensity={0.5} />
-              <directionalLight
-                castShadow
-                position={[10, 10, 10]}
-                intensity={1.5}
-                shadow-mapSize={[2048, 2048]}
-              />
-              
-              <CarPhysics
-                position={[0, 0, 0]}
-                rotation={[0, 0, 0]}
-                scale={1}
-              />
-
-              <mesh
-                receiveShadow
-                rotation={[-Math.PI / 2, 0, 0]}
-                position={[0, -0.5, 0]}
+            <Suspense fallback={null}>
+              <Canvas
+                ref={canvasRef}
+                shadows
+                gl={{ 
+                  antialias: true,
+                  alpha: true,
+                  stencil: true,
+                  depth: true,
+                  powerPreference: "high-performance"
+                }}
+                camera={{ position: [0, 15, 20], fov: 75 }}
+                style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
+                dpr={[1, 2]}
               >
-                <planeGeometry args={[100, 100]} />
-                <meshStandardMaterial
-                  color="#a8e6cf"
-                  metalness={0.1}
-                  roughness={0.9}
-                />
-              </mesh>
-
-              <Environment preset="sunset" />
-              
-              <EffectComposer enabled={!isPaused}>
-                <DepthOfField
-                  focusDistance={0}
-                  focalLength={0.02}
-                  bokehScale={2}
-                  height={480}
-                />
-                <Bloom
+                <PerspectiveCamera makeDefault position={[0, 15, 20]} />
+                
+                <ambientLight intensity={0.5} />
+                <directionalLight
+                  castShadow
+                  position={[10, 10, 10]}
                   intensity={1.5}
-                  luminanceThreshold={0.5}
-                  luminanceSmoothing={0.9}
+                  shadow-mapSize={[2048, 2048]}
                 />
-              </EffectComposer>
+                
+                <CarPhysics
+                  position={[0, 0, 0]}
+                  rotation={[0, 0, 0]}
+                  scale={1}
+                />
 
-              <OrbitControls
-                enableZoom={false}
-                enablePan={false}
-                maxPolarAngle={Math.PI / 2.5}
-                minPolarAngle={Math.PI / 3}
-              />
-            </Canvas>
+                <mesh
+                  receiveShadow
+                  rotation={[-Math.PI / 2, 0, 0]}
+                  position={[0, -0.5, 0]}
+                >
+                  <planeGeometry args={[100, 100]} />
+                  <meshStandardMaterial
+                    color="#a8e6cf"
+                    metalness={0.1}
+                    roughness={0.9}
+                  />
+                </mesh>
+
+                <Environment preset="sunset" />
+                
+                {!isPaused && (
+                  <EffectComposer>
+                    <DepthOfField
+                      focusDistance={0}
+                      focalLength={0.02}
+                      bokehScale={2}
+                      height={480}
+                    />
+                    <Bloom
+                      intensity={1.5}
+                      luminanceThreshold={0.5}
+                      luminanceSmoothing={0.9}
+                    />
+                  </EffectComposer>
+                )}
+
+                <OrbitControls
+                  enableZoom={false}
+                  enablePan={false}
+                  maxPolarAngle={Math.PI / 2.5}
+                  minPolarAngle={Math.PI / 3}
+                />
+              </Canvas>
+            </Suspense>
           )}
         </div>
 
