@@ -14,15 +14,24 @@ interface AnimatedExerciseDisplayProps {
 }
 
 const ExerciseScene = ({ imageUrl }: { imageUrl: string }) => {
-  const textureLoader = new THREE.TextureLoader();
-  const texture = textureLoader.load(imageUrl);
-  
+  const [texture, setTexture] = useState<THREE.Texture | null>(null);
+  const materialRef = useRef<THREE.MeshBasicMaterial>(null);
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    loader.load(imageUrl, (loadedTexture) => {
+      setTexture(loadedTexture);
+    });
+  }, [imageUrl]);
+
+  if (!texture) {
+    return null;
+  }
+
   return (
     <mesh>
       <planeGeometry args={[3, 3]} />
-      <meshBasicMaterial>
-        <primitive attach="map" object={texture} />
-      </meshBasicMaterial>
+      <meshBasicMaterial ref={materialRef} map={texture} transparent />
     </mesh>
   );
 };
