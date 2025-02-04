@@ -5,6 +5,12 @@ import { Card } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 
+interface SupplementLog {
+  supplement_name: string;
+  interaction_notes: string;
+  created_at: string;
+}
+
 export function SupplementInteractions() {
   const { session } = useAuth();
 
@@ -13,7 +19,7 @@ export function SupplementInteractions() {
     queryFn: async () => {
       const { data: logs, error } = await supabase
         .from('supplement_logs')
-        .select('supplement_name, interaction_notes')
+        .select('supplement_name, interaction_notes, created_at')
         .eq('user_id', session?.user?.id)
         .order('created_at', { ascending: false });
       
@@ -21,7 +27,7 @@ export function SupplementInteractions() {
 
       // Group supplements taken together
       const today = new Date().toISOString().split('T')[0];
-      const supplementsByDay = logs.reduce((acc: any, log) => {
+      const supplementsByDay = (logs as SupplementLog[]).reduce((acc: Record<string, Set<string>>, log) => {
         const day = log.created_at?.split('T')[0];
         if (!acc[day]) acc[day] = new Set();
         acc[day].add(log.supplement_name);
@@ -56,8 +62,8 @@ export function SupplementInteractions() {
   return (
     <div className="space-y-4">
       {interactions.map((interaction, index) => (
-        <Alert key={index} variant="warning">
-          <AlertTriangle className="h-4 w-4" />
+        <Alert key={index} variant="default" className="border-yellow-500 bg-yellow-50">
+          <AlertTriangle className="h-4 w-4 text-yellow-500" />
           <AlertTitle>Potential Interaction Detected</AlertTitle>
           <AlertDescription>
             <p className="mt-2">
