@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Brain, Heart, Focus, Sun } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Meditation = () => {
+  const { toast } = useToast();
+  const [activeSession, setActiveSession] = useState<string | null>(null);
+
   const { data: sessions, isLoading } = useQuery({
     queryKey: ['meditation-sessions'],
     queryFn: async () => {
@@ -17,6 +21,40 @@ const Meditation = () => {
 
       if (error) throw error;
       return data;
+    },
+  });
+
+  const startSessionMutation = useMutation({
+    mutationFn: async (sessionId: string) => {
+      const { data, error } = await supabase
+        .from('meditation_progress')
+        .insert([
+          {
+            session_id: sessionId,
+            completed_duration: 0, // Will be updated when session ends
+            mood_before: null, // Could add mood tracking later
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, sessionId) => {
+      const session = sessions?.find(s => s.id === sessionId);
+      setActiveSession(sessionId);
+      toast({
+        title: "Session Started",
+        description: `Starting ${session?.title}. Find a comfortable position and follow along.`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error Starting Session",
+        description: "Unable to start meditation session. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -72,8 +110,20 @@ const Meditation = () => {
                     <p className="text-sm text-muted-foreground">{session.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">{session.duration_minutes} minutes</span>
-                      <Button variant="secondary" size="sm">
-                        Start Session
+                      <Button 
+                        variant="secondary" 
+                        size="sm"
+                        onClick={() => startSessionMutation.mutate(session.id)}
+                        disabled={startSessionMutation.isPending || activeSession !== null}
+                      >
+                        {startSessionMutation.isPending && activeSession === session.id ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Starting...
+                          </>
+                        ) : (
+                          'Start Session'
+                        )}
                       </Button>
                     </div>
                   </CardContent>
