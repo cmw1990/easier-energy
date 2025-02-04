@@ -1,7 +1,8 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { PhotoUpload } from "./PhotoUpload";
 
 interface AdditionalDetailsProps {
   batchNumber: string;
@@ -22,6 +23,9 @@ interface AdditionalDetailsProps {
   setInteractionNotes: (value: string) => void;
   notes: string;
   setNotes: (value: string) => void;
+  photoUrl: string;
+  setPhotoUrl: (value: string) => void;
+  supplementName: string;
 }
 
 export function AdditionalDetails({
@@ -43,49 +47,55 @@ export function AdditionalDetails({
   setInteractionNotes,
   notes,
   setNotes,
+  photoUrl,
+  setPhotoUrl,
+  supplementName,
 }: AdditionalDetailsProps) {
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="batchNumber">Batch Number</Label>
-          <Input
-            id="batchNumber"
-            value={batchNumber}
-            onChange={(e) => setBatchNumber(e.target.value)}
-            placeholder="Enter batch number"
-          />
-        </div>
+    <div className="grid gap-4">
+      <PhotoUpload 
+        supplementName={supplementName}
+        onPhotoUploaded={setPhotoUrl}
+      />
 
-        <div className="space-y-2">
-          <Label htmlFor="expirationDate">Expiration Date</Label>
-          <Input
-            id="expirationDate"
-            type="date"
-            value={expirationDate}
-            onChange={(e) => setExpirationDate(e.target.value)}
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="batchNumber">Batch Number</Label>
+        <Input
+          id="batchNumber"
+          value={batchNumber}
+          onChange={(e) => setBatchNumber(e.target.value)}
+          placeholder="Enter batch number"
+        />
+      </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="storageConditions">Storage Conditions</Label>
-          <Input
-            id="storageConditions"
-            value={storageConditions}
-            onChange={(e) => setStorageConditions(e.target.value)}
-            placeholder="How should this be stored?"
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="expirationDate">Expiration Date</Label>
+        <Input
+          id="expirationDate"
+          type="date"
+          value={expirationDate}
+          onChange={(e) => setExpirationDate(e.target.value)}
+        />
+      </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="purchaseLocation">Purchase Location</Label>
-          <Input
-            id="purchaseLocation"
-            value={purchaseLocation}
-            onChange={(e) => setPurchaseLocation(e.target.value)}
-            placeholder="Where did you buy it?"
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="storageConditions">Storage Conditions</Label>
+        <Input
+          id="storageConditions"
+          value={storageConditions}
+          onChange={(e) => setStorageConditions(e.target.value)}
+          placeholder="e.g., Store in a cool, dry place"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="purchaseLocation">Purchase Location</Label>
+        <Input
+          id="purchaseLocation"
+          value={purchaseLocation}
+          onChange={(e) => setPurchaseLocation(e.target.value)}
+          placeholder="Where did you buy it?"
+        />
       </div>
 
       <div className="flex items-center space-x-2">
@@ -99,11 +109,11 @@ export function AdditionalDetails({
 
       <div className="space-y-2">
         <Label htmlFor="sideEffects">Side Effects</Label>
-        <Input
+        <Textarea
           id="sideEffects"
           value={sideEffects}
           onChange={(e) => setSideEffects(e.target.value)}
-          placeholder="Any side effects?"
+          placeholder="Any side effects experienced?"
         />
       </div>
 
@@ -113,7 +123,7 @@ export function AdditionalDetails({
           id="timingNotes"
           value={timingNotes}
           onChange={(e) => setTimingNotes(e.target.value)}
-          placeholder="When did you take it? With food?"
+          placeholder="Best time to take, intervals, etc."
         />
       </div>
 
@@ -133,7 +143,7 @@ export function AdditionalDetails({
           id="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Additional observations or notes"
+          placeholder="Any other notes or observations?"
         />
       </div>
     </div>
