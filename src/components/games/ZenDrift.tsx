@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Wind, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls, PerspectiveCamera, Effects } from "@react-three/drei";
+import { Environment, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing";
 import { CarPhysics } from "./physics/CarPhysics";
 import { ZenDriftAssetsGenerator } from "./ZenDriftAssetsGenerator";
@@ -17,20 +17,21 @@ interface GameAsset {
   index: number;
 }
 
-export const ZenDrift = () => {
+const ZenDrift = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isLoadingAssets, setIsLoadingAssets] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [assets, setAssets] = useState<GameAsset[]>([]);
   const { toast } = useToast();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const loadAssets = async () => {
     try {
       setIsLoadingAssets(true);
       setLoadingProgress(0);
       const newAssets: GameAsset[] = [];
-      let totalAssets = 24; // 8 of each type
+      let totalAssets = 24;
       let loadedAssets = 0;
       
       const assetTypes = [
@@ -64,7 +65,6 @@ export const ZenDrift = () => {
             }
           } catch (error) {
             console.error(`Error loading ${type}_${i}:`, error);
-            // Continue loading other assets even if one fails
           }
         }
       }
@@ -76,7 +76,6 @@ export const ZenDrift = () => {
       setAssets(newAssets);
       console.log(`Loaded ${newAssets.length} assets successfully`);
       
-      // Only show success toast if we loaded at least some assets
       if (newAssets.length > 0) {
         toast({
           title: "Assets Loaded",
@@ -148,7 +147,13 @@ export const ZenDrift = () => {
             </div>
           )}
           
-          <Canvas shadows>
+          <Canvas
+            ref={canvasRef}
+            shadows
+            gl={{ antialias: true }}
+            camera={{ position: [0, 15, 20], fov: 75 }}
+            style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
+          >
             <PerspectiveCamera makeDefault position={[0, 15, 20]} />
             
             <ambientLight intensity={0.5} />
