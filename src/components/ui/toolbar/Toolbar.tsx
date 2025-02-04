@@ -1,123 +1,171 @@
-import React, { useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Shield, Activity, Brain, Heart, Moon, Coffee, Zap, Target, Clock, MoreHorizontal, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthProvider";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Brain,
+  Coffee,
+  Moon,
+  Sun,
+  Wind,
+  Check,
+  X,
+  Activity,
+} from "lucide-react";
 
-// Define all available tools
-const allTools = [
-  { id: 'blocking', icon: Shield, label: 'Block Distractions', route: '/distraction-blocker' },
-  { id: 'energy', icon: Activity, label: 'Energy Tracking', route: '/energy' },
-  { id: 'focus', icon: Brain, label: 'Focus Mode', route: '/focus' },
-  { id: 'mood', icon: Heart, label: 'Mood Tracking', route: '/mood' },
-  { id: 'sleep', icon: Moon, label: 'Sleep Tracking', route: '/sleep' },
-  { id: 'caffeine', icon: Coffee, label: 'Caffeine Tracking', route: '/caffeine' },
-  { id: 'games', icon: Target, label: 'Focus Games', route: '/games' },
-  { id: 'breathing', icon: Zap, label: 'Breathing', route: '/breathing' },
-  { id: 'schedule', icon: Clock, label: 'Schedule', route: '/schedule' },
-];
-
-export const Toolbar = () => {
+export function Toolbar() {
   const navigate = useNavigate();
-  const [tools, setTools] = useState(allTools);
-  const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
-  
-  const handleDragEnd = (result: any) => {
-    if (!result.destination) return;
-    
-    const items = Array.from(tools);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    
-    setTools(items);
+  const { session } = useAuth();
+
+  const logSoberMoment = async () => {
+    if (!session?.user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to track your sobriety",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('substance_logs')
+        .insert([{
+          user_id: session.user.id,
+          substance_type: 'none',
+          quantity: 0,
+          unit_of_measure: 'units',
+          success_in_refusing: true,
+          notes: 'Stayed sober - positive choice logged',
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success!",
+        description: "Your sober moment has been logged. Keep going!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log sober moment. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Error logging sober moment:", error);
+    }
   };
 
-  const toggleEditMode = () => {
-    setIsEditing(!isEditing);
-    if (isEditing) {
+  const startQuitAttempt = async () => {
+    if (!session?.user) {
       toast({
-        title: "Toolbar updated",
-        description: "Your toolbar layout has been saved.",
+        title: "Authentication Required",
+        description: "Please sign in to start your quit journey",
+        variant: "destructive",
       });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('quit_attempts')
+        .insert([{
+          user_id: session.user.id,
+          substance_type: 'general',
+          challenges_faced: [],
+          coping_strategies: [],
+          support_received: [],
+          notes: 'Starting fresh - committed to change',
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Quit Journey Started",
+        description: "Your commitment has been recorded. We're here to support you!",
+      });
+      
+      // Navigate to the quit plan page for additional setup
+      navigate('/sobriety/quit-plan');
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to start quit attempt. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Error starting quit attempt:", error);
     }
   };
 
   return (
-    <div className="w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b relative">
-      <div className="container h-14">
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="toolbar" direction="horizontal">
-            {(provided) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="flex items-center gap-2 overflow-x-auto h-full px-2 pr-20 scrollbar-thin scrollbar-thumb-secondary/20 scrollbar-track-transparent hover:scrollbar-thumb-secondary/30 transition-colors"
-                style={{ touchAction: isEditing ? 'none' : 'auto' }}
-              >
-                {tools.map((tool, index) => (
-                  <Draggable 
-                    key={tool.id} 
-                    draggableId={tool.id} 
-                    index={index}
-                    isDragDisabled={!isEditing}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="flex items-center touch-manipulation"
-                        style={{
-                          ...provided.draggableProps.style,
-                          touchAction: isEditing ? 'none' : 'auto'
-                        }}
-                      >
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={`gap-2 transition-all ${
-                            snapshot.isDragging ? 'scale-105 bg-accent/50' : ''
-                          } ${isEditing ? 'cursor-move hover:bg-accent/20' : ''}`}
-                          onClick={() => !isEditing && navigate(tool.route)}
-                        >
-                          <tool.icon className="h-4 w-4" />
-                          {tool.label}
-                        </Button>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+    <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+      <div className="flex w-max space-x-4 p-4">
+        <Button
+          variant="outline"
+          className="flex items-center"
+          onClick={() => navigate("/focus")}
+        >
+          <Brain className="mr-2 h-4 w-4" />
+          Focus Time
+        </Button>
         
-        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleEditMode}
-            className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          >
-            {isEditing ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <MoreHorizontal className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          className="flex items-center"
+          onClick={() => navigate("/breathing")}
+        >
+          <Wind className="mr-2 h-4 w-4" />
+          Breathing
+        </Button>
+        
+        <Button
+          variant="outline"
+          className="flex items-center"
+          onClick={() => navigate("/sleep")}
+        >
+          <Moon className="mr-2 h-4 w-4" />
+          Sleep
+        </Button>
+        
+        <Button
+          variant="outline"
+          className="flex items-center"
+          onClick={() => navigate("/caffeine")}
+        >
+          <Coffee className="mr-2 h-4 w-4" />
+          Caffeine
+        </Button>
+
+        <Button
+          variant="outline"
+          className="flex items-center"
+          onClick={logSoberMoment}
+        >
+          <Check className="mr-2 h-4 w-4 text-green-500" />
+          Sober Today
+        </Button>
+
+        <Button
+          variant="outline"
+          className="flex items-center"
+          onClick={startQuitAttempt}
+        >
+          <X className="mr-2 h-4 w-4 text-red-500" />
+          Start Quitting
+        </Button>
+
+        <Button
+          variant="outline"
+          className="flex items-center"
+          onClick={() => navigate("/sobriety")}
+        >
+          <Activity className="mr-2 h-4 w-4" />
+          Recovery Hub
+        </Button>
       </div>
-      {isEditing && (
-        <div className="absolute inset-0 bg-background/5 pointer-events-none" />
-      )}
-      {isEditing && (
-        <div className="text-sm text-muted-foreground text-center pb-1">
-          Drag tools to reorder them in the toolbar
-        </div>
-      )}
-    </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
-};
+}
