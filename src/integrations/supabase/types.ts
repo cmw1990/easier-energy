@@ -1547,38 +1547,101 @@ export type Database = {
         }
         Relationships: []
       }
-      supplement_logs: {
+      supplement_correlations: {
         Row: {
+          analysis_period_days: number | null
+          correlation_score: number | null
+          correlation_type: string
           created_at: string | null
-          dosage: string
-          effectiveness_rating: number | null
           id: string
-          notes: string | null
-          side_effects: string | null
           supplement_name: string
-          time_taken: string
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          analysis_period_days?: number | null
+          correlation_score?: number | null
+          correlation_type: string
           created_at?: string | null
-          dosage: string
-          effectiveness_rating?: number | null
           id?: string
-          notes?: string | null
-          side_effects?: string | null
           supplement_name: string
-          time_taken: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          analysis_period_days?: number | null
+          correlation_score?: number | null
+          correlation_type?: string
+          created_at?: string | null
+          id?: string
+          supplement_name?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      supplement_logs: {
+        Row: {
+          batch_number: string | null
+          brand: string | null
+          created_at: string | null
+          dosage: string
+          effectiveness_rating: number | null
+          energy_impact: number | null
+          expiration_date: string | null
+          focus_impact: number | null
+          id: string
+          interaction_notes: string | null
+          mood_impact: number | null
+          notes: string | null
+          side_effects: string | null
+          sleep_impact: number | null
+          stress_impact: number | null
+          supplement_name: string
+          time_taken: string
+          timing_notes: string | null
+          user_id: string | null
+        }
+        Insert: {
+          batch_number?: string | null
+          brand?: string | null
+          created_at?: string | null
+          dosage: string
+          effectiveness_rating?: number | null
+          energy_impact?: number | null
+          expiration_date?: string | null
+          focus_impact?: number | null
+          id?: string
+          interaction_notes?: string | null
+          mood_impact?: number | null
+          notes?: string | null
+          side_effects?: string | null
+          sleep_impact?: number | null
+          stress_impact?: number | null
+          supplement_name: string
+          time_taken: string
+          timing_notes?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          batch_number?: string | null
+          brand?: string | null
           created_at?: string | null
           dosage?: string
           effectiveness_rating?: number | null
+          energy_impact?: number | null
+          expiration_date?: string | null
+          focus_impact?: number | null
           id?: string
+          interaction_notes?: string | null
+          mood_impact?: number | null
           notes?: string | null
           side_effects?: string | null
+          sleep_impact?: number | null
+          stress_impact?: number | null
           supplement_name?: string
           time_taken?: string
+          timing_notes?: string | null
           user_id?: string | null
         }
         Relationships: []
