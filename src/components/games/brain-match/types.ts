@@ -4,3 +4,10 @@ export type TileType = {
   matched: boolean;
   selected: boolean;
 };
+
+export type GameState = {
+  score: number;
+  tiles: TileType[];
+  selectedTiles: number[];
+  matchedTiles: number[];
+};

@@ -2407,6 +2407,7 @@ export type Database = {
         | "gomoku"
         | "connect_four"
         | "tic_tac_toe"
+        | "pattern_recognition"
       health_condition:
         | "adhd"
         | "chronic_fatigue"
