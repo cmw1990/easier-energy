@@ -46,10 +46,10 @@ export class PufferfishScene extends Phaser.Scene {
 
     // Create bubble particle emitter
     if (this.pufferfish) {
-      this.bubbleEmitter = this.createBubbleEmitter(
-        this.pufferfish.x,
-        this.pufferfish.y
-      );
+      this.bubbleEmitter = this.createBubbleEmitter();
+      if (this.bubbleEmitter) {
+        this.bubbleEmitter.setPosition(this.pufferfish.x, this.pufferfish.y + 20);
+      }
     }
 
     // Start game loop
@@ -95,8 +95,8 @@ export class PufferfishScene extends Phaser.Scene {
     this.setScoreCallback(this.currentScore);
   }
 
-  private createBubbleEmitter(x: number, y: number): Phaser.GameObjects.Particles.ParticleEmitter {
-    const particles = this.add.particles(x, y, 'bubbles');
+  private createBubbleEmitter(): Phaser.GameObjects.Particles.ParticleEmitter {
+    const particles = this.add.particles('bubbles');
     return particles.createEmitter({
       speed: { min: 50, max: 100 },
       angle: { min: 260, max: 280 },
