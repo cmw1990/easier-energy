@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { generateNatureSound } from "@/utils/audioGenerators";
+import { generateNatureSound } from "@/utils/audio";
 import { GenerateBackgroundsButton } from "@/components/meditation/GenerateBackgroundsButton";
 
 const MEDITATION_TYPES = [

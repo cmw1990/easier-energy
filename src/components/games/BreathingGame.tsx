@@ -17,7 +17,7 @@ import { BreathingTechniques, type BreathingTechnique } from "@/components/breat
 import { usePhaserGame } from "@/hooks/use-phaser-game";
 import { PufferfishScene3D } from "./scenes/PufferfishScene3D";
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
-import { generateBinauralBeat, generateNatureSound } from "@/utils/audioGenerators";
+import { generateBinauralBeat, generateNatureSound } from "@/utils/audio";
 
 const BreathingGame = () => {
   const [score, setScore] = useState(0);
