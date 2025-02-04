@@ -1,155 +1,135 @@
-import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Brain, RefreshCw } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/AuthProvider";
+import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from '@/integrations/supabase/client';
 
 const NumberMemoryGame = () => {
-  const { session } = useAuth();
-  const { toast } = useToast();
-  const [number, setNumber] = useState("");
-  const [userInput, setUserInput] = useState("");
+  const [sequence, setSequence] = useState<number[]>([]);
+  const [userInput, setUserInput] = useState('');
+  const [showingSequence, setShowingSequence] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
-  const [gameState, setGameState] = useState<"showing" | "input" | "result">("showing");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [level, setLevel] = useState(3); // Start with 3 digits
+  const { toast } = useToast();
 
-  useEffect(() => {
-    if (gameState === "showing") {
-      generateNumber();
-      const timer = setTimeout(() => {
-        setGameState("input");
-      }, 2000 + (level * 500)); // Increase showing time with level
-      return () => clearTimeout(timer);
-    }
-  }, [gameState, level]);
+  const generateSequence = useCallback(() => {
+    const newSequence = Array.from(
+      { length: level },
+      () => Math.floor(Math.random() * 10)
+    );
+    setSequence(newSequence);
+  }, [level]);
 
-  const generateNumber = () => {
-    const length = level + 2; // Start with 3 digits and increase
-    let num = "";
-    for (let i = 0; i < length; i++) {
-      num += Math.floor(Math.random() * 10);
-    }
-    setNumber(num);
-    setUserInput("");
-  };
+  const startNewRound = useCallback(() => {
+    setUserInput('');
+    setShowingSequence(true);
+    generateSequence();
+    setGameStarted(true);
 
-  const handleSubmit = () => {
-    if (userInput === number) {
-      setScore(prev => prev + (level * 10));
+    // Hide the sequence after 2 seconds * current level
+    setTimeout(() => {
+      setShowingSequence(false);
+    }, level * 1000);
+  }, [generateSequence, level]);
+
+  const handleSubmit = async () => {
+    const userSequence = userInput.split('').map(Number);
+    const correct = sequence.join('') === userSequence.join('');
+
+    if (correct) {
+      const newScore = score + level;
+      setScore(newScore);
       setLevel(prev => prev + 1);
       toast({
         title: "Correct!",
-        description: "Moving to next level",
+        description: `Moving to level ${level + 1}`,
       });
+
+      // Save the score to Supabase
+      try {
+        const { error } = await supabase.from('board_games').insert({
+          game_type: 'digit_span',
+          score: newScore,
+          difficulty_level: level,
+          game_state: { sequence, userInput: userSequence },
+          status: 'completed'
+        });
+
+        if (error) throw error;
+      } catch (error) {
+        console.error('Error saving score:', error);
+      }
+
     } else {
       toast({
         title: "Incorrect",
-        description: `The number was ${number}`,
+        description: `The sequence was ${sequence.join('')}. Game Over! Final score: ${score}`,
         variant: "destructive",
       });
-      saveScore();
-      setLevel(1);
+      setGameStarted(false);
+      setLevel(3);
       setScore(0);
     }
-    setGameState("showing");
+    setUserInput('');
   };
 
-  const saveScore = async () => {
-    if (!session?.user?.id || score === 0) return;
-    
-    setIsSubmitting(true);
-    try {
-      const { error } = await supabase.from("energy_focus_logs").insert({
-        user_id: session.user.id,
-        activity_type: "brain_game",
-        activity_name: "Number Memory",
-        duration_minutes: Math.ceil(score / 30),
-        focus_rating: Math.min(100, score),
-        energy_rating: null,
-        notes: `Completed Number Memory with score ${score}`
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Score saved!",
-        description: "Your progress has been recorded.",
-      });
-    } catch (error) {
-      console.error("Error saving score:", error);
-      toast({
-        title: "Error Saving Score",
-        description: "There was a problem saving your progress.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+  useEffect(() => {
+    if (gameStarted && !showingSequence) {
+      const input = document.getElementById('number-input');
+      input?.focus();
     }
-  };
-
-  const resetGame = () => {
-    setLevel(1);
-    setScore(0);
-    setGameState("showing");
-  };
+  }, [showingSequence, gameStarted]);
 
   return (
-    <Card className="p-6">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-full">
-            <Brain className="h-5 w-5 text-primary" />
+    <Card className="p-6 max-w-lg mx-auto">
+      <div className="space-y-4">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Digit Span Memory Test</h2>
+          <p className="text-gray-600 mb-4">
+            Remember the sequence of numbers and type them in order
+          </p>
+          <div className="mb-4">
+            <p className="font-semibold">Level: {level - 2}</p>
+            <p className="font-semibold">Score: {score}</p>
           </div>
-          <h2 className="text-2xl font-bold">Number Memory</h2>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-lg font-semibold">Score: {score}</div>
-          <div className="text-lg font-semibold">Level: {level}</div>
-          <Button 
-            onClick={resetGame}
-            variant="outline"
-            size="icon"
-            disabled={isSubmitting}
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
 
-      <div className="flex flex-col items-center space-y-6 my-8">
-        {gameState === "showing" && (
-          <div className="text-4xl font-bold tracking-wider animate-pulse">
-            {number}
+        {!gameStarted ? (
+          <Button 
+            onClick={startNewRound}
+            className="w-full"
+          >
+            Start Game
+          </Button>
+        ) : showingSequence ? (
+          <div className="text-4xl font-bold text-center p-8">
+            {sequence.join(' ')}
           </div>
-        )}
-        
-        {gameState === "input" && (
-          <div className="w-full max-w-sm space-y-4">
+        ) : (
+          <div className="space-y-4">
             <Input
+              id="number-input"
               type="number"
-              placeholder="Enter the number you saw"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              className="text-center text-xl"
-              autoFocus
+              placeholder="Enter the sequence"
+              className="text-center text-2xl"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSubmit();
+                }
+              }}
             />
             <Button 
               onClick={handleSubmit}
               className="w-full"
-              disabled={!userInput}
             >
               Submit
             </Button>
           </div>
         )}
-      </div>
-
-      <div className="text-sm text-muted-foreground text-center">
-        Remember the number sequence before it disappears
       </div>
     </Card>
   );

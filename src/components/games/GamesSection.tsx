@@ -1,113 +1,96 @@
-import { Card } from "@/components/ui/card";
-import { Brain, Gamepad, Puzzle, Zap, Book, Grid, Hash, FlaskConical } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Card } from '@/components/ui/card';
 
-export const GamesSection = () => {
-  const navigate = useNavigate();
-
+const GamesSection = () => {
   const games = [
     {
-      title: "Logic Puzzles",
-      description: "Challenge your reasoning with engaging logic problems",
-      icon: Brain,
-      route: "/games/logic-puzzles"
+      title: 'Chess',
+      description: 'Classic chess game with AI opponent',
+      path: '/games/chess'
     },
     {
-      title: "Reading Comprehension",
-      description: "Improve reading speed and understanding",
-      icon: Book,
-      route: "/games/reading-comprehension"
+      title: 'Go',
+      description: 'Ancient board game of territory control',
+      path: '/games/go'
     },
     {
-      title: "Color Match",
-      description: "Challenge your focus with quick color matching decisions",
-      icon: Zap,
-      route: "/games/color-match"
+      title: 'Checkers',
+      description: 'Traditional checkers game',
+      path: '/games/checkers'
     },
     {
-      title: "Pattern Recognition",
-      description: "Test your memory by reproducing visual patterns",
-      icon: Puzzle,
-      route: "/games/pattern-recognition",
-      isNew: true
+      title: 'Reversi',
+      description: 'Strategic board game also known as Othello',
+      path: '/games/reversi'
     },
     {
-      title: "Math Speed",
-      description: "Boost mental arithmetic in a relaxing environment",
-      icon: Brain,
-      route: "/games/math-speed"
+      title: 'Xiangqi',
+      description: 'Chinese Chess',
+      path: '/games/xiangqi'
     },
     {
-      title: "Brain Match 3",
-      description: "Match tiles to create equations divisible by 3",
-      icon: Puzzle,
-      route: "/games/brain-match-3"
+      title: 'Shogi',
+      description: 'Japanese Chess',
+      path: '/games/shogi'
     },
     {
-      title: "Sudoku",
-      description: "Classic number puzzle game to test your logic",
-      icon: Grid,
-      route: "/games/sudoku"
+      title: 'Gomoku',
+      description: 'Five in a row game',
+      path: '/games/gomoku'
     },
     {
-      title: "Number Memory",
-      description: "Test and improve your working memory capacity",
-      icon: Hash,
-      route: "/games/number-memory"
+      title: 'Connect Four',
+      description: 'Classic connection game',
+      path: '/games/connect-four'
     },
     {
-      title: "N-Back Test",
-      description: "Challenge your working memory and attention",
-      icon: Brain,
-      route: "/games/n-back",
-      isNew: true
+      title: 'Tic Tac Toe',
+      description: 'Simple but strategic game',
+      path: '/games/tic-tac-toe'
     },
     {
-      title: "Stroop Test",
-      description: "Challenge your mental flexibility and processing speed",
-      icon: FlaskConical,
-      route: "/games/stroop-test",
-      isNew: true
+      title: 'Pattern Recognition',
+      description: 'Test your pattern recognition skills',
+      path: '/games/pattern-recognition'
+    },
+    {
+      title: 'Brain Match',
+      description: 'Match pairs to test your memory',
+      path: '/games/brain-match'
+    },
+    {
+      title: 'N-Back',
+      description: 'Test your working memory',
+      path: '/games/n-back'
+    },
+    {
+      title: 'Stroop Test',
+      description: 'Test your mental flexibility',
+      path: '/games/stroop-test'
+    },
+    {
+      title: 'Digit Span',
+      description: 'Test your number memory',
+      path: '/games/digit-span'
     }
   ];
 
   return (
-    <Card className="p-6 bg-primary/5 border-2 border-primary/20 shadow-lg">
-      <div className="flex flex-col items-center text-center space-y-6">
-        <div className="p-4 bg-primary/10 rounded-full">
-          <Gamepad className="h-12 w-12 text-primary animate-pulse" />
-        </div>
-        <div>
-          <h2 className="text-3xl font-bold mb-2">Focus Games</h2>
-          <p className="text-muted-foreground mb-6">
-            Improve your focus and reduce stress with these engaging games
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-          {games.map((game) => (
-            <Card
-              key={game.route}
-              className="p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-              onClick={() => navigate(game.route)}
-            >
-              <div className="flex flex-col items-center space-y-4 text-center">
-                <div className="p-3 bg-primary/10 rounded-full group-hover:scale-110 transition-transform">
-                  <game.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="font-semibold text-lg">{game.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {game.description}
-                </p>
-                {game.isNew && (
-                  <span className="px-2 py-1 text-xs bg-primary/10 text-primary rounded-full">
-                    New!
-                  </span>
-                )}
-              </div>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">Brain Training Games</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {games.map((game) => (
+          <Link key={game.path} to={game.path}>
+            <Card className="p-4 hover:shadow-lg transition-shadow">
+              <h2 className="text-xl font-semibold">{game.title}</h2>
+              <p className="text-gray-600">{game.description}</p>
             </Card>
-          ))}
-        </div>
+          </Link>
+        ))}
       </div>
-    </Card>
+    </div>
   );
 };
+
+export default GamesSection;

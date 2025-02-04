@@ -1,4 +1,4 @@
-export type GameType = 'chess' | 'go' | 'checkers' | 'reversi' | 'xiangqi' | 'shogi' | 'gomoku' | 'connect_four' | 'tic_tac_toe';
+export type GameType = 'chess' | 'go' | 'checkers' | 'reversi' | 'xiangqi' | 'shogi' | 'gomoku' | 'connect_four' | 'tic_tac_toe' | 'pattern_recognition' | 'brain_match' | 'n_back' | 'stroop_test' | 'digit_span' | 'mental_rotation' | 'word_pairs' | 'reaction_time';
 export type GameStatus = 'not_started' | 'in_progress' | 'completed';
 export type Player = 'black' | 'white' | 'red';
 

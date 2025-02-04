@@ -2409,6 +2409,12 @@ export type Database = {
         | "tic_tac_toe"
         | "pattern_recognition"
         | "brain_match"
+        | "n_back"
+        | "stroop_test"
+        | "digit_span"
+        | "mental_rotation"
+        | "word_pairs"
+        | "reaction_time"
       health_condition:
         | "adhd"
         | "chronic_fatigue"
