@@ -19,6 +19,7 @@ import {
   Dumbbell,
   Pill,
   Cigarette,
+  Heart,
 } from "lucide-react";
 
 const navigationGroups = [
