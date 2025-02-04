@@ -14,6 +14,7 @@ import {
   Cigarette,
   Utensils,
   Heart,
+  Package,
 } from "lucide-react";
 
 const toolbarItems = [
@@ -32,67 +33,73 @@ const toolbarItems = [
   {
     to: "/relax",
     icon: Flower2,
-    label: "Zen",
+    label: "Relax",
     iconClassName: "text-pink-500",
   },
   {
     to: "/focus",
     icon: Brain,
-    label: "Mind",
+    label: "Focus",
     iconClassName: "text-amber-500",
   },
   {
     to: "/meditation",
     icon: Sparkles,
-    label: "Peace",
+    label: "Meditate",
     iconClassName: "text-purple-500",
   },
   {
     to: "/exercise",
     icon: Dumbbell,
-    label: "Move",
+    label: "Exercise",
     iconClassName: "text-red-500",
   },
   {
     to: "/eye-exercises",
     icon: Eye,
-    label: "Eye",
+    label: "Vision",
     iconClassName: "text-sky-500",
   },
   {
     to: "/breathing",
     icon: Wind,
-    label: "Air",
+    label: "Breathe",
     iconClassName: "text-teal-500",
   },
   {
     to: "/caffeine",
     icon: Coffee,
-    label: "Boost",
+    label: "Caffeine",
     iconClassName: "text-orange-500",
   },
   {
     to: "/nicotine",
+    icon: Package,
+    label: "Nicotine",
+    iconClassName: "text-zinc-500",
+  },
+  {
+    to: "/sobriety",
     icon: Cigarette,
-    label: "Quit",
+    label: "Recovery",
     iconClassName: "text-zinc-500",
   },
   {
     to: "/supplements",
     icon: Pill,
-    label: "Pills",
+    label: "Supplements",
     iconClassName: "text-blue-500",
   },
   {
     to: "/food",
     icon: Utensils,
-    label: "Food",
+    label: "Nutrition",
     iconClassName: "text-lime-500",
   },
   {
-    to: "/sobriety",
+    to: "/health",
     icon: Heart,
-    label: "Life",
+    label: "Wellness",
     iconClassName: "text-rose-500",
   },
 ];
