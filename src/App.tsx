@@ -23,6 +23,7 @@ import DigitSpanGame from "@/components/games/digit-span/DigitSpanGame";
 import MentalRotationGame from "@/components/games/mental-rotation/MentalRotationGame";
 import WordPairsGame from "@/components/games/word-pairs/WordPairsGame";
 import SpeedTypingGame from "@/components/games/speed-typing/SpeedTypingGame";
+import MemoryCards from "@/components/games/MemoryCards";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ function App() {
               <Route path="/games/word-pairs" element={<WordPairsGame />} />
               <Route path="/games/speed-typing" element={<SpeedTypingGame />} />
               <Route path="/games/dual-n-back" element={<DualNBackGame />} />
+              <Route path="/games/memory-cards" element={<MemoryCards />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

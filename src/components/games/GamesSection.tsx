@@ -93,6 +93,11 @@ const GamesSection = () => {
       title: 'Dual N-Back',
       description: 'Advanced memory training with visual and audio',
       path: '/games/dual-n-back'
+    },
+    {
+      title: 'Memory Cards',
+      description: 'Classic memory game with matching pairs',
+      path: '/games/memory-cards'
     }
   ];
 
