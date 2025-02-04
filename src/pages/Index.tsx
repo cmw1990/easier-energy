@@ -24,6 +24,7 @@ import { RunningExercise } from "@/components/exercises/RunningExercise";
 import { StretchExercise } from "@/components/exercises/StretchExercise";
 import { DeskYoga } from "@/components/exercises/DeskYoga";
 import { YogaPoses } from "@/components/exercises/YogaPoses";
+import { ExerciseAssetsGenerator } from "@/components/exercises/ExerciseAssetsGenerator";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -112,6 +113,9 @@ const Index = () => {
               <WeatherHealthInsights />
             </div>
           )}
+          <div className="mb-8">
+            <ExerciseAssetsGenerator />
+          </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
             <WalkingExercise />
             <RunningExercise />
