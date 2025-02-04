@@ -1,13 +1,30 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Timer, Activity } from "lucide-react";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
 
 export const RunningExercise = () => {
   const [isTracking, setIsTracking] = useState(false);
   const [duration, setDuration] = useState(0);
   const { toast } = useToast();
+  const { session } = useAuth();
+  
+  useEffect(() => {
+    let interval: number | undefined;
+    
+    if (isTracking) {
+      interval = setInterval(() => {
+        setDuration(prev => prev + 1);
+      }, 1000);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTracking]);
   
   const startTracking = () => {
     setIsTracking(true);
@@ -15,22 +32,37 @@ export const RunningExercise = () => {
       title: "Running Exercise Started",
       description: "We'll track your running duration",
     });
-    
-    // Start the timer
-    const interval = setInterval(() => {
-      setDuration(prev => prev + 1);
-    }, 1000);
-    
-    // Store the interval ID for cleanup
-    return () => clearInterval(interval);
   };
   
-  const stopTracking = () => {
+  const stopTracking = async () => {
     setIsTracking(false);
-    toast({
-      title: "Running Exercise Completed",
-      description: `You ran for ${Math.floor(duration / 60)} minutes`,
-    });
+    
+    if (!session?.user) return;
+
+    try {
+      const { error } = await supabase
+        .from('exercise_tracking')
+        .insert({
+          user_id: session.user.id,
+          exercise_type: 'running',
+          duration_seconds: duration,
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Running Exercise Completed",
+        description: `You ran for ${Math.floor(duration / 60)} minutes`,
+      });
+    } catch (error) {
+      console.error('Error saving exercise:', error);
+      toast({
+        title: "Error saving exercise",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    }
+    
     setDuration(0);
   };
 

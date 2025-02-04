@@ -1,7 +1,17 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dumbbell, Activity } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dumbbell, Activity, Timer } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthProvider";
 
 export const DeskExercises = () => {
+  const [activeExercise, setActiveExercise] = useState<number | null>(null);
+  const [duration, setDuration] = useState(0);
+  const { toast } = useToast();
+  const { session } = useAuth();
+
   const exercises = [
     {
       title: "Neck Rolls",
@@ -41,6 +51,49 @@ export const DeskExercises = () => {
     }
   ];
 
+  const startExercise = (index: number) => {
+    setActiveExercise(index);
+    setDuration(0);
+    const interval = setInterval(() => {
+      setDuration(prev => prev + 1);
+    }, 1000);
+
+    // Store the interval ID for cleanup
+    return () => clearInterval(interval);
+  };
+
+  const completeExercise = async (index: number) => {
+    if (!session?.user) return;
+
+    try {
+      const { error } = await supabase
+        .from('exercise_tracking')
+        .insert({
+          user_id: session.user.id,
+          exercise_type: 'desk_exercise',
+          duration_seconds: duration,
+          notes: exercises[index].title
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Exercise Completed!",
+        description: `You completed ${exercises[index].title} for ${Math.floor(duration / 60)}:${(duration % 60).toString().padStart(2, '0')}`,
+      });
+    } catch (error) {
+      console.error('Error saving exercise:', error);
+      toast({
+        title: "Error saving exercise",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    }
+
+    setActiveExercise(null);
+    setDuration(0);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -57,13 +110,28 @@ export const DeskExercises = () => {
               className="flex items-start space-x-4 p-4 rounded-lg bg-muted/50"
             >
               <exercise.icon className="h-5 w-5 text-primary mt-1" />
-              <div>
+              <div className="flex-1">
                 <h3 className="font-medium">{exercise.title}</h3>
                 <p className="text-sm text-muted-foreground">
                   {exercise.description}
                 </p>
                 <p className="text-sm text-primary mt-1">{exercise.duration}</p>
+                {activeExercise === index && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <Timer className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
+                    </span>
+                  </div>
+                )}
               </div>
+              <Button
+                variant={activeExercise === index ? "destructive" : "default"}
+                onClick={() => activeExercise === index ? completeExercise(index) : startExercise(index)}
+                disabled={activeExercise !== null && activeExercise !== index}
+              >
+                {activeExercise === index ? "Complete" : "Start"}
+              </Button>
             </div>
           ))}
         </div>
