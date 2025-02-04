@@ -7,9 +7,13 @@ import { Progress } from "@/components/ui/progress";
 import { Calendar, Trophy, Activity, Users, Clock, Heart } from "lucide-react";
 import { CravingTracker } from "@/components/sobriety/CravingTracker";
 import { WithdrawalTracker } from "@/components/sobriety/WithdrawalTracker";
+import { TriggerPatternAnalysis } from "@/components/sobriety/TriggerPatternAnalysis";
+import { MoneySaved } from "@/components/sobriety/MoneySaved";
+import { HealthImprovements } from "@/components/sobriety/HealthImprovements";
 
 export default function Sobriety() {
   const navigate = useNavigate();
+  
   const { data: quitAttempts } = useQuery({
     queryKey: ['quitAttempts'],
     queryFn: async () => {
@@ -46,9 +50,11 @@ export default function Sobriety() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <CravingTracker />
         <WithdrawalTracker />
+        <TriggerPatternAnalysis />
+        <MoneySaved />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -128,6 +134,8 @@ export default function Sobriety() {
           </CardContent>
         </Card>
 
+        <HealthImprovements />
+
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -150,25 +158,6 @@ export default function Sobriety() {
                 </p>
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Heart className="h-5 w-5" />
-              Health Benefits
-            </CardTitle>
-            <CardDescription>Track your health improvements</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {milestones?.map((milestone) => (
-                <div key={milestone.id} className="text-sm">
-                  {milestone.health_improvements?.[0]}
-                </div>
-              ))}
-            </div>
           </CardContent>
         </Card>
       </div>
