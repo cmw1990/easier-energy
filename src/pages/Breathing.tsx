@@ -32,18 +32,31 @@ const Breathing = () => {
   const { data: recentSessions, refetch } = useQuery({
     queryKey: ["breathingSessions"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("energy_focus_logs")
-        .select("*")
-        .eq("user_id", session?.user?.id)
-        .eq("activity_type", "breathing")
-        .order("created_at", { ascending: false })
-        .limit(5);
+      try {
+        const { data, error } = await supabase
+          .from("energy_focus_logs")
+          .select("*")
+          .eq("user_id", session?.user?.id)
+          .eq("activity_type", "breathing")
+          .order("created_at", { ascending: false })
+          .limit(5);
 
-      if (error) throw error;
-      return data;
+        if (error) {
+          toast({
+            title: "Error loading sessions",
+            description: "Could not load your recent breathing sessions. Please try again.",
+            variant: "destructive",
+          });
+          throw error;
+        }
+        return data;
+      } catch (error) {
+        console.error("Error fetching breathing sessions:", error);
+        return [];
+      }
     },
     enabled: !!session?.user?.id,
+    retry: 1,
   });
 
   const clearHapticTimeouts = () => {
