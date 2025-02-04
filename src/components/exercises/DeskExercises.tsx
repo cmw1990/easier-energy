@@ -81,7 +81,6 @@ export const DeskExercises = () => {
     const interval = setInterval(() => {
       setDuration(prev => {
         const newDuration = prev + 1;
-        // Automatically advance to next step every 5 seconds
         if (newDuration % 5 === 0) {
           setCurrentStep(prevStep => {
             const nextStep = prevStep + 1;
@@ -99,7 +98,15 @@ export const DeskExercises = () => {
   };
 
   const completeExercise = async (index: number) => {
-    if (!session?.user) return;
+    if (!session?.user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to save your progress",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -109,7 +116,8 @@ export const DeskExercises = () => {
           user_id: session.user.id,
           exercise_type: 'desk_exercise',
           duration_seconds: duration,
-          notes: exercises[index].title
+          notes: exercises[index].title,
+          calories_burned: Math.round(duration / 60 * 3), // Rough estimate: 3 calories per minute
         });
 
       if (error) throw error;
