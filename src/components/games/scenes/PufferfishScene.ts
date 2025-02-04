@@ -2,8 +2,8 @@ import Phaser from 'phaser';
 
 export class PufferfishScene extends Phaser.Scene {
   private pufferfish: Phaser.GameObjects.Sprite | null = null;
+  private particles!: Phaser.GameObjects.ParticleEmitterManager;
   private bubbleEmitter!: Phaser.GameObjects.Particles.ParticleEmitter;
-  private particles!: Phaser.GameObjects.Particles.ParticleEmitterManager;
   private assets: Record<string, string> = {};
   private setScoreCallback: (score: number) => void;
   private currentScore: number = 0;
@@ -46,20 +46,18 @@ export class PufferfishScene extends Phaser.Scene {
     this.pufferfish.setScale(0.5);
 
     // Create particle system for bubbles
-    this.particles = this.add.particles('bubbles');
-    
-    // Configure the particle emitter
-    this.bubbleEmitter = this.particles.createEmitter({
+    this.particles = this.add.particles(0, 0, 'bubbles', {
       x: { min: 380, max: 420 },
       y: { min: 190, max: 210 },
-      speed: { min: 50, max: 100 },
+      speedX: { min: 0, max: 0 },
+      speedY: { min: -50, max: -100 },
       angle: { min: 260, max: 280 },
       scale: { start: 0.4, end: 0.1 },
       alpha: { start: 0.8, end: 0 },
       lifespan: 2000,
-      gravityY: -100,
       frequency: 100,
-      quantity: 1
+      quantity: 1,
+      emitting: true
     });
 
     // Start game loop
@@ -72,27 +70,35 @@ export class PufferfishScene extends Phaser.Scene {
   }
 
   update() {
-    if (!this.pufferfish || !this.bubbleEmitter) return;
+    if (!this.pufferfish) return;
 
     // Update pufferfish position and scale based on breath phase
     switch (this.breathPhase) {
       case 'inhale':
         this.pufferfish.setScale(Math.min(this.pufferfish.scale + 0.01, 0.8));
         this.pufferfish.y = Math.max(this.pufferfish.y - 1, 50);
-        this.bubbleEmitter.setPosition(this.pufferfish.x, this.pufferfish.y + 20);
-        this.bubbleEmitter.setFrequency(50);
+        if (this.particles) {
+          this.particles.setPosition(this.pufferfish.x, this.pufferfish.y + 20);
+          this.particles.setFrequency(50);
+        }
         break;
       case 'exhale':
         this.pufferfish.setScale(Math.max(this.pufferfish.scale - 0.01, 0.3));
         this.pufferfish.y = Math.min(this.pufferfish.y + 1, 350);
-        this.bubbleEmitter.setPosition(this.pufferfish.x, this.pufferfish.y + 20);
-        this.bubbleEmitter.setFrequency(200);
+        if (this.particles) {
+          this.particles.setPosition(this.pufferfish.x, this.pufferfish.y + 20);
+          this.particles.setFrequency(200);
+        }
         break;
       case 'hold':
-        this.bubbleEmitter.setFrequency(1000);
+        if (this.particles) {
+          this.particles.setFrequency(1000);
+        }
         break;
       case 'rest':
-        this.bubbleEmitter.setFrequency(500);
+        if (this.particles) {
+          this.particles.setFrequency(500);
+        }
         break;
     }
 
