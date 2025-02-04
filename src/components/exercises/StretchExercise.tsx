@@ -9,6 +9,7 @@ import { useAuth } from "@/components/AuthProvider";
 export const StretchExercise = () => {
   const [activeStretch, setActiveStretch] = useState<number | null>(null);
   const [duration, setDuration] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { session } = useAuth();
 
@@ -52,17 +53,44 @@ export const StretchExercise = () => {
   ];
 
   const startStretch = (index: number) => {
-    setActiveStretch(index);
-    setDuration(0);
-    const interval = setInterval(() => {
-      setDuration(prev => prev + 1);
-    }, 1000);
+    try {
+      setIsLoading(true);
+      setActiveStretch(index);
+      setDuration(0);
+      
+      const interval = setInterval(() => {
+        setDuration(prev => prev + 1);
+      }, 1000);
 
-    return () => clearInterval(interval);
+      toast({
+        title: "Exercise Started",
+        description: `Starting ${stretches[index].title}. Follow the instructions carefully.`,
+      });
+
+      return () => clearInterval(interval);
+    } catch (error) {
+      console.error('Error starting stretch:', error);
+      toast({
+        title: "Error Starting Exercise",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const completeStretch = async (index: number) => {
-    if (!session?.user) return;
+    if (!session?.user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to save your progress",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       const { error } = await supabase
@@ -87,10 +115,11 @@ export const StretchExercise = () => {
         description: "Please try again",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
+      setActiveStretch(null);
+      setDuration(0);
     }
-
-    setActiveStretch(null);
-    setDuration(0);
   };
 
   return (
@@ -138,14 +167,20 @@ export const StretchExercise = () => {
               <Button
                 variant={activeStretch === index ? "destructive" : "default"}
                 onClick={() => activeStretch === index ? completeStretch(index) : startStretch(index)}
-                disabled={activeStretch !== null && activeStretch !== index}
+                disabled={isLoading || (activeStretch !== null && activeStretch !== index)}
                 className={`transition-all duration-300 transform ${
                   activeStretch === index 
                     ? "animate-pulse" 
                     : "hover:scale-105 hover:shadow-md"
                 }`}
               >
-                {activeStretch === index ? "Complete" : "Start"}
+                {isLoading ? (
+                  <div className="h-5 w-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ) : activeStretch === index ? (
+                  "Complete"
+                ) : (
+                  "Start"
+                )}
               </Button>
             </div>
           ))}
