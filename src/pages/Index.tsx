@@ -116,21 +116,6 @@ const Index = () => {
           <div className="mb-8">
             <ExerciseAssetsGenerator />
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-            <WalkingExercise />
-            <RunningExercise />
-            <DeskExercises />
-          </div>
-          <div className="mb-8">
-            <StretchExercise />
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 mb-8">
-            <DeskYoga />
-            <YogaPoses />
-          </div>
-          <div className="mb-8">
-            <MeditationRecommendations />
-          </div>
           <div className="mb-8">
             <GamesSection />
           </div>
