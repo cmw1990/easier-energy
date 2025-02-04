@@ -11,6 +11,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { SupplementAIAnalysis } from "@/components/supplements/SupplementAIAnalysis";
 
 export function SupplementIntakeForm({
   onSubmit,
@@ -110,11 +111,12 @@ export function SupplementIntakeForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="basic">Basic Info</TabsTrigger>
           <TabsTrigger value="impact">Impact</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="reminder">Reminder</TabsTrigger>
+          <TabsTrigger value="analysis">AI Analysis</TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic" className="mt-4">
@@ -180,6 +182,22 @@ export function SupplementIntakeForm({
             setReminderEnabled={setReminderEnabled}
             reminderTime={reminderTime}
             setReminderTime={setReminderTime}
+          />
+        </TabsContent>
+
+        <TabsContent value="analysis" className="mt-4">
+          <SupplementAIAnalysis
+            supplementName={supplementName}
+            supplementData={{
+              dosage,
+              form,
+              effectiveness_rating: effectivenessRating,
+              energy_impact: energyImpact,
+              stress_impact: stressImpact,
+              focus_impact: focusImpact,
+              mood_impact: moodImpact,
+              sleep_impact: sleepImpact,
+            }}
           />
         </TabsContent>
       </Tabs>
