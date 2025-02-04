@@ -1547,6 +1547,45 @@ export type Database = {
         }
         Relationships: []
       }
+      supplement_ai_analysis: {
+        Row: {
+          created_at: string | null
+          effectiveness_patterns: Json | null
+          id: string
+          interaction_warnings: string[] | null
+          last_analyzed_at: string | null
+          optimal_timing_suggestion: string | null
+          research_summary: string | null
+          supplement_name: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          effectiveness_patterns?: Json | null
+          id?: string
+          interaction_warnings?: string[] | null
+          last_analyzed_at?: string | null
+          optimal_timing_suggestion?: string | null
+          research_summary?: string | null
+          supplement_name: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          effectiveness_patterns?: Json | null
+          id?: string
+          interaction_warnings?: string[] | null
+          last_analyzed_at?: string | null
+          optimal_timing_suggestion?: string | null
+          research_summary?: string | null
+          supplement_name?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       supplement_categories: {
         Row: {
           created_at: string | null
@@ -1596,6 +1635,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      supplement_community_insights: {
+        Row: {
+          content: string
+          created_at: string | null
+          downvotes: number | null
+          id: string
+          insight_type: string
+          is_expert: boolean | null
+          research_url: string | null
+          supplement_name: string
+          updated_at: string | null
+          upvotes: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          downvotes?: number | null
+          id?: string
+          insight_type: string
+          is_expert?: boolean | null
+          research_url?: string | null
+          supplement_name: string
+          updated_at?: string | null
+          upvotes?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          downvotes?: number | null
+          id?: string
+          insight_type?: string
+          is_expert?: boolean | null
+          research_url?: string | null
+          supplement_name?: string
+          updated_at?: string | null
+          upvotes?: number | null
+        }
+        Relationships: []
       }
       supplement_correlations: {
         Row: {
@@ -1662,6 +1740,7 @@ export type Database = {
       }
       supplement_logs: {
         Row: {
+          barcode: string | null
           batch_number: string | null
           brand: string | null
           contraindications: string | null
@@ -1675,8 +1754,10 @@ export type Database = {
           form: string | null
           id: string
           interaction_notes: string | null
+          lab_results: Json | null
           mood_impact: number | null
           notes: string | null
+          photo_url: string | null
           purchase_location: string | null
           recommended_timing: string[] | null
           reminder_enabled: boolean | null
@@ -1693,6 +1774,7 @@ export type Database = {
           verified_purchase: boolean | null
         }
         Insert: {
+          barcode?: string | null
           batch_number?: string | null
           brand?: string | null
           contraindications?: string | null
@@ -1706,8 +1788,10 @@ export type Database = {
           form?: string | null
           id?: string
           interaction_notes?: string | null
+          lab_results?: Json | null
           mood_impact?: number | null
           notes?: string | null
+          photo_url?: string | null
           purchase_location?: string | null
           recommended_timing?: string[] | null
           reminder_enabled?: boolean | null
@@ -1724,6 +1808,7 @@ export type Database = {
           verified_purchase?: boolean | null
         }
         Update: {
+          barcode?: string | null
           batch_number?: string | null
           brand?: string | null
           contraindications?: string | null
@@ -1737,8 +1822,10 @@ export type Database = {
           form?: string | null
           id?: string
           interaction_notes?: string | null
+          lab_results?: Json | null
           mood_impact?: number | null
           notes?: string | null
+          photo_url?: string | null
           purchase_location?: string | null
           recommended_timing?: string[] | null
           reminder_enabled?: boolean | null
