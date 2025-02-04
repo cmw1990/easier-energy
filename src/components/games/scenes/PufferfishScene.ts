@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 
 export class PufferfishScene extends Phaser.Scene {
   private pufferfish: Phaser.GameObjects.Sprite | null = null;
-  private bubbleEmitter: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
+  private bubbleEmitter!: Phaser.GameObjects.Particles.ParticleEmitter;
+  private particles!: Phaser.GameObjects.Particles.ParticleEmitterManager;
   private assets: Record<string, string> = {};
   private setScoreCallback: (score: number) => void;
   private currentScore: number = 0;
@@ -44,11 +45,11 @@ export class PufferfishScene extends Phaser.Scene {
     this.pufferfish = this.add.sprite(400, 200, 'pufferfish');
     this.pufferfish.setScale(0.5);
 
-    // Create particle manager and emitter for bubbles
-    const particles = this.add.particles('bubbles');
+    // Create particle system for bubbles
+    this.particles = this.add.particles('bubbles');
     
     // Configure the particle emitter
-    this.bubbleEmitter = particles.createEmitter({
+    this.bubbleEmitter = this.particles.createEmitter({
       x: { min: 380, max: 420 },
       y: { min: 190, max: 210 },
       speed: { min: 50, max: 100 },
