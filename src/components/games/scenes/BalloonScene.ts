@@ -32,10 +32,10 @@ export class BalloonScene extends Phaser.Scene {
       .setScale(0.5);
 
     // Create particle system for clouds
-    const particles = this.add.particles(0, 0, 'cloud');
+    const particles = this.add.particles('cloud');
     
     this.particleEmitter = particles.createEmitter({
-      x: this.gameWidth + 50,
+      x: { min: this.gameWidth, max: this.gameWidth + 50 },
       y: { min: 50, max: this.gameHeight - 50 },
       speedX: { min: -200, max: -150 },
       speedY: { min: -20, max: 20 },
