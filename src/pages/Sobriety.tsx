@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Calendar, Trophy, Activity, Users, Clock, Heart } from "lucide-react";
 import { CravingTracker } from "@/components/sobriety/CravingTracker";
+import { WithdrawalTracker } from "@/components/sobriety/WithdrawalTracker";
 
 export default function Sobriety() {
   const navigate = useNavigate();
@@ -45,7 +46,10 @@ export default function Sobriety() {
         </Button>
       </div>
 
-      <CravingTracker />
+      <div className="grid grid-cols-1 gap-6">
+        <CravingTracker />
+        <WithdrawalTracker />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card className="hover:shadow-lg transition-shadow">
