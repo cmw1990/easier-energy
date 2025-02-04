@@ -4,9 +4,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Brain, Heart, Focus, Sun, X, Image } from "lucide-react";
+import { 
+  Brain, Heart, Focus, Sun, X, Image, 
+  Moon, Leaf, Zap, Target, Sparkles, Waves 
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { generateNatureSound } from "@/utils/audioGenerators";
+
+const MEDITATION_TYPES = [
+  { id: 'mindfulness', icon: Brain, label: 'Mindfulness' },
+  { id: 'focus', icon: Target, label: 'Focus' },
+  { id: 'energy', icon: Zap, label: 'Energy' },
+  { id: 'stress-relief', icon: Leaf, label: 'Stress Relief' },
+  { id: 'sleep', icon: Moon, label: 'Sleep' },
+  { id: 'advanced', icon: Sparkles, label: 'Advanced' },
+  { id: 'therapeutic', icon: Heart, label: 'Therapeutic' },
+  { id: 'performance', icon: Waves, label: 'Performance' }
+];
 
 const Meditation = () => {
   const { toast } = useToast();
@@ -14,6 +29,7 @@ const Meditation = () => {
   const [breathCount, setBreathCount] = useState(0);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
   const [generatingImageId, setGeneratingImageId] = useState<string | null>(null);
+  const [ambientSound, setAmbientSound] = useState<ReturnType<typeof generateNatureSound> | null>(null);
 
   const { data: sessions, isLoading, refetch } = useQuery({
     queryKey: ['meditation-sessions'],
@@ -53,6 +69,12 @@ const Meditation = () => {
       setActiveSession(sessionId);
       setBreathCount(0);
       setBreathPhase('inhale');
+      
+      // Start ambient sound
+      if (ambientSound) ambientSound.stop();
+      const sound = generateNatureSound('ocean', 0.3);
+      setAmbientSound(sound);
+
       toast({
         title: "Session Started",
         description: `Starting ${session?.title}. Find a comfortable position and follow along.`,
@@ -81,7 +103,7 @@ const Meditation = () => {
       refetch();
       toast({
         title: "Background Generated",
-        description: "New meditation background has been created and saved.",
+        description: "New meditation background has been created.",
       });
       setGeneratingImageId(null);
     },
@@ -100,6 +122,10 @@ const Meditation = () => {
     setActiveSession(null);
     setBreathCount(0);
     setBreathPhase('inhale');
+    if (ambientSound) {
+      ambientSound.stop();
+      setAmbientSound(null);
+    }
     toast({
       title: "Session Ended",
       description: "Your meditation session has ended. Great job!",
@@ -117,17 +143,16 @@ const Meditation = () => {
     }
   };
 
-  const sessionTypes = [
-    { id: 'mindfulness', icon: Brain, label: 'Mindfulness' },
-    { id: 'loving-kindness', icon: Heart, label: 'Loving-Kindness' },
-    { id: 'focus', icon: Focus, label: 'Focus' },
-    { id: 'morning', icon: Sun, label: 'Morning' },
-  ];
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="animate-pulse flex space-x-4">
+          <div className="h-12 w-12 bg-primary/20 rounded-full" />
+          <div className="space-y-3">
+            <div className="h-4 w-28 bg-primary/20 rounded" />
+            <div className="h-4 w-20 bg-primary/20 rounded" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -239,8 +264,8 @@ const Meditation = () => {
       </div>
 
       <Tabs defaultValue="mindfulness" className="space-y-4">
-        <TabsList className="grid grid-cols-4 gap-4">
-          {sessionTypes.map((type) => (
+        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+          {MEDITATION_TYPES.map((type) => (
             <TabsTrigger key={type.id} value={type.id} className="flex items-center gap-2">
               <type.icon className="h-4 w-4" />
               {type.label}
@@ -248,7 +273,7 @@ const Meditation = () => {
           ))}
         </TabsList>
 
-        {sessionTypes.map((type) => (
+        {MEDITATION_TYPES.map((type) => (
           <TabsContent key={type.id} value={type.id} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {sessions?.filter(session => session.type === type.id).map((session) => (
@@ -279,7 +304,7 @@ const Meditation = () => {
                           disabled={generatingImageId === session.id}
                         >
                           {generatingImageId === session.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                           ) : (
                             <Image className="h-4 w-4" />
                           )}
@@ -292,7 +317,7 @@ const Meditation = () => {
                         >
                           {startSessionMutation.isPending && activeSession === session.id ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                               Starting...
                             </>
                           ) : (
