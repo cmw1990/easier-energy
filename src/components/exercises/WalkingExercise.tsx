@@ -13,16 +13,16 @@ export const WalkingExercise = () => {
   const { session } = useAuth();
   
   useEffect(() => {
-    let interval: number | undefined;
+    let intervalId: NodeJS.Timeout | undefined;
     
     if (isTracking) {
-      interval = setInterval(() => {
+      intervalId = setInterval(() => {
         setDuration(prev => prev + 1);
       }, 1000);
     }
     
     return () => {
-      if (interval) clearInterval(interval);
+      if (intervalId) clearInterval(intervalId);
     };
   }, [isTracking]);
   

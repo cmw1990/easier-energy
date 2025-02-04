@@ -69,7 +69,7 @@ export const DeskYoga = () => {
         .from('exercise_tracking')
         .insert({
           user_id: session.user.id,
-          exercise_type: 'desk_yoga',
+          exercise_type: 'desk_exercise',
           duration_seconds: duration,
           notes: poses[index].title
         });

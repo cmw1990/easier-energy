@@ -69,7 +69,7 @@ export const StretchExercise = () => {
         .from('exercise_tracking')
         .insert({
           user_id: session.user.id,
-          exercise_type: 'stretch',
+          exercise_type: 'stretching',
           duration_seconds: duration,
           notes: stretches[index].title
         });
