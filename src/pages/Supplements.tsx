@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SupplementIntakeForm } from "@/components/supplements/SupplementIntakeForm";
 import { SupplementHistory } from "@/components/supplements/SupplementHistory";
 import { SupplementChart } from "@/components/supplements/SupplementChart";
+import { SupplementCorrelations } from "@/components/supplements/SupplementCorrelations";
 
 const Supplements = () => {
   const { session } = useAuth();
@@ -32,19 +33,25 @@ const Supplements = () => {
       supplement_name: string; 
       dosage: string; 
       effectiveness_rating: number;
+      energy_impact: number;
+      stress_impact: number;
+      focus_impact: number;
+      mood_impact: number;
+      sleep_impact: number;
       side_effects?: string;
       notes?: string;
+      brand?: string;
+      batch_number?: string;
+      expiration_date?: string;
+      timing_notes?: string;
+      interaction_notes?: string;
     }) => {
       const { error } = await supabase
         .from('supplement_logs')
         .insert({
           user_id: session?.user?.id,
-          supplement_name: values.supplement_name,
-          dosage: values.dosage,
+          ...values,
           time_taken: new Date().toISOString(),
-          effectiveness_rating: values.effectiveness_rating,
-          side_effects: values.side_effects,
-          notes: values.notes,
         });
 
       if (error) throw error;
@@ -91,10 +98,19 @@ const Supplements = () => {
 
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Supplement Effectiveness Trends</CardTitle>
+            <CardTitle>Supplement Impact Trends</CardTitle>
           </CardHeader>
           <CardContent>
             <SupplementChart data={supplementLogs || []} />
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Impact Correlations</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SupplementCorrelations />
           </CardContent>
         </Card>
       </div>
