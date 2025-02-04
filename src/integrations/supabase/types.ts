@@ -1630,6 +1630,36 @@ export type Database = {
         }
         Relationships: []
       }
+      supplement_inventory: {
+        Row: {
+          created_at: string | null
+          id: string
+          quantity: number
+          reorder_threshold: number | null
+          supplement_name: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          quantity?: number
+          reorder_threshold?: number | null
+          supplement_name: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          quantity?: number
+          reorder_threshold?: number | null
+          supplement_name?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       supplement_logs: {
         Row: {
           batch_number: string | null
@@ -1723,6 +1753,33 @@ export type Database = {
           timing_notes?: string | null
           user_id?: string | null
           verified_purchase?: boolean | null
+        }
+        Relationships: []
+      }
+      supplement_stacks: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          supplements: string[]
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          supplements: string[]
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          supplements?: string[]
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
