@@ -4,13 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useToast } from "@/hooks/use-toast";
 import { Calendar, Trophy, Activity, Users, Clock, Heart } from "lucide-react";
+import { CravingTracker } from "@/components/sobriety/CravingTracker";
 
 export default function Sobriety() {
   const navigate = useNavigate();
-  const { toast } = useToast();
-
   const { data: quitAttempts } = useQuery({
     queryKey: ['quitAttempts'],
     queryFn: async () => {
@@ -46,6 +44,8 @@ export default function Sobriety() {
           Log Substance Use
         </Button>
       </div>
+
+      <CravingTracker />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card className="hover:shadow-lg transition-shadow">

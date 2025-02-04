@@ -1184,15 +1184,19 @@ export type Database = {
           alternative_product_id: string | null
           created_at: string | null
           current_daily_usage: number | null
+          daily_routines: Json | null
           id: string
           initial_daily_usage: number
           is_shift_worker: boolean | null
           product_type: string
+          replacement_activities: string[] | null
           shift_pattern: string | null
           start_date: string | null
           strategy_type: Database["public"]["Enums"]["quit_strategy_type"]
+          support_resources: string[] | null
           target_daily_usage: number | null
           target_date: string | null
+          trigger_management_strategies: string[] | null
           updated_at: string | null
           user_id: string | null
         }
@@ -1200,15 +1204,19 @@ export type Database = {
           alternative_product_id?: string | null
           created_at?: string | null
           current_daily_usage?: number | null
+          daily_routines?: Json | null
           id?: string
           initial_daily_usage: number
           is_shift_worker?: boolean | null
           product_type: string
+          replacement_activities?: string[] | null
           shift_pattern?: string | null
           start_date?: string | null
           strategy_type: Database["public"]["Enums"]["quit_strategy_type"]
+          support_resources?: string[] | null
           target_daily_usage?: number | null
           target_date?: string | null
+          trigger_management_strategies?: string[] | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -1216,15 +1224,19 @@ export type Database = {
           alternative_product_id?: string | null
           created_at?: string | null
           current_daily_usage?: number | null
+          daily_routines?: Json | null
           id?: string
           initial_daily_usage?: number
           is_shift_worker?: boolean | null
           product_type?: string
+          replacement_activities?: string[] | null
           shift_pattern?: string | null
           start_date?: string | null
           strategy_type?: Database["public"]["Enums"]["quit_strategy_type"]
+          support_resources?: string[] | null
           target_daily_usage?: number | null
           target_date?: string | null
+          trigger_management_strategies?: string[] | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -1246,8 +1258,11 @@ export type Database = {
           days_sober: number | null
           health_improvements: string[] | null
           id: string
+          lifestyle_changes: string[] | null
+          mental_improvements: string[] | null
           milestone_type: string
           money_saved: number | null
+          physical_improvements: string[] | null
           substance_type: Database["public"]["Enums"]["substance_type"]
           user_id: string
         }
@@ -1258,8 +1273,11 @@ export type Database = {
           days_sober?: number | null
           health_improvements?: string[] | null
           id?: string
+          lifestyle_changes?: string[] | null
+          mental_improvements?: string[] | null
           milestone_type: string
           money_saved?: number | null
+          physical_improvements?: string[] | null
           substance_type: Database["public"]["Enums"]["substance_type"]
           user_id: string
         }
@@ -1270,9 +1288,54 @@ export type Database = {
           days_sober?: number | null
           health_improvements?: string[] | null
           id?: string
+          lifestyle_changes?: string[] | null
+          mental_improvements?: string[] | null
           milestone_type?: string
           money_saved?: number | null
+          physical_improvements?: string[] | null
           substance_type?: Database["public"]["Enums"]["substance_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      replacement_activities: {
+        Row: {
+          activity_name: string
+          category: string
+          cost: number | null
+          created_at: string | null
+          duration_minutes: number | null
+          effectiveness_rating: number | null
+          id: string
+          mood_impact: number | null
+          notes: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_name: string
+          category: string
+          cost?: number | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          effectiveness_rating?: number | null
+          id?: string
+          mood_impact?: number | null
+          notes?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_name?: string
+          category?: string
+          cost?: number | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          effectiveness_rating?: number | null
+          id?: string
+          mood_impact?: number | null
+          notes?: string | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -1423,45 +1486,60 @@ export type Database = {
       }
       substance_logs: {
         Row: {
+          cost: number | null
+          craving_intensity: number | null
           created_at: string | null
+          environmental_factors: string[] | null
           id: string
           location: string | null
           mood_after: number | null
           mood_before: number | null
           notes: string | null
+          physical_symptoms: string[] | null
           quantity: number
           social_context: string | null
           substance_type: Database["public"]["Enums"]["substance_type"]
+          success_in_refusing: boolean | null
           trigger_factors: string[] | null
           unit_of_measure: string
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          cost?: number | null
+          craving_intensity?: number | null
           created_at?: string | null
+          environmental_factors?: string[] | null
           id?: string
           location?: string | null
           mood_after?: number | null
           mood_before?: number | null
           notes?: string | null
+          physical_symptoms?: string[] | null
           quantity: number
           social_context?: string | null
           substance_type: Database["public"]["Enums"]["substance_type"]
+          success_in_refusing?: boolean | null
           trigger_factors?: string[] | null
           unit_of_measure: string
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          cost?: number | null
+          craving_intensity?: number | null
           created_at?: string | null
+          environmental_factors?: string[] | null
           id?: string
           location?: string | null
           mood_after?: number | null
           mood_before?: number | null
           notes?: string | null
+          physical_symptoms?: string[] | null
           quantity?: number
           social_context?: string | null
           substance_type?: Database["public"]["Enums"]["substance_type"]
+          success_in_refusing?: boolean | null
           trigger_factors?: string[] | null
           unit_of_measure?: string
           updated_at?: string | null
@@ -1604,6 +1682,51 @@ export type Database = {
           id?: string
           priority?: number | null
           title?: string
+        }
+        Relationships: []
+      }
+      trigger_patterns: {
+        Row: {
+          coping_strategies: string[] | null
+          created_at: string | null
+          emotional_state: string[] | null
+          frequency: number | null
+          id: string
+          location_patterns: string[] | null
+          social_context: string[] | null
+          success_rate: number | null
+          time_patterns: Json | null
+          trigger_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          coping_strategies?: string[] | null
+          created_at?: string | null
+          emotional_state?: string[] | null
+          frequency?: number | null
+          id?: string
+          location_patterns?: string[] | null
+          social_context?: string[] | null
+          success_rate?: number | null
+          time_patterns?: Json | null
+          trigger_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          coping_strategies?: string[] | null
+          created_at?: string | null
+          emotional_state?: string[] | null
+          frequency?: number | null
+          id?: string
+          location_patterns?: string[] | null
+          social_context?: string[] | null
+          success_rate?: number | null
+          time_patterns?: Json | null
+          trigger_type?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -1797,6 +1920,42 @@ export type Database = {
           store_type?: string
           verified?: boolean | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      withdrawal_symptoms: {
+        Row: {
+          coping_methods: string[] | null
+          created_at: string | null
+          duration_hours: number | null
+          id: string
+          intensity: number
+          notes: string | null
+          symptom_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          coping_methods?: string[] | null
+          created_at?: string | null
+          duration_hours?: number | null
+          id?: string
+          intensity: number
+          notes?: string | null
+          symptom_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          coping_methods?: string[] | null
+          created_at?: string | null
+          duration_hours?: number | null
+          id?: string
+          intensity?: number
+          notes?: string | null
+          symptom_type?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
