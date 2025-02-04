@@ -22,6 +22,7 @@ const ColorMatch = () => {
   const [timeLeft, setTimeLeft] = useState(30);
   const [isActive, setIsActive] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
   const { toast } = useToast();
   const { session } = useAuth();
 
@@ -36,6 +37,15 @@ const ColorMatch = () => {
     }
     return () => clearInterval(interval);
   }, [isActive, timeLeft]);
+
+  useEffect(() => {
+    if (feedback) {
+      const timer = setTimeout(() => {
+        setFeedback(null);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [feedback]);
 
   const generateNewPair = () => {
     const newWord = COLORS[Math.floor(Math.random() * COLORS.length)];
@@ -56,6 +66,8 @@ const ColorMatch = () => {
 
   const handleAnswer = async (matches: boolean) => {
     const isCorrect = (matches && word === color) || (!matches && word !== color);
+    
+    setFeedback(isCorrect ? "correct" : "incorrect");
     
     if (isCorrect) {
       setScore(prev => prev + 1);
@@ -110,15 +122,17 @@ const ColorMatch = () => {
           <h2 className="text-2xl font-bold">Color Match</h2>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-lg">Score: {score}</div>
-          <div className="text-lg">Time: {timeLeft}s</div>
+          <div className="text-lg font-semibold">Score: {score}</div>
+          <div className={`text-lg font-semibold ${timeLeft <= 10 ? 'text-red-500 animate-pulse' : ''}`}>
+            Time: {timeLeft}s
+          </div>
         </div>
       </div>
 
       {!isActive ? (
         <Button 
           onClick={startGame} 
-          className="w-full animate-pulse"
+          className="w-full animate-pulse bg-primary/90 hover:bg-primary"
           disabled={isSubmitting}
         >
           Start Game
@@ -126,14 +140,22 @@ const ColorMatch = () => {
       ) : (
         <>
           <div className="text-center mb-8">
-            <div className={`text-4xl font-bold mb-8 transition-all duration-300 ${COLOR_CLASSES[color as keyof typeof COLOR_CLASSES]} animate-breathe`}>
+            <div 
+              className={`text-4xl font-bold mb-8 p-8 rounded-lg transition-all duration-300 transform
+                ${COLOR_CLASSES[color as keyof typeof COLOR_CLASSES]}
+                ${feedback === "correct" ? "scale-110" : feedback === "incorrect" ? "scale-95" : ""}
+              `}
+            >
               {word.toUpperCase()}
             </div>
             <div className="flex justify-center gap-4">
               <Button
                 onClick={() => handleAnswer(true)}
                 variant="outline"
-                className="w-32 hover:scale-105 transition-transform"
+                className={`w-32 transition-all duration-200 
+                  ${feedback === "correct" ? "bg-green-100 dark:bg-green-900/20" : 
+                    feedback === "incorrect" ? "bg-red-100 dark:bg-red-900/20" : ""}
+                  hover:scale-105`}
                 disabled={isSubmitting}
               >
                 Matches
@@ -141,7 +163,10 @@ const ColorMatch = () => {
               <Button
                 onClick={() => handleAnswer(false)}
                 variant="outline"
-                className="w-32 hover:scale-105 transition-transform"
+                className={`w-32 transition-all duration-200
+                  ${feedback === "correct" ? "bg-green-100 dark:bg-green-900/20" : 
+                    feedback === "incorrect" ? "bg-red-100 dark:bg-red-900/20" : ""}
+                  hover:scale-105`}
                 disabled={isSubmitting}
               >
                 Different
