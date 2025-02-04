@@ -4,13 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Brain, Heart, Focus, Sun, X } from "lucide-react";
+import { Loader2, Brain, Heart, Focus, Sun, X, Image } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Meditation = () => {
   const { toast } = useToast();
   const [activeSession, setActiveSession] = useState<string | null>(null);
   const [breathCount, setBreathCount] = useState(0);
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const { data: sessions, isLoading } = useQuery({
     queryKey: ['meditation-sessions'],
@@ -66,6 +68,35 @@ const Meditation = () => {
     },
   });
 
+  const generateImageMutation = useMutation({
+    mutationFn: async () => {
+      const currentSession = sessions?.find(s => s.id === activeSession);
+      const response = await supabase.functions.invoke('generate-meditation-image', {
+        body: {
+          prompt: `Meditation scene for ${currentSession?.type || 'mindfulness'} meditation. ${currentSession?.title || 'Peaceful meditation scene'}`,
+        },
+      });
+
+      if (response.error) throw response.error;
+      return response.data.url;
+    },
+    onSuccess: (imageUrl) => {
+      setBackgroundImage(imageUrl);
+      toast({
+        title: "Image Generated",
+        description: "New meditation background has been created.",
+      });
+    },
+    onError: (error) => {
+      console.error('Image generation error:', error);
+      toast({
+        title: "Error Generating Image",
+        description: "Unable to generate meditation background. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const sessionTypes = [
     { id: 'mindfulness', icon: Brain, label: 'Mindfulness' },
     { id: 'loving-kindness', icon: Heart, label: 'Loving-Kindness' },
@@ -76,10 +107,20 @@ const Meditation = () => {
   const handleEndSession = () => {
     setActiveSession(null);
     setBreathCount(0);
+    setBackgroundImage(null);
     toast({
       title: "Session Ended",
       description: "Your meditation session has ended. Great job!",
     });
+  };
+
+  const handleGenerateImage = () => {
+    if (!isGeneratingImage) {
+      setIsGeneratingImage(true);
+      generateImageMutation.mutate(undefined, {
+        onSettled: () => setIsGeneratingImage(false),
+      });
+    }
   };
 
   if (isLoading) {
@@ -92,21 +133,48 @@ const Meditation = () => {
 
   if (activeSession) {
     const currentSession = sessions?.find(s => s.id === activeSession);
+    const backgroundStyle = backgroundImage ? {
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    } : {};
+
     return (
-      <div className="fixed inset-0 bg-background/95 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div className="max-w-2xl w-full mx-auto p-6 space-y-8">
+      <div className="fixed inset-0 bg-background/95 backdrop-blur-sm z-50 flex items-center justify-center" style={backgroundStyle}>
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+        <div className="max-w-2xl w-full mx-auto p-6 space-y-8 relative">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-primary">{currentSession?.title}</h2>
-            <Button variant="ghost" size="icon" onClick={handleEndSession}>
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-          <div className="relative aspect-square max-w-md mx-auto bg-accent rounded-full flex items-center justify-center">
-            <div className={`absolute inset-4 rounded-full border-4 border-primary transition-transform duration-4000 animate-breathe flex items-center justify-center`}>
-              <span className="text-4xl font-light text-primary">{breathCount}</span>
+            <h2 className="text-2xl font-semibold text-white">{currentSession?.title}</h2>
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleGenerateImage}
+                disabled={isGeneratingImage}
+                className="text-white hover:text-primary hover:bg-white/10"
+              >
+                {isGeneratingImage ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Image className="h-5 w-5" />
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleEndSession}
+                className="text-white hover:text-primary hover:bg-white/10"
+              >
+                <X className="h-5 w-5" />
+              </Button>
             </div>
           </div>
-          <p className="text-center text-lg text-muted-foreground">
+          <div className="relative aspect-square max-w-md mx-auto bg-accent/20 rounded-full flex items-center justify-center backdrop-blur-md">
+            <div className={`absolute inset-4 rounded-full border-4 border-primary transition-transform duration-4000 animate-breathe flex items-center justify-center`}>
+              <span className="text-4xl font-light text-white">{breathCount}</span>
+            </div>
+          </div>
+          <p className="text-center text-lg text-white/90">
             Focus on your breath. The circle expands on inhale, contracts on exhale.
           </p>
         </div>
