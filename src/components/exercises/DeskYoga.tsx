@@ -43,7 +43,8 @@ export const DeskYoga = () => {
       duration: "30 seconds each side",
       difficulty: "Easy",
     },
-     Sun Salutation",
+    {
+      title: "Sun Salutation",
       description: "Modified sun salutation sequence while seated",
       duration: "60 seconds",
       difficulty: "Medium",
