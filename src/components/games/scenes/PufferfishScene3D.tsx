@@ -56,6 +56,8 @@ export const PufferfishScene3D = ({ breathPhase }: SceneProps) => {
         <EffectComposer>
           <ChromaticAberration
             offset={new Vector2(0.002, 0.002)}
+            radialModulation={false}
+            modulationOffset={0.5}
             blendFunction={BlendFunction.NORMAL}
           />
           <Bloom
