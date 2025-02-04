@@ -15,6 +15,7 @@ import {
   Grid3X3,
   Gamepad2,
   Flower2,
+  Sparkles,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -40,6 +41,11 @@ const navigationGroups = [
         to: "/focus",
         icon: Focus,
         label: "Focus",
+      },
+      {
+        to: "/meditation",
+        icon: Sparkles,
+        label: "Meditation",
       },
     ]
   },

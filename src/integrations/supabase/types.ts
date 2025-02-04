@@ -673,6 +673,86 @@ export type Database = {
         }
         Relationships: []
       }
+      meditation_progress: {
+        Row: {
+          completed_duration: number
+          created_at: string | null
+          id: string
+          mood_after: number | null
+          mood_before: number | null
+          notes: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_duration: number
+          created_at?: string | null
+          id?: string
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_duration?: number
+          created_at?: string | null
+          id?: string
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meditation_progress_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "meditation_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meditation_sessions: {
+        Row: {
+          audio_url: string | null
+          background_image_url: string | null
+          created_at: string | null
+          description: string | null
+          difficulty_level: string
+          duration_minutes: number
+          id: string
+          title: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          audio_url?: string | null
+          background_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty_level: string
+          duration_minutes: number
+          id?: string
+          title: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          audio_url?: string | null
+          background_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty_level?: string
+          duration_minutes?: number
+          id?: string
+          title?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       mood_logs: {
         Row: {
           activities: string[] | null

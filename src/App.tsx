@@ -14,6 +14,7 @@ import Breathing from "@/pages/Breathing";
 import Caffeine from "@/pages/Caffeine";
 import DistractionBlocker from "@/pages/DistractionBlocker";
 import Food from "@/pages/Food";
+import Meditation from "@/pages/Meditation";
 import NotFound from "@/pages/NotFound";
 import ChessGame from "@/components/games/ChessGame";
 import GoGame from "@/components/games/GoGame";
@@ -43,6 +44,7 @@ function App() {
               <Route path="/relax" element={<Relax />} />
               <Route path="/focus" element={<Focus />} />
               <Route path="/breathing" element={<Breathing />} />
+              <Route path="/meditation" element={<Meditation />} />
               <Route path="/caffeine" element={<Caffeine />} />
               <Route path="/food" element={<Food />} />
               <Route path="/distraction-blocker" element={<DistractionBlocker />} />
