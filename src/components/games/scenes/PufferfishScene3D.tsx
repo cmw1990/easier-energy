@@ -7,7 +7,7 @@ interface PufferfishScene3DProps {
 
 export const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
       <PufferfishProvider breathPhase={breathPhase}>
         <PufferfishScene />
       </PufferfishProvider>
