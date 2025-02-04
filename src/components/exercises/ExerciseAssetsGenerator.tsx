@@ -71,27 +71,27 @@ export const ExerciseAssetsGenerator = () => {
       const batches = [
         {
           name: 'desk-exercises',
-          description: 'Professional 3D illustrations of desk exercises including neck rolls, shoulder stretches, wrist exercises, with smooth gradients and calming colors',
+          description: 'Professional illustration of workplace wellness activities, featuring gentle neck and shoulder movements in an office setting',
         },
         {
           name: 'walking-exercise',
-          description: 'Beautiful 3D illustrations of walking exercises in nature, with dynamic motion trails and energetic visual elements',
+          description: 'Professional illustration of a person taking a walk in a park setting, demonstrating proper walking posture',
         },
         {
           name: 'running-exercise',
-          description: 'Dynamic 3D illustrations of running exercises with motion blur effects and energy visualization',
+          description: 'Professional illustration of proper running form in an outdoor setting, focusing on posture and movement',
         },
         {
           name: 'stretching',
-          description: 'Elegant 3D illustrations of full-body stretches with flowing lines and peaceful visual elements',
+          description: 'Professional illustration of basic stretching exercises, showing safe and effective stretching positions',
         },
         {
           name: 'desk-yoga',
-          description: 'Zen-inspired 3D illustrations of office yoga poses with minimal design and calming visual elements',
+          description: 'Professional illustration of gentle seated stretches suitable for office breaks, focusing on proper form',
         },
         {
           name: 'traditional-yoga',
-          description: 'Beautiful 3D illustrations of traditional yoga poses with spiritual elements and serene backgrounds',
+          description: 'Professional illustration of basic yoga poses in a calm setting, emphasizing proper alignment and form',
         }
       ];
 
@@ -136,7 +136,7 @@ export const ExerciseAssetsGenerator = () => {
           
           toast({
             title: 'Success',
-            description: `Generated 3D assets for ${batch.name}`,
+            description: `Generated assets for ${batch.name}`,
           });
           
           // Add delay between batches to avoid rate limits
