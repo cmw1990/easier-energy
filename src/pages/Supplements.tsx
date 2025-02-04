@@ -10,6 +10,9 @@ import { SupplementChart } from "@/components/supplements/SupplementChart";
 import { SupplementCorrelations } from "@/components/supplements/SupplementCorrelations";
 import { SupplementCategories } from "@/components/supplements/SupplementCategories";
 import { SupplementStats } from "@/components/supplements/SupplementStats";
+import { SupplementStacks } from "@/components/supplements/SupplementStacks";
+import { SupplementInteractions } from "@/components/supplements/SupplementInteractions";
+import { SupplementInventory } from "@/components/supplements/SupplementInventory";
 
 const Supplements = () => {
   const { session } = useAuth();
@@ -41,9 +44,26 @@ const Supplements = () => {
         });
 
       if (error) throw error;
+
+      // Update inventory if it exists
+      const { data: inventory } = await supabase
+        .from('supplement_inventory')
+        .select('quantity')
+        .eq('supplement_name', values.supplement_name)
+        .eq('user_id', session?.user?.id)
+        .single();
+
+      if (inventory) {
+        await supabase
+          .from('supplement_inventory')
+          .update({ quantity: inventory.quantity - 1 })
+          .eq('supplement_name', values.supplement_name)
+          .eq('user_id', session?.user?.id);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['supplementLogs'] });
+      queryClient.invalidateQueries({ queryKey: ['supplementInventory'] });
       toast({
         title: "Success",
         description: "Supplement intake logged successfully",
@@ -64,10 +84,12 @@ const Supplements = () => {
       <h1 className="text-3xl font-bold mb-6">Supplement Tracker</h1>
 
       <Tabs defaultValue="log" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="log">Log Intake</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
           <TabsTrigger value="analysis">Analysis</TabsTrigger>
+          <TabsTrigger value="stacks">Stacks</TabsTrigger>
+          <TabsTrigger value="inventory">Inventory</TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
         </TabsList>
 
@@ -121,7 +143,38 @@ const Supplements = () => {
                 <SupplementCorrelations />
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Interactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SupplementInteractions />
+              </CardContent>
+            </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="stacks">
+          <Card>
+            <CardHeader>
+              <CardTitle>Supplement Stacks</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SupplementStacks />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="inventory">
+          <Card>
+            <CardHeader>
+              <CardTitle>Inventory Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SupplementInventory />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="categories">
