@@ -5,10 +5,13 @@ import { EyeRelaxationGuide } from "@/components/exercises/EyeRelaxationGuide";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
 
 const EyeExercises = () => {
   const [activeExercise, setActiveExercise] = useState<string | null>(null);
   const { toast } = useToast();
+  const { session } = useAuth();
 
   const exercises = [
     {
