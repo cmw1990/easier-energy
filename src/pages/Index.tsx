@@ -17,6 +17,9 @@ import { useToast } from "@/hooks/use-toast";
 import { ActivityTracker } from "@/components/health/ActivityTracker";
 import { GamesSection } from "@/components/games/GamesSection";
 import { MeditationRecommendations } from "@/components/meditation/MeditationRecommendations";
+import { DeskExercises } from "@/components/exercises/DeskExercises";
+import { WalkingExercise } from "@/components/exercises/WalkingExercise";
+import { RunningExercise } from "@/components/exercises/RunningExercise";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -99,6 +102,11 @@ const Index = () => {
           </div>
           <div className="mb-8">
             <MoodOverview />
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+            <WalkingExercise />
+            <RunningExercise />
+            <DeskExercises />
           </div>
           <div className="mb-8">
             <MeditationRecommendations />
