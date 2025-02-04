@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Brain, Gamepad, Puzzle, Zap, Book } from "lucide-react";
+import { Brain, Gamepad, Puzzle, Zap, Book, Grid } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const GamesSection = () => {
@@ -34,14 +34,19 @@ export const GamesSection = () => {
       title: "Math Speed",
       description: "Boost mental arithmetic in a relaxing environment",
       icon: Brain,
-      route: "/games/math-speed",
-      isNew: true
+      route: "/games/math-speed"
     },
     {
       title: "Brain Match 3",
       description: "Match tiles to create equations divisible by 3",
       icon: Puzzle,
-      route: "/games/brain-match-3",
+      route: "/games/brain-match-3"
+    },
+    {
+      title: "Sudoku",
+      description: "Classic number puzzle game to test your logic",
+      icon: Grid,
+      route: "/games/sudoku",
       isNew: true
     }
   ];
