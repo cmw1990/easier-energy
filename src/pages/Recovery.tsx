@@ -1,11 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Trophy, Clock, Coins, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Trophy, Calendar, Heart, DollarSign } from "lucide-react";
 
 export default function Recovery() {
   const navigate = useNavigate();
@@ -19,7 +18,7 @@ export default function Recovery() {
         .select('*')
         .eq('user_id', session?.user?.id)
         .order('achieved_at', { ascending: false });
-      
+
       if (error) throw error;
       return data;
     },
@@ -36,90 +35,115 @@ export default function Recovery() {
         .order('start_date', { ascending: false })
         .limit(1)
         .maybeSingle();
-      
+
       if (error) throw error;
       return data;
     },
     enabled: !!session?.user?.id,
   });
 
-  const daysSober = quitAttempt
+  const daysSince = quitAttempt
     ? Math.floor((new Date().getTime() - new Date(quitAttempt.start_date).getTime()) / (1000 * 60 * 60 * 24))
     : 0;
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Recovery Progress</h1>
+        <h1 className="text-3xl font-bold">Recovery Journey</h1>
         <Button variant="outline" onClick={() => navigate('/sobriety')}>
           Back to Dashboard
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Current Streak
+              <Calendar className="h-5 w-5" />
+              Days Smoke-Free
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold mb-2">{daysSober} days</div>
-            <Progress value={(daysSober / 30) * 100} className="h-2" />
-            <p className="text-sm text-muted-foreground mt-2">
-              {30 - (daysSober % 30)} days until next milestone
-            </p>
+            <p className="text-4xl font-bold">{daysSince}</p>
+            <p className="text-sm text-muted-foreground">Keep going!</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5" />
-              Achievements
+              <Trophy className="h-5 w-5 text-yellow-500" />
+              Milestones
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold mb-2">
-              {milestones?.length || 0}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Milestones reached in your journey
+            <p className="text-4xl font-bold">{milestones?.length || 0}</p>
+            <p className="text-sm text-muted-foreground">Achievements unlocked</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Heart className="h-5 w-5 text-red-500" />
+              Health Score
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">
+              {Math.min(100, Math.floor(daysSince * 1.5))}%
             </p>
+            <p className="text-sm text-muted-foreground">Improving daily</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-green-500" />
+              Money Saved
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">
+              ${(daysSince * 10).toFixed(2)}
+            </p>
+            <p className="text-sm text-muted-foreground">Since quitting</p>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Milestones</CardTitle>
+          <CardTitle>Recovery Timeline</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-6">
             {milestones?.map((milestone) => (
-              <div
-                key={milestone.id}
-                className="flex items-center justify-between p-4 rounded-lg border"
-              >
-                <div className="flex items-center gap-4">
-                  {milestone.milestone_type === 'financial' ? (
-                    <Coins className="h-8 w-8 text-yellow-500" />
-                  ) : (
-                    <Heart className="h-8 w-8 text-rose-500" />
-                  )}
-                  <div>
-                    <p className="font-medium">{milestone.milestone_type}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(milestone.achieved_at).toLocaleDateString()}
-                    </p>
+              <div key={milestone.id} className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Trophy className="h-5 w-5 text-primary" />
                   </div>
                 </div>
-                {milestone.money_saved && (
-                  <p className="text-lg font-bold">
-                    ${milestone.money_saved.toFixed(2)} saved
+                <div>
+                  <p className="font-medium">{milestone.milestone_type}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(milestone.achieved_at).toLocaleDateString()}
                   </p>
-                )}
+                  {milestone.health_improvements && (
+                    <ul className="mt-2 list-disc list-inside text-sm">
+                      {milestone.health_improvements.map((improvement, i) => (
+                        <li key={i}>{improvement}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {milestone.celebration_notes && (
+                    <p className="mt-2 text-sm italic">
+                      "{milestone.celebration_notes}"
+                    </p>
+                  )}
+                </div>
               </div>
             ))}
           </div>

@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar } from "lucide-react";
+import { Calendar, CigaretteOff, DollarSign, Heart } from "lucide-react";
 
 export default function QuitPlan() {
   const navigate = useNavigate();
@@ -27,6 +27,8 @@ export default function QuitPlan() {
   const [targetUsage, setTargetUsage] = useState("");
   const [strategy, setStrategy] = useState<"cold_turkey" | "taper_down" | "nrt_assisted" | "harm_reduction">("taper_down");
   const [productType, setProductType] = useState("");
+  const [isShiftWorker, setIsShiftWorker] = useState(false);
+  const [shiftPattern, setShiftPattern] = useState("");
 
   const { data: currentPlan } = useQuery({
     queryKey: ['quit-plan'],
@@ -58,6 +60,8 @@ export default function QuitPlan() {
           target_daily_usage: Number(targetUsage),
           target_date: targetDate,
           product_type: productType,
+          is_shift_worker: isShiftWorker,
+          shift_pattern: shiftPattern,
         }]);
 
       if (error) throw error;
@@ -87,85 +91,170 @@ export default function QuitPlan() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Create Your Plan
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="strategy">Quit Strategy</Label>
-            <Select
-              value={strategy}
-              onValueChange={(value: typeof strategy) => setStrategy(value)}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CigaretteOff className="h-5 w-5" />
+              Create Your Plan
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="strategy">Quit Strategy</Label>
+              <Select
+                value={strategy}
+                onValueChange={(value: typeof strategy) => setStrategy(value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select strategy" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cold_turkey">Cold Turkey</SelectItem>
+                  <SelectItem value="taper_down">Taper Down</SelectItem>
+                  <SelectItem value="nrt_assisted">NRT Assisted</SelectItem>
+                  <SelectItem value="harm_reduction">Harm Reduction</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="productType">Product Type</Label>
+              <Input
+                id="productType"
+                value={productType}
+                onChange={(e) => setProductType(e.target.value)}
+                placeholder="e.g., Cigarettes, Vape"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="initialUsage">Current Daily Usage</Label>
+                <Input
+                  id="initialUsage"
+                  type="number"
+                  value={initialUsage}
+                  onChange={(e) => setInitialUsage(e.target.value)}
+                  placeholder="Amount per day"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="targetUsage">Target Daily Usage</Label>
+                <Input
+                  id="targetUsage"
+                  type="number"
+                  value={targetUsage}
+                  onChange={(e) => setTargetUsage(e.target.value)}
+                  placeholder="Target amount"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="targetDate">Target Quit Date</Label>
+              <Input
+                id="targetDate"
+                type="date"
+                value={targetDate}
+                onChange={(e) => setTargetDate(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Work Pattern</Label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={isShiftWorker}
+                  onChange={(e) => setIsShiftWorker(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <span>I work shifts</span>
+              </div>
+              {isShiftWorker && (
+                <Input
+                  placeholder="Describe your shift pattern"
+                  value={shiftPattern}
+                  onChange={(e) => setShiftPattern(e.target.value)}
+                />
+              )}
+            </div>
+
+            <Button 
+              className="w-full" 
+              onClick={() => createPlan.mutate()}
+              disabled={createPlan.isPending}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select strategy" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cold_turkey">Cold Turkey</SelectItem>
-                <SelectItem value="taper_down">Taper Down</SelectItem>
-                <SelectItem value="nrt_assisted">NRT Assisted</SelectItem>
-                <SelectItem value="harm_reduction">Harm Reduction</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              {createPlan.isPending ? "Saving..." : "Save Plan"}
+            </Button>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-2">
-            <Label htmlFor="productType">Substance Type</Label>
-            <Input
-              id="productType"
-              value={productType}
-              onChange={(e) => setProductType(e.target.value)}
-              placeholder="e.g., Cigarettes, Alcohol"
-            />
-          </div>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="h-5 w-5 text-red-500" />
+                Health Benefits Timeline
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-green-500 rounded-full" />
+                  <p>20 minutes: Heart rate drops</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-green-500 rounded-full" />
+                  <p>12 hours: Carbon monoxide levels normalize</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-green-500 rounded-full" />
+                  <p>2-12 weeks: Circulation improves</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-green-500 rounded-full" />
+                  <p>1-9 months: Coughing and shortness of breath decrease</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="initialUsage">Current Daily Usage</Label>
-              <Input
-                id="initialUsage"
-                type="number"
-                value={initialUsage}
-                onChange={(e) => setInitialUsage(e.target.value)}
-                placeholder="Amount per day"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="targetUsage">Target Daily Usage</Label>
-              <Input
-                id="targetUsage"
-                type="number"
-                value={targetUsage}
-                onChange={(e) => setTargetUsage(e.target.value)}
-                placeholder="Target amount"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="targetDate">Target Quit Date</Label>
-            <Input
-              id="targetDate"
-              type="date"
-              value={targetDate}
-              onChange={(e) => setTargetDate(e.target.value)}
-            />
-          </div>
-
-          <Button 
-            className="w-full" 
-            onClick={() => createPlan.mutate()}
-            disabled={createPlan.isPending}
-          >
-            {createPlan.isPending ? "Saving..." : "Save Plan"}
-          </Button>
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-green-500" />
+                Money Saved Calculator
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {currentPlan && (
+                <div className="space-y-4">
+                  <p className="text-lg">
+                    Based on your current usage of {currentPlan.initial_daily_usage} per day:
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Monthly savings</p>
+                      <p className="text-2xl font-bold">
+                        ${(currentPlan.initial_daily_usage * 30 * 0.50).toFixed(2)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Yearly savings</p>
+                      <p className="text-2xl font-bold">
+                        ${(currentPlan.initial_daily_usage * 365 * 0.50).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       {currentPlan && (
         <Card>

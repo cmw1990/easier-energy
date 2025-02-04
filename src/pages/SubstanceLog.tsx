@@ -138,7 +138,7 @@ export default function SubstanceLog() {
                 <Label htmlFor="substance_type">Substance Type</Label>
                 <Select
                   value={formData.substance_type}
-                  onValueChange={(value) => 
+                  onValueChange={(value: SubstanceType) => 
                     setFormData(prev => ({ ...prev, substance_type: value }))
                   }
                 >
