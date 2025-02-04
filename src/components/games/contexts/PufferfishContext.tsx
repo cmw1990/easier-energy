@@ -6,7 +6,12 @@ interface PufferfishContextType {
 
 const PufferfishContext = createContext<PufferfishContextType | null>(null);
 
-export function PufferfishProvider({ children, breathPhase }: { children: ReactNode; breathPhase: PufferfishContextType['breathPhase'] }) {
+interface PufferfishProviderProps {
+  children: ReactNode;
+  breathPhase: PufferfishContextType['breathPhase'];
+}
+
+export function PufferfishProvider({ children, breathPhase }: PufferfishProviderProps) {
   return (
     <PufferfishContext.Provider value={{ breathPhase }}>
       {children}

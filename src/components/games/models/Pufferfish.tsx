@@ -1,16 +1,16 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import { Mesh } from 'three';
 import { usePufferfish } from '../contexts/PufferfishContext';
 
-export function Pufferfish() {
-  const meshRef = useRef<THREE.Mesh>(null);
+export const Pufferfish = () => {
+  const meshRef = useRef<Mesh>(null);
   const { breathPhase } = usePufferfish();
   
   useFrame(() => {
     if (meshRef.current) {
       const targetScale = breathPhase === 'inhale' ? 1.5 : 1;
-      meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+      meshRef.current.scale.lerp({ x: targetScale, y: targetScale, z: targetScale }, 0.1);
     }
   });
 
@@ -24,4 +24,4 @@ export function Pufferfish() {
       />
     </mesh>
   );
-}
+};

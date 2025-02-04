@@ -7,8 +7,10 @@ interface PufferfishScene3DProps {
 
 export const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
   return (
-    <PufferfishProvider breathPhase={breathPhase}>
-      <PufferfishScene />
-    </PufferfishProvider>
+    <div className="w-full h-full">
+      <PufferfishProvider breathPhase={breathPhase}>
+        <PufferfishScene />
+      </PufferfishProvider>
+    </div>
   );
 };
