@@ -16,6 +16,7 @@ import { MoodOverview } from "@/components/MoodOverview";
 import { useToast } from "@/hooks/use-toast";
 import { ActivityTracker } from "@/components/health/ActivityTracker";
 import { GamesSection } from "@/components/games/GamesSection";
+import { MeditationRecommendations } from "@/components/meditation/MeditationRecommendations";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -98,6 +99,9 @@ const Index = () => {
           </div>
           <div className="mb-8">
             <MoodOverview />
+          </div>
+          <div className="mb-8">
+            <MeditationRecommendations />
           </div>
           <div className="mb-8">
             <GamesSection />
