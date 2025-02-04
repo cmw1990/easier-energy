@@ -20,6 +20,7 @@ import Meditation from "@/pages/Meditation";
 import Exercise from "@/pages/Exercise";
 import NotFound from "@/pages/NotFound";
 import EyeExercises from "@/pages/EyeExercises";
+import Motivation from "@/pages/Motivation";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ function App() {
             <Route path="/auth" element={<Auth />} />
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/motivation" element={<Motivation />} />
               <Route path="/sleep" element={<Sleep />} />
               <Route path="/sleep/track" element={<SleepTrack />} />
               <Route path="/relax" element={<Relax />} />

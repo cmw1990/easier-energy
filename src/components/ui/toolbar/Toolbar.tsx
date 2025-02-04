@@ -25,6 +25,12 @@ const toolbarItems = [
     iconClassName: "text-emerald-500",
   },
   {
+    to: "/motivation",
+    icon: Sparkles,
+    label: "Motivation",
+    iconClassName: "text-yellow-500",
+  },
+  {
     to: "/sleep",
     icon: Moon,
     label: "Sleep",
