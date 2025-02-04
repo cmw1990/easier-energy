@@ -335,6 +335,30 @@ export type Database = {
         }
         Relationships: []
       }
+      exercise_assets: {
+        Row: {
+          asset_url: string
+          created_at: string | null
+          exercise_name: string
+          exercise_type: string
+          id: string
+        }
+        Insert: {
+          asset_url: string
+          created_at?: string | null
+          exercise_name: string
+          exercise_type: string
+          id?: string
+        }
+        Update: {
+          asset_url?: string
+          created_at?: string | null
+          exercise_name?: string
+          exercise_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
       exercise_tracking: {
         Row: {
           average_speed: number | null
