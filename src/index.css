@@ -73,8 +73,10 @@
     @apply border-border selection:bg-primary/20;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased font-medium;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -89,18 +91,18 @@
 
   /* Battery level utilities */
   .battery-empty {
-    @apply text-destructive;
+    @apply text-destructive font-semibold;
   }
   
   .battery-low {
-    @apply text-orange-400;
+    @apply text-orange-400 font-semibold;
   }
   
   .battery-medium {
-    @apply text-yellow-400;
+    @apply text-yellow-400 font-semibold;
   }
   
   .battery-full {
-    @apply text-emerald-400;
+    @apply text-emerald-400 font-semibold;
   }
 }
