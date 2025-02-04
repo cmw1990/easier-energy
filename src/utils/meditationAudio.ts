@@ -1,4 +1,4 @@
-import { generateBinauralBeat, generateNatureSound, type NatureSound } from './audioGenerators';
+import { generateBinauralBeat, generateNatureSound, type NatureSound } from './audio';
 
 type MeditationType = 'mindfulness' | 'focus' | 'energy' | 'stress-relief' | 'sleep' | 'advanced' | 
   'shower-meditation';

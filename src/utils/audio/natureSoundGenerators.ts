@@ -1,3 +1,7 @@
+import { createModulation } from './createModulation';
+import { createNoiseBuffer } from './createNoiseBuffer';
+import type { NatureSound } from './natureTypes';
+
 let audioContextInstance: AudioContext | null = null;
 
 const getAudioContext = () => {
@@ -5,35 +9,6 @@ const getAudioContext = () => {
     audioContextInstance = new AudioContext();
   }
   return audioContextInstance;
-};
-
-// Create noise buffer for base sound
-const createNoiseBuffer = (context: AudioContext) => {
-  const bufferSize = context.sampleRate * 2; // 2 seconds of noise
-  const buffer = context.createBuffer(1, bufferSize, context.sampleRate);
-  const data = buffer.getChannelData(0);
-  
-  for (let i = 0; i < bufferSize; i++) {
-    data[i] = Math.random() * 2 - 1;
-  }
-  
-  return buffer;
-};
-
-export type NatureSound = 'ocean' | 'rain' | 'wind' | 'forest' | 'thunder' | 'crickets' | 'birds' | 'stream' | 
-  'shower-relax' | 'shower-calm' | 'shower-creative' | 'shower-energy';
-
-// Frequency modulation for effects
-const createModulation = (context: AudioContext, frequency: number, depth: number) => {
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-  
-  oscillator.frequency.value = frequency;
-  gain.gain.value = depth;
-  oscillator.connect(gain);
-  oscillator.start();
-  
-  return gain;
 };
 
 // Create random bursts for thunder
@@ -173,7 +148,6 @@ export const generateNatureSound = (type: NatureSound, volume = 0.5) => {
       noiseSource.connect(filter);
       filter.connect(masterGain);
 
-      // Random chirps
       setInterval(() => {
         if (Math.random() > 0.7) {
           filter.frequency.setTargetAtTime(2000 + Math.random() * 2000, context.currentTime, 0.1);
@@ -259,47 +233,6 @@ export const generateNatureSound = (type: NatureSound, volume = 0.5) => {
   return {
     stop: () => {
       noiseSource.stop();
-      masterGain.disconnect();
-    },
-    setVolume: (newVolume: number) => {
-      masterGain.gain.value = newVolume;
-    }
-  };
-};
-
-// Binaural beat generator
-export const generateBinauralBeat = (baseFreq: number, beatFreq: number, volume = 0.5) => {
-  const context = getAudioContext();
-  const masterGain = context.createGain();
-  masterGain.gain.value = volume;
-  masterGain.connect(context.destination);
-
-  // Create two oscillators slightly detuned
-  const osc1 = context.createOscillator();
-  const osc2 = context.createOscillator();
-  
-  // Pan oscillators left and right
-  const panLeft = context.createStereoPanner();
-  const panRight = context.createStereoPanner();
-  
-  panLeft.pan.value = -1;
-  panRight.pan.value = 1;
-
-  osc1.frequency.value = baseFreq;
-  osc2.frequency.value = baseFreq + beatFreq;
-
-  osc1.connect(panLeft);
-  osc2.connect(panRight);
-  panLeft.connect(masterGain);
-  panRight.connect(masterGain);
-
-  osc1.start();
-  osc2.start();
-
-  return {
-    stop: () => {
-      osc1.stop();
-      osc2.stop();
       masterGain.disconnect();
     },
     setVolume: (newVolume: number) => {

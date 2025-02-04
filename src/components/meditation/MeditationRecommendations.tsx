@@ -1,13 +1,12 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, Clock, Battery, Activity, Sun, Moon, Heart, Sparkles } from "lucide-react";
+import { Brain, Sparkles } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { MeditationAudioControls } from "./MeditationAudioControls";
-import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
+import { MoodDisplay } from "./MoodDisplay";
+import { SessionsList } from "./SessionsList";
 
 type MeditationSession = {
   id: string;
@@ -28,6 +27,7 @@ export const MeditationRecommendations = () => {
   const [activeSession, setActiveSession] = useState<string | null>(null);
   const [sessionProgress, setSessionProgress] = useState(0);
   const [initialMood, setInitialMood] = useState<number | null>(null);
+  const [generatingImageId, setGeneratingImageId] = useState<string | null>(null);
 
   const { data: recommendations } = useQuery({
     queryKey: ['meditation-recommendations'],
@@ -52,7 +52,6 @@ export const MeditationRecommendations = () => {
           .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
       ]);
 
-      // Get current hour to recommend appropriate sessions
       const currentHour = new Date().getHours();
       let recommendedTypes = ['mindfulness'];
       let intensity = 'medium';
@@ -62,7 +61,6 @@ export const MeditationRecommendations = () => {
         else if (moodResponse.data.energy_level >= 8) intensity = 'strong';
       }
 
-      // Time-based recommendations
       if (currentHour >= 5 && currentHour < 11) {
         recommendedTypes = ['energy', 'focus'];
       } else if (currentHour >= 11 && currentHour < 17) {
@@ -73,7 +71,6 @@ export const MeditationRecommendations = () => {
         recommendedTypes = ['sleep', 'mindfulness'];
       }
 
-      // Calculate streak
       let streak = 0;
       const progressSessions = progressResponse.data || [];
       let currentDate = new Date();
@@ -143,7 +140,6 @@ export const MeditationRecommendations = () => {
       if (userError) throw userError;
       if (!user) throw new Error('User not authenticated');
 
-      // Get current mood if available
       const { data: currentMood } = await supabase
         .from('mood_logs')
         .select('mood_score')
@@ -206,6 +202,30 @@ export const MeditationRecommendations = () => {
     setInitialMood(null);
   };
 
+  const handleGenerateBackground = async (sessionId: string) => {
+    if (!generatingImageId) {
+      setGeneratingImageId(sessionId);
+      try {
+        const { error } = await supabase.functions.invoke('generate-meditation-backgrounds', {
+          body: { sessionId },
+        });
+        if (error) throw error;
+        toast({
+          title: "Background Generated",
+          description: "New meditation background has been created.",
+        });
+      } catch (error) {
+        console.error('Background generation error:', error);
+        toast({
+          title: "Error Generating Background",
+          description: "Unable to generate meditation background. Please try again.",
+          variant: "destructive",
+        });
+      }
+      setGeneratingImageId(null);
+    }
+  };
+
   // Update progress every minute
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -220,23 +240,6 @@ export const MeditationRecommendations = () => {
       }
     };
   }, [activeSession]);
-
-  const getSessionIcon = (type: string) => {
-    switch (type) {
-      case 'energy':
-        return <Battery className="h-5 w-5 text-yellow-500" />;
-      case 'focus':
-        return <Brain className="h-5 w-5 text-blue-500" />;
-      case 'stress-relief':
-        return <Activity className="h-5 w-5 text-emerald-500" />;
-      case 'sleep':
-        return <Moon className="h-5 w-5 text-purple-500" />;
-      case 'mindfulness':
-        return <Sun className="h-5 w-5 text-orange-500" />;
-      default:
-        return <Brain className="h-5 w-5 text-primary" />;
-    }
-  };
 
   if (!recommendations?.sessions.length) return null;
 
@@ -259,68 +262,18 @@ export const MeditationRecommendations = () => {
       <CardContent>
         <div className="space-y-4">
           {recommendations.mood && (
-            <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Heart className="h-4 w-4 text-rose-500" />
-                <span className="text-sm">Mood: {recommendations.mood.mood_score}/10</span>
-              </div>
-              <Progress 
-                value={recommendations.mood.energy_level * 10} 
-                className="h-2 w-24"
-              />
-            </div>
+            <MoodDisplay mood={recommendations.mood} />
           )}
           
-          {recommendations.sessions.map((session) => (
-            <div
-              key={session.id}
-              className="space-y-4 p-4 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3">
-                  {getSessionIcon(session.type)}
-                  <div>
-                    <h4 className="font-medium">{session.title}</h4>
-                    <p className="text-sm text-muted-foreground">{session.description}</p>
-                    <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      {session.duration_minutes} minutes
-                      {activeSession === session.id && (
-                        <span className="text-primary">
-                          ({sessionProgress} min completed)
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <Button
-                  variant={activeSession === session.id ? "default" : "secondary"}
-                  onClick={() => {
-                    if (activeSession === session.id) {
-                      handleEndSession();
-                    } else {
-                      startSessionMutation.mutate(session.id);
-                    }
-                  }}
-                >
-                  {activeSession === session.id ? 'End Session' : 'Start'}
-                </Button>
-              </div>
-              
-              {activeSession === session.id && (
-                <div className="space-y-4">
-                  <Progress 
-                    value={(sessionProgress / session.duration_minutes) * 100}
-                    className="h-2"
-                  />
-                  <MeditationAudioControls
-                    sessionType={session.type}
-                    isPlaying={activeSession === session.id}
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+          <SessionsList
+            sessions={recommendations.sessions}
+            activeSession={activeSession}
+            sessionProgress={sessionProgress}
+            generatingImageId={generatingImageId}
+            onStartSession={(sessionId) => startSessionMutation.mutate(sessionId)}
+            onEndSession={handleEndSession}
+            onGenerateBackground={handleGenerateBackground}
+          />
         </div>
       </CardContent>
     </Card>
