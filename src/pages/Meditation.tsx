@@ -11,6 +11,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { generateNatureSound } from "@/utils/audioGenerators";
+import { GenerateBackgroundsButton } from "@/components/meditation/GenerateBackgroundsButton";
 
 const MEDITATION_TYPES = [
   { id: 'mindfulness', icon: Brain, label: 'Mindfulness' },
@@ -261,6 +262,9 @@ const Meditation = () => {
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Find peace and clarity through guided meditation sessions tailored to your needs.
         </p>
+        <div className="flex justify-center">
+          <GenerateBackgroundsButton />
+        </div>
       </div>
 
       <Tabs defaultValue="mindfulness" className="space-y-4">
