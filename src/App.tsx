@@ -21,6 +21,7 @@ import Exercise from "@/pages/Exercise";
 import NotFound from "@/pages/NotFound";
 import EyeExercises from "@/pages/EyeExercises";
 import Motivation from "@/pages/Motivation";
+import LogicPuzzles from "@/components/games/LogicPuzzles";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ function App() {
               <Route path="/supplements" element={<Supplements />} />
               <Route path="/food" element={<Food />} />
               <Route path="/distraction-blocker" element={<DistractionBlocker />} />
+              <Route path="/games/logic-puzzles" element={<LogicPuzzles />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

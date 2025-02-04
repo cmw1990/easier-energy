@@ -1,11 +1,17 @@
 import { Card } from "@/components/ui/card";
-import { Brain, Gamepad, Puzzle, Zap, Flower2, Music, Cloud, Waves, Wind } from "lucide-react";
+import { Brain, Gamepad, Puzzle, Zap, Flower2, Music, Cloud, Waves, Wind, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const GamesSection = () => {
   const navigate = useNavigate();
 
   const games = [
+    {
+      title: "Logic Puzzles",
+      description: "Challenge your reasoning with engaging logic problems",
+      icon: Brain,
+      route: "/games/logic-puzzles"
+    },
     {
       title: "Zen Drift",
       description: "Find peace in motion with this meditative driving experience",
