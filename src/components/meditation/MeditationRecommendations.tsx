@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Brain, Clock, Battery, Activity, Sun, Moon, Heart, Sparkles } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { MeditationAudioControls } from "./MeditationAudioControls";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 type MeditationSession = {
   id: string;
@@ -23,7 +24,10 @@ type MeditationSession = {
 
 export const MeditationRecommendations = () => {
   const { session } = useAuth();
+  const { toast } = useToast();
   const [activeSession, setActiveSession] = useState<string | null>(null);
+  const [sessionProgress, setSessionProgress] = useState(0);
+  const [initialMood, setInitialMood] = useState<number | null>(null);
 
   const { data: recommendations } = useQuery({
     queryKey: ['meditation-recommendations'],
@@ -100,6 +104,123 @@ export const MeditationRecommendations = () => {
     enabled: !!session?.user?.id,
   });
 
+  const completeMeditationMutation = useMutation({
+    mutationFn: async ({ sessionId, duration, moodAfter }: { sessionId: string, duration: number, moodAfter: number }) => {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('meditation_progress')
+        .update({
+          completed_duration: duration,
+          mood_after: moodAfter
+        })
+        .eq('session_id', sessionId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Session Completed",
+        description: "Great job! Your progress has been saved.",
+      });
+    },
+    onError: (error) => {
+      console.error('Error completing meditation:', error);
+      toast({
+        title: "Error Saving Progress",
+        description: "Unable to save your meditation progress. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const startSessionMutation = useMutation({
+    mutationFn: async (sessionId: string) => {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error('User not authenticated');
+
+      // Get current mood if available
+      const { data: currentMood } = await supabase
+        .from('mood_logs')
+        .select('mood_score')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      const initialMoodScore = currentMood?.mood_score || null;
+      setInitialMood(initialMoodScore);
+
+      const { data, error } = await supabase
+        .from('meditation_progress')
+        .insert([{
+          session_id: sessionId,
+          user_id: user.id,
+          completed_duration: 0,
+          mood_before: initialMoodScore,
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, sessionId) => {
+      const session = recommendations?.sessions.find(s => s.id === sessionId);
+      setActiveSession(sessionId);
+      setSessionProgress(0);
+      
+      toast({
+        title: "Session Started",
+        description: `Starting ${session?.title}. Find a comfortable position and follow along.`,
+      });
+    },
+    onError: (error) => {
+      console.error('Meditation session error:', error);
+      toast({
+        title: "Error Starting Session",
+        description: "Unable to start meditation session. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleEndSession = async (moodAfter: number = 7) => {
+    if (activeSession) {
+      try {
+        await completeMeditationMutation.mutateAsync({
+          sessionId: activeSession,
+          duration: sessionProgress,
+          moodAfter
+        });
+      } catch (error) {
+        console.error('Error ending session:', error);
+      }
+    }
+    setActiveSession(null);
+    setSessionProgress(0);
+    setInitialMood(null);
+  };
+
+  // Update progress every minute
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activeSession) {
+      interval = setInterval(() => {
+        setSessionProgress(prev => prev + 1);
+      }, 60000); // Every minute
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [activeSession]);
+
   const getSessionIcon = (type: string) => {
     switch (type) {
       case 'energy':
@@ -164,22 +285,39 @@ export const MeditationRecommendations = () => {
                     <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                       <Clock className="h-4 w-4" />
                       {session.duration_minutes} minutes
+                      {activeSession === session.id && (
+                        <span className="text-primary">
+                          ({sessionProgress} min completed)
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
                 <Button
                   variant={activeSession === session.id ? "default" : "secondary"}
-                  onClick={() => setActiveSession(activeSession === session.id ? null : session.id)}
+                  onClick={() => {
+                    if (activeSession === session.id) {
+                      handleEndSession();
+                    } else {
+                      startSessionMutation.mutate(session.id);
+                    }
+                  }}
                 >
-                  {activeSession === session.id ? 'Stop' : 'Start'}
+                  {activeSession === session.id ? 'End Session' : 'Start'}
                 </Button>
               </div>
               
               {activeSession === session.id && (
-                <MeditationAudioControls
-                  sessionType={session.type}
-                  isPlaying={activeSession === session.id}
-                />
+                <div className="space-y-4">
+                  <Progress 
+                    value={(sessionProgress / session.duration_minutes) * 100}
+                    className="h-2"
+                  />
+                  <MeditationAudioControls
+                    sessionType={session.type}
+                    isPlaying={activeSession === session.id}
+                  />
+                </div>
               )}
             </div>
           ))}
