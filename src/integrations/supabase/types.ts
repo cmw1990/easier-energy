@@ -1162,47 +1162,56 @@ export type Database = {
         Row: {
           brand: string
           chemicals: string[] | null
+          comments_count: number | null
           created_at: string | null
           description: string | null
           flavor: string
           id: string
           image_url: string | null
+          is_launched: boolean | null
           is_nrt_certified: boolean
           name: string
           product_type: string
           risk_level: Database["public"]["Enums"]["risk_level"]
           strength: Database["public"]["Enums"]["strength_level"]
           updated_at: string | null
+          upvotes_count: number | null
         }
         Insert: {
           brand?: string
           chemicals?: string[] | null
+          comments_count?: number | null
           created_at?: string | null
           description?: string | null
           flavor: string
           id?: string
           image_url?: string | null
+          is_launched?: boolean | null
           is_nrt_certified?: boolean
           name: string
           product_type?: string
           risk_level: Database["public"]["Enums"]["risk_level"]
           strength: Database["public"]["Enums"]["strength_level"]
           updated_at?: string | null
+          upvotes_count?: number | null
         }
         Update: {
           brand?: string
           chemicals?: string[] | null
+          comments_count?: number | null
           created_at?: string | null
           description?: string | null
           flavor?: string
           id?: string
           image_url?: string | null
+          is_launched?: boolean | null
           is_nrt_certified?: boolean
           name?: string
           product_type?: string
           risk_level?: Database["public"]["Enums"]["risk_level"]
           strength?: Database["public"]["Enums"]["strength_level"]
           updated_at?: string | null
+          upvotes_count?: number | null
         }
         Relationships: []
       }
