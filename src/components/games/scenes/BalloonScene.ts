@@ -9,8 +9,7 @@ export class BalloonScene extends Phaser.Scene {
   private gameHeight: number = 400;
   private isGameOver: boolean = false;
   private breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest' = 'rest';
-  private particles!: Phaser.GameObjects.ParticleEmitterManager;
-  private particleEmitter!: Phaser.GameObjects.Particles.ParticleEmitter;
+  private emitter!: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor() {
     super({ key: 'BalloonScene' });
@@ -33,7 +32,8 @@ export class BalloonScene extends Phaser.Scene {
       .setScale(0.5);
 
     // Create particle system for clouds
-    this.particles = this.add.particles(0, 0, 'cloud', {
+    const particles = this.add.particles(0, 0, 'cloud');
+    this.emitter = particles.createEmitter({
       x: { min: this.gameWidth, max: this.gameWidth + 50 },
       y: { min: 50, max: this.gameHeight - 50 },
       speedX: { min: -200, max: -150 },
@@ -45,7 +45,8 @@ export class BalloonScene extends Phaser.Scene {
       lifespan: { min: 2000, max: 3000 },
       frequency: 500,
       blendMode: Phaser.BlendModes.ADD,
-      emitting: true
+      active: true,
+      quantity: 1
     });
 
     // Add score text
@@ -107,8 +108,8 @@ export class BalloonScene extends Phaser.Scene {
 
   endGame() {
     this.isGameOver = true;
-    if (this.particles) {
-      this.particles.destroy();
+    if (this.emitter) {
+      this.emitter.stop();
     }
   }
 }
