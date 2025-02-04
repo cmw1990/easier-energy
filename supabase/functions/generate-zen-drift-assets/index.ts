@@ -12,37 +12,37 @@ const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 const supabase = createClient(supabaseUrl!, supabaseKey!)
 
 const carPrompts = [
-  "A sleek Toyota AE86 in white and black, iconic drift car, digital art style, dreamy atmosphere, zen aesthetic",
-  "A modified Nissan Silvia S15 in metallic blue, professional drift car, artistic rendering, peaceful mood",
-  "A classic Mazda RX-7 FD in candy red, drift-ready, ethereal digital artwork, calming design",
-  "A Nissan Skyline R34 in midnight purple, drift spec, dreamlike digital illustration, serene style",
-  "A minimalist drift car design in pearl white, clean lines, zen-inspired details, digital art",
-  "A futuristic drift vehicle with flowing lines, iridescent finish, peaceful aesthetic, digital artwork",
-  "A vintage drift car reimagined with modern touches, soft pastel colors, tranquil mood, digital render",
-  "An elegant drift machine in chrome and sakura pink, harmony of power and grace, digital illustration"
-]
+  "A minimalist 3D sports car model in white, clean lines, zen aesthetic, front view, on transparent background, digital art",
+  "A sleek 3D drift car design in pearl blue, simple elegant style, side view, on transparent background, digital art",
+  "A modern 3D sports coupe in metallic silver, minimalist design, 3/4 view, on transparent background, digital art",
+  "A futuristic 3D vehicle with flowing lines, iridescent finish, rear view, on transparent background, digital art",
+  "A classic 3D sports car reimagined, rose gold finish, angular view, on transparent background, digital art",
+  "An elegant 3D racing machine in chrome, harmony of power and grace, profile view, on transparent background, digital art",
+  "A zen-inspired 3D supercar design, matte black finish, dynamic pose, on transparent background, digital art",
+  "A peaceful 3D drift car concept, pearl white finish, studio lighting, on transparent background, digital art"
+];
 
 const backgroundPrompts = [
-  "A serene mountain road with cherry blossoms, winding through misty peaks, ethereal atmosphere, digital art",
-  "A peaceful countryside road at sunset, surrounded by lavender fields, dreamy digital artwork",
-  "A mystical forest road with dappled sunlight, zen-like atmosphere, digital illustration",
-  "A coastal mountain pass with ocean views, tranquil atmosphere, digital art style",
-  "A Japanese garden-inspired racetrack, peaceful water features, digital artwork",
-  "A minimalist circuit surrounded by zen rock gardens, morning mist, digital render",
-  "A flowing track through bamboo forests, soft natural lighting, peaceful mood",
-  "An abstract racing environment with floating islands, calming color palette, digital art"
-]
+  "A serene 3D mountain road environment, cherry blossoms, misty peaks, low-poly art style",
+  "A peaceful 3D countryside track, lavender fields, sunset lighting, low-poly style",
+  "A mystical 3D forest circuit, dappled sunlight, zen atmosphere, low-poly design",
+  "A coastal 3D mountain pass, ocean views, morning fog, low-poly aesthetic",
+  "A Japanese garden-inspired 3D racetrack, water features, low-poly art",
+  "A minimalist 3D circuit, zen rock gardens, morning mist, low-poly style",
+  "A flowing 3D track through bamboo forests, soft lighting, low-poly design",
+  "An abstract 3D racing environment, floating islands, pastel colors, low-poly art"
+];
 
 const effectPrompts = [
-  "Ethereal drift smoke trails in pastel colors, digital art style, zen-inspired",
-  "Glowing particle effects for car boost, magical atmosphere, peaceful energy",
-  "Zen-inspired motion blur effects, peaceful color palette, digital artwork",
-  "Dreamy light trails for night drifting, neon accents, calming mood",
-  "Flowing energy ribbons in soft pastels, spiritual drift effects, digital art",
-  "Sakura petal particle effects, gentle motion trails, peaceful atmosphere",
-  "Minimalist speed lines with zen garden influences, digital artwork",
-  "Water-inspired drift effects, fluid and peaceful motion, digital render"
-]
+  "3D particle effect, ethereal drift smoke, soft pastels, on transparent background",
+  "3D energy trail effect, glowing particles, peaceful colors, on transparent background",
+  "3D motion blur effect, zen-inspired streaks, soft light, on transparent background",
+  "3D light trail effect, neon accents, dreamy style, on transparent background",
+  "3D energy ribbon effect, flowing curves, peaceful glow, on transparent background",
+  "3D sakura petal effect, gentle motion, soft pink, on transparent background",
+  "3D speed line effect, minimalist style, clean design, on transparent background",
+  "3D drift smoke effect, fluid motion, peaceful aesthetic, on transparent background"
+];
 
 const MAX_RETRIES = 3
 const RETRY_DELAY = 2000
