@@ -44,25 +44,22 @@ export class PufferfishScene extends Phaser.Scene {
     this.pufferfish = this.add.sprite(400, 200, 'pufferfish');
     this.pufferfish.setScale(0.5);
 
-    // Create bubble particle emitter
-    if (this.pufferfish) {
-      const particles = this.add.particles(0, 0, 'bubbles', {
-        speed: { min: 50, max: 100 },
-        angle: { min: 260, max: 280 },
-        scale: { start: 0.4, end: 0.1 },
-        alpha: { start: 0.8, end: 0 },
-        lifespan: 2000,
-        gravityY: -100,
-        frequency: 100,
-        quantity: 1,
-        emitting: true
-      });
-      
-      this.bubbleEmitter = particles.createEmitter();
-      if (this.bubbleEmitter) {
-        this.bubbleEmitter.setPosition(this.pufferfish.x, this.pufferfish.y + 20);
-      }
-    }
+    // Create particle manager and emitter for bubbles
+    const particles = this.add.particles('bubbles');
+    
+    // Configure the particle emitter
+    this.bubbleEmitter = particles.createEmitter({
+      x: this.pufferfish.x,
+      y: this.pufferfish.y + 20,
+      speed: { min: 50, max: 100 },
+      angle: { min: 260, max: 280 },
+      scale: { start: 0.4, end: 0.1 },
+      alpha: { start: 0.8, end: 0 },
+      lifespan: 2000,
+      gravityY: -100,
+      frequency: 100,
+      quantity: 1
+    });
 
     // Start game loop
     this.time.addEvent({
