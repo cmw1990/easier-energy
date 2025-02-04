@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dumbbell, Activity, Timer, Info } from "lucide-react";
+import { Dumbbell, Activity, Timer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
@@ -69,56 +69,6 @@ export const DeskExercises = () => {
       icon: Dumbbell,
       type: "strength",
       imageUrl: "/exercise-assets/wrist-exercises.png"
-    },
-    {
-      title: "Desk Stretches",
-      description: "Stretch arms overhead and lean side to side",
-      instructions: [
-        "Sit up straight in your chair",
-        "Raise both arms overhead",
-        "Interlace your fingers and turn palms upward",
-        "Gently lean to the right side",
-        "Hold for 10 seconds",
-        "Return to center and lean to the left",
-        "Repeat sequence 3 times"
-      ],
-      duration: "45 seconds",
-      icon: Activity,
-      type: "stretch",
-      imageUrl: "/exercise-assets/desk-stretches.png"
-    },
-    {
-      title: "Seated Leg Stretches",
-      description: "Extend legs and point/flex feet",
-      instructions: [
-        "Sit at the edge of your chair",
-        "Extend your right leg straight out",
-        "Point and flex your foot 10 times",
-        "Make small circles with your ankle",
-        "Switch to the left leg",
-        "Repeat the sequence twice"
-      ],
-      duration: "30 seconds",
-      icon: Activity,
-      type: "stretch",
-      imageUrl: "/exercise-assets/seated-leg-stretches.png"
-    },
-    {
-      title: "Back Twist",
-      description: "Gentle seated spinal twist, both sides",
-      instructions: [
-        "Sit sideways in your chair",
-        "Keep both feet flat on the floor",
-        "Place your right hand on the back of the chair",
-        "Left hand on your right knee",
-        "Gently twist to the right",
-        "Hold for 10 seconds",
-        "Return to center and switch sides"
-      ],
-      duration: "45 seconds",
-      icon: Activity,
-      type: "stretch",
-      imageUrl: "/exercise-assets/back-twist.png"
     }
   ];
 
