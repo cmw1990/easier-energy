@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Activity, User, Menu } from "lucide-react";
+import { Activity, User, Menu, Battery } from "lucide-react";
 import { Toolbar } from "@/components/ui/toolbar/Toolbar";
 import {
   Sheet,
@@ -56,7 +56,7 @@ const Layout = ({ children }: LayoutProps) => {
   const SidebarContent = () => (
     <div className="h-full flex flex-col">
       <div className="flex items-center gap-2 p-4 border-b">
-        <Activity className="h-5 w-5 text-primary" />
+        <Battery className="h-5 w-5 text-emerald-500" />
         <h1 className="text-xl font-semibold">Energy Support</h1>
       </div>
       <AppSidebar />
@@ -88,7 +88,7 @@ const Layout = ({ children }: LayoutProps) => {
               <div className="flex items-center gap-2">
                 {!isMobile && (
                   <>
-                    <Activity className="h-5 w-5 text-primary" />
+                    <Battery className="h-5 w-5 text-emerald-500" />
                     <h1 className="text-xl font-semibold">Energy Dashboard</h1>
                   </>
                 )}
