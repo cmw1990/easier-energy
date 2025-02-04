@@ -18,12 +18,25 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { useAuth } from "@/components/AuthProvider";
 
+type SubstanceType = "alcohol" | "tobacco" | "other";
+
+interface FormData {
+  substance_type: SubstanceType | "";
+  quantity: string;
+  unit_of_measure: string;
+  location: string;
+  social_context: string;
+  mood_before: number;
+  mood_after: number;
+  notes: string;
+}
+
 export default function SubstanceLog() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { session } = useAuth();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     substance_type: "",
     quantity: "",
     unit_of_measure: "",
@@ -48,12 +61,22 @@ export default function SubstanceLog() {
   });
 
   const createLog = useMutation({
-    mutationFn: async (data: typeof formData) => {
+    mutationFn: async (data: FormData) => {
+      if (!data.substance_type) {
+        throw new Error("Substance type is required");
+      }
+
       const { error } = await supabase
         .from('substance_logs')
         .insert([{
-          ...data,
+          substance_type: data.substance_type,
           quantity: Number(data.quantity),
+          unit_of_measure: data.unit_of_measure,
+          location: data.location,
+          social_context: data.social_context,
+          mood_before: data.mood_before,
+          mood_after: data.mood_after,
+          notes: data.notes,
           user_id: session?.user.id
         }]);
       
