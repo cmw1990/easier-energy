@@ -41,6 +41,7 @@ export function SupplementIntakeForm({
   const [notes, setNotes] = useState("");
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [reminderTime, setReminderTime] = useState("09:00");
+  const [photoUrl, setPhotoUrl] = useState("");
 
   const { toast } = useToast();
 
@@ -79,6 +80,7 @@ export function SupplementIntakeForm({
       notes,
       reminder_enabled: reminderEnabled,
       reminder_time: reminderTime,
+      photo_url: photoUrl,
       time_taken: new Date().toISOString(),
     });
 
@@ -106,6 +108,7 @@ export function SupplementIntakeForm({
     setNotes("");
     setReminderEnabled(false);
     setReminderTime("09:00");
+    setPhotoUrl("");
   };
 
   return (
@@ -173,6 +176,9 @@ export function SupplementIntakeForm({
             setInteractionNotes={setInteractionNotes}
             notes={notes}
             setNotes={setNotes}
+            photoUrl={photoUrl}
+            setPhotoUrl={setPhotoUrl}
+            supplementName={supplementName}
           />
         </TabsContent>
 
