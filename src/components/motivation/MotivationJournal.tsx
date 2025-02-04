@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { BookOpen, Plus } from "lucide-react";
+import { GratitudeJournal } from "./GratitudeJournal";
 
 export const MotivationJournal = () => {
   const { toast } = useToast();
@@ -47,23 +48,27 @@ export const MotivationJournal = () => {
   };
 
   return (
-    <Card className="p-6 space-y-4">
-      <div className="flex items-center gap-3">
-        <BookOpen className="h-6 w-6 text-blue-500" />
-        <h2 className="text-2xl font-semibold">Motivation Journal</h2>
-      </div>
+    <div className="space-y-6">
+      <Card className="p-6 space-y-4">
+        <div className="flex items-center gap-3">
+          <BookOpen className="h-6 w-6 text-blue-500" />
+          <h2 className="text-2xl font-semibold">Motivation Journal</h2>
+        </div>
 
-      <Textarea
-        value={entry}
-        onChange={(e) => setEntry(e.target.value)}
-        placeholder="Write about your motivation, goals, and progress..."
-        className="min-h-[150px]"
-      />
+        <Textarea
+          value={entry}
+          onChange={(e) => setEntry(e.target.value)}
+          placeholder="Write about your motivation, goals, and progress..."
+          className="min-h-[150px]"
+        />
 
-      <Button onClick={saveJournalEntry} className="w-full">
-        <Plus className="h-4 w-4 mr-2" />
-        Save Entry
-      </Button>
-    </Card>
+        <Button onClick={saveJournalEntry} className="w-full">
+          <Plus className="h-4 w-4 mr-2" />
+          Save Entry
+        </Button>
+      </Card>
+
+      <GratitudeJournal />
+    </div>
   );
 };

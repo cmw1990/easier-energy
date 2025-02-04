@@ -620,6 +620,39 @@ export type Database = {
         }
         Relationships: []
       }
+      gratitude_journal: {
+        Row: {
+          category: Database["public"]["Enums"]["gratitude_category"]
+          content: string
+          created_at: string | null
+          id: string
+          mood_impact: number | null
+          reflection: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["gratitude_category"]
+          content: string
+          created_at?: string | null
+          id?: string
+          mood_impact?: number | null
+          reflection?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["gratitude_category"]
+          content?: string
+          created_at?: string | null
+          id?: string
+          mood_impact?: number | null
+          reflection?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       health_data: {
         Row: {
           calories_burned: number | null
@@ -2511,6 +2544,13 @@ export type Database = {
         | "word_pairs"
         | "reaction_time"
         | "dual_n_back"
+      gratitude_category:
+        | "people"
+        | "experiences"
+        | "things"
+        | "personal_growth"
+        | "nature"
+        | "other"
       health_condition:
         | "adhd"
         | "chronic_fatigue"
