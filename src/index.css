@@ -73,10 +73,11 @@
     @apply border-border selection:bg-primary/20;
   }
   body {
-    @apply bg-background text-foreground antialiased font-medium;
-    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+    @apply bg-background text-foreground antialiased font-medium tracking-tight;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03", "kern";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 }
 
