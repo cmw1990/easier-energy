@@ -11,11 +11,13 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em rgba(249, 115, 22, 0.5));
 }
+
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em rgba(249, 115, 22, 0.5));
 }
 
 @keyframes logo-spin {
@@ -35,8 +37,58 @@
 
 .card {
   padding: 2em;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
 }
 
 .read-the-docs {
-  color: #888;
+  color: var(--muted-foreground);
+}
+
+/* Modern Apple-style animations */
+.fade-up {
+  animation: fadeUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apple-style button */
+.apple-button {
+  @apply px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium 
+         transition-all duration-300 hover:bg-primary/90 active:scale-95
+         shadow-lg hover:shadow-primary/25;
+}
+
+/* Modern card styles */
+.modern-card {
+  @apply rounded-2xl bg-card p-6 shadow-lg border border-border/50
+         transition-all duration-300 hover:shadow-xl hover:border-primary/20;
+}
+
+/* Glassmorphism effects */
+.glass-panel {
+  @apply backdrop-blur-xl bg-white/80 dark:bg-black/80
+         border border-white/20 dark:border-white/10
+         shadow-lg;
+}
+
+/* Smooth transitions */
+.smooth-transition {
+  @apply transition-all duration-300 ease-in-out;
 }
