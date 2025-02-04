@@ -14,7 +14,8 @@ export function PufferfishScene() {
         <Stage
           environment="sunset"
           intensity={0.5}
-          contactShadow={{ opacity: 0.3, blur: 2 }}
+          shadows={{ type: 'contact', opacity: 0.3, blur: 2 }}
+          preset="rembrandt"
         >
           <Pufferfish />
         </Stage>
