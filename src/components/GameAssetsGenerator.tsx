@@ -144,3 +144,5 @@ export const GameAssetsGenerator = () => {
     </Button>
   );
 };
+
+export default GameAssetsGenerator;

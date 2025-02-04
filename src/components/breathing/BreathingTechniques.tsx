@@ -200,3 +200,5 @@ export const BreathingTechniques = ({ onSelectTechnique, className = "" }: Breat
 };
 
 export { breathingTechniques };
+
+export default BreathingTechniques;

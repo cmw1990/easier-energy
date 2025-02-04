@@ -6,10 +6,10 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Lazy load heavy components
-const ZenDrift = lazy(() => import("@/components/games/ZenDrift"));
-const BreathingTechniques = lazy(() => import("@/components/breathing/BreathingTechniques"));
-const OpenAITest = lazy(() => import("@/components/OpenAITest"));
-const GameAssetsGenerator = lazy(() => import("@/components/GameAssetsGenerator"));
+const ZenDrift = lazy(() => import("@/components/games/ZenDrift").then(module => ({ default: module.default })));
+const BreathingTechniques = lazy(() => import("@/components/breathing/BreathingTechniques").then(module => ({ default: module.default })));
+const OpenAITest = lazy(() => import("@/components/OpenAITest").then(module => ({ default: module.default })));
+const GameAssetsGenerator = lazy(() => import("@/components/GameAssetsGenerator").then(module => ({ default: module.default })));
 
 // Loading fallbacks
 const LoadingCard = () => (

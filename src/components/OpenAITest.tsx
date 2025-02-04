@@ -66,3 +66,5 @@ export const OpenAITest = () => {
     </Button>
   );
 };
+
+export default OpenAITest;
