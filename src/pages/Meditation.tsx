@@ -4,12 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Brain, Heart, Focus, Sun } from "lucide-react";
+import { Loader2, Brain, Heart, Focus, Sun, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Meditation = () => {
   const { toast } = useToast();
   const [activeSession, setActiveSession] = useState<string | null>(null);
+  const [breathCount, setBreathCount] = useState(0);
 
   const { data: sessions, isLoading } = useQuery({
     queryKey: ['meditation-sessions'],
@@ -36,8 +37,8 @@ const Meditation = () => {
           {
             session_id: sessionId,
             user_id: user.id,
-            completed_duration: 0, // Will be updated when session ends
-            mood_before: null, // Could add mood tracking later
+            completed_duration: 0,
+            mood_before: null,
           }
         ])
         .select()
@@ -49,6 +50,7 @@ const Meditation = () => {
     onSuccess: (_, sessionId) => {
       const session = sessions?.find(s => s.id === sessionId);
       setActiveSession(sessionId);
+      setBreathCount(0);
       toast({
         title: "Session Started",
         description: `Starting ${session?.title}. Find a comfortable position and follow along.`,
@@ -71,10 +73,43 @@ const Meditation = () => {
     { id: 'morning', icon: Sun, label: 'Morning' },
   ];
 
+  const handleEndSession = () => {
+    setActiveSession(null);
+    setBreathCount(0);
+    toast({
+      title: "Session Ended",
+      description: "Your meditation session has ended. Great job!",
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (activeSession) {
+    const currentSession = sessions?.find(s => s.id === activeSession);
+    return (
+      <div className="fixed inset-0 bg-background/95 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div className="max-w-2xl w-full mx-auto p-6 space-y-8">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-semibold text-primary">{currentSession?.title}</h2>
+            <Button variant="ghost" size="icon" onClick={handleEndSession}>
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+          <div className="relative aspect-square max-w-md mx-auto bg-accent rounded-full flex items-center justify-center">
+            <div className={`absolute inset-4 rounded-full border-4 border-primary transition-transform duration-4000 animate-breathe flex items-center justify-center`}>
+              <span className="text-4xl font-light text-primary">{breathCount}</span>
+            </div>
+          </div>
+          <p className="text-center text-lg text-muted-foreground">
+            Focus on your breath. The circle expands on inhale, contracts on exhale.
+          </p>
+        </div>
       </div>
     );
   }
