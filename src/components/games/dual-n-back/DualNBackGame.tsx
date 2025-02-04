@@ -30,7 +30,7 @@ const DualNBackGame = () => {
         .from('board_games')
         .select('score')
         .eq('user_id', session?.user?.id)
-        .eq('game_type', 'dual_n_back')
+        .eq('game_type', 'n_back')
         .order('score', { ascending: false })
         .limit(1)
         .single();
@@ -110,7 +110,7 @@ const DualNBackGame = () => {
       .from('board_games')
       .insert({
         user_id: session.user.id,
-        game_type: 'dual_n_back',
+        game_type: 'n_back',
         score,
         game_state: { nBack, positionMatches, audioMatches },
         status: 'completed'

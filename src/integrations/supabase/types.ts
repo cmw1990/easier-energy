@@ -2510,6 +2510,7 @@ export type Database = {
         | "mental_rotation"
         | "word_pairs"
         | "reaction_time"
+        | "dual_n_back"
       health_condition:
         | "adhd"
         | "chronic_fatigue"

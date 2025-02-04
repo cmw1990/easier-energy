@@ -226,3 +226,5 @@ export const NBackGame = () => {
     </Card>
   );
 };
+
+export default NBackGame;
