@@ -94,10 +94,10 @@ export const DeskExercises = () => {
   };
 
   return (
-    <Card>
+    <Card className="transform transition-all duration-300 hover:shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Dumbbell className="h-5 w-5 text-primary" />
+          <Dumbbell className="h-5 w-5 text-primary animate-bounce" />
           Desk Exercises
         </CardTitle>
       </CardHeader>
@@ -106,10 +106,10 @@ export const DeskExercises = () => {
           {exercises.map((exercise, index) => (
             <div
               key={index}
-              className={`flex items-start space-x-4 p-4 rounded-lg transition-all duration-300 ${
+              className={`flex items-start space-x-4 p-4 rounded-lg transition-all duration-300 transform ${
                 activeExercise === index 
-                  ? "bg-primary/10 shadow-lg scale-[1.02]" 
-                  : "bg-muted/50 hover:bg-muted/70"
+                  ? "bg-primary/10 shadow-lg scale-105 animate-breathe" 
+                  : "bg-muted/50 hover:bg-muted/70 hover:scale-[1.02]"
               }`}
             >
               <exercise.icon className={`h-5 w-5 mt-1 transition-all duration-300 ${
@@ -134,10 +134,10 @@ export const DeskExercises = () => {
                 variant={activeExercise === index ? "destructive" : "default"}
                 onClick={() => activeExercise === index ? completeExercise(index) : startExercise(index)}
                 disabled={activeExercise !== null && activeExercise !== index}
-                className={`transition-all duration-300 ${
+                className={`transition-all duration-300 transform ${
                   activeExercise === index 
                     ? "animate-pulse" 
-                    : "hover:scale-105"
+                    : "hover:scale-105 hover:shadow-md"
                 }`}
               >
                 {activeExercise === index ? "Complete" : "Start"}

@@ -94,10 +94,10 @@ export const DeskYoga = () => {
   };
 
   return (
-    <Card>
+    <Card className="transform transition-all duration-300 hover:shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5 text-primary" />
+          <Activity className="h-5 w-5 text-primary animate-bounce" />
           Desk Yoga Poses
         </CardTitle>
       </CardHeader>
@@ -106,10 +106,10 @@ export const DeskYoga = () => {
           {poses.map((pose, index) => (
             <div
               key={index}
-              className={`flex items-start space-x-4 p-4 rounded-lg transition-all duration-300 ${
+              className={`flex items-start space-x-4 p-4 rounded-lg transition-all duration-300 transform ${
                 activePose === index 
-                  ? "bg-primary/10 shadow-lg scale-[1.02]" 
-                  : "bg-muted/50 hover:bg-muted/70"
+                  ? "bg-primary/10 shadow-lg scale-105 animate-breathe" 
+                  : "bg-muted/50 hover:bg-muted/70 hover:scale-[1.02]"
               }`}
             >
               <Activity className={`h-5 w-5 mt-1 transition-all duration-300 ${
@@ -139,10 +139,10 @@ export const DeskYoga = () => {
                 variant={activePose === index ? "destructive" : "default"}
                 onClick={() => activePose === index ? completePose(index) : startPose(index)}
                 disabled={activePose !== null && activePose !== index}
-                className={`transition-all duration-300 ${
+                className={`transition-all duration-300 transform ${
                   activePose === index 
                     ? "animate-pulse" 
-                    : "hover:scale-105"
+                    : "hover:scale-105 hover:shadow-md"
                 }`}
               >
                 {activePose === index ? "Complete" : "Start"}

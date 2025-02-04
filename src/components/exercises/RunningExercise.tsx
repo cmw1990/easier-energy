@@ -67,17 +67,17 @@ export const RunningExercise = () => {
   };
 
   return (
-    <Card>
+    <Card className="transform transition-all duration-300 hover:shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5 text-primary" />
+          <Activity className="h-5 w-5 text-primary animate-bounce" />
           Running Exercise
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className={`flex justify-between items-center p-4 rounded-lg transition-all duration-300 ${
-            isTracking ? "bg-primary/10 shadow-lg" : "bg-muted/50"
+          <div className={`flex justify-between items-center p-4 rounded-lg transition-all duration-300 transform ${
+            isTracking ? "bg-primary/10 shadow-lg scale-105 animate-breathe" : "bg-muted/50 hover:scale-[1.02]"
           }`}>
             <div className="flex items-center gap-2">
               <Timer className={`h-5 w-5 text-primary ${isTracking ? "animate-pulse" : ""}`} />
@@ -88,8 +88,8 @@ export const RunningExercise = () => {
             <Button
               onClick={isTracking ? stopTracking : startTracking}
               variant={isTracking ? "destructive" : "default"}
-              className={`transition-all duration-300 ${
-                isTracking ? "animate-pulse" : "hover:scale-105"
+              className={`transition-all duration-300 transform ${
+                isTracking ? "animate-pulse" : "hover:scale-105 hover:shadow-md"
               }`}
             >
               {isTracking ? "Stop" : "Start"} Running

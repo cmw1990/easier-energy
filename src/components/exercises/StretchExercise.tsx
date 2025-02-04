@@ -94,10 +94,10 @@ export const StretchExercise = () => {
   };
 
   return (
-    <Card>
+    <Card className="transform transition-all duration-300 hover:shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5 text-primary" />
+          <Activity className="h-5 w-5 text-primary animate-bounce" />
           Full Body Stretches
         </CardTitle>
       </CardHeader>
@@ -106,9 +106,15 @@ export const StretchExercise = () => {
           {stretches.map((stretch, index) => (
             <div
               key={index}
-              className="flex items-start space-x-4 p-4 rounded-lg bg-muted/50"
+              className={`flex items-start space-x-4 p-4 rounded-lg transition-all duration-300 transform ${
+                activeStretch === index 
+                  ? "bg-primary/10 shadow-lg scale-105 animate-breathe" 
+                  : "bg-muted/50 hover:bg-muted/70 hover:scale-[1.02]"
+              }`}
             >
-              <Activity className="h-5 w-5 text-primary mt-1" />
+              <Activity className={`h-5 w-5 text-primary mt-1 ${
+                activeStretch === index ? "animate-pulse" : ""
+              }`} />
               <div className="flex-1">
                 <h3 className="font-medium">{stretch.title}</h3>
                 <p className="text-sm text-muted-foreground">
@@ -121,8 +127,8 @@ export const StretchExercise = () => {
                   </span>
                 </div>
                 {activeStretch === index && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <Timer className="h-4 w-4" />
+                  <div className="mt-2 flex items-center gap-2 animate-fade-in">
+                    <Timer className="h-4 w-4 animate-pulse" />
                     <span className="text-sm font-medium">
                       {Math.floor(duration / 60)}:{(duration % 60).toString().padStart(2, '0')}
                     </span>
@@ -133,6 +139,11 @@ export const StretchExercise = () => {
                 variant={activeStretch === index ? "destructive" : "default"}
                 onClick={() => activeStretch === index ? completeStretch(index) : startStretch(index)}
                 disabled={activeStretch !== null && activeStretch !== index}
+                className={`transition-all duration-300 transform ${
+                  activeStretch === index 
+                    ? "animate-pulse" 
+                    : "hover:scale-105 hover:shadow-md"
+                }`}
               >
                 {activeStretch === index ? "Complete" : "Start"}
               </Button>
