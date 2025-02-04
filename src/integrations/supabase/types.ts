@@ -1134,6 +1134,51 @@ export type Database = {
         }
         Relationships: []
       }
+      quit_attempts: {
+        Row: {
+          challenges_faced: string[] | null
+          coping_strategies: string[] | null
+          created_at: string | null
+          end_date: string | null
+          id: string
+          notes: string | null
+          start_date: string
+          substance_type: Database["public"]["Enums"]["substance_type"]
+          success_rating: number | null
+          support_received: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          challenges_faced?: string[] | null
+          coping_strategies?: string[] | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          start_date?: string
+          substance_type: Database["public"]["Enums"]["substance_type"]
+          success_rating?: number | null
+          support_received?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          challenges_faced?: string[] | null
+          coping_strategies?: string[] | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          start_date?: string
+          substance_type?: Database["public"]["Enums"]["substance_type"]
+          success_rating?: number | null
+          support_received?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       quit_plans: {
         Row: {
           alternative_product_id: string | null
@@ -1192,6 +1237,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      recovery_milestones: {
+        Row: {
+          achieved_at: string
+          celebration_notes: string | null
+          created_at: string | null
+          days_sober: number | null
+          health_improvements: string[] | null
+          id: string
+          milestone_type: string
+          money_saved: number | null
+          substance_type: Database["public"]["Enums"]["substance_type"]
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string
+          celebration_notes?: string | null
+          created_at?: string | null
+          days_sober?: number | null
+          health_improvements?: string[] | null
+          id?: string
+          milestone_type: string
+          money_saved?: number | null
+          substance_type: Database["public"]["Enums"]["substance_type"]
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string
+          celebration_notes?: string | null
+          created_at?: string | null
+          days_sober?: number | null
+          health_improvements?: string[] | null
+          id?: string
+          milestone_type?: string
+          money_saved?: number | null
+          substance_type?: Database["public"]["Enums"]["substance_type"]
+          user_id?: string
+        }
+        Relationships: []
       }
       reviews: {
         Row: {
@@ -1334,6 +1418,54 @@ export type Database = {
           quantity?: number
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      substance_logs: {
+        Row: {
+          created_at: string | null
+          id: string
+          location: string | null
+          mood_after: number | null
+          mood_before: number | null
+          notes: string | null
+          quantity: number
+          social_context: string | null
+          substance_type: Database["public"]["Enums"]["substance_type"]
+          trigger_factors: string[] | null
+          unit_of_measure: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          quantity: number
+          social_context?: string | null
+          substance_type: Database["public"]["Enums"]["substance_type"]
+          trigger_factors?: string[] | null
+          unit_of_measure: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          quantity?: number
+          social_context?: string | null
+          substance_type?: Database["public"]["Enums"]["substance_type"]
+          trigger_factors?: string[] | null
+          unit_of_measure?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -1719,6 +1851,7 @@ export type Database = {
       risk_level: "low" | "medium" | "high"
       smoking_log_type: "cigarette" | "cigar" | "vape" | "pouch" | "gum"
       strength_level: "light" | "medium" | "strong" | "extra_strong"
+      substance_type: "alcohol" | "tobacco" | "other"
     }
     CompositeTypes: {
       [_ in never]: never

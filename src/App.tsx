@@ -27,6 +27,11 @@ import { ShogiGame } from "@/components/games/ShogiGame";
 import { CheckersGame } from "@/components/games/CheckersGame";
 import GomokuGame from "@/components/games/GomokuGame";
 import ZenDrift from "@/components/games/ZenDrift";
+import Sobriety from "@/pages/Sobriety";
+import SubstanceLog from "@/pages/SubstanceLog";
+import QuitPlan from "@/pages/QuitPlan";
+import Recovery from "@/pages/Recovery";
+import Support from "@/pages/Support";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +55,11 @@ function App() {
               <Route path="/caffeine" element={<Caffeine />} />
               <Route path="/food" element={<Food />} />
               <Route path="/distraction-blocker" element={<DistractionBlocker />} />
+              <Route path="/sobriety" element={<Sobriety />} />
+              <Route path="/sobriety/log" element={<SubstanceLog />} />
+              <Route path="/sobriety/quit-plan" element={<QuitPlan />} />
+              <Route path="/sobriety/recovery" element={<Recovery />} />
+              <Route path="/sobriety/support" element={<Support />} />
               <Route path="/games/chess" element={<ChessGame />} />
               <Route path="/games/go" element={<GoGame />} />
               <Route path="/games/reversi" element={<ReversiGame />} />
