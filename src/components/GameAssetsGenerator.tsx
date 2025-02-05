@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Trash } from "lucide-react";
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -11,28 +11,36 @@ export const GameAssetsGenerator = () => {
   
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const checkExistingAssets = async (batch: string) => {
+  const deleteExistingAssets = async (batch: string) => {
     try {
-      console.log(`Checking storage for ${batch} assets...`);
-      const { data, error } = await supabase
+      console.log(`Deleting assets for ${batch}...`);
+      const { data: files, error: listError } = await supabase
         .storage
         .from('game-assets')
-        .list(batch, {
-          limit: 1,
-          offset: 0,
-        });
+        .list(batch);
 
-      if (error) throw error;
-      return data && data.length > 0;
+      if (listError) throw listError;
+
+      if (files && files.length > 0) {
+        const filePaths = files.map(file => `${batch}/${file.name}`);
+        const { error: deleteError } = await supabase
+          .storage
+          .from('game-assets')
+          .remove(filePaths);
+
+        if (deleteError) throw deleteError;
+        console.log(`Deleted ${filePaths.length} files from ${batch}`);
+      }
     } catch (error) {
-      console.error(`Error checking existing assets for ${batch}:`, error);
-      return false;
+      console.error(`Error deleting assets for ${batch}:`, error);
+      throw error;
     }
   };
 
   const generateAssets = async () => {
-    setIsGenerating(true);
+    setIsDeleting(true);
     try {
       const batches = [
         {
@@ -49,20 +57,19 @@ export const GameAssetsGenerator = () => {
         }
       ];
       
+      // Delete all existing assets first
+      for (const batch of batches) {
+        await deleteExistingAssets(batch.name);
+      }
+
+      setIsDeleting(false);
+      setIsGenerating(true);
+      
+      // Generate new assets
       for (const batch of batches) {
         try {
           console.log(`Starting process for ${batch.name}...`);
-          const hasExisting = await checkExistingAssets(batch.name);
           
-          if (hasExisting) {
-            console.log(`Skipping ${batch.name} - assets already exist`);
-            toast({
-              title: `${batch.name} assets exist`,
-              description: "Skipping generation as assets already exist",
-            });
-            continue;
-          }
-
           console.log(`Invoking edge function for ${batch.name}...`);
           
           const { data, error } = await supabase.functions.invoke(
@@ -120,6 +127,7 @@ export const GameAssetsGenerator = () => {
         variant: 'destructive',
       });
     } finally {
+      setIsDeleting(false);
       setIsGenerating(false);
     }
   };
@@ -127,12 +135,15 @@ export const GameAssetsGenerator = () => {
   return (
     <Button 
       onClick={generateAssets} 
-      disabled={isGenerating}
+      disabled={isGenerating || isDeleting}
       className="gap-2 bg-gradient-to-r from-primary via-secondary to-accent hover:shadow-lg transition-all duration-300"
     >
+      {isDeleting && <Trash className="h-4 w-4 animate-pulse text-red-500" />}
       {isGenerating && <Loader2 className="h-4 w-4 animate-spin" />}
-      {!isGenerating && <Sparkles className="h-4 w-4 animate-pulse" />}
-      {isGenerating ? 'Generating Game Assets...' : 'Generate Game Assets'}
+      {!isGenerating && !isDeleting && <Sparkles className="h-4 w-4 animate-pulse" />}
+      {isDeleting ? 'Cleaning up old assets...' : 
+       isGenerating ? 'Generating Game Assets...' : 
+       'Generate Game Assets'}
     </Button>
   );
 };
