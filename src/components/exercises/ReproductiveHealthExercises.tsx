@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { AnimatedExerciseDisplay } from "./AnimatedExerciseDisplay";
 
 export const ReproductiveHealthExercises = () => {
   const [activeExercise, setActiveExercise] = useState<number | null>(null);
@@ -27,13 +28,50 @@ export const ReproductiveHealthExercises = () => {
       const { data, error } = await supabase
         .from('reproductive_health_exercises')
         .select('*')
-        .order('difficulty_level', { ascending: true })
-        .limit(3);  // Show only first 3 exercises in the horizontal list
+        .order('difficulty_level', { ascending: true });
 
       if (error) throw error;
       return data;
     },
   });
+
+  const exerciseInstructions = {
+    kegel_basic: [
+      "Find a comfortable position (sitting or lying down)",
+      "Identify your pelvic floor muscles",
+      "Contract these muscles for 3-5 seconds",
+      "Relax for 3-5 seconds",
+      "Repeat 10 times",
+    ],
+    kegel_advanced: [
+      "Start in a comfortable position",
+      "Contract pelvic floor muscles quickly",
+      "Hold for 1 second then release",
+      "Perform quick pulses",
+      "Complete 2 sets of 10 repetitions",
+    ],
+    breathing: [
+      "Sit comfortably with good posture",
+      "Inhale deeply through your nose",
+      "Feel your pelvic floor relax",
+      "Exhale slowly through your mouth",
+      "Practice for 5-10 breaths",
+    ],
+    core_strength: [
+      "Lie on your back with knees bent",
+      "Engage your core muscles",
+      "Lift your pelvis slightly",
+      "Hold for 5-10 seconds",
+      "Lower and repeat 10 times",
+    ],
+    relaxation: [
+      "Find a quiet, comfortable space",
+      "Close your eyes and breathe deeply",
+      "Focus on releasing tension",
+      "Scan your body for tight areas",
+      "Practice for 5-10 minutes",
+    ],
+  };
 
   const startExercise = (index: number) => {
     setActiveExercise(index);
@@ -135,7 +173,7 @@ export const ReproductiveHealthExercises = () => {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
               {activeExercise !== null && exercises ? exercises[activeExercise].name : ''}
@@ -145,7 +183,14 @@ export const ReproductiveHealthExercises = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4">
-            <div className="flex justify-between items-center">
+            <AnimatedExerciseDisplay
+              imageUrl="/placeholder.svg"
+              exerciseType={activeExercise !== null && exercises ? exercises[activeExercise].exercise_type : 'breathing'}
+              isActive={true}
+              progress={Math.min((duration / 300) * 100, 100)}
+              instructions={exerciseInstructions[exercises?.[activeExercise || 0]?.exercise_type || 'breathing']}
+            />
+            <div className="mt-4 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <Timer className="h-4 w-4" />
                 <span className="text-sm font-medium">
@@ -153,7 +198,7 @@ export const ReproductiveHealthExercises = () => {
                 </span>
               </div>
               <Button 
-                variant="destructive"
+                variant="default"
                 onClick={() => activeExercise !== null && exercises 
                   ? completeExercise(exercises[activeExercise].id)
                   : undefined}

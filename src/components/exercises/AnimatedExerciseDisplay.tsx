@@ -17,10 +17,16 @@ interface AnimatedExerciseDisplayProps {
 const SVGAnimation = ({ exerciseType, progress = 0 }: { exerciseType: string; progress?: number }) => {
   const getAnimationPath = () => {
     switch (exerciseType) {
-      case 'stretch':
+      case 'kegel_basic':
         return "M10 50 Q 50 10, 90 50 T 170 50";
-      case 'strength':
+      case 'kegel_advanced':
         return "M10 50 L 90 10 L 170 50";
+      case 'breathing':
+        return "M10 50 Q 90 10, 170 50 T 330 50";
+      case 'core_strength':
+        return "M10 50 L 90 30 L 170 50";
+      case 'relaxation':
+        return "M10 50 Q 90 50, 170 50";
       default:
         return "M10 50 L 90 50 L 170 50";
     }
@@ -43,7 +49,11 @@ const SVGAnimation = ({ exerciseType, progress = 0 }: { exerciseType: string; pr
         strokeWidth="2"
         className={cn(
           "transition-all duration-300",
-          exerciseType === 'stretch' ? "animate-exercise-stretch" : "animate-exercise-pulse"
+          exerciseType === 'breathing' ? "animate-exercise-breath" :
+          exerciseType === 'kegel_basic' ? "animate-exercise-pulse" :
+          exerciseType === 'kegel_advanced' ? "animate-exercise-quick-pulse" :
+          exerciseType === 'core_strength' ? "animate-exercise-lift" :
+          "animate-exercise-wave"
         )}
       />
     </svg>
@@ -79,9 +89,12 @@ export const AnimatedExerciseDisplay = ({
 
   const getAnimationClass = () => {
     const baseAnimation = {
-      stretch: 'animate-exercise-stretch',
-      strength: 'animate-exercise-pulse'
-    }[exerciseType] || 'animate-exercise-rotate';
+      kegel_basic: 'animate-exercise-pulse',
+      kegel_advanced: 'animate-exercise-quick-pulse',
+      breathing: 'animate-exercise-breath',
+      core_strength: 'animate-exercise-lift',
+      relaxation: 'animate-exercise-wave'
+    }[exerciseType] || 'animate-exercise-pulse';
 
     return cn(
       baseAnimation,
