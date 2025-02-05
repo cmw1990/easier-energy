@@ -3,11 +3,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-export interface PufferfishScene3DProps {
+interface PufferfishProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
 }
 
-function Pufferfish({ breathPhase }: { breathPhase: PufferfishScene3DProps['breathPhase'] }) {
+function Pufferfish({ breathPhase }: PufferfishProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const targetScale = breathPhase === 'inhale' ? 1.5 : 1;
 
@@ -28,6 +28,10 @@ function Pufferfish({ breathPhase }: { breathPhase: PufferfishScene3DProps['brea
       />
     </mesh>
   );
+}
+
+interface PufferfishScene3DProps {
+  breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
 }
 
 const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
