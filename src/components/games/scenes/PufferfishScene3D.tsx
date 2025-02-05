@@ -1,115 +1,162 @@
-import React, { useEffect, useState } from 'react';
-import { usePufferfishAssets } from '../PufferfishAssets';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import coralImg from '@/assets/games/pufferfish/coral.png';
+import predatorImg from '@/assets/games/pufferfish/predator.png';
 
-interface PufferfishProps {
+interface PufferfishScene3DProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
 }
 
-const PufferfishScene3D: React.FC<PufferfishProps> = ({ breathPhase }) => {
-  const { assets, isLoading } = usePufferfishAssets();
-  const [instruction, setInstruction] = useState('Get ready...');
+const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
+  const [pufferPosition, setPufferPosition] = useState({ y: 50 });
+  const [obstacles, setObstacles] = useState<Array<{ x: number; type: 'coral' | 'predator' }>>([]);
+  const [score, setScore] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
 
-  // Get scale and color based on breath phase
-  const getScale = () => {
-    switch (breathPhase) {
-      case 'inhale': return 1.5;
-      case 'hold': return 1.3;
-      case 'exhale': return 1.0;
-      default: return 1.2;
-    }
-  };
-
-  // Update breathing instructions
+  // Handle pufferfish movement based on breath
   useEffect(() => {
-    switch (breathPhase) {
-      case 'inhale':
-        setInstruction('Breathe in slowly...');
-        break;
-      case 'hold':
-        setInstruction('Hold your breath...');
-        break;
-      case 'exhale':
-        setInstruction('Breathe out gently...');
-        break;
-      default:
-        setInstruction('Get ready...');
+    if (breathPhase === 'inhale') {
+      setPufferPosition(prev => ({ y: Math.min(prev.y + 10, 80) }));
+    } else if (breathPhase === 'exhale') {
+      setPufferPosition(prev => ({ y: Math.max(prev.y - 10, 20) }));
     }
   }, [breathPhase]);
 
+  // Spawn obstacles
+  useEffect(() => {
+    if (isGameOver) return;
+
+    const spawnInterval = setInterval(() => {
+      setObstacles(prev => {
+        // Remove obstacles that are off screen
+        const filtered = prev.filter(obs => obs.x > -10);
+        
+        // Add new obstacle
+        const newObstacle = {
+          x: 100,
+          type: Math.random() > 0.5 ? 'coral' : 'predator' as const
+        };
+
+        return [...filtered, newObstacle];
+      });
+    }, 2000);
+
+    return () => clearInterval(spawnInterval);
+  }, [isGameOver]);
+
+  // Move obstacles and check collisions
+  useEffect(() => {
+    if (isGameOver) return;
+
+    const gameLoop = setInterval(() => {
+      setObstacles(prev => {
+        const moved = prev.map(obs => ({
+          ...obs,
+          x: obs.x - 2
+        }));
+
+        // Check collisions
+        const collision = moved.some(obs => {
+          const obsRect = {
+            x: obs.x,
+            y: obs.type === 'coral' ? 20 : 60,
+            width: 40,
+            height: 40
+          };
+
+          const pufferRect = {
+            x: 20,
+            y: pufferPosition.y,
+            width: 40,
+            height: 40
+          };
+
+          return (
+            pufferRect.x < obsRect.x + obsRect.width &&
+            pufferRect.x + pufferRect.width > obsRect.x &&
+            pufferRect.y < obsRect.y + obsRect.height &&
+            pufferRect.y + pufferRect.height > obsRect.y
+          );
+        });
+
+        if (collision) {
+          setIsGameOver(true);
+        }
+
+        return moved;
+      });
+
+      setScore(prev => prev + 1);
+    }, 50);
+
+    return () => clearInterval(gameLoop);
+  }, [isGameOver, pufferPosition.y]);
+
   return (
-    <div className="relative w-full aspect-video bg-gradient-to-b from-blue-100 to-blue-300 rounded-lg overflow-hidden">
-      {/* Ocean background */}
-      <div className="absolute inset-0">
-        <img 
-          src={assets.background} 
-          alt="Ocean background"
-          className="w-full h-full object-cover"
-        />
+    <div className="relative w-full h-[600px] bg-gradient-to-b from-blue-300 to-blue-600 overflow-hidden rounded-lg">
+      {/* Score */}
+      <div className="absolute top-4 right-4 text-white text-2xl font-bold">
+        Score: {score}
       </div>
 
-      {/* Seaweed decorations */}
-      <div className="absolute bottom-0 left-0 w-1/4">
-        <img 
-          src={assets.seaweed} 
-          alt="Seaweed"
-          className="w-full animate-sway"
-        />
-      </div>
-
-      {/* Small fish swimming */}
-      <div className="absolute top-1/4 right-0 w-1/6">
-        <img 
-          src={assets.smallFish} 
-          alt="Small fish"
-          className="w-full animate-swim"
-        />
-      </div>
-
-      {/* Pufferfish container */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div 
-          className={cn(
-            "relative transition-all duration-700 ease-in-out",
-            breathPhase === 'inhale' && "animate-float-up",
-            breathPhase === 'exhale' && "animate-float-down"
-          )}
-          style={{
-            transform: `scale(${getScale()})`,
-          }}
-        >
-          <img 
-            src={assets.pufferfish} 
-            alt="Pufferfish"
-            className="w-32 h-32 object-contain"
-          />
-
-          {/* Bubbles effect during exhale */}
-          {breathPhase === 'exhale' && (
-            <div className="absolute top-0 left-1/2 -translate-x-1/2">
-              <img 
-                src={assets.bubbles} 
-                alt="Bubbles"
-                className="w-16 animate-rise"
-              />
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Breathing instruction */}
-      <div className="absolute bottom-4 left-0 right-0 text-center">
-        <div className="bg-white/80 mx-auto max-w-sm px-4 py-2 rounded-full">
-          <p className="text-lg font-medium text-blue-800">{instruction}</p>
-        </div>
-      </div>
-
-      {/* Loading state */}
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/80">
-          <p className="text-lg font-medium">Loading ocean scene...</p>
+      {/* Game Over */}
+      {isGameOver && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <div className="text-white text-center">
+            <h2 className="text-3xl font-bold mb-4">Game Over!</h2>
+            <p className="text-xl">Final Score: {score}</p>
+          </div>
         </div>
       )}
+
+      {/* Pufferfish */}
+      <div
+        className={cn(
+          "absolute w-20 h-20 transition-all duration-300",
+          breathPhase === 'inhale' && "scale-125",
+          breathPhase === 'hold' && "scale-110",
+          breathPhase === 'exhale' && "scale-100"
+        )}
+        style={{
+          left: '20px',
+          top: `${pufferPosition.y}%`,
+          transform: `translateY(-50%) scale(${breathPhase === 'inhale' ? 1.25 : 1})`
+        }}
+      >
+        <img
+          src="/assets/games/pufferfish/pufferfish.png"
+          alt="Pufferfish"
+          className="w-full h-full object-contain"
+        />
+      </div>
+
+      {/* Obstacles */}
+      {obstacles.map((obstacle, index) => (
+        <div
+          key={index}
+          className="absolute w-20 h-20"
+          style={{
+            left: `${obstacle.x}%`,
+            top: obstacle.type === 'coral' ? '80%' : '20%',
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          <img
+            src={obstacle.type === 'coral' ? coralImg : predatorImg}
+            alt={obstacle.type}
+            className="w-full h-full object-contain"
+          />
+        </div>
+      ))}
+
+      {/* Breathing Instructions */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/80 px-6 py-2 rounded-full">
+        <p className="text-blue-800 font-medium">
+          {breathPhase === 'inhale' ? 'Breathe In' :
+           breathPhase === 'hold' ? 'Hold' :
+           breathPhase === 'exhale' ? 'Breathe Out' : 'Get Ready...'}
+        </p>
+      </div>
     </div>
   );
 };
