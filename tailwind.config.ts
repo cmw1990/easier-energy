@@ -20,33 +20,23 @@ export default {
     extend: {
       keyframes: {
         "float-up": {
-          "0%": { transform: "translateY(0) scale(1)" },
-          "50%": { transform: "translateY(-20px) scale(1.5)" },
-          "100%": { transform: "translateY(0) scale(1.3)" }
+          "0%": { transform: "translate(-50%, -50%) scale(1)" },
+          "50%": { transform: "translate(-50%, -80%) scale(1.5)" },
+          "100%": { transform: "translate(-50%, -50%) scale(1.3)" }
         },
         "float-down": {
-          "0%": { transform: "translateY(-20px) scale(1.3)" },
-          "100%": { transform: "translateY(0) scale(1)" }
+          "0%": { transform: "translate(-50%, -50%) scale(1.3)" },
+          "100%": { transform: "translate(-50%, -50%) scale(1)" }
         },
         "sway": {
-          "0%, 100%": { transform: "rotate(-5deg)" },
-          "50%": { transform: "rotate(5deg)" }
-        },
-        "swim": {
-          "0%": { transform: "translateX(100%)" },
-          "100%": { transform: "translateX(-400%)" }
-        },
-        "rise": {
-          "0%": { transform: "translateY(0) scale(1)", opacity: "1" },
-          "100%": { transform: "translateY(-100px) scale(0)", opacity: "0" }
+          "0%, 100%": { transform: "translate(-50%, -50%) rotate(-5deg)" },
+          "50%": { transform: "translate(-50%, -50%) rotate(5deg)" }
         }
       },
       animation: {
         "float-up": "float-up 4s ease-in-out",
         "float-down": "float-down 4s ease-in-out",
         "sway": "sway 3s ease-in-out infinite",
-        "swim": "swim 10s linear infinite",
-        "rise": "rise 2s ease-out infinite",
       },
     },
   },

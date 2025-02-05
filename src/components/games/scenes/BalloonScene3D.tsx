@@ -8,28 +8,31 @@ interface BalloonProps {
 export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
   const { assets } = useBalloonAssets();
 
-  // Get scale and color based on breath phase
-  const getScale = () => {
+  const getBalloonAnimation = () => {
     switch (breathPhase) {
-      case 'inhale': return 1.5;
-      case 'hold': return 1.3;
-      case 'exhale': return 1.0;
-      default: return 1.2;
+      case 'inhale':
+        return 'animate-float-up';
+      case 'hold':
+        return 'animate-sway';
+      case 'exhale':
+        return 'animate-float-down';
+      default:
+        return '';
     }
   };
 
   return (
     <div 
-      className="w-full aspect-video bg-cover bg-center rounded-lg overflow-hidden relative"
-      style={{ backgroundImage: `url(${assets.background})` }}
+      className="w-full h-[60vh] bg-cover bg-center rounded-lg overflow-hidden relative"
+      style={{ 
+        backgroundImage: `url(${assets.background})`,
+        backgroundSize: 'cover'
+      }}
     >
       <img 
         src={assets.balloon}
         alt="Hot Air Balloon"
-        className="absolute left-1/2 transform -translate-x-1/2 transition-all duration-700 ease-in-out w-32 h-32 object-contain"
-        style={{
-          transform: `translate(-50%, ${breathPhase === 'inhale' ? '-60%' : '-40%'}) scale(${getScale()})`,
-        }}
+        className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 object-contain transition-all duration-1000 ease-in-out ${getBalloonAnimation()}`}
       />
     </div>
   );
