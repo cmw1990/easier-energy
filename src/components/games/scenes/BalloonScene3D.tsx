@@ -1,84 +1,39 @@
-import { useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { PerspectiveCamera, Environment, OrbitControls } from '@react-three/drei';
-import { EffectComposer, Bloom, ChromaticAberration, DepthOfField } from '@react-three/postprocessing';
-import { BlendFunction, KernelSize } from 'postprocessing';
-import * as THREE from 'three';
+import React from 'react';
 
-interface BalloonScene3DProps {
+interface BalloonProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
 }
 
-export const BalloonScene3D = ({ breathPhase }: BalloonScene3DProps) => {
-  const [scale, setScale] = useState(1);
-  
+export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
+  // Get scale and color based on breath phase
+  const getScale = () => {
+    switch (breathPhase) {
+      case 'inhale': return 1.5;
+      case 'hold': return 1.3;
+      case 'exhale': return 1.0;
+      default: return 1.2;
+    }
+  };
+
+  const getColor = () => {
+    switch (breathPhase) {
+      case 'inhale': return '#FF9999';
+      case 'hold': return '#FFB6C1';
+      case 'exhale': return '#FFC0CB';
+      default: return '#FFE4E1';
+    }
+  };
+
   return (
-    <div style={{ width: '100%', height: '400px' }}>
-      <Canvas shadows>
-        <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-        
-        <ambientLight intensity={0.5} />
-        <directionalLight
-          castShadow
-          position={[2, 2, 2]}
-          intensity={1}
-          shadow-mapSize={[1024, 1024]}
-        />
-        
-        <mesh
-          scale={scale}
-          position={[0, 0, 0]}
-        >
-          <sphereGeometry args={[1, 32, 32]} />
-          <meshStandardMaterial 
-            color="#FF9999"
-            roughness={0.3}
-            metalness={0.4}
-          />
-        </mesh>
-
-        <mesh
-          receiveShadow
-          rotation={[-Math.PI / 2, 0, 0]}
-          position={[0, -2, 0]}
-        >
-          <planeGeometry args={[10, 10]} />
-          <meshStandardMaterial 
-            color="#88CCFF"
-            transparent
-            opacity={0.3}
-          />
-        </mesh>
-
-        <Environment preset="sunset" />
-        
-        <EffectComposer>
-          <DepthOfField
-            focusDistance={0}
-            focalLength={0.02}
-            bokehScale={2}
-            height={480}
-          />
-          <Bloom
-            intensity={1.0}
-            luminanceThreshold={0.9}
-            luminanceSmoothing={0.025}
-            blendFunction={BlendFunction.ADD}
-          />
-          <ChromaticAberration
-            offset={new THREE.Vector2(0.002, 0.002)}
-            radialModulation={false}
-            modulationOffset={0.5}
-          />
-        </EffectComposer>
-
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          maxPolarAngle={Math.PI / 2}
-          minPolarAngle={Math.PI / 3}
-        />
-      </Canvas>
+    <div className="w-full aspect-video bg-black/5 rounded-lg overflow-hidden flex items-center justify-center">
+      <div 
+        className="w-32 h-32 rounded-full transition-all duration-700 ease-in-out"
+        style={{
+          backgroundColor: getColor(),
+          transform: `scale(${getScale()}) translateY(${breathPhase === 'inhale' ? '-20px' : '0'})`,
+          boxShadow: '0 0 20px rgba(0,0,0,0.1)',
+        }}
+      />
     </div>
   );
 };
