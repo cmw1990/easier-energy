@@ -54,11 +54,6 @@ serve(async (req) => {
     const imageData = await response.json();
     const imageUrl = imageData.data[0].url;
 
-    const imageResponse = await fetch(imageUrl);
-    if (!imageResponse.ok) {
-      throw new Error(`Failed to download generated image`);
-    }
-
     return new Response(
       JSON.stringify({ 
         url: imageUrl,
