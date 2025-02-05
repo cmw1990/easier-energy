@@ -2,14 +2,22 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import coralImg from '@/assets/games/pufferfish/coral.png';
 import predatorImg from '@/assets/games/pufferfish/predator.png';
+import pufferfishImg from '@/assets/games/pufferfish/pufferfish.png';
 
 interface PufferfishScene3DProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
 }
 
+type ObstacleType = 'coral' | 'predator';
+
+interface Obstacle {
+  x: number;
+  type: ObstacleType;
+}
+
 const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
   const [pufferPosition, setPufferPosition] = useState({ y: 50 });
-  const [obstacles, setObstacles] = useState<Array<{ x: number; type: 'coral' | 'predator' }>>([]);
+  const [obstacles, setObstacles] = useState<Obstacle[]>([]);
   const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
 
@@ -31,10 +39,10 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
         // Remove obstacles that are off screen
         const filtered = prev.filter(obs => obs.x > -10);
         
-        // Add new obstacle
-        const newObstacle = {
+        // Add new obstacle with correct type annotation
+        const newObstacle: Obstacle = {
           x: 100,
-          type: Math.random() > 0.5 ? 'coral' : 'predator' as const
+          type: Math.random() > 0.5 ? 'coral' : 'predator'
         };
 
         return [...filtered, newObstacle];
@@ -124,7 +132,7 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
         }}
       >
         <img
-          src="/assets/games/pufferfish/pufferfish.png"
+          src={pufferfishImg}
           alt="Pufferfish"
           className="w-full h-full object-contain"
         />
