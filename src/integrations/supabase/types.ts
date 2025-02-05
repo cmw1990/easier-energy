@@ -9,35 +9,121 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      achievement_progress: {
+        Row: {
+          achievement_id: string
+          current_progress: number | null
+          id: string
+          last_updated: string | null
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          current_progress?: number | null
+          id?: string
+          last_updated?: string | null
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          current_progress?: number | null
+          id?: string
+          last_updated?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievement_progress_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      achievement_rules: {
+        Row: {
+          badge_icon: string | null
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          points_reward: number | null
+          trigger_type: string
+          trigger_value: number | null
+        }
+        Insert: {
+          badge_icon?: string | null
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          points_reward?: number | null
+          trigger_type: string
+          trigger_value?: number | null
+        }
+        Update: {
+          badge_icon?: string | null
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          points_reward?: number | null
+          trigger_type?: string
+          trigger_value?: number | null
+        }
+        Relationships: []
+      }
       achievements: {
         Row: {
+          category: string | null
           created_at: string | null
           description: string
           icon: string
           id: string
+          level: number | null
+          next_level_points: number | null
           points: number
+          progress: number | null
+          streak_count: number | null
+          target_value: number | null
           title: string
           type: string
           unlocked_at: string | null
           user_id: string | null
         }
         Insert: {
+          category?: string | null
           created_at?: string | null
           description: string
           icon: string
           id?: string
+          level?: number | null
+          next_level_points?: number | null
           points?: number
+          progress?: number | null
+          streak_count?: number | null
+          target_value?: number | null
           title: string
           type: string
           unlocked_at?: string | null
           user_id?: string | null
         }
         Update: {
+          category?: string | null
           created_at?: string | null
           description?: string
           icon?: string
           id?: string
+          level?: number | null
+          next_level_points?: number | null
           points?: number
+          progress?: number | null
+          streak_count?: number | null
+          target_value?: number | null
           title?: string
           type?: string
           unlocked_at?: string | null
