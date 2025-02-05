@@ -48,6 +48,61 @@ const Scene = () => {
   );
 };
 
+const Game = () => {
+  const [isPaused, setIsPaused] = useState(false);
+
+  return (
+    <KeyboardControls map={keyboardMap}>
+      <Canvas
+        shadows
+        gl={{ 
+          antialias: true,
+          alpha: true,
+          stencil: true,
+          depth: true,
+          powerPreference: "high-performance"
+        }}
+        camera={{ position: [0, 15, 20], fov: 75 }}
+        style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
+        dpr={[1, 2]}
+      >
+        <Suspense fallback={<LoadingScreen />}>
+          <PerspectiveCamera makeDefault position={[0, 15, 20]} />
+          <ambientLight intensity={0.5} />
+          <directionalLight
+            castShadow
+            position={[10, 10, 10]}
+            intensity={1.5}
+            shadow-mapSize={[2048, 2048]}
+          />
+          <Scene />
+          {!isPaused && (
+            <EffectComposer>
+              <DepthOfField
+                focusDistance={0}
+                focalLength={0.02}
+                bokehScale={2}
+                height={480}
+              />
+              <Bloom
+                intensity={1.5}
+                luminanceThreshold={0.5}
+                luminanceSmoothing={0.9}
+              />
+            </EffectComposer>
+          )}
+          <OrbitControls
+            enableZoom={false}
+            enablePan={false}
+            maxPolarAngle={Math.PI / 2.5}
+            minPolarAngle={Math.PI / 3}
+          />
+        </Suspense>
+      </Canvas>
+    </KeyboardControls>
+  );
+};
+
 const ZenDrift = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -206,59 +261,7 @@ const ZenDrift = () => {
 
           {!hasError && (
             <ErrorBoundary FallbackComponent={ErrorFallback} onError={handleError}>
-              <KeyboardControls map={keyboardMap}>
-                <Canvas
-                  ref={canvasRef}
-                  shadows
-                  gl={{ 
-                    antialias: true,
-                    alpha: true,
-                    stencil: true,
-                    depth: true,
-                    powerPreference: "high-performance"
-                  }}
-                  camera={{ position: [0, 15, 20], fov: 75 }}
-                  style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
-                  dpr={[1, 2]}
-                >
-                  <Suspense fallback={<LoadingScreen />}>
-                    {isSceneReady && (
-                      <>
-                        <PerspectiveCamera makeDefault position={[0, 15, 20]} />
-                        <ambientLight intensity={0.5} />
-                        <directionalLight
-                          castShadow
-                          position={[10, 10, 10]}
-                          intensity={1.5}
-                          shadow-mapSize={[2048, 2048]}
-                        />
-                        <Scene />
-                        {!isPaused && (
-                          <EffectComposer>
-                            <DepthOfField
-                              focusDistance={0}
-                              focalLength={0.02}
-                              bokehScale={2}
-                              height={480}
-                            />
-                            <Bloom
-                              intensity={1.5}
-                              luminanceThreshold={0.5}
-                              luminanceSmoothing={0.9}
-                            />
-                          </EffectComposer>
-                        )}
-                        <OrbitControls
-                          enableZoom={false}
-                          enablePan={false}
-                          maxPolarAngle={Math.PI / 2.5}
-                          minPolarAngle={Math.PI / 3}
-                        />
-                      </>
-                    )}
-                  </Suspense>
-                </Canvas>
-              </KeyboardControls>
+              {isSceneReady && <Game />}
             </ErrorBoundary>
           )}
         </div>
