@@ -9,6 +9,7 @@ export interface PufferfishAssets {
   smallFish: string;
   predator: string;
   background: string;
+  coral: string;  // Added coral property
 }
 
 export const usePufferfishAssets = () => {
@@ -18,7 +19,8 @@ export const usePufferfishAssets = () => {
     seaweed: '/placeholder.svg',
     smallFish: '/placeholder.svg',
     predator: '/placeholder.svg',
-    background: '/placeholder.svg'
+    background: '/placeholder.svg',
+    coral: '/placeholder.svg'  // Added coral initialization
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -27,7 +29,7 @@ export const usePufferfishAssets = () => {
   useEffect(() => {
     const loadAssets = async () => {
       try {
-        const assetNames = ['pufferfish', 'bubbles', 'seaweed', 'smallFish', 'predator', 'background'];
+        const assetNames = ['pufferfish', 'bubbles', 'seaweed', 'smallFish', 'predator', 'background', 'coral'];  // Added coral to assetNames
         const loadedAssets: Partial<PufferfishAssets> = {};
 
         for (const name of assetNames) {
