@@ -1,6 +1,6 @@
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
+import { RigidBody, CuboidCollider } from '@react-three/rapier';
 import * as THREE from 'three';
 
 interface CarPhysicsProps {
@@ -11,98 +11,91 @@ interface CarPhysicsProps {
 }
 
 export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysicsProps) => {
-  const meshRef = useRef<THREE.Group>();
+  const rigidBodyRef = useRef(null);
   const velocityRef = useRef(new THREE.Vector3());
   const angularVelocityRef = useRef(0);
   const driftFactorRef = useRef(0);
-  const trailsRef = useRef<THREE.Points>();
 
   useFrame((state, delta) => {
-    if (!meshRef.current) return;
+    if (!rigidBodyRef.current) return;
 
-    // Get keyboard input
-    const keys = state.controls as any;
-    const forward = keys?.forward || false;
-    const backward = keys?.backward || false;
-    const left = keys?.left || false;
-    const right = keys?.right || false;
-    const drift = keys?.drift || false;
+    const keys = {
+      forward: state.controls?.forward || false,
+      backward: state.controls?.backward || false,
+      left: state.controls?.left || false,
+      right: state.controls?.right || false,
+      drift: state.controls?.drift || false,
+    };
 
-    // Update physics with dreamy values
-    const acceleration = 15; // Reduced for smoother acceleration
-    const deceleration = 0.98; // Increased for more floating feeling
-    const turnSpeed = 2.0; // Reduced for smoother turning
-    const maxSpeed = 25; // Reduced for better control
-    const driftDecay = 0.99; // Increased for longer drifts
-    const lateralFriction = drift ? 0.95 : 0.8; // More slide when drifting
+    const acceleration = 15;
+    const deceleration = 0.98;
+    const turnSpeed = 2.0;
+    const maxSpeed = 25;
+    const driftDecay = 0.99;
+    const lateralFriction = keys.drift ? 0.95 : 0.8;
 
-    // Handle acceleration with smooth ramping
-    if (forward) {
+    // Handle acceleration
+    if (keys.forward) {
       velocityRef.current.z -= acceleration * delta * (1 - Math.abs(driftFactorRef.current) * 0.3);
-    } else if (backward) {
+    } else if (keys.backward) {
       velocityRef.current.z += acceleration * delta * (1 - Math.abs(driftFactorRef.current) * 0.3);
     }
     
-    // Apply natural deceleration
+    // Apply deceleration and friction
     velocityRef.current.z *= deceleration;
     velocityRef.current.x *= lateralFriction;
 
-    // Clamp speed with smooth transition
+    // Clamp speed
     const currentSpeed = velocityRef.current.length();
     if (currentSpeed > maxSpeed) {
-      const scale = maxSpeed / currentSpeed;
-      velocityRef.current.multiplyScalar(scale);
+      velocityRef.current.multiplyScalar(maxSpeed / currentSpeed);
     }
 
-    // Handle turning with drift influence
-    if (left) {
+    // Handle turning
+    if (keys.left) {
       angularVelocityRef.current -= turnSpeed * delta * (1 + driftFactorRef.current * 0.5);
     }
-    if (right) {
+    if (keys.right) {
       angularVelocityRef.current += turnSpeed * delta * (1 + driftFactorRef.current * 0.5);
     }
     
-    // Enhanced drift mechanics
-    if (drift && currentSpeed > 5) {
+    // Handle drifting
+    if (keys.drift && currentSpeed > 5) {
       driftFactorRef.current = Math.min(driftFactorRef.current + delta * 1.5, 1);
-      
-      // Add lateral force during drift
       const driftForce = new THREE.Vector3(
-        -Math.sin(meshRef.current.rotation.y) * currentSpeed * driftFactorRef.current * 0.8,
+        -Math.sin(rigidBodyRef.current.rotation().y) * currentSpeed * driftFactorRef.current * 0.8,
         0,
-        -Math.cos(meshRef.current.rotation.y) * currentSpeed * driftFactorRef.current * 0.3
+        -Math.cos(rigidBodyRef.current.rotation().y) * currentSpeed * driftFactorRef.current * 0.3
       );
       velocityRef.current.add(driftForce);
     } else {
       driftFactorRef.current *= driftDecay;
     }
 
-    // Update position and rotation with smooth interpolation
-    meshRef.current.position.add(
-      velocityRef.current
-        .clone()
-        .applyAxisAngle(new THREE.Vector3(0, 1, 0), meshRef.current.rotation.y)
-        .multiplyScalar(delta)
-    );
-    
-    meshRef.current.rotation.y += angularVelocityRef.current * delta;
+    // Update physics body
+    const currentTransform = rigidBodyRef.current.translation();
+    const nextPosition = new THREE.Vector3(
+      currentTransform.x,
+      currentTransform.y,
+      currentTransform.z
+    ).add(velocityRef.current.clone().multiplyScalar(delta));
 
-    // Apply natural decay to angular velocity
+    rigidBodyRef.current.setTranslation(nextPosition);
+    rigidBodyRef.current.setRotation(new THREE.Quaternion().setFromEuler(
+      new THREE.Euler(0, rigidBodyRef.current.rotation().y + angularVelocityRef.current * delta, 0)
+    ));
+
+    // Natural angular velocity decay
     angularVelocityRef.current *= 0.95;
 
-    // Notify parent of updates
     if (onUpdate) {
-      onUpdate(meshRef.current.position, meshRef.current.rotation);
+      onUpdate(nextPosition, new THREE.Euler(0, rigidBodyRef.current.rotation().y, 0));
     }
   });
 
   return (
-    <group
-      ref={meshRef}
-      position={position}
-      rotation={rotation}
-      scale={[scale, scale, scale]}
-    >
+    <RigidBody ref={rigidBodyRef} position={position} rotation={rotation} colliders={false}>
+      <CuboidCollider args={[1, 0.5, 2]} />
       <mesh castShadow receiveShadow>
         <boxGeometry args={[2, 1, 4]} />
         <meshPhysicalMaterial
@@ -115,25 +108,6 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
           emissiveIntensity={driftFactorRef.current * 0.2}
         />
       </mesh>
-      
-      {/* Ethereal trail effect */}
-      <points ref={trailsRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={1}
-            array={new Float32Array(3)}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <pointsMaterial
-          size={2}
-          color="#ffffff"
-          transparent
-          opacity={0.6}
-          sizeAttenuation
-        />
-      </points>
-    </group>
+    </RigidBody>
   );
 };

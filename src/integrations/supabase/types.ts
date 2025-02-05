@@ -857,6 +857,38 @@ export type Database = {
         }
         Relationships: []
       }
+      featured_products: {
+        Row: {
+          created_at: string | null
+          feature_date: string
+          feature_type: string
+          id: string
+          product_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feature_date?: string
+          feature_type: string
+          id?: string
+          product_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feature_date?: string
+          feature_type?: string
+          id?: string
+          product_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financial_tracking: {
         Row: {
           amount: number
@@ -1560,6 +1592,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          link: string | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          title: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       nrt_guide_steps: {
         Row: {
           created_at: string | null
@@ -1863,6 +1928,7 @@ export type Database = {
           image_url: string | null
           is_launched: boolean | null
           is_nrt_certified: boolean
+          launch_date: string | null
           maker_id: string | null
           name: string
           product_type: string
@@ -1882,6 +1948,7 @@ export type Database = {
           image_url?: string | null
           is_launched?: boolean | null
           is_nrt_certified?: boolean
+          launch_date?: string | null
           maker_id?: string | null
           name: string
           product_type?: string
@@ -1901,6 +1968,7 @@ export type Database = {
           image_url?: string | null
           is_launched?: boolean | null
           is_nrt_certified?: boolean
+          launch_date?: string | null
           maker_id?: string | null
           name?: string
           product_type?: string
@@ -2963,6 +3031,27 @@ export type Database = {
           trigger_type?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_follows: {
+        Row: {
+          created_at: string | null
+          follower_id: string | null
+          following_id: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          follower_id?: string | null
+          following_id?: string | null
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          follower_id?: string | null
+          following_id?: string | null
+          id?: string
         }
         Relationships: []
       }

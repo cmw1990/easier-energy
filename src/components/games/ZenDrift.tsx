@@ -6,6 +6,7 @@ import { Wind, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { Physics } from "@react-three/rapier";
 import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing";
 import { CarPhysics } from "./physics/CarPhysics";
 import { ZenDriftAssetsGenerator } from "./ZenDriftAssetsGenerator";
@@ -69,13 +70,11 @@ const ZenDrift = () => {
             }
           } catch (error) {
             console.error(`Error loading ${type}_${i}:`, error);
-            setHasError(true);
           }
         }
       }
 
       if (newAssets.length === 0) {
-        setHasError(true);
         throw new Error("No assets were loaded successfully");
       }
 
@@ -193,7 +192,7 @@ const ZenDrift = () => {
           
           {!isLoadingAssets && !hasError && (
             <ErrorBoundary
-              fallbackRender={ErrorFallback}
+              FallbackComponent={ErrorFallback}
               onError={handleError}
             >
               <Suspense fallback={null}>
@@ -221,24 +220,26 @@ const ZenDrift = () => {
                     shadow-mapSize={[2048, 2048]}
                   />
                   
-                  <CarPhysics
-                    position={[0, 0, 0]}
-                    rotation={[0, 0, 0]}
-                    scale={1}
-                  />
-
-                  <mesh
-                    receiveShadow
-                    rotation={[-Math.PI / 2, 0, 0]}
-                    position={[0, -0.5, 0]}
-                  >
-                    <planeGeometry args={[100, 100]} />
-                    <meshStandardMaterial
-                      color="#a8e6cf"
-                      metalness={0.1}
-                      roughness={0.9}
+                  <Physics>
+                    <CarPhysics
+                      position={[0, 0, 0]}
+                      rotation={[0, 0, 0]}
+                      scale={1}
                     />
-                  </mesh>
+
+                    <mesh
+                      receiveShadow
+                      rotation={[-Math.PI / 2, 0, 0]}
+                      position={[0, -0.5, 0]}
+                    >
+                      <planeGeometry args={[100, 100]} />
+                      <meshStandardMaterial
+                        color="#a8e6cf"
+                        metalness={0.1}
+                        roughness={0.9}
+                      />
+                    </mesh>
+                  </Physics>
 
                   <Environment preset="sunset" />
                   
