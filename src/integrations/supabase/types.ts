@@ -1744,6 +1744,82 @@ export type Database = {
           },
         ]
       }
+      product_badges: {
+        Row: {
+          awarded_at: string | null
+          badge_type: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          product_id: string | null
+        }
+        Insert: {
+          awarded_at?: string | null
+          badge_type: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          product_id?: string | null
+        }
+        Update: {
+          awarded_at?: string | null
+          badge_type?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          product_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_badges_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_discussions: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_pinned: boolean | null
+          product_id: string | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          product_id?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          product_id?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_discussions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_reviews: {
         Row: {
           cons: string[] | null
@@ -1919,10 +1995,13 @@ export type Database = {
       products: {
         Row: {
           brand: string
+          category: string | null
           chemicals: string[] | null
           comments_count: number | null
           created_at: string | null
           description: string | null
+          featured_date: string | null
+          featured_score: number | null
           flavor: string
           id: string
           image_url: string | null
@@ -1930,19 +2009,24 @@ export type Database = {
           is_nrt_certified: boolean
           launch_date: string | null
           maker_id: string | null
+          media_gallery: Json[] | null
           name: string
           product_type: string
           risk_level: Database["public"]["Enums"]["risk_level"]
           strength: Database["public"]["Enums"]["strength_level"]
+          tags: string[] | null
           updated_at: string | null
           upvotes_count: number | null
         }
         Insert: {
           brand?: string
+          category?: string | null
           chemicals?: string[] | null
           comments_count?: number | null
           created_at?: string | null
           description?: string | null
+          featured_date?: string | null
+          featured_score?: number | null
           flavor: string
           id?: string
           image_url?: string | null
@@ -1950,19 +2034,24 @@ export type Database = {
           is_nrt_certified?: boolean
           launch_date?: string | null
           maker_id?: string | null
+          media_gallery?: Json[] | null
           name: string
           product_type?: string
           risk_level: Database["public"]["Enums"]["risk_level"]
           strength: Database["public"]["Enums"]["strength_level"]
+          tags?: string[] | null
           updated_at?: string | null
           upvotes_count?: number | null
         }
         Update: {
           brand?: string
+          category?: string | null
           chemicals?: string[] | null
           comments_count?: number | null
           created_at?: string | null
           description?: string | null
+          featured_date?: string | null
+          featured_score?: number | null
           flavor?: string
           id?: string
           image_url?: string | null
@@ -1970,10 +2059,12 @@ export type Database = {
           is_nrt_certified?: boolean
           launch_date?: string | null
           maker_id?: string | null
+          media_gallery?: Json[] | null
           name?: string
           product_type?: string
           risk_level?: Database["public"]["Enums"]["risk_level"]
           strength?: Database["public"]["Enums"]["strength_level"]
+          tags?: string[] | null
           updated_at?: string | null
           upvotes_count?: number | null
         }
