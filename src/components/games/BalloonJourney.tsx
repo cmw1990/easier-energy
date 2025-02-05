@@ -6,6 +6,7 @@ import { BreathingTechniques, type BreathingTechnique } from '@/components/breat
 import BalloonScene3D from './scenes/BalloonScene3D';
 import { Loader2 } from 'lucide-react';
 import { generateNatureSound } from '@/utils/audio';
+import { GameAssetsGenerator } from '@/components/GameAssetsGenerator';
 
 const BalloonJourney = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -98,6 +99,11 @@ const BalloonJourney = () => {
   return (
     <Card className="p-6">
       <div className="flex flex-col items-center gap-4">
+        {/* Temporary GameAssetsGenerator - remove after assets are generated */}
+        <div className="w-full flex justify-center mb-4">
+          <GameAssetsGenerator />
+        </div>
+
         {!isPlaying && (
           <BreathingTechniques
             onSelectTechnique={setSelectedTechnique}
