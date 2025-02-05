@@ -6,6 +6,7 @@ import { usePufferfishAssets } from '../PufferfishAssets';
 import { setupBreathDetection } from '@/utils/breathDetection';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
+import { Vector2 } from 'three';
 
 interface PufferfishScene3DProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
@@ -96,6 +97,7 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
   const { assets } = usePufferfishAssets();
   const [scale, setScale] = useState(1);
   const [isBreathDetected, setIsBreathDetected] = useState(false);
+  const cleanupRef = useRef<(() => void) | null>(null);
   
   const textures = useTexture({
     pufferfish: assets.pufferfish,
@@ -105,23 +107,34 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
   });
 
   useEffect(() => {
-    const cleanup = setupBreathDetection(
-      (volume) => {
-        if (breathPhase === 'inhale') {
-          setScale(1 + volume * 0.5);
-          setIsBreathDetected(true);
-        }
-      },
-      (volume) => {
-        if (breathPhase === 'exhale') {
-          setScale(Math.max(1 - volume * 0.3, 0.7));
-          setIsBreathDetected(true);
-        }
+    const initBreathDetection = async () => {
+      try {
+        const cleanup = await setupBreathDetection(
+          (volume) => {
+            if (breathPhase === 'inhale') {
+              setScale(1 + volume * 0.5);
+              setIsBreathDetected(true);
+            }
+          },
+          (volume) => {
+            if (breathPhase === 'exhale') {
+              setScale(Math.max(1 - volume * 0.3, 0.7));
+              setIsBreathDetected(true);
+            }
+          }
+        );
+        cleanupRef.current = cleanup;
+      } catch (error) {
+        console.error('Failed to setup breath detection:', error);
       }
-    );
+    };
+
+    initBreathDetection();
 
     return () => {
-      if (cleanup) cleanup();
+      if (cleanupRef.current) {
+        cleanupRef.current();
+      }
     };
   }, [breathPhase]);
 
@@ -200,7 +213,7 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
             intensity={1.5}
             radius={0.4}
           />
-          <ChromaticAberration offset={[0.002, 0.002]} />
+          <ChromaticAberration offset={new Vector2(0.002, 0.002)} />
         </EffectComposer>
         <OrbitControls
           enableZoom={false}
