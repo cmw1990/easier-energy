@@ -13,6 +13,7 @@ import { CravingTracker } from "@/components/sobriety/CravingTracker";
 import { MoodOverview } from "@/components/MoodOverview";
 import { WithdrawalTracker } from "@/components/sobriety/WithdrawalTracker";
 import { TriggerPatternAnalysis } from "@/components/sobriety/TriggerPatternAnalysis";
+import { Battery, Brain, Coffee, Moon, Wind } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Index() {
@@ -23,8 +24,8 @@ export default function Index() {
     return (
       <div className="container mx-auto p-6 space-y-6">
         <Card className="p-6">
-          <h1 className="text-2xl font-bold mb-4">Welcome to Mind Mate</h1>
-          <p className="mb-4">Please sign in to access all features.</p>
+          <h1 className="text-2xl font-bold mb-4">Welcome to Energy Support</h1>
+          <p className="mb-4">Sign in to access your personal energy dashboard.</p>
           <Button onClick={() => navigate("/login")}>Sign In</Button>
         </Card>
       </div>
@@ -36,27 +37,76 @@ export default function Index() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="container mx-auto p-6 space-y-6"
+      className="container mx-auto p-4 md:p-6 space-y-6"
     >
-      <h1 className="text-3xl font-bold">Welcome</h1>
-      
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <AchievementWall />
-      </motion.div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Energy Overview Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="col-span-full lg:col-span-2"
+        >
+          <Card className="p-4 bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-900/20 dark:to-blue-900/20">
+            <div className="flex items-center gap-3 mb-4">
+              <Battery className="h-6 w-6 text-emerald-500" />
+              <h2 className="text-2xl font-bold">Energy Score</h2>
+            </div>
+            <MoodOverview />
+          </Card>
+        </motion.div>
+
+        {/* Quick Access Tools */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="col-span-1"
+        >
+          <Card className="p-4 h-full">
+            <div className="flex items-center gap-2 mb-4">
+              <Brain className="h-5 w-5 text-purple-500" />
+              <h3 className="font-semibold">Focus Tools</h3>
+            </div>
+            <div className="space-y-2">
+              <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/focus")}>
+                <Coffee className="h-4 w-4 mr-2" />
+                Focus Session
+              </Button>
+              <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/meditation")}>
+                <Wind className="h-4 w-4 mr-2" />
+                Quick Meditation
+              </Button>
+              <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/sleep")}>
+                <Moon className="h-4 w-4 mr-2" />
+                Power Nap
+              </Button>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Audio Tools */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
+          className="col-span-1"
+        >
+          <BackgroundMusicPlayer />
+        </motion.div>
+      </div>
+
+      {/* Main Dashboard Content */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="lg:col-span-2"
         >
           <MeditationStats />
         </motion.div>
-        
+
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -64,75 +114,52 @@ export default function Index() {
         >
           <GroupSession />
         </motion.div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.7 }}
+        >
+          <HealthImprovements />
+        </motion.div>
+
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.8 }}
+          className="lg:col-span-2"
         >
-          <MeditationAudioPlayer />
+          <TriggerPatternAnalysis />
         </motion.div>
-        
+      </div>
+
+      {/* Achievement Section */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.9 }}
+      >
+        <AchievementWall />
+      </motion.div>
+
+      {/* Support Tools */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 1.0 }}
         >
-          <BackgroundMusicPlayer />
-        </motion.div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1.2 }}
-        >
-          <MotivationSection />
+          <CravingTracker />
         </motion.div>
         
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1.4 }}
+          transition={{ delay: 1.1 }}
         >
-          <HealthImprovements />
+          <WithdrawalTracker />
         </motion.div>
       </div>
-
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 1.6 }}
-      >
-        <CravingTracker />
-      </motion.div>
-
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 1.8 }}
-      >
-        <MoodOverview />
-      </motion.div>
-
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 2.0 }}
-      >
-        <WithdrawalTracker />
-      </motion.div>
-
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 2.2 }}
-      >
-        <TriggerPatternAnalysis />
-      </motion.div>
     </motion.div>
   );
 }
