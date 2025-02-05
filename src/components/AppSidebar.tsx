@@ -81,6 +81,7 @@ const navigationGroups = [
         to: "/nicotine",
         icon: Package,
         label: "Nicotine",
+        iconClassName: "rounded-full p-0.5", // Add rounded styling to make it look like a pouch case
       },
       {
         to: "/supplements",
@@ -124,7 +125,7 @@ export const AppSidebar = () => {
                       : "text-muted-foreground"
                   )}
                 >
-                  <link.icon className="mr-2 h-4 w-4" />
+                  <link.icon className={cn("mr-2 h-4 w-4", link.iconClassName)} />
                   {link.label}
                 </Link>
               ))}

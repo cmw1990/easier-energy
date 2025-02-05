@@ -81,7 +81,7 @@ const toolbarItems = [
     to: "/nicotine",
     icon: Package,
     label: "Nicotine",
-    iconClassName: "text-zinc-500",
+    iconClassName: "text-zinc-500 rounded-full p-0.5", // Add rounded styling to make it look like a pouch case
   },
   {
     to: "/sobriety",
