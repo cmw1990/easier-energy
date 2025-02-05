@@ -17,6 +17,7 @@ import { Battery, Brain, Coffee, Moon, Wind, Gamepad2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 import { ReproductiveHealthExercises } from "@/components/exercises/ReproductiveHealthExercises";
+import { ExerciseRoutine } from "@/components/exercises/ExerciseRoutine";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -125,6 +126,91 @@ export default function Index() {
           <div className="space-y-4">
             <BackgroundMusicPlayer />
             <ReproductiveHealthExercises />
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="col-span-1"
+        >
+          <div className="space-y-4">
+            <ExerciseRoutine
+              routineName="Daily Energy Training"
+              exercises={[
+                {
+                  name: "Pelvic Floor Warm-up",
+                  type: "breathing",
+                  sets: 1,
+                  reps: 10,
+                  holdDuration: 5,
+                  restDuration: 3,
+                  instructions: [
+                    "Find a comfortable position",
+                    "Take deep breaths",
+                    "Focus on relaxing your pelvic floor",
+                    "Maintain good posture"
+                  ]
+                },
+                {
+                  name: "Basic Strengthening",
+                  type: "kegel_basic",
+                  sets: 3,
+                  reps: 10,
+                  holdDuration: 5,
+                  restDuration: 5,
+                  instructions: [
+                    "Contract your pelvic floor muscles",
+                    "Hold for 5 seconds",
+                    "Release completely",
+                    "Rest for 5 seconds"
+                  ]
+                },
+                {
+                  name: "Advanced Training",
+                  type: "kegel_advanced",
+                  sets: 2,
+                  reps: 15,
+                  holdDuration: 2,
+                  restDuration: 3,
+                  instructions: [
+                    "Quick, strong contractions",
+                    "Focus on full release",
+                    "Maintain breathing",
+                    "Keep your core relaxed"
+                  ]
+                },
+                {
+                  name: "Core Integration",
+                  type: "core_strength",
+                  sets: 3,
+                  reps: 12,
+                  holdDuration: 5,
+                  restDuration: 10,
+                  instructions: [
+                    "Engage your core muscles",
+                    "Coordinate with pelvic floor",
+                    "Maintain neutral spine",
+                    "Breathe steadily"
+                  ]
+                },
+                {
+                  name: "Cool Down",
+                  type: "relaxation",
+                  sets: 1,
+                  reps: 1,
+                  holdDuration: 300,
+                  restDuration: 0,
+                  instructions: [
+                    "Progressive muscle relaxation",
+                    "Focus on breathing",
+                    "Release any tension",
+                    "Stay mindful and present"
+                  ]
+                }
+              ]}
+            />
           </div>
         </motion.div>
       </div>
