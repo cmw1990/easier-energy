@@ -881,6 +881,45 @@ export type Database = {
         }
         Relationships: []
       }
+      focus_music: {
+        Row: {
+          artist: string | null
+          audio_url: string
+          category: string
+          created_at: string | null
+          duration_seconds: number
+          energy_level: number | null
+          id: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          artist?: string | null
+          audio_url: string
+          category: string
+          created_at?: string | null
+          duration_seconds: number
+          energy_level?: number | null
+          id?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          artist?: string | null
+          audio_url?: string
+          category?: string
+          created_at?: string | null
+          duration_seconds?: number
+          energy_level?: number | null
+          id?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       food_logs: {
         Row: {
           ai_analysis: string | null
@@ -1186,6 +1225,42 @@ export type Database = {
           side_effects?: string | null
           time_taken?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      meditation_audio: {
+        Row: {
+          audio_url: string
+          category: string
+          created_at: string | null
+          description: string | null
+          duration_seconds: number
+          id: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          audio_url: string
+          category: string
+          created_at?: string | null
+          description?: string | null
+          duration_seconds: number
+          id?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          audio_url?: string
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          duration_seconds?: number
+          id?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1676,6 +1751,7 @@ export type Database = {
           image_url: string | null
           is_launched: boolean | null
           is_nrt_certified: boolean
+          maker_id: string | null
           name: string
           product_type: string
           risk_level: Database["public"]["Enums"]["risk_level"]
@@ -1694,6 +1770,7 @@ export type Database = {
           image_url?: string | null
           is_launched?: boolean | null
           is_nrt_certified?: boolean
+          maker_id?: string | null
           name: string
           product_type?: string
           risk_level: Database["public"]["Enums"]["risk_level"]
@@ -1712,6 +1789,7 @@ export type Database = {
           image_url?: string | null
           is_launched?: boolean | null
           is_nrt_certified?: boolean
+          maker_id?: string | null
           name?: string
           product_type?: string
           risk_level?: Database["public"]["Enums"]["risk_level"]
@@ -1719,7 +1797,15 @@ export type Database = {
           updated_at?: string | null
           upvotes_count?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_maker_id_fkey"
+            columns: ["maker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
