@@ -44,13 +44,12 @@ export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
   }
 
   return (
-    <div className="w-full h-[60vh] rounded-lg overflow-hidden relative">
+    <div className="w-full h-[60vh] rounded-lg overflow-hidden relative bg-sky-100">
       <Canvas
         camera={{ position: [0, 5, 10], fov: 75 }}
-        style={{
-          background: 'linear-gradient(to bottom, #3498db, #2980b9)'
-        }}
+        gl={{ antialias: true }}
       >
+        <color attach="background" args={['#87CEEB']} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         
@@ -67,6 +66,7 @@ export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
             ]}
             opacity={0.5}
             speed={0.1}
+            segments={8}
           />
         ))}
 
