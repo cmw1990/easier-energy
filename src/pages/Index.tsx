@@ -49,13 +49,16 @@ export default function Index() {
         <p className="text-muted-foreground mb-4">
           Embark on a dreamy journey through the clouds in this breath-controlled balloon adventure.
         </p>
-        <Button 
-          onClick={() => navigate("/breathing-balloon")}
-          className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-        >
-          <Gamepad2 className="mr-2 h-4 w-4" />
-          Start Adventure
-        </Button>
+        <div className="flex gap-4">
+          <Button 
+            onClick={() => navigate("/breathing-balloon")}
+            className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <Gamepad2 className="mr-2 h-4 w-4" />
+            Start Adventure
+          </Button>
+          <GameAssetsGenerator />
+        </div>
       </Card>
 
       {/* Energy Overview Section */}
