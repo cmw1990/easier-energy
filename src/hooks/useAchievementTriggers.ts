@@ -141,5 +141,33 @@ export const useAchievementTriggers = () => {
     };
   }, [updateProgress]);
 
+  // Track sleep quality
+  useEffect(() => {
+    const sleepChannel = supabase
+      .channel('daily_checkins')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'daily_checkins'
+        },
+        async (payload) => {
+          const sleepQuality = payload.new.sleep_quality;
+          if (sleepQuality >= 8) {
+            await updateProgress.mutateAsync({
+              achievementId: 'sleep-quality',
+              progress: 1
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(sleepChannel);
+    };
+  }, [updateProgress]);
+
   return null;
 };

@@ -30,12 +30,33 @@ export const AchievementCelebration = ({
       duration: 5000,
     });
 
-    // Trigger confetti effect
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
+    // Create a more elaborate confetti effect
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
+
+    const colors = ['#ff0000', '#00ff00', '#0000ff'];
+
+    (function frame() {
+      confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: colors
+      });
+      
+      confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: colors
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    }());
 
     // Call onComplete after animation
     const timer = setTimeout(() => {
@@ -60,7 +81,18 @@ export const AchievementCelebration = ({
             transition={{ delay: 0.2 }}
             className="flex flex-col items-center gap-4"
           >
-            <div className="relative">
+            <motion.div 
+              className="relative"
+              animate={{ 
+                scale: [1, 1.2, 1],
+                rotate: [0, 10, -10, 0]
+              }}
+              transition={{ 
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
               <Trophy className="w-16 h-16 text-primary" />
               <motion.div
                 animate={{ 
@@ -75,15 +107,25 @@ export const AchievementCelebration = ({
               >
                 <Sparkles className="w-6 h-6 text-yellow-500" />
               </motion.div>
-            </div>
+            </motion.div>
 
             <div className="text-center space-y-2">
-              <h3 className="text-xl font-bold">{title}</h3>
+              <motion.h3 
+                className="text-xl font-bold"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                {title}
+              </motion.h3>
               <p className="text-sm text-muted-foreground">{description}</p>
-              <div className="flex items-center justify-center gap-2 text-yellow-500">
+              <motion.div 
+                className="flex items-center justify-center gap-2 text-yellow-500"
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
                 <Star className="w-5 h-5" />
                 <span className="font-bold">+{points} points</span>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         </Card>
