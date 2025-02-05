@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { BreathingTechniques, type BreathingTechnique } from '@/components/breathing/BreathingTechniques';
-import { PufferfishScene3D } from './scenes/PufferfishScene3D';
+import PufferfishScene3D from './scenes/PufferfishScene3D';
 import { Loader2 } from 'lucide-react';
 
 const BreathingGame = () => {
