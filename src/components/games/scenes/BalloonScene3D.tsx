@@ -136,6 +136,8 @@ const Scene = ({ balloonState, breathPhase }: { balloonState: any, breathPhase: 
         />
         <ChromaticAberration
           offset={new Vector2(0.002, 0.002)}
+          radialModulation={false}
+          modulationOffset={0.5}
         />
       </EffectComposer>
       
