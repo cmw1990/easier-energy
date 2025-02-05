@@ -29,6 +29,9 @@ export default function Index() {
           <p className="mb-4">Sign in to access your personal energy dashboard.</p>
           <Button onClick={() => navigate("/login")}>Sign In</Button>
         </Card>
+        <div className="flex justify-center">
+          <GameAssetsGenerator />
+        </div>
       </div>
     );
   }
@@ -40,6 +43,10 @@ export default function Index() {
       transition={{ duration: 0.5 }}
       className="container mx-auto p-4 md:p-6 space-y-6"
     >
+      <div className="flex justify-center mb-6">
+        <GameAssetsGenerator />
+      </div>
+
       {/* Add Balloon Adventure Game Button */}
       <Card className="p-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 hover:shadow-lg transition-all duration-300">
         <div className="flex items-center gap-3 mb-4">
