@@ -13,8 +13,9 @@ import { CravingTracker } from "@/components/sobriety/CravingTracker";
 import { MoodOverview } from "@/components/MoodOverview";
 import { WithdrawalTracker } from "@/components/sobriety/WithdrawalTracker";
 import { TriggerPatternAnalysis } from "@/components/sobriety/TriggerPatternAnalysis";
-import { Battery, Brain, Coffee, Moon, Wind } from "lucide-react";
+import { Battery, Brain, Coffee, Moon, Wind, Gamepad2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -39,6 +40,18 @@ export default function Index() {
       transition={{ duration: 0.5 }}
       className="container mx-auto p-4 md:p-6 space-y-6"
     >
+      {/* Temporary Game Assets Generation Button */}
+      <Card className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+        <div className="flex items-center gap-3 mb-4">
+          <Gamepad2 className="h-6 w-6 text-purple-500" />
+          <h2 className="text-2xl font-bold">Game Assets Generator</h2>
+        </div>
+        <p className="text-muted-foreground mb-4">
+          Click the button below to generate all necessary game assets for Pufferfish, Balloon, and Zen Garden games.
+        </p>
+        <GameAssetsGenerator />
+      </Card>
+
       {/* Energy Overview Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <motion.div
