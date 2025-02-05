@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { generateNatureSound } from "@/utils/audio";
 import { GenerateBackgroundsButton } from "@/components/meditation/GenerateBackgroundsButton";
 import { MeditationStats } from "@/components/meditation/MeditationStats";
+import { AIStoryPlayer } from "@/components/meditation/AIStoryPlayer";
 
 const MEDITATION_TYPES = [
   { id: 'mindfulness', icon: Brain, label: 'Mindfulness' },
@@ -269,6 +270,31 @@ const Meditation = () => {
       </div>
 
       <MeditationStats />
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <AIStoryPlayer theme="peaceful nature" duration={5} />
+        <Card>
+          <CardHeader>
+            <CardTitle>Premium Features</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              <li className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-500" />
+                AI-Narrated Meditation Stories
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-500" />
+                Customizable Themes
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-500" />
+                High-Quality Audio
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
 
       <Tabs defaultValue="mindfulness" className="space-y-4">
         {MEDITATION_TYPES.map((type) => (
