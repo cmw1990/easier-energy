@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { generateNatureSound } from "@/utils/audio";
 import { GenerateBackgroundsButton } from "@/components/meditation/GenerateBackgroundsButton";
+import { MeditationStats } from "@/components/meditation/MeditationStats";
 
 const MEDITATION_TYPES = [
   { id: 'mindfulness', icon: Brain, label: 'Mindfulness' },
@@ -267,16 +268,15 @@ const Meditation = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="mindfulness" className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-          {MEDITATION_TYPES.map((type) => (
-            <TabsTrigger key={type.id} value={type.id} className="flex items-center gap-2">
-              <type.icon className="h-4 w-4" />
-              {type.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <MeditationStats />
 
+      <Tabs defaultValue="mindfulness" className="space-y-4">
+        {MEDITATION_TYPES.map((type) => (
+          <TabsTrigger key={type.id} value={type.id} className="flex items-center gap-2">
+            <type.icon className="h-4 w-4" />
+            {type.label}
+          </TabsTrigger>
+        ))}
         {MEDITATION_TYPES.map((type) => (
           <TabsContent key={type.id} value={type.id} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
