@@ -10,6 +10,7 @@ import { BackgroundMusicPlayer } from "@/components/audio/BackgroundMusicPlayer"
 import { MotivationSection } from "@/components/motivation/MotivationSection";
 import { HealthImprovements } from "@/components/sobriety/HealthImprovements";
 import { CravingTracker } from "@/components/sobriety/CravingTracker";
+import { MoodOverview } from "@/components/MoodOverview";
 import { motion } from "framer-motion";
 
 export default function Index() {
@@ -105,6 +106,14 @@ export default function Index() {
         transition={{ delay: 1.6 }}
       >
         <CravingTracker />
+      </motion.div>
+
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 1.8 }}
+      >
+        <MoodOverview />
       </motion.div>
     </motion.div>
   );
