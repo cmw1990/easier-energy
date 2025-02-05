@@ -29,6 +29,7 @@ import SupplementsPage from "@/pages/Supplements"
 import SupportPage from "@/pages/Support"
 import BreathingGame from "@/components/games/BreathingGame"
 import BalloonJourney from "@/components/games/BalloonJourney"
+import ZenGarden from "@/components/games/ZenGarden"
 
 const queryClient = new QueryClient()
 
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: "/breathing-balloon",
     element: <BalloonJourney />,
+  },
+  {
+    path: "/breathing-zen",
+    element: <ZenGarden />,
   },
   // Main app routes
   {
