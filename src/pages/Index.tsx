@@ -6,10 +6,13 @@ import { useAuth } from "@/components/AuthProvider";
 import { MeditationStats } from "@/components/meditation/MeditationStats";
 import GomokuGame from "@/components/games/GomokuGame";
 import BrainMatch3 from "@/components/games/BrainMatch3";
+import { useAchievementTriggers } from "@/hooks/useAchievementTriggers";
+import { motion } from "framer-motion";
 
 export default function Index() {
   const navigate = useNavigate();
   const { session } = useAuth();
+  useAchievementTriggers(); // Initialize achievement triggers
 
   if (!session) {
     return (
@@ -24,19 +27,45 @@ export default function Index() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="container mx-auto p-6 space-y-6"
+    >
       <h1 className="text-3xl font-bold">Welcome</h1>
-      <AchievementWall />
+      
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <AchievementWall />
+      </motion.div>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <MeditationStats />
-        <Card className="p-6">
-          <h2 className="text-2xl font-bold mb-4">Brain Training</h2>
-          <div className="space-y-4">
-            <GomokuGame />
-            <BrainMatch3 />
-          </div>
-        </Card>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <MeditationStats />
+        </motion.div>
+        
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          <Card className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Brain Training</h2>
+            <div className="space-y-4">
+              <GomokuGame />
+              <BrainMatch3 />
+            </div>
+          </Card>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
