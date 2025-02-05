@@ -9,27 +9,19 @@ export default {
     './src/**/*.{ts,tsx}',
   ],
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
       keyframes: {
         "float-up": {
-          "0%": { transform: "translate(-50%, -50%) scale(1)" },
-          "50%": { transform: "translate(-50%, -80%) scale(1.5)" },
-          "100%": { transform: "translate(-50%, -50%) scale(1.3)" }
+          '0%': { transform: 'translate(-50%, -50%)' },
+          '100%': { transform: 'translate(-50%, -80%)' }
         },
         "float-down": {
-          "0%": { transform: "translate(-50%, -50%) scale(1.3)" },
-          "100%": { transform: "translate(-50%, -50%) scale(1)" }
+          '0%': { transform: 'translate(-50%, -80%)' },
+          '100%': { transform: 'translate(-50%, -50%)' }
         },
         "sway": {
-          "0%, 100%": { transform: "translate(-50%, -50%) rotate(-5deg)" },
-          "50%": { transform: "translate(-50%, -50%) rotate(5deg)" }
+          '0%, 100%': { transform: 'translate(-50%, -50%) rotate(-5deg)' },
+          '50%': { transform: 'translate(-50%, -50%) rotate(5deg)' }
         }
       },
       animation: {

@@ -6,7 +6,11 @@ interface BalloonProps {
 }
 
 export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
-  const { assets } = useBalloonAssets();
+  const { assets, isLoading } = useBalloonAssets();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   const getBalloonAnimation = () => {
     switch (breathPhase) {
@@ -26,7 +30,8 @@ export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
       className="w-full h-[60vh] bg-cover bg-center rounded-lg overflow-hidden relative"
       style={{ 
         backgroundImage: `url(${assets.background})`,
-        backgroundSize: 'cover'
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
       }}
     >
       <img 
