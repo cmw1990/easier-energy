@@ -1768,6 +1768,47 @@ export type Database = {
           },
         ]
       }
+      product_updates: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          product_id: string | null
+          title: string
+          update_type: string | null
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          product_id?: string | null
+          title: string
+          update_type?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          product_id?: string | null
+          title?: string
+          update_type?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_updates_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       productivity_metrics: {
         Row: {
           created_at: string | null
