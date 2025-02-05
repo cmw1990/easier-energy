@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
 import { MeditationStats } from "@/components/meditation/MeditationStats";
-import { GomokuGame } from "@/components/games/GomokuGame";
-import { BrainMatch3 } from "@/components/games/BrainMatch3";
+import GomokuGame from "@/components/games/GomokuGame";
+import BrainMatch3 from "@/components/games/BrainMatch3";
 
 export default function Index() {
   const navigate = useNavigate();

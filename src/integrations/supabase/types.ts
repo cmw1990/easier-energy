@@ -9,6 +9,103 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ab_test_assignments: {
+        Row: {
+          assigned_at: string | null
+          id: string
+          test_name: string
+          user_id: string | null
+          variant_id: string | null
+        }
+        Insert: {
+          assigned_at?: string | null
+          id?: string
+          test_name: string
+          user_id?: string | null
+          variant_id?: string | null
+        }
+        Update: {
+          assigned_at?: string | null
+          id?: string
+          test_name?: string
+          user_id?: string | null
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ab_test_assignments_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "ab_test_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ab_test_events: {
+        Row: {
+          assignment_id: string | null
+          created_at: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+        }
+        Insert: {
+          assignment_id?: string | null
+          created_at?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+        }
+        Update: {
+          assignment_id?: string | null
+          created_at?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ab_test_events_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "ab_test_assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ab_test_variants: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          test_name: string
+          updated_at: string | null
+          variant_name: string
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          test_name: string
+          updated_at?: string | null
+          variant_name: string
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          test_name?: string
+          updated_at?: string | null
+          variant_name?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
       achievement_progress: {
         Row: {
           achievement_id: string
@@ -2496,6 +2593,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      survey_templates: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          questions: Json
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          questions?: Json
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          questions?: Json
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       surveys: {
         Row: {
