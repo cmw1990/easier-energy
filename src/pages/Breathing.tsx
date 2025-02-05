@@ -4,7 +4,7 @@ import { BreathingVisualizer } from "@/components/breathing/BreathingVisualizer"
 import { BreathingTechniques } from "@/components/breathing/BreathingTechniques";
 import BreathingGame from "@/components/games/BreathingGame";
 import BalloonJourney from "@/components/games/BalloonJourney";
-import PufferfishScene3D from "@/components/games/scenes/PufferfishScene3D";
+import { PufferfishScene3D } from "@/components/games/scenes/PufferfishScene3D";
 import { Wind, Gamepad2 } from "lucide-react";
 
 const Breathing = () => {
