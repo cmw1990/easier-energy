@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, useGLTF, Stars, Cloud, Float } from '@react-three/drei';
+import { OrbitControls, Environment, Stars, Cloud, Float } from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
 import { BreathingTechnique } from '@/components/breathing/BreathingTechniques';
 
@@ -45,7 +45,7 @@ function ZenScene() {
         />
       ))}
 
-      <Environment preset="night" />
+      <Environment preset="sunset" />
       <EffectComposer>
         <DepthOfField
           focusDistance={0}
