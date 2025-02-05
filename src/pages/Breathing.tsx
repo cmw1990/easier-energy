@@ -5,7 +5,6 @@ import { BreathingTechniques } from "@/components/breathing/BreathingTechniques"
 import { Wind, Gamepad2 } from "lucide-react";
 import BreathingGame from "@/components/games/BreathingGame";
 import BalloonJourney from "@/components/games/BalloonJourney";
-import PufferfishScene3D from "@/components/games/scenes/PufferfishScene3D";
 
 const Breathing = () => {
   const [selectedGame, setSelectedGame] = useState<string>("pufferfish");
@@ -41,7 +40,7 @@ const Breathing = () => {
             </TabsList>
 
             <TabsContent value="pufferfish">
-              <PufferfishScene3D breathPhase={breathPhase} />
+              <BreathingGame />
             </TabsContent>
 
             <TabsContent value="balloon">
