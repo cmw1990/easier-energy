@@ -8,7 +8,10 @@ interface PufferfishProps {
 }
 
 function Scene({ breathPhase }: PufferfishProps) {
-  const scale = breathPhase === 'inhale' ? 1.5 : 1;
+  // Scale based on breath phase
+  const scale = breathPhase === 'inhale' ? 1.5 : 
+                breathPhase === 'hold' ? 1.3 :
+                breathPhase === 'exhale' ? 1.0 : 1.2;
 
   return (
     <>
@@ -17,7 +20,9 @@ function Scene({ breathPhase }: PufferfishProps) {
       <mesh scale={[scale, scale, scale]}>
         <sphereGeometry args={[1, 32, 32]} />
         <meshStandardMaterial 
-          color={breathPhase === 'inhale' ? '#4CAF50' : '#2196F3'} 
+          color={breathPhase === 'inhale' ? '#4CAF50' : 
+                breathPhase === 'hold' ? '#2196F3' : 
+                breathPhase === 'exhale' ? '#FFC107' : '#9C27B0'} 
           wireframe={breathPhase === 'hold'} 
         />
       </mesh>
@@ -37,6 +42,7 @@ const PufferfishScene3D: React.FC<PufferfishProps> = ({ breathPhase }) => {
       <Canvas
         camera={{ position: [0, 0, 5] }}
         gl={{ antialias: true }}
+        style={{ width: '100%', height: '100%' }}
       >
         <Scene breathPhase={breathPhase} />
       </Canvas>
