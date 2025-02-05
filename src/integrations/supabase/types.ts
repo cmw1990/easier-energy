@@ -1673,6 +1673,71 @@ export type Database = {
           },
         ]
       }
+      product_reviews: {
+        Row: {
+          cons: string[] | null
+          content: string | null
+          created_at: string | null
+          helpful_count: number | null
+          id: string
+          not_helpful_count: number | null
+          product_id: string | null
+          pros: string[] | null
+          rating: number
+          review_type: Database["public"]["Enums"]["review_type"] | null
+          title: string
+          updated_at: string | null
+          usage_period: string | null
+          user_id: string | null
+          verified_purchase: boolean | null
+          would_recommend: boolean | null
+        }
+        Insert: {
+          cons?: string[] | null
+          content?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string
+          not_helpful_count?: number | null
+          product_id?: string | null
+          pros?: string[] | null
+          rating: number
+          review_type?: Database["public"]["Enums"]["review_type"] | null
+          title: string
+          updated_at?: string | null
+          usage_period?: string | null
+          user_id?: string | null
+          verified_purchase?: boolean | null
+          would_recommend?: boolean | null
+        }
+        Update: {
+          cons?: string[] | null
+          content?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string
+          not_helpful_count?: number | null
+          product_id?: string | null
+          pros?: string[] | null
+          rating?: number
+          review_type?: Database["public"]["Enums"]["review_type"] | null
+          title?: string
+          updated_at?: string | null
+          usage_period?: string | null
+          user_id?: string | null
+          verified_purchase?: boolean | null
+          would_recommend?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_topics: {
         Row: {
           product_id: string
@@ -3186,6 +3251,7 @@ export type Database = {
         | "taper_down"
         | "nrt_assisted"
         | "harm_reduction"
+      review_type: "product" | "alternative" | "experience"
       risk_level: "low" | "medium" | "high"
       smoking_log_type: "cigarette" | "cigar" | "vape" | "pouch" | "gum"
       strength_level: "light" | "medium" | "strong" | "extra_strong"
