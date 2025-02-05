@@ -16,6 +16,7 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
   const velocityRef = useRef(new THREE.Vector3());
   const angularVelocityRef = useRef(0);
   const driftFactorRef = useRef(0);
+  const tireTracks = useRef<THREE.Vector3[]>([]);
 
   const [subscribeKeys, getKeys] = useKeyboardControls();
 
@@ -24,18 +25,21 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
 
     const { forward, backward, left, right, drift } = getKeys();
 
-    const acceleration = 15;
-    const deceleration = 0.98;
-    const turnSpeed = 2.0;
-    const maxSpeed = 25;
-    const driftDecay = 0.99;
-    const lateralFriction = drift ? 0.95 : 0.8;
+    // Absolute Drift-style physics constants
+    const acceleration = 20; // Increased for snappier response
+    const deceleration = 0.95; // Slightly increased friction
+    const turnSpeed = 2.5; // Increased for tighter turns
+    const maxSpeed = 30; // Higher top speed
+    const driftDecay = 0.98; // Slower drift decay for longer slides
+    const lateralFriction = drift ? 0.98 : 0.7; // More pronounced drift
+    const driftBoost = 1.2; // Speed boost during drift
 
-    // Handle acceleration
+    // Handle acceleration with drift boost
     if (forward) {
-      velocityRef.current.z -= acceleration * delta * (1 - Math.abs(driftFactorRef.current) * 0.3);
+      const boostFactor = drift && driftFactorRef.current > 0.5 ? driftBoost : 1;
+      velocityRef.current.z -= acceleration * delta * boostFactor;
     } else if (backward) {
-      velocityRef.current.z += acceleration * delta * (1 - Math.abs(driftFactorRef.current) * 0.3);
+      velocityRef.current.z += acceleration * delta * 0.7; // Slower reverse speed
     }
     
     // Apply deceleration and friction
@@ -48,25 +52,46 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
       velocityRef.current.multiplyScalar(maxSpeed / currentSpeed);
     }
 
-    // Handle turning
-    if (left) {
-      angularVelocityRef.current -= turnSpeed * delta * (1 + driftFactorRef.current * 0.5);
-    }
-    if (right) {
-      angularVelocityRef.current += turnSpeed * delta * (1 + driftFactorRef.current * 0.5);
-    }
-    
-    // Handle drifting
-    if (drift && currentSpeed > 5) {
-      driftFactorRef.current = Math.min(driftFactorRef.current + delta * 1.5, 1);
+    // Enhanced drifting mechanics
+    if (drift) {
+      // Increase drift factor more quickly when turning
+      const turnFactor = (left || right) ? 2 : 1;
+      driftFactorRef.current = Math.min(
+        driftFactorRef.current + delta * 2 * turnFactor, 
+        1
+      );
+
+      // Apply lateral force during drift
       const driftForce = new THREE.Vector3(
-        -Math.sin(rigidBodyRef.current.rotation().y) * currentSpeed * driftFactorRef.current * 0.8,
+        -Math.sin(rigidBodyRef.current.rotation().y) * currentSpeed * driftFactorRef.current,
         0,
-        -Math.cos(rigidBodyRef.current.rotation().y) * currentSpeed * driftFactorRef.current * 0.3
+        -Math.cos(rigidBodyRef.current.rotation().y) * currentSpeed * driftFactorRef.current * 0.4
       );
       velocityRef.current.add(driftForce);
+
+      // Store tire tracks during drift
+      if (currentSpeed > 5) {
+        tireTracks.current.push(rigidBodyRef.current.translation());
+        if (tireTracks.current.length > 100) {
+          tireTracks.current.shift();
+        }
+      }
     } else {
       driftFactorRef.current *= driftDecay;
+      if (driftFactorRef.current < 0.1) {
+        driftFactorRef.current = 0;
+      }
+    }
+
+    // Enhanced turning mechanics
+    const turnMultiplier = drift ? 1.5 : 1; // Sharper turns during drift
+    if (left) {
+      angularVelocityRef.current -= turnSpeed * delta * turnMultiplier * 
+        (1 + driftFactorRef.current * 0.5);
+    }
+    if (right) {
+      angularVelocityRef.current += turnSpeed * delta * turnMultiplier * 
+        (1 + driftFactorRef.current * 0.5);
     }
 
     // Update physics body
@@ -83,7 +108,7 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
     ));
 
     // Natural angular velocity decay
-    angularVelocityRef.current *= 0.95;
+    angularVelocityRef.current *= 0.93; // Slightly increased decay for more responsive steering
 
     if (onUpdate) {
       onUpdate(nextPosition, new THREE.Euler(0, rigidBodyRef.current.rotation().y, 0));
@@ -101,8 +126,8 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
           roughness={0.4}
           clearcoat={0.5}
           clearcoatRoughness={0.1}
-          emissive="#ffffff"
-          emissiveIntensity={driftFactorRef.current * 0.2}
+          emissive="#ff3300"
+          emissiveIntensity={driftFactorRef.current * 0.5}
         />
       </mesh>
     </RigidBody>
