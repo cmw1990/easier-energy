@@ -1,17 +1,71 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { BreathingTechniques, type BreathingTechnique } from '@/components/breathing/BreathingTechniques';
 import { BalloonScene3D } from './scenes/BalloonScene3D';
 import { Loader2 } from 'lucide-react';
+import { generateNatureSound } from '@/utils/audio';
 
 const BalloonJourney = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
   const [selectedTechnique, setSelectedTechnique] = useState<BreathingTechnique | null>(null);
+  const [ambientSound, setAmbientSound] = useState<ReturnType<typeof generateNatureSound> | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    let timer: NodeJS.Timeout;
+    const runBreathingCycle = () => {
+      if (!selectedTechnique) return;
+
+      const { pattern } = selectedTechnique;
+      const cycle = [
+        { phase: 'inhale', duration: pattern.inhale * 1000 },
+        { phase: 'hold', duration: (pattern.hold || 0) * 1000 },
+        { phase: 'exhale', duration: pattern.exhale * 1000 },
+        { phase: 'rest', duration: (pattern.holdAfterExhale || 0) * 1000 }
+      ];
+
+      let currentPhaseIndex = 0;
+      const nextPhase = () => {
+        if (!isPlaying) return;
+        
+        setBreathPhase(cycle[currentPhaseIndex].phase as 'inhale' | 'hold' | 'exhale' | 'rest');
+        timer = setTimeout(() => {
+          currentPhaseIndex = (currentPhaseIndex + 1) % cycle.length;
+          nextPhase();
+        }, cycle[currentPhaseIndex].duration);
+      };
+
+      nextPhase();
+    };
+
+    runBreathingCycle();
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isPlaying, selectedTechnique]);
+
+  useEffect(() => {
+    if (isPlaying && !ambientSound) {
+      const sound = generateNatureSound('wind', 0.3);
+      setAmbientSound(sound);
+    } else if (!isPlaying && ambientSound) {
+      ambientSound.stop();
+      setAmbientSound(null);
+    }
+
+    return () => {
+      if (ambientSound) {
+        ambientSound.stop();
+      }
+    };
+  }, [isPlaying]);
 
   const handleStartStop = async () => {
     if (!selectedTechnique) {
@@ -25,18 +79,9 @@ const BalloonJourney = () => {
 
     setIsLoading(true);
     try {
-      setIsPlaying(prev => !prev);
-      if (!isPlaying) {
-        // Start breathing cycle
-        const phases = ['inhale', 'hold', 'exhale', 'rest'];
-        let currentPhaseIndex = 0;
-
-        const interval = setInterval(() => {
-          currentPhaseIndex = (currentPhaseIndex + 1) % phases.length;
-          setBreathPhase(phases[currentPhaseIndex] as 'inhale' | 'hold' | 'exhale' | 'rest');
-        }, 4000); // 4 seconds per phase
-
-        return () => clearInterval(interval);
+      setIsPlaying(!isPlaying);
+      if (isPlaying) {
+        setBreathPhase('rest');
       }
     } catch (error) {
       console.error('Error starting game:', error);
