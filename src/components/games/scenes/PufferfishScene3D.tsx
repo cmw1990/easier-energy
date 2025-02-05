@@ -31,7 +31,7 @@ function Pufferfish({ breathPhase }: { breathPhase: PufferfishScene3DProps['brea
   );
 }
 
-const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
+export const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
   return (
     <div className="w-full aspect-video bg-black/5 rounded-lg overflow-hidden">
       <Canvas
@@ -56,5 +56,3 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
     </div>
   );
 };
-
-export default PufferfishScene3D;
