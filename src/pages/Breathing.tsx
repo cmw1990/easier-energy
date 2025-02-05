@@ -1,36 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BreathingVisualizer } from "@/components/breathing/BreathingVisualizer";
 import { BreathingTechniques } from "@/components/breathing/BreathingTechniques";
-import { Suspense, lazy } from 'react';
 import { Wind, Gamepad2 } from "lucide-react";
-import { Loader2 } from "lucide-react";
-
-// Lazy load game components
-const BreathingGame = lazy(() => import("@/components/games/BreathingGame"));
-const BalloonJourney = lazy(() => import("@/components/games/BalloonJourney"));
-const PufferfishScene3D = lazy(() => import("@/components/games/scenes/PufferfishScene3D"));
-
-const LoadingFallback = () => (
-  <div className="flex items-center justify-center p-12">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
+import BreathingGame from "@/components/games/BreathingGame";
+import BalloonJourney from "@/components/games/BalloonJourney";
+import PufferfishScene3D from "@/components/games/scenes/PufferfishScene3D";
 
 const Breathing = () => {
   const [selectedGame, setSelectedGame] = useState<string>("pufferfish");
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
-
-  useEffect(() => {
-    // Preload game components when tab is selected
-    if (selectedGame === "pufferfish") {
-      import("@/components/games/scenes/PufferfishScene3D");
-    } else if (selectedGame === "balloon") {
-      import("@/components/games/BalloonJourney");
-    } else if (selectedGame === "breathing") {
-      import("@/components/games/BreathingGame");
-    }
-  }, [selectedGame]);
 
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-8">
@@ -61,19 +40,17 @@ const Breathing = () => {
               <TabsTrigger value="breathing">Breathing Game</TabsTrigger>
             </TabsList>
 
-            <Suspense fallback={<LoadingFallback />}>
-              <TabsContent value="pufferfish">
-                <PufferfishScene3D breathPhase={breathPhase} />
-              </TabsContent>
+            <TabsContent value="pufferfish">
+              <PufferfishScene3D breathPhase={breathPhase} />
+            </TabsContent>
 
-              <TabsContent value="balloon">
-                <BalloonJourney />
-              </TabsContent>
+            <TabsContent value="balloon">
+              <BalloonJourney />
+            </TabsContent>
 
-              <TabsContent value="breathing">
-                <BreathingGame />
-              </TabsContent>
-            </Suspense>
+            <TabsContent value="breathing">
+              <BreathingGame />
+            </TabsContent>
           </Tabs>
         </TabsContent>
       </Tabs>

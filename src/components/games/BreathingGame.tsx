@@ -15,7 +15,7 @@ import { Brain, Loader2, RefreshCw } from "lucide-react";
 import { usePufferfishAssets } from "./PufferfishAssets";
 import { BreathingTechniques, type BreathingTechnique } from "@/components/breathing/BreathingTechniques";
 import { usePhaserGame } from "@/hooks/use-phaser-game";
-import { PufferfishScene3D } from "./scenes/PufferfishScene3D";
+import PufferfishScene3D from "./scenes/PufferfishScene3D";
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 import { generateBinauralBeat, generateNatureSound } from "@/utils/audio";
 
