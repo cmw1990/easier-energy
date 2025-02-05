@@ -44,15 +44,7 @@ export const GameAssetsGenerator = () => {
       const batches = [
         {
           name: 'balloon',
-          description: '3D balloon game assets including a detailed hot air balloon model, dreamy sky environment, and particle effects',
-        },
-        {
-          name: 'pufferfish',
-          description: '3D pufferfish game assets including an animated pufferfish model, underwater environment, and bubble effects',
-        },
-        {
-          name: 'zen-garden',
-          description: '3D zen garden assets including stones, sand patterns, and atmospheric effects',
+          description: 'A serene hot air balloon floating in a peaceful sky. The balloon should be colorful and welcoming, with a clear silhouette against a calming sky background. The style should be simple yet engaging, perfect for a relaxation app.',
         }
       ];
       
@@ -78,7 +70,7 @@ export const GameAssetsGenerator = () => {
               body: {
                 batch: batch.name,
                 type: 'game-assets',
-                is3D: true,
+                is3D: false,
                 description: batch.description
               }
             }
@@ -98,7 +90,7 @@ export const GameAssetsGenerator = () => {
           
           toast({
             title: 'Success',
-            description: `Generated 3D assets for ${batch.name}`,
+            description: `Generated assets for ${batch.name}`,
           });
           
           // Add delay between batches to avoid rate limits
@@ -118,7 +110,7 @@ export const GameAssetsGenerator = () => {
       
       toast({
         title: 'Success!',
-        description: 'All 3D game assets generation completed!',
+        description: 'Game assets generation completed! Please refresh the page to see the new assets.',
       });
     } catch (error) {
       console.error('Error generating game assets:', error);
@@ -140,7 +132,7 @@ export const GameAssetsGenerator = () => {
     >
       {isGenerating && <Loader2 className="h-4 w-4 animate-spin" />}
       {!isGenerating && <Sparkles className="h-4 w-4 animate-pulse" />}
-      {isGenerating ? 'Generating 3D Game Assets...' : 'Generate 3D Game Assets'}
+      {isGenerating ? 'Generating Game Assets...' : 'Generate Game Assets'}
     </Button>
   );
 };

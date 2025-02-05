@@ -19,9 +19,9 @@ serve(async (req) => {
     }
 
     // Parse request body
-    const { batch, type } = await req.json();
+    const { batch, description } = await req.json();
     
-    if (!batch || !type) {
+    if (!batch || !description) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameters' }),
         { 
@@ -31,7 +31,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Generating assets for batch: ${batch}, type: ${type}`);
+    console.log(`Generating assets for batch: ${batch}`);
 
     // Initialize Supabase client
     const supabaseClient = createClient(
@@ -39,59 +39,73 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Generate image using OpenAI
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: "dall-e-3",
-        prompt: `Generate a game asset for ${batch}. Make it simple, clean, and suitable for a browser game.`,
-        n: 1,
-        size: "1024x1024",
-        response_format: "url"
-      })
-    });
+    // Generate images using OpenAI
+    const assets = ['balloon', 'background'];
+    const generatedAssets = [];
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
-    }
+    for (const asset of assets) {
+      const assetPrompt = asset === 'balloon' 
+        ? `A beautiful, serene hot air balloon design. The balloon should be colorful and welcoming, perfect for a meditation app. Style: Simple, clean vector illustration with clear silhouette.`
+        : `A peaceful, calming sky background with soft clouds. Perfect for a meditation app background. Style: Gentle gradients, soothing colors, minimal design.`;
 
-    const imageData = await response.json();
-    const imageUrl = imageData.data[0].url;
-
-    // Download the image
-    const imageResponse = await fetch(imageUrl);
-    if (!imageResponse.ok) {
-      throw new Error('Failed to download generated image');
-    }
-    const imageBlob = await imageResponse.blob();
-
-    // Upload to Supabase Storage
-    const filePath = `${batch}/asset.png`;
-    const { error: uploadError } = await supabaseClient
-      .storage
-      .from('game-assets')
-      .upload(filePath, imageBlob, {
-        contentType: 'image/png',
-        upsert: true
+      const response = await fetch('https://api.openai.com/v1/images/generations', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openAIKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "dall-e-3",
+          prompt: assetPrompt,
+          n: 1,
+          size: "1024x1024",
+          response_format: "url"
+        })
       });
 
-    if (uploadError) throw uploadError;
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+      }
 
-    // Get the public URL
-    const { data: { publicUrl } } = supabaseClient
-      .storage
-      .from('game-assets')
-      .getPublicUrl(filePath);
+      const imageData = await response.json();
+      const imageUrl = imageData.data[0].url;
+
+      // Download the image
+      const imageResponse = await fetch(imageUrl);
+      if (!imageResponse.ok) {
+        throw new Error(`Failed to download generated image for ${asset}`);
+      }
+      const imageBlob = await imageResponse.blob();
+
+      // Upload to Supabase Storage
+      const filePath = `${batch}/${asset}.png`;
+      const { error: uploadError } = await supabaseClient
+        .storage
+        .from('game-assets')
+        .upload(filePath, imageBlob, {
+          contentType: 'image/png',
+          upsert: true
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Get the public URL
+      const { data: { publicUrl } } = supabaseClient
+        .storage
+        .from('game-assets')
+        .getPublicUrl(filePath);
+
+      generatedAssets.push({ asset, url: publicUrl });
+      
+      // Add delay between generations to respect rate limits
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
 
     return new Response(
       JSON.stringify({ 
-        message: 'Asset generated and uploaded successfully',
-        url: publicUrl 
+        message: 'Assets generated and uploaded successfully',
+        assets: generatedAssets 
       }),
       { 
         status: 200,
