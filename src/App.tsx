@@ -6,6 +6,7 @@ import { AuthProvider } from "@/components/AuthProvider"
 import Layout from "@/components/layout/Layout"
 import NotFound from "@/components/layout/NotFound"
 import Index from "@/pages/Index"
+import Auth from "@/pages/Auth"
 import CBTPage from "@/pages/CBT"
 import BreathingPage from "@/pages/Breathing"
 import CaffeinePage from "@/pages/Caffeine"
@@ -34,6 +35,10 @@ import ZenGarden from "@/components/games/ZenGarden"
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
+  {
+    path: "/auth",
+    element: <Auth />,
+  },
   // Standalone breathing game routes outside the main layout
   {
     path: "/breathing-pufferfish",
