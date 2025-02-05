@@ -28,7 +28,7 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
     });
 
     return () => cancelAnimationFrame(animation);
-  }, [breathPhase]);
+  }, [breathPhase, scale, pufferPosition.y]);
 
   return (
     <div 
@@ -37,7 +37,12 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
     >
       {/* Pufferfish */}
       <div
-        className="absolute w-32 h-32 transition-all duration-300"
+        className={cn(
+          "absolute w-32 h-32 transition-all duration-300",
+          breathPhase === 'inhale' && "animate-float-up",
+          breathPhase === 'exhale' && "animate-float-down",
+          breathPhase === 'hold' && "animate-sway"
+        )}
         style={{
           left: '20%',
           top: `${pufferPosition.y}%`,
@@ -61,6 +66,29 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
           backgroundSize: 'cover',
           backgroundPosition: 'bottom',
           opacity: 0.8
+        }}
+      />
+
+      {/* Seaweed Animation */}
+      <div
+        className="absolute bottom-0 left-1/4 w-16 h-32 origin-bottom animate-sway"
+        style={{
+          backgroundImage: `url(${assets.seaweed})`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'bottom',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+
+      {/* Additional Seaweed */}
+      <div
+        className="absolute bottom-0 left-3/4 w-16 h-24 origin-bottom animate-sway"
+        style={{
+          backgroundImage: `url(${assets.seaweed})`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'bottom',
+          backgroundRepeat: 'no-repeat',
+          animationDelay: '-1.5s'
         }}
       />
 
