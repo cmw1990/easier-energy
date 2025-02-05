@@ -144,7 +144,7 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
       setIsBreathDetected(false);
     }
   }, [breathPhase]);
-  
+
   return (
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden bg-blue-900/20 backdrop-blur-sm">
       <Canvas
@@ -213,7 +213,11 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
             intensity={1.5}
             radius={0.4}
           />
-          <ChromaticAberration offset={new Vector2(0.002, 0.002)} />
+          <ChromaticAberration 
+            offset={new Vector2(0.002, 0.002)}
+            radialModulation={false}
+            modulationOffset={0.0}
+          />
         </EffectComposer>
         <OrbitControls
           enableZoom={false}
