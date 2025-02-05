@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
 import { MeditationStats } from "@/components/meditation/MeditationStats";
 import { GroupSession } from "@/components/social/GroupSession";
+import { MeditationAudioPlayer } from "@/components/audio/MeditationAudioPlayer";
+import { BackgroundMusicPlayer } from "@/components/audio/BackgroundMusicPlayer";
 import GomokuGame from "@/components/games/GomokuGame";
 import BrainMatch3 from "@/components/games/BrainMatch3";
 import { useAchievementTriggers } from "@/hooks/useAchievementTriggers";
@@ -62,10 +64,28 @@ export default function Index() {
         </motion.div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.8 }}
+        >
+          <MeditationAudioPlayer />
+        </motion.div>
+        
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 1.0 }}
+        >
+          <BackgroundMusicPlayer />
+        </motion.div>
+      </div>
+
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 1.2 }}
       >
         <Card className="p-6">
           <h2 className="text-2xl font-bold mb-4">Brain Training</h2>
