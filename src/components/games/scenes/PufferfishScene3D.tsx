@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import coralImg from '@/assets/games/pufferfish/coral.png';
-import predatorImg from '@/assets/games/pufferfish/predator.png';
-import pufferfishImg from '@/assets/games/pufferfish/pufferfish.png';
+import { usePufferfishAssets } from '../PufferfishAssets';
 
 interface PufferfishScene3DProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
@@ -16,6 +14,7 @@ interface Obstacle {
 }
 
 const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
+  const { assets } = usePufferfishAssets();
   const [pufferPosition, setPufferPosition] = useState({ y: 50 });
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
   const [score, setScore] = useState(0);
@@ -39,7 +38,7 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
         // Remove obstacles that are off screen
         const filtered = prev.filter(obs => obs.x > -10);
         
-        // Add new obstacle with correct type annotation
+        // Add new obstacle
         const newObstacle: Obstacle = {
           x: 100,
           type: Math.random() > 0.5 ? 'coral' : 'predator'
@@ -101,7 +100,10 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
   }, [isGameOver, pufferPosition.y]);
 
   return (
-    <div className="relative w-full h-[600px] bg-gradient-to-b from-blue-300 to-blue-600 overflow-hidden rounded-lg">
+    <div 
+      className="relative w-full h-[600px] bg-cover bg-center rounded-lg overflow-hidden"
+      style={{ backgroundImage: `url(${assets.background})` }}
+    >
       {/* Score */}
       <div className="absolute top-4 right-4 text-white text-2xl font-bold">
         Score: {score}
@@ -132,7 +134,7 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
         }}
       >
         <img
-          src={pufferfishImg}
+          src={assets.pufferfish}
           alt="Pufferfish"
           className="w-full h-full object-contain"
         />
@@ -150,7 +152,7 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
           }}
         >
           <img
-            src={obstacle.type === 'coral' ? coralImg : predatorImg}
+            src={obstacle.type === 'coral' ? assets.coral : assets.predator}
             alt={obstacle.type}
             className="w-full h-full object-contain"
           />

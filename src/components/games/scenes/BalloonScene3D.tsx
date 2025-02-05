@@ -1,10 +1,13 @@
 import React from 'react';
+import { useBalloonAssets } from '../BalloonAssets';
 
 interface BalloonProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
 }
 
 export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
+  const { assets } = useBalloonAssets();
+
   // Get scale and color based on breath phase
   const getScale = () => {
     switch (breathPhase) {
@@ -15,23 +18,17 @@ export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
     }
   };
 
-  const getColor = () => {
-    switch (breathPhase) {
-      case 'inhale': return '#FF9999';
-      case 'hold': return '#FFB6C1';
-      case 'exhale': return '#FFC0CB';
-      default: return '#FFE4E1';
-    }
-  };
-
   return (
-    <div className="w-full aspect-video bg-black/5 rounded-lg overflow-hidden flex items-center justify-center">
-      <div 
-        className="w-32 h-32 rounded-full transition-all duration-700 ease-in-out"
+    <div 
+      className="w-full aspect-video bg-cover bg-center rounded-lg overflow-hidden relative"
+      style={{ backgroundImage: `url(${assets.background})` }}
+    >
+      <img 
+        src={assets.balloon}
+        alt="Hot Air Balloon"
+        className="absolute left-1/2 transform -translate-x-1/2 transition-all duration-700 ease-in-out w-32 h-32 object-contain"
         style={{
-          backgroundColor: getColor(),
-          transform: `scale(${getScale()}) translateY(${breathPhase === 'inhale' ? '-20px' : '0'})`,
-          boxShadow: '0 0 20px rgba(0,0,0,0.1)',
+          transform: `translate(-50%, ${breathPhase === 'inhale' ? '-60%' : '-40%'}) scale(${getScale()})`,
         }}
       />
     </div>
