@@ -16,6 +16,7 @@ import { TriggerPatternAnalysis } from "@/components/sobriety/TriggerPatternAnal
 import { Battery, Brain, Coffee, Moon, Wind, Gamepad2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
+import { ReproductiveHealthExercises } from "@/components/exercises/ReproductiveHealthExercises";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -114,14 +115,17 @@ export default function Index() {
           </Card>
         </motion.div>
 
-        {/* Audio Tools */}
+        {/* Audio Tools with Reproductive Health Exercises */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
           className="col-span-1"
         >
-          <BackgroundMusicPlayer />
+          <div className="space-y-4">
+            <BackgroundMusicPlayer />
+            <ReproductiveHealthExercises />
+          </div>
         </motion.div>
       </div>
 

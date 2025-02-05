@@ -2402,6 +2402,98 @@ export type Database = {
         }
         Relationships: []
       }
+      reproductive_health_exercises: {
+        Row: {
+          created_at: string
+          description: string
+          difficulty_level: number
+          duration_seconds: number
+          exercise_type: Database["public"]["Enums"]["reproductive_exercise_type"]
+          hold_duration_seconds: number | null
+          id: string
+          name: string
+          repetitions: number | null
+          rest_duration_seconds: number | null
+          sets: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          difficulty_level?: number
+          duration_seconds: number
+          exercise_type: Database["public"]["Enums"]["reproductive_exercise_type"]
+          hold_duration_seconds?: number | null
+          id?: string
+          name: string
+          repetitions?: number | null
+          rest_duration_seconds?: number | null
+          sets?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          difficulty_level?: number
+          duration_seconds?: number
+          exercise_type?: Database["public"]["Enums"]["reproductive_exercise_type"]
+          hold_duration_seconds?: number | null
+          id?: string
+          name?: string
+          repetitions?: number | null
+          rest_duration_seconds?: number | null
+          sets?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      reproductive_health_progress: {
+        Row: {
+          completed_at: string
+          created_at: string
+          difficulty_level: number
+          exercise_id: string
+          id: string
+          notes: string | null
+          perceived_effort: number | null
+          sets_completed: number | null
+          total_duration_seconds: number | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          difficulty_level: number
+          exercise_id: string
+          id?: string
+          notes?: string | null
+          perceived_effort?: number | null
+          sets_completed?: number | null
+          total_duration_seconds?: number | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          difficulty_level?: number
+          exercise_id?: string
+          id?: string
+          notes?: string | null
+          perceived_effort?: number | null
+          sets_completed?: number | null
+          total_duration_seconds?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reproductive_health_progress_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "reproductive_health_exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           appearance_rating: number | null
@@ -3606,6 +3698,14 @@ export type Database = {
         | "taper_down"
         | "nrt_assisted"
         | "harm_reduction"
+      reproductive_exercise_type:
+        | "kegel_basic"
+        | "kegel_advanced"
+        | "pelvic_floor"
+        | "core_strength"
+        | "hip_mobility"
+        | "breathing"
+        | "relaxation"
       review_type: "product" | "alternative" | "experience"
       risk_level: "low" | "medium" | "high"
       smoking_log_type: "cigarette" | "cigar" | "vape" | "pouch" | "gum"
