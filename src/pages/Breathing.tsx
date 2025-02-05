@@ -9,6 +9,7 @@ import { Wind, Gamepad2 } from "lucide-react";
 
 const Breathing = () => {
   const [selectedGame, setSelectedGame] = useState<string>("pufferfish");
+  const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
 
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-8">
@@ -38,7 +39,7 @@ const Breathing = () => {
             </TabsList>
 
             <TabsContent value="pufferfish">
-              <PufferfishScene3D breathPhase="inhale" />
+              <PufferfishScene3D breathPhase={breathPhase} />
             </TabsContent>
 
             <TabsContent value="balloon">
