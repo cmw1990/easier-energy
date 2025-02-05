@@ -121,7 +121,7 @@ const Scene = ({ balloonState, breathPhase }: { balloonState: any, breathPhase: 
 
       <Environment preset="sunset" />
       
-      <EffectComposer>
+      <EffectComposer multisampling={8}>
         <DepthOfField
           focusDistance={0}
           focalLength={0.02}
