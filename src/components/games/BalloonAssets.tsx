@@ -7,6 +7,8 @@ export interface BalloonAssets {
 }
 
 export const useBalloonAssets = () => {
+  console.log('Loading balloon assets:', { balloonImage, backgroundImage });
+  
   const assets: BalloonAssets = {
     balloon: balloonImage,
     background: backgroundImage

@@ -7,6 +7,8 @@ interface BalloonProps {
 
 export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
   const { assets, isLoading } = useBalloonAssets();
+  
+  console.log('Balloon Scene rendering:', { breathPhase, assets, isLoading });
 
   if (isLoading) {
     return <div>Loading...</div>;
