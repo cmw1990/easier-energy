@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { BreathingTechniques, type BreathingTechnique } from '@/components/breathing/BreathingTechniques';
-import { BalloonScene3D } from './scenes/BalloonScene3D';
+import BalloonScene3D from './scenes/BalloonScene3D';
 import { Loader2 } from 'lucide-react';
 import { generateNatureSound } from '@/utils/audio';
 
