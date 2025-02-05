@@ -38,12 +38,9 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
   return (
     <div className="w-full aspect-video bg-black/5 rounded-lg overflow-hidden">
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 75 }}
-        style={{ width: '100%', height: '100%' }}
+        camera={{ position: [0, 0, 5] }}
         gl={{ antialias: true }}
-        dpr={[1, 2]}
       >
-        <color attach="background" args={['#f0f0f0']} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
         <Pufferfish breathPhase={breathPhase} />
