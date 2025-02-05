@@ -3237,6 +3237,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_comment_downvotes: {
+        Args: {
+          comment_id: string
+        }
+        Returns: undefined
+      }
+      increment_comment_upvotes: {
+        Args: {
+          comment_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       activity_impact: "positive" | "negative" | "neutral"
