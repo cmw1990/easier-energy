@@ -18,6 +18,8 @@ import { motion } from "framer-motion";
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 import { ReproductiveHealthExercises } from "@/components/exercises/ReproductiveHealthExercises";
 import { ExerciseRoutine } from "@/components/exercises/ExerciseRoutine";
+import { AdvancedExercisePatterns } from "@/components/exercises/AdvancedExercisePatterns";
+import { ExerciseProgressChart } from "@/components/exercises/ExerciseProgressChart";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -212,6 +214,25 @@ export default function Index() {
               ]}
             />
           </div>
+        </motion.div>
+      </div>
+
+      {/* Advanced Exercise Section */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <AdvancedExercisePatterns />
+        </motion.div>
+        
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <ExerciseProgressChart />
         </motion.div>
       </div>
 
