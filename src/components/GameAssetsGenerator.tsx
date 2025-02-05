@@ -65,12 +65,11 @@ export const GameAssetsGenerator = () => {
           console.log(`Invoking edge function for ${batch.name}...`);
           
           const { data, error } = await supabase.functions.invoke(
-            'generate-initial-game-assets',
+            'generate-assets',
             {
               body: {
-                batch: batch.name,
                 type: 'game-assets',
-                is3D: false,
+                batch: batch.name,
                 description: batch.description
               }
             }
@@ -93,7 +92,6 @@ export const GameAssetsGenerator = () => {
             description: `Generated assets for ${batch.name}`,
           });
           
-          // Add delay between batches to avoid rate limits
           if (batch !== batches[batches.length - 1]) {
             await new Promise(resolve => setTimeout(resolve, 5000));
           }

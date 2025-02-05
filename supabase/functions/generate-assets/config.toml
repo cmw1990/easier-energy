@@ -1,5 +1,5 @@
 project_id = "zoubqdwxemivxrjruvam"
 
 [functions]
-[functions.generate-exercise-assets]
+[functions.generate-assets]
 verify_jwt = false

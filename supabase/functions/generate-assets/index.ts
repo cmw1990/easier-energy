@@ -12,16 +12,15 @@ serve(async (req) => {
   }
 
   try {
-    // Initialize OpenAI API key
     const openAIKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIKey) {
       throw new Error('OpenAI API key is not configured');
     }
 
-    // Parse request body
-    const { batch, description } = await req.json();
-    
-    if (!batch || !description) {
+    const { type, batch, description } = await req.json();
+    console.log(`Generating assets for type: ${type}, batch: ${batch}`);
+
+    if (!type || (type === 'game-assets' && !batch)) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameters' }),
         { 
@@ -31,23 +30,38 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Generating assets for batch: ${batch}`);
-
-    // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Generate images using OpenAI
-    const assets = ['balloon', 'background'];
+    let assets = [];
+    let prompts = {};
+
+    switch (type) {
+      case 'game-assets':
+        assets = ['balloon', 'background'];
+        prompts = {
+          balloon: `A beautiful, serene hot air balloon design. The balloon should be colorful and welcoming, perfect for a meditation app. Style: Simple, clean vector illustration with clear silhouette.`,
+          background: `A peaceful, calming sky background with soft clouds. Perfect for a meditation app background. Style: Gentle gradients, soothing colors, minimal design.`
+        };
+        break;
+      case 'exercise':
+        assets = ['pose', 'instruction'];
+        prompts = {
+          pose: `A clear illustration of a person performing ${description}. Style: Clean, professional fitness instruction illustration.`,
+          instruction: `Step-by-step visual guide for ${description}. Style: Clear, instructional diagram style.`
+        };
+        break;
+      default:
+        throw new Error(`Unsupported asset type: ${type}`);
+    }
+
     const generatedAssets = [];
 
     for (const asset of assets) {
-      const assetPrompt = asset === 'balloon' 
-        ? `A beautiful, serene hot air balloon design. The balloon should be colorful and welcoming, perfect for a meditation app. Style: Simple, clean vector illustration with clear silhouette.`
-        : `A peaceful, calming sky background with soft clouds. Perfect for a meditation app background. Style: Gentle gradients, soothing colors, minimal design.`;
-
+      const assetPrompt = prompts[asset];
+      
       const response = await fetch('https://api.openai.com/v1/images/generations', {
         method: 'POST',
         headers: {
@@ -71,34 +85,33 @@ serve(async (req) => {
       const imageData = await response.json();
       const imageUrl = imageData.data[0].url;
 
-      // Download the image
       const imageResponse = await fetch(imageUrl);
       if (!imageResponse.ok) {
         throw new Error(`Failed to download generated image for ${asset}`);
       }
       const imageBlob = await imageResponse.blob();
 
-      // Upload to Supabase Storage
-      const filePath = `${batch}/${asset}.png`;
+      const storagePath = type === 'game-assets' 
+        ? `${batch}/${asset}.png`
+        : `${type}/${asset}_${Date.now()}.png`;
+
       const { error: uploadError } = await supabaseClient
         .storage
-        .from('game-assets')
-        .upload(filePath, imageBlob, {
+        .from(type === 'game-assets' ? 'game-assets' : 'exercise-assets')
+        .upload(storagePath, imageBlob, {
           contentType: 'image/png',
           upsert: true
         });
 
       if (uploadError) throw uploadError;
 
-      // Get the public URL
       const { data: { publicUrl } } = supabaseClient
         .storage
-        .from('game-assets')
-        .getPublicUrl(filePath);
+        .from(type === 'game-assets' ? 'game-assets' : 'exercise-assets')
+        .getPublicUrl(storagePath);
 
       generatedAssets.push({ asset, url: publicUrl });
       
-      // Add delay between generations to respect rate limits
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
