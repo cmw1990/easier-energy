@@ -28,9 +28,11 @@ const EMOTION_OPTIONS = [
   "Proud",
 ]
 
+type ExerciseType = "thought_record" | "behavioral_activation" | "cognitive_restructuring" | "problem_solving" | "relaxation"
+
 const CBTExercises = () => {
   const { toast } = useToast()
-  const [exerciseType, setExerciseType] = useState<string>("thought_record")
+  const [exerciseType, setExerciseType] = useState<ExerciseType>("thought_record")
   const [situation, setSituation] = useState("")
   const [thoughts, setThoughts] = useState("")
   const [emotions, setEmotions] = useState<string[]>([])
@@ -57,17 +59,15 @@ const CBTExercises = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const { error } = await supabase.from("cbt_exercises").insert([
-      {
-        exercise_type: exerciseType,
-        situation,
-        thoughts,
-        emotions,
-        behaviors,
-        alternative_thoughts: alternativeThoughts,
-        outcome,
-      },
-    ])
+    const { error } = await supabase.from("cbt_exercises").insert({
+      exercise_type: exerciseType,
+      situation,
+      thoughts,
+      emotions,
+      behaviors,
+      alternative_thoughts: alternativeThoughts,
+      outcome,
+    })
 
     if (error) {
       console.error("Error saving exercise:", error)
@@ -105,7 +105,7 @@ const CBTExercises = () => {
               <Label>Exercise Type</Label>
               <Select
                 value={exerciseType}
-                onValueChange={(value) => setExerciseType(value)}
+                onValueChange={(value: ExerciseType) => setExerciseType(value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select exercise type" />
