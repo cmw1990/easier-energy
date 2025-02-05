@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Brain, Heart, Focus, Sun, X, Image, 
-  Moon, Leaf, Zap, Target, Sparkles, Waves 
+  Moon, Leaf, Zap, Target, Sparkles, Waves,
+  Check 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";

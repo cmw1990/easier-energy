@@ -45,6 +45,39 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_tracking: {
+        Row: {
+          activity_name: string
+          created_at: string | null
+          duration_minutes: number | null
+          id: string
+          impact: Database["public"]["Enums"]["activity_impact"] | null
+          notes: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_name: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          impact?: Database["public"]["Enums"]["activity_impact"] | null
+          notes?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_name?: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          impact?: Database["public"]["Enums"]["activity_impact"] | null
+          notes?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       board_games: {
         Row: {
           board_size: number | null
@@ -346,6 +379,42 @@ export type Database = {
           notes?: string | null
           success_rating?: number | null
           trigger_type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_checkins: {
+        Row: {
+          created_at: string | null
+          energy_level: number | null
+          id: string
+          mood_score: number | null
+          notes: string | null
+          sleep_quality: number | null
+          stress_level: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          energy_level?: number | null
+          id?: string
+          mood_score?: number | null
+          notes?: string | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          energy_level?: number | null
+          id?: string
+          mood_score?: number | null
+          notes?: string | null
+          sleep_quality?: number | null
+          stress_level?: number | null
           updated_at?: string | null
           user_id?: string
         }
@@ -2715,6 +2784,7 @@ export type Database = {
       }
     }
     Enums: {
+      activity_impact: "positive" | "negative" | "neutral"
       app_role: "admin" | "user"
       cbt_exercise_type:
         | "thought_record"
@@ -2767,6 +2837,7 @@ export type Database = {
         | "short_term_memory"
         | "long_term_memory"
         | "migraine"
+      mood_category: "positive" | "negative" | "neutral"
       quit_strategy_type:
         | "cold_turkey"
         | "taper_down"
