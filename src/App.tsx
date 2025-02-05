@@ -27,10 +27,22 @@ import SobrietyPage from "@/pages/Sobriety"
 import SubstanceLogPage from "@/pages/SubstanceLog"
 import SupplementsPage from "@/pages/Supplements"
 import SupportPage from "@/pages/Support"
+import BreathingGame from "@/components/games/BreathingGame"
+import BalloonJourney from "@/components/games/BalloonJourney"
 
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
+  // Standalone breathing game routes outside the main layout
+  {
+    path: "/breathing-pufferfish",
+    element: <BreathingGame />,
+  },
+  {
+    path: "/breathing-balloon",
+    element: <BalloonJourney />,
+  },
+  // Main app routes
   {
     path: "/",
     element: (
