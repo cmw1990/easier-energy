@@ -41,7 +41,7 @@ export const GameAssetsGenerator = () => {
         },
         {
           name: 'pufferfish',
-          description: 'A beautiful and peaceful underwater scene with a zen-like atmosphere. The pufferfish should be adorable and friendly, with gentle expressions and soft, calming colors. The underwater environment should include ethereal light rays, delicate coral formations, and floating particles that create a dreamy, meditative atmosphere. The art style should be both artistic and soothing.',
+          description: 'A beautiful and peaceful underwater scene with a zen-like atmosphere. Create a cute and friendly pufferfish character with gentle expressions and soft, calming colors. The underwater environment should include ethereal light rays piercing through crystal clear water, delicate coral formations in pastel colors, gracefully swaying seaweed, and floating particles that create a dreamy, meditative atmosphere. Small fish should be elegant and flowing, while the predator should be subtly present but not threatening. The background should feature a serene underwater landscape with distant coral reefs and gentle water caustics. The art style should be both artistic and soothing, perfect for a meditation experience.',
         },
         {
           name: 'zen-drift',
@@ -72,7 +72,7 @@ export const GameAssetsGenerator = () => {
                 type: 'game-assets',
                 batch: batch.name,
                 description: batch.description,
-                style: "zen-like, artistic, dreamy, ethereal"
+                style: "zen-like, artistic, dreamy, ethereal, Studio Ghibli inspired"
               }
             }
           );
