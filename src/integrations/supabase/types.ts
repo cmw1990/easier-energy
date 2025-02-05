@@ -3369,6 +3369,36 @@ export type Database = {
         }
         Relationships: []
       }
+      verification_requests: {
+        Row: {
+          created_at: string | null
+          id: string
+          reason: string
+          reviewed_at: string | null
+          reviewer_notes: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reason: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reason?: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       withdrawal_symptoms: {
         Row: {
           coping_methods: string[] | null
