@@ -8,13 +8,16 @@ export interface BalloonAssets {
 export const useBalloonAssets = () => {
   const { assets, isLoading, error } = useGameAssets('balloon');
   
-  console.log('Loading balloon assets:', assets);
+  console.log('Loading balloon assets:', { assets, isLoading, error });
   
+  // Only return valid assets when they are actually loaded
+  const validAssets: BalloonAssets = {
+    balloon: assets?.balloon?.url || '',
+    background: assets?.background?.url || ''
+  };
+
   return {
-    assets: {
-      balloon: assets?.balloon?.url || '',
-      background: assets?.background?.url || ''
-    },
+    assets: validAssets,
     isLoading,
     error
   };
