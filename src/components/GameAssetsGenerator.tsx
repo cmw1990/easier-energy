@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Sparkles } from "lucide-react";
 
-// Only show this component in development
 const isDevelopment = import.meta.env.DEV;
 
 export const GameAssetsGenerator = () => {
@@ -24,14 +23,8 @@ export const GameAssetsGenerator = () => {
           offset: 0,
         });
 
-      if (error) {
-        console.error(`Error checking existing assets for ${batch}:`, error);
-        throw error;
-      }
-      
-      const hasAssets = data && data.length > 0;
-      console.log(`${batch} assets exist:`, hasAssets);
-      return hasAssets;
+      if (error) throw error;
+      return data && data.length > 0;
     } catch (error) {
       console.error(`Error checking existing assets for ${batch}:`, error);
       return false;
@@ -44,7 +37,15 @@ export const GameAssetsGenerator = () => {
       const batches = [
         {
           name: 'balloon',
-          description: 'A serene hot air balloon floating in a peaceful sky. The balloon should be colorful and welcoming, with a clear silhouette against a calming sky background. The style should be simple yet engaging, perfect for a relaxation app.',
+          description: 'A serene and ethereal hot air balloon floating in a dreamy sky. The balloon should be elegant and ornate with intricate patterns, rendered in soft, calming colors. The background should feature gentle clouds, distant mountains, and a peaceful gradient from dawn colors to twilight hues. The style should be artistic and zen-like, perfect for a meditation app.',
+        },
+        {
+          name: 'pufferfish',
+          description: 'A beautiful and peaceful underwater scene with a zen-like atmosphere. The pufferfish should be adorable and friendly, with gentle expressions and soft, calming colors. The underwater environment should include ethereal light rays, delicate coral formations, and floating particles that create a dreamy, meditative atmosphere. The art style should be both artistic and soothing.',
+        },
+        {
+          name: 'zen-drift',
+          description: 'A minimalist and serene landscape for a peaceful driving experience. The scene should feature elegant curves, zen garden elements, and a calming color palette. Include subtle elements like cherry blossoms, gentle mist, and smooth stone pathways. The style should evoke tranquility and mindfulness.',
         }
       ];
       
@@ -70,7 +71,8 @@ export const GameAssetsGenerator = () => {
               body: {
                 type: 'game-assets',
                 batch: batch.name,
-                description: batch.description
+                description: batch.description,
+                style: "zen-like, artistic, dreamy, ethereal"
               }
             }
           );
