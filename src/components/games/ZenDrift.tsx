@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Wind, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { Environment, OrbitControls, PerspectiveCamera, useKeyboardControls } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing";
 import { CarPhysics } from "./physics/CarPhysics";
@@ -126,6 +126,27 @@ const ZenDrift = () => {
       </Button>
     </div>
   );
+
+  const [subscribeKeys, getKeys] = useKeyboardControls();
+
+  useEffect(() => {
+    const keyMap = [
+      { name: "forward", keys: ["ArrowUp", "KeyW"] },
+      { name: "backward", keys: ["ArrowDown", "KeyS"] },
+      { name: "left", keys: ["ArrowLeft", "KeyA"] },
+      { name: "right", keys: ["ArrowRight", "KeyD"] },
+      { name: "drift", keys: ["Space"] },
+    ];
+
+    const unsubscribe = subscribeKeys((state) => {
+      // Handle control state changes if needed
+      console.log("Control state:", state);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [subscribeKeys]);
 
   return (
     <Card className="p-6 bg-gradient-to-r from-primary/5 to-accent/5 border-2 border-primary/20">

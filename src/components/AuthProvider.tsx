@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 interface AuthContextType {
   session: Session | null;
@@ -54,8 +55,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [navigate, toast]);
 
   return (
-    <AuthContext.Provider value={{ session, loading }}>
-      {children}
-    </AuthContext.Provider>
+    <>
+      <AuthContext.Provider value={{ session, loading }}>
+        {children}
+      </AuthContext.Provider>
+      <Toaster />
+    </>
   );
 };

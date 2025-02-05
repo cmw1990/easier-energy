@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { RigidBody, CuboidCollider } from '@react-three/rapier';
 import * as THREE from 'three';
+import { useKeyboardControls } from '@react-three/drei';
 
 interface CarPhysicsProps {
   position: [number, number, number];
@@ -16,28 +17,24 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
   const angularVelocityRef = useRef(0);
   const driftFactorRef = useRef(0);
 
+  const [subscribeKeys, getKeys] = useKeyboardControls();
+
   useFrame((state, delta) => {
     if (!rigidBodyRef.current) return;
 
-    const keys = {
-      forward: state.controls?.forward || false,
-      backward: state.controls?.backward || false,
-      left: state.controls?.left || false,
-      right: state.controls?.right || false,
-      drift: state.controls?.drift || false,
-    };
+    const { forward, backward, left, right, drift } = getKeys();
 
     const acceleration = 15;
     const deceleration = 0.98;
     const turnSpeed = 2.0;
     const maxSpeed = 25;
     const driftDecay = 0.99;
-    const lateralFriction = keys.drift ? 0.95 : 0.8;
+    const lateralFriction = drift ? 0.95 : 0.8;
 
     // Handle acceleration
-    if (keys.forward) {
+    if (forward) {
       velocityRef.current.z -= acceleration * delta * (1 - Math.abs(driftFactorRef.current) * 0.3);
-    } else if (keys.backward) {
+    } else if (backward) {
       velocityRef.current.z += acceleration * delta * (1 - Math.abs(driftFactorRef.current) * 0.3);
     }
     
@@ -52,15 +49,15 @@ export const CarPhysics = ({ position, rotation, scale = 1, onUpdate }: CarPhysi
     }
 
     // Handle turning
-    if (keys.left) {
+    if (left) {
       angularVelocityRef.current -= turnSpeed * delta * (1 + driftFactorRef.current * 0.5);
     }
-    if (keys.right) {
+    if (right) {
       angularVelocityRef.current += turnSpeed * delta * (1 + driftFactorRef.current * 0.5);
     }
     
     // Handle drifting
-    if (keys.drift && currentSpeed > 5) {
+    if (drift && currentSpeed > 5) {
       driftFactorRef.current = Math.min(driftFactorRef.current + delta * 1.5, 1);
       const driftForce = new THREE.Vector3(
         -Math.sin(rigidBodyRef.current.rotation().y) * currentSpeed * driftFactorRef.current * 0.8,
