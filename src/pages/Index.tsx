@@ -40,16 +40,22 @@ export default function Index() {
       transition={{ duration: 0.5 }}
       className="container mx-auto p-4 md:p-6 space-y-6"
     >
-      {/* Temporary Game Assets Generation Button */}
-      <Card className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+      {/* Add Balloon Adventure Game Button */}
+      <Card className="p-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 hover:shadow-lg transition-all duration-300">
         <div className="flex items-center gap-3 mb-4">
-          <Gamepad2 className="h-6 w-6 text-purple-500" />
-          <h2 className="text-2xl font-bold">Game Assets Generator</h2>
+          <Gamepad2 className="h-6 w-6 text-pink-500" />
+          <h2 className="text-2xl font-bold">Balloon Adventure</h2>
         </div>
         <p className="text-muted-foreground mb-4">
-          Click the button below to generate all necessary game assets for Pufferfish, Balloon, and Zen Garden games.
+          Embark on a dreamy journey through the clouds in this breath-controlled balloon adventure.
         </p>
-        <GameAssetsGenerator />
+        <Button 
+          onClick={() => navigate("/breathing-balloon")}
+          className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+        >
+          <Gamepad2 className="mr-2 h-4 w-4" />
+          Start Adventure
+        </Button>
       </Card>
 
       {/* Energy Overview Section */}

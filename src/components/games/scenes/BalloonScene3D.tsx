@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, Float, Cloud } from '@react-three/drei';
-import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
+import { OrbitControls, Environment, Float, Cloud, useTexture, Stars } from '@react-three/drei';
+import { EffectComposer, Bloom, DepthOfField, ChromaticAberration } from '@react-three/postprocessing';
+import { Vector2 } from 'three';
 import { setupBreathDetection } from '@/utils/breathDetection';
 import { useToast } from '@/hooks/use-toast';
 
@@ -13,52 +14,152 @@ function Mountain({ position }: { position: [number, number, number] }) {
   return (
     <mesh position={position}>
       <coneGeometry args={[2, 4, 4]} />
-      <meshStandardMaterial color="#718096" roughness={0.7} />
+      <meshStandardMaterial 
+        color="#a78bfa" 
+        roughness={0.2}
+        metalness={0.1}
+        emissive="#4c1d95"
+        emissiveIntensity={0.2}
+      />
     </mesh>
   );
 }
 
 function Balloon({ scale, position, color }: { scale: number; position: [number, number, number]; color: string }) {
   return (
-    <Float speed={1} rotationIntensity={0.2} floatIntensity={0.5}>
+    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={2}>
       <group position={position}>
         <mesh scale={[scale, scale * 1.2, scale]}>
           <sphereGeometry args={[1, 32, 32]} />
-          <meshStandardMaterial color={color} roughness={0.3} metalness={0.2} />
+          <meshStandardMaterial 
+            color={color} 
+            roughness={0.1} 
+            metalness={0.3}
+            emissive={color}
+            emissiveIntensity={0.2}
+          />
         </mesh>
         <mesh position={[0, -1.2 * scale, 0]} scale={[0.2 * scale, 0.3 * scale, 0.2 * scale]}>
           <sphereGeometry args={[1, 16, 16]} />
-          <meshStandardMaterial color="#c0392b" roughness={0.5} metalness={0.1} />
+          <meshStandardMaterial 
+            color="#fef3c7" 
+            roughness={0.2} 
+            metalness={0.3}
+            emissive="#fef3c7"
+            emissiveIntensity={0.2}
+          />
         </mesh>
         <mesh position={[0, -2 * scale, 0]} scale={[0.05 * scale, 1.5 * scale, 0.05 * scale]}>
           <cylinderGeometry />
-          <meshStandardMaterial color="#ecf0f1" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial 
+            color="#fef3c7" 
+            roughness={0.3} 
+            metalness={0.2}
+            emissive="#fef3c7"
+            emissiveIntensity={0.1}
+          />
         </mesh>
       </group>
     </Float>
   );
 }
 
+const Scene = ({ balloonState, breathPhase }: { balloonState: any, breathPhase: string }) => {
+  return (
+    <>
+      <color attach="background" args={['#bae6fd']} />
+      <ambientLight intensity={0.8} />
+      <pointLight position={[10, 10, 10]} intensity={1.5} color="#fef3c7" />
+      <directionalLight position={[-5, 5, -5]} intensity={0.5} color="#e0f2fe" />
+      
+      <Balloon 
+        scale={balloonState.scale} 
+        position={[0, balloonState.yPos, 0]} 
+        color={balloonState.color}
+      />
+      
+      {/* Dreamy mountains */}
+      <Mountain position={[-4, -3, -2]} />
+      <Mountain position={[4, -2, -3]} />
+      <Mountain position={[0, -4, -4]} />
+      
+      {/* Add more clouds for dreamy effect */}
+      {Array.from({ length: 12 }).map((_, i) => (
+        <Cloud
+          key={i}
+          position={[
+            (i - 6) * 4,
+            Math.sin(i) * 2 + 3,
+            -5 + Math.cos(i) * 2
+          ]}
+          opacity={0.6}
+          speed={0.2}
+          segments={8}
+          color="#f0f9ff"
+        />
+      ))}
+
+      {/* Add stars for magical effect */}
+      <Stars 
+        radius={50}
+        depth={50}
+        count={1000}
+        factor={4}
+        saturation={1}
+        fade
+        speed={0.5}
+      />
+
+      <Environment preset="sunset" />
+      
+      <EffectComposer>
+        <DepthOfField
+          focusDistance={0}
+          focalLength={0.02}
+          bokehScale={3}
+          height={480}
+        />
+        <Bloom
+          intensity={1.5}
+          luminanceThreshold={0.2}
+          luminanceSmoothing={0.9}
+          kernelSize={3}
+        />
+        <ChromaticAberration
+          offset={new Vector2(0.002, 0.002)}
+          radialModulation={false}
+          modulationOffset={0}
+        />
+      </EffectComposer>
+      
+      <OrbitControls
+        enableZoom={false}
+        enablePan={false}
+        enableRotate={false}
+      />
+    </>
+  );
+};
+
 const BalloonScene3D = ({ breathPhase }: BalloonScene3DProps) => {
   const [balloonState, setBalloonState] = useState({
     scale: 1,
     yPos: 0,
-    color: '#ff6b6b'
+    color: '#f472b6'
   });
   const { toast } = useToast();
+  const cleanupRef = useRef<(() => void) | null>(null);
   
   useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
     const initBreathDetection = async () => {
       try {
-        cleanup = await setupBreathDetection(
+        const cleanup = await setupBreathDetection(
           (volume) => {
             setBalloonState(prev => ({
               ...prev,
               scale: Math.min(1.5, 1 + (volume / 128)),
               yPos: Math.min(5, prev.yPos + (volume / 64)),
-              color: '#ff6b6b'
+              color: '#f472b6'
             }));
           },
           (volume) => {
@@ -66,10 +167,11 @@ const BalloonScene3D = ({ breathPhase }: BalloonScene3DProps) => {
               ...prev,
               scale: Math.max(0.8, 1 - (volume / 128)),
               yPos: Math.max(-2, prev.yPos - (volume / 64)),
-              color: '#ff8787'
+              color: '#fb7185'
             }));
           }
         );
+        cleanupRef.current = cleanup;
       } catch (error) {
         toast({
           title: "Microphone Access Required",
@@ -80,7 +182,11 @@ const BalloonScene3D = ({ breathPhase }: BalloonScene3DProps) => {
     };
 
     initBreathDetection();
-    return () => cleanup?.();
+    return () => {
+      if (cleanupRef.current) {
+        cleanupRef.current();
+      }
+    };
   }, [toast]);
 
   return (
@@ -89,58 +195,10 @@ const BalloonScene3D = ({ breathPhase }: BalloonScene3DProps) => {
         camera={{ position: [0, 0, 10], fov: 75 }}
         gl={{ antialias: true }}
       >
-        <color attach="background" args={['#a8d5e5']} />
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
-        
-        <Balloon 
-          scale={balloonState.scale} 
-          position={[0, balloonState.yPos, 0]} 
-          color={balloonState.color}
-        />
-        
-        {/* Add mountains as obstacles */}
-        <Mountain position={[-4, -3, -2]} />
-        <Mountain position={[4, -2, -3]} />
-        
-        {/* Add clouds */}
-        {Array.from({ length: 8 }).map((_, i) => (
-          <Cloud
-            key={i}
-            position={[
-              (i - 4) * 4,
-              Math.sin(i) * 2 + 3,
-              -5 + Math.cos(i) * 2
-            ]}
-            opacity={0.5}
-            speed={0.1}
-            segments={8}
-          />
-        ))}
-
-        <Environment preset="sunset" />
-        <EffectComposer>
-          <DepthOfField
-            focusDistance={0}
-            focalLength={0.02}
-            bokehScale={2}
-            height={480}
-          />
-          <Bloom
-            intensity={1.5}
-            luminanceThreshold={0.5}
-            luminanceSmoothing={0.9}
-          />
-        </EffectComposer>
-        
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          enableRotate={false}
-        />
+        <Scene balloonState={balloonState} breathPhase={breathPhase} />
       </Canvas>
       
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/80 px-6 py-2 rounded-full">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-lg px-6 py-2 rounded-full shadow-lg">
         <p className="text-blue-800 font-medium">
           {breathPhase === 'inhale' ? 'Breathe In' :
            breathPhase === 'hold' ? 'Hold' :
