@@ -11,10 +11,9 @@ import {
   Sparkles,
   Dumbbell,
   Pill,
-  Cigarette,
+  Package,
   Utensils,
   Heart,
-  Package,
 } from "lucide-react";
 
 const toolbarItems = [
@@ -86,7 +85,7 @@ const toolbarItems = [
   },
   {
     to: "/sobriety",
-    icon: Cigarette,
+    icon: Heart,
     label: "Recovery",
     iconClassName: "text-zinc-500",
   },

@@ -18,7 +18,7 @@ import {
   Sparkles,
   Dumbbell,
   Pill,
-  Cigarette,
+  Package,
   Heart,
   Eye,
 } from "lucide-react";
@@ -79,7 +79,7 @@ const navigationGroups = [
       },
       {
         to: "/nicotine",
-        icon: Cigarette,
+        icon: Package,
         label: "Nicotine",
       },
       {
