@@ -105,6 +105,10 @@ const Layout = ({ children }: LayoutProps) => {
                   <DropdownMenuItem onClick={handleSignOut}>
                     Sign Out
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                    Version 1.0.0
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
