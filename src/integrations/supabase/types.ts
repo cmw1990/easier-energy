@@ -427,28 +427,34 @@ export type Database = {
         Row: {
           content: string
           created_at: string | null
+          downvotes: number | null
           id: string
           parent_id: string | null
           product_id: string | null
           updated_at: string | null
+          upvotes: number | null
           user_id: string | null
         }
         Insert: {
           content: string
           created_at?: string | null
+          downvotes?: number | null
           id?: string
           parent_id?: string | null
           product_id?: string | null
           updated_at?: string | null
+          upvotes?: number | null
           user_id?: string | null
         }
         Update: {
           content?: string
           created_at?: string | null
+          downvotes?: number | null
           id?: string
           parent_id?: string | null
           product_id?: string | null
           updated_at?: string | null
+          upvotes?: number | null
           user_id?: string | null
         }
         Relationships: [
