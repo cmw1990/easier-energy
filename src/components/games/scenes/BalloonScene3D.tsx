@@ -1,50 +1,42 @@
-import React from 'react';
+import { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Float, Cloud } from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
-import { useBalloonAssets } from '../BalloonAssets';
 
-interface BalloonProps {
+interface BalloonScene3DProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
 }
 
-function HotAirBalloon({ position, scale }: { position: [number, number, number], scale: number }) {
+function Balloon({ scale, position }: { scale: number; position: [number, number, number] }) {
   return (
     <Float speed={1} rotationIntensity={0.2} floatIntensity={0.5}>
-      <group position={position} scale={[scale, scale, scale]}>
-        {/* Balloon */}
-        <mesh position={[0, 1, 0]}>
+      <group position={position}>
+        {/* Balloon body */}
+        <mesh scale={[scale, scale * 1.2, scale]}>
           <sphereGeometry args={[1, 32, 32]} />
-          <meshStandardMaterial color="#e74c3c" roughness={0.4} metalness={0.1} />
+          <meshStandardMaterial color="#ff4757" roughness={0.3} metalness={0.2} />
         </mesh>
-        {/* Basket */}
-        <mesh position={[0, -0.5, 0]}>
-          <boxGeometry args={[0.5, 0.5, 0.5]} />
-          <meshStandardMaterial color="#8b4513" roughness={0.8} metalness={0.2} />
+        {/* Balloon tie */}
+        <mesh position={[0, -1.2 * scale, 0]} scale={[0.2 * scale, 0.3 * scale, 0.2 * scale]}>
+          <sphereGeometry args={[1, 16, 16]} />
+          <meshStandardMaterial color="#c0392b" roughness={0.5} metalness={0.1} />
         </mesh>
-        {/* Ropes */}
-        {[[-0.25, 0.25], [0.25, 0.25], [-0.25, -0.25], [0.25, -0.25]].map(([x, z], i) => (
-          <mesh key={i} position={[x, 0.25, z]}>
-            <cylinderGeometry args={[0.02, 0.02, 1.5, 8]} />
-            <meshStandardMaterial color="#8b4513" roughness={0.8} />
-          </mesh>
-        ))}
+        {/* String */}
+        <mesh position={[0, -2 * scale, 0]} scale={[0.05 * scale, 1.5 * scale, 0.05 * scale]}>
+          <cylinderGeometry />
+          <meshStandardMaterial color="#ecf0f1" roughness={0.8} metalness={0.1} />
+        </mesh>
       </group>
     </Float>
   );
 }
 
-export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
-  const { assets, isLoading } = useBalloonAssets();
-  const scale = breathPhase === 'inhale' ? 1.2 : 1;
-  const height = breathPhase === 'inhale' ? 2 : 0;
+const BalloonScene3D = ({ breathPhase }: BalloonScene3DProps) => {
+  const scale = breathPhase === 'inhale' ? 1.5 : 1;
+  const yPos = breathPhase === 'inhale' ? 2 : 0;
   
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="w-full h-[60vh] rounded-lg overflow-hidden relative bg-sky-100">
+    <div className="w-full h-[600px] rounded-lg overflow-hidden relative bg-sky-100">
       <Canvas
         camera={{ position: [0, 5, 10], fov: 75 }}
         gl={{ antialias: true }}
@@ -53,16 +45,16 @@ export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         
-        <HotAirBalloon position={[0, height, 0]} scale={scale} />
+        <Balloon scale={scale} position={[0, yPos, 0]} />
         
-        {/* Add clouds */}
-        {Array.from({ length: 10 }).map((_, i) => (
+        {/* Add some clouds */}
+        {Array.from({ length: 8 }).map((_, i) => (
           <Cloud
             key={i}
             position={[
-              (Math.random() - 0.5) * 20,
-              Math.random() * 10,
-              (Math.random() - 0.5) * 20
+              (i - 4) * 4,
+              Math.sin(i) * 2 + 3,
+              -5 + Math.cos(i) * 2
             ]}
             opacity={0.5}
             speed={0.1}
@@ -84,11 +76,10 @@ export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
           enableZoom={false}
           enablePan={false}
           autoRotate
-          autoRotateSpeed={0.5}
+          autoRotateSpeed={0.2}
         />
       </Canvas>
       
-      {/* Breathing Instructions */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/80 px-6 py-2 rounded-full">
         <p className="text-blue-800 font-medium">
           {breathPhase === 'inhale' ? 'Breathe In' :
@@ -99,3 +90,5 @@ export const BalloonScene3D: React.FC<BalloonProps> = ({ breathPhase }) => {
     </div>
   );
 };
+
+export default BalloonScene3D;

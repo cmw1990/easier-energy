@@ -67,19 +67,17 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
   const scale = breathPhase === 'inhale' ? 1.5 : 1;
   
   return (
-    <div className="relative w-full h-[600px] rounded-lg overflow-hidden">
+    <div className="relative w-full h-[600px] rounded-lg overflow-hidden bg-blue-900">
       <Canvas
         camera={{ position: [0, 5, 10], fov: 75 }}
-        style={{
-          background: 'linear-gradient(to bottom, #1e3799, #0c2461)'
-        }}
+        gl={{ antialias: true }}
       >
+        <color attach="background" args={['#1e3799']} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         
         <Pufferfish scale={scale} position={[0, 0, 0]} />
         
-        {/* Add seaweed */}
         {Array.from({ length: 5 }).map((_, i) => (
           <Seaweed 
             key={i} 
@@ -111,7 +109,6 @@ const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
         />
       </Canvas>
       
-      {/* Breathing Instructions */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/80 px-6 py-2 rounded-full">
         <p className="text-blue-800 font-medium">
           {breathPhase === 'inhale' ? 'Breathe In' :
