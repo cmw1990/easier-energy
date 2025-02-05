@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, Float, Cloud, useTexture, Stars } from '@react-three/drei';
+import { OrbitControls, Environment, Float, Cloud, Stars } from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField, ChromaticAberration } from '@react-three/postprocessing';
 import { Vector2 } from 'three';
 import { setupBreathDetection } from '@/utils/breathDetection';
 import { useToast } from '@/hooks/use-toast';
+import { ErrorBoundary } from 'react-error-boundary';
 
 interface BalloonScene3DProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
@@ -64,6 +65,17 @@ function Balloon({ scale, position, color }: { scale: number; position: [number,
   );
 }
 
+function ErrorFallback({ error }: { error: Error }) {
+  return (
+    <div className="w-full h-[600px] flex items-center justify-center bg-gray-100 rounded-lg">
+      <div className="text-center p-4">
+        <h2 className="text-lg font-semibold text-red-600">Something went wrong:</h2>
+        <p className="text-sm text-gray-600">{error.message}</p>
+      </div>
+    </div>
+  );
+}
+
 const Scene = ({ balloonState, breathPhase }: { balloonState: any, breathPhase: string }) => {
   return (
     <>
@@ -78,12 +90,10 @@ const Scene = ({ balloonState, breathPhase }: { balloonState: any, breathPhase: 
         color={balloonState.color}
       />
       
-      {/* Dreamy mountains */}
       <Mountain position={[-4, -3, -2]} />
       <Mountain position={[4, -2, -3]} />
       <Mountain position={[0, -4, -4]} />
       
-      {/* Add more clouds for dreamy effect */}
       {Array.from({ length: 12 }).map((_, i) => (
         <Cloud
           key={i}
@@ -99,7 +109,6 @@ const Scene = ({ balloonState, breathPhase }: { balloonState: any, breathPhase: 
         />
       ))}
 
-      {/* Add stars for magical effect */}
       <Stars 
         radius={50}
         depth={50}
@@ -127,8 +136,6 @@ const Scene = ({ balloonState, breathPhase }: { balloonState: any, breathPhase: 
         />
         <ChromaticAberration
           offset={new Vector2(0.002, 0.002)}
-          radialModulation={false}
-          modulationOffset={0}
         />
       </EffectComposer>
       
@@ -173,6 +180,7 @@ const BalloonScene3D = ({ breathPhase }: BalloonScene3DProps) => {
         );
         cleanupRef.current = cleanup;
       } catch (error) {
+        console.error('Breath detection error:', error);
         toast({
           title: "Microphone Access Required",
           description: "Please enable microphone access to control the balloon with your breath.",
@@ -191,12 +199,14 @@ const BalloonScene3D = ({ breathPhase }: BalloonScene3DProps) => {
 
   return (
     <div className="w-full h-[600px] rounded-lg overflow-hidden relative">
-      <Canvas
-        camera={{ position: [0, 0, 10], fov: 75 }}
-        gl={{ antialias: true }}
-      >
-        <Scene balloonState={balloonState} breathPhase={breathPhase} />
-      </Canvas>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <Canvas
+          camera={{ position: [0, 0, 10], fov: 75 }}
+          gl={{ antialias: true }}
+        >
+          <Scene balloonState={balloonState} breathPhase={breathPhase} />
+        </Canvas>
+      </ErrorBoundary>
       
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-lg px-6 py-2 rounded-full shadow-lg">
         <p className="text-blue-800 font-medium">
