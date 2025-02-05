@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
 import { MeditationStats } from "@/components/meditation/MeditationStats";
+import { GroupSession } from "@/components/social/GroupSession";
 import GomokuGame from "@/components/games/GomokuGame";
 import BrainMatch3 from "@/components/games/BrainMatch3";
 import { useAchievementTriggers } from "@/hooks/useAchievementTriggers";
@@ -12,7 +13,7 @@ import { motion } from "framer-motion";
 export default function Index() {
   const navigate = useNavigate();
   const { session } = useAuth();
-  useAchievementTriggers(); // Initialize achievement triggers
+  useAchievementTriggers();
 
   if (!session) {
     return (
@@ -57,15 +58,23 @@ export default function Index() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
         >
-          <Card className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Brain Training</h2>
-            <div className="space-y-4">
-              <GomokuGame />
-              <BrainMatch3 />
-            </div>
-          </Card>
+          <GroupSession />
         </motion.div>
       </div>
+
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.8 }}
+      >
+        <Card className="p-6">
+          <h2 className="text-2xl font-bold mb-4">Brain Training</h2>
+          <div className="space-y-4">
+            <GomokuGame />
+            <BrainMatch3 />
+          </div>
+        </Card>
+      </motion.div>
     </motion.div>
   );
 }
