@@ -1,143 +1,142 @@
-import { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
+import { useEffect, useRef } from 'react';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { TextureLoader } from 'three';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { usePufferfishAssets } from '../PufferfishAssets';
+import { cn } from '@/lib/utils';
 
 interface PufferfishScene3DProps {
   breathPhase: 'inhale' | 'hold' | 'exhale' | 'rest';
 }
 
-const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
+function Pufferfish({ breathPhase }: { breathPhase: string }) {
+  const meshRef = useRef<THREE.Mesh>(null);
   const { assets } = usePufferfishAssets();
-  const [pufferPosition, setPufferPosition] = useState({ y: 50 });
-  const [scale, setScale] = useState(1);
-  const [rotation, setRotation] = useState(0);
+  const texture = useLoader(TextureLoader, assets.pufferfish);
 
-  useEffect(() => {
-    let animationFrame: number;
-    const animate = () => {
-      const targetScale = breathPhase === 'inhale' ? 1.5 : 
-                         breathPhase === 'hold' ? 1.3 : 1;
-      const targetY = breathPhase === 'inhale' ? 40 : 
-                     breathPhase === 'hold' ? 45 : 60;
+  useFrame((state, delta) => {
+    if (!meshRef.current) return;
 
-      setScale(prev => {
-        const diff = targetScale - prev;
-        return prev + diff * 0.05; // Slower, more natural inflation
-      });
+    // Target scales for different breath phases
+    const targetScale = breathPhase === 'inhale' ? 1.5 : 
+                       breathPhase === 'hold' ? 1.3 : 1;
 
-      setPufferPosition(prev => ({
-        y: prev.y + (targetY - prev.y) * 0.03 // Smoother vertical movement
-      }));
+    // Smooth scale transition
+    meshRef.current.scale.x = THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, delta * 2);
+    meshRef.current.scale.y = THREE.MathUtils.lerp(meshRef.current.scale.y, targetScale, delta * 2);
+    meshRef.current.scale.z = THREE.MathUtils.lerp(meshRef.current.scale.z, targetScale, delta * 2);
 
-      // Add subtle continuous rotation for 3D effect
-      setRotation(prev => {
-        const wobble = Math.sin(Date.now() / 1000) * 2;
-        return wobble;
-      });
-
-      animationFrame = requestAnimationFrame(animate);
-    };
-
-    animate();
-    return () => cancelAnimationFrame(animationFrame);
-  }, [breathPhase]);
+    // Add gentle floating motion
+    meshRef.current.position.y = Math.sin(state.clock.elapsedTime) * 0.1;
+    meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+  });
 
   return (
-    <div 
-      className="relative w-full h-[600px] bg-cover bg-center rounded-lg overflow-hidden"
-      style={{ backgroundImage: `url(${assets.background})` }}
-    >
-      {/* Pufferfish with enhanced 3D effect */}
-      <div
-        className={cn(
-          "absolute w-32 h-32 transition-all duration-300",
-          breathPhase === 'inhale' && "animate-float-up",
-          breathPhase === 'exhale' && "animate-float-down",
-          breathPhase === 'hold' && "animate-sway"
-        )}
-        style={{
-          left: '20%',
-          top: `${pufferPosition.y}%`,
-          transform: `translate(-50%, -50%) scale(${scale}) rotate(${rotation}deg)`,
-          transition: 'transform 0.3s ease-out',
-          filter: 'drop-shadow(0 0 10px rgba(0,0,0,0.2))',
-          perspective: '1000px',
-          transformStyle: 'preserve-3d',
-        }}
-      >
-        <img
-          src={assets.pufferfish}
-          alt="Pufferfish"
-          className="w-full h-full object-contain mix-blend-multiply"
-          style={{
-            filter: `brightness(${1 + (scale - 1) * 0.2})`, // Subtle brightness change during inflation
-            transform: `translateZ(${(scale - 1) * 20}px)`, // Push forward during inflation
-          }}
+    <mesh ref={meshRef} position={[0, 0, 0]}>
+      <sphereGeometry args={[1, 32, 32]} />
+      <meshStandardMaterial 
+        map={texture}
+        transparent
+        opacity={0.9}
+        roughness={0.5}
+        metalness={0.2}
+      />
+    </mesh>
+  );
+}
+
+function Bubbles({ breathPhase }: { breathPhase: string }) {
+  const { assets } = usePufferfishAssets();
+  const texture = useLoader(TextureLoader, assets.bubbles);
+  const bubblesRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!bubblesRef.current || breathPhase !== 'exhale') return;
+    bubblesRef.current.children.forEach((bubble, i) => {
+      bubble.position.y += 0.02;
+      bubble.position.x += Math.sin(state.clock.elapsedTime + i) * 0.01;
+      if (bubble.position.y > 3) bubble.position.y = -1;
+    });
+  });
+
+  if (breathPhase !== 'exhale') return null;
+
+  return (
+    <group ref={bubblesRef}>
+      {[...Array(5)].map((_, i) => (
+        <mesh key={i} position={[Math.random() * 2 - 1, -1 + i * 0.5, Math.random() * 2 - 1]}>
+          <planeGeometry args={[0.2, 0.2]} />
+          <meshStandardMaterial map={texture} transparent opacity={0.6} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function Seaweed() {
+  const { assets } = usePufferfishAssets();
+  const texture = useLoader(TextureLoader, assets.seaweed);
+  const seaweedRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!seaweedRef.current) return;
+    seaweedRef.current.children.forEach((plant, i) => {
+      plant.rotation.z = Math.sin(state.clock.elapsedTime + i) * 0.1;
+    });
+  });
+
+  return (
+    <group ref={seaweedRef} position={[0, -2, 0]}>
+      {[...Array(3)].map((_, i) => (
+        <mesh key={i} position={[i * 1 - 1, 0, 0]}>
+          <planeGeometry args={[0.5, 1]} />
+          <meshStandardMaterial map={texture} transparent />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function Coral() {
+  const { assets } = usePufferfishAssets();
+  const texture = useLoader(TextureLoader, assets.coral);
+
+  return (
+    <mesh position={[0, -2, -1]} rotation={[-Math.PI / 2, 0, 0]}>
+      <planeGeometry args={[10, 5]} />
+      <meshStandardMaterial map={texture} transparent />
+    </mesh>
+  );
+}
+
+const PufferfishScene3D = ({ breathPhase }: PufferfishScene3DProps) => {
+  const { assets } = usePufferfishAssets();
+
+  return (
+    <div className="relative w-full h-[600px] rounded-lg overflow-hidden">
+      <Canvas shadows>
+        <PerspectiveCamera makeDefault position={[0, 0, 5]} />
+        <OrbitControls 
+          enableZoom={false}
+          enablePan={false}
+          maxPolarAngle={Math.PI / 2}
+          minPolarAngle={Math.PI / 3}
         />
-      </div>
-
-      {/* Bubbles that appear during exhale */}
-      {breathPhase === 'exhale' && (
-        <div className="absolute left-[20%] top-[40%]">
-          {[...Array(3)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-rise"
-              style={{
-                left: `${Math.random() * 40}px`,
-                animationDelay: `${i * 0.2}s`,
-                opacity: 0.6,
-              }}
-            >
-              <img
-                src={assets.bubbles}
-                alt="bubble"
-                className="w-4 h-4 object-contain"
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Coral */}
-      <div
-        className="absolute bottom-0 left-0 w-full"
-        style={{
-          height: '30%',
-          backgroundImage: `url(${assets.coral})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'bottom',
-          opacity: 0.8,
-          mixBlendMode: 'multiply'
-        }}
-      />
-
-      {/* Seaweed Animation */}
-      <div
-        className="absolute bottom-0 left-1/4 w-16 h-32 origin-bottom animate-sway"
-        style={{
-          backgroundImage: `url(${assets.seaweed})`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'bottom',
-          backgroundRepeat: 'no-repeat',
-          filter: 'brightness(0.9)',
-          mixBlendMode: 'multiply'
-        }}
-      />
-
-      {/* Additional Seaweed */}
-      <div
-        className="absolute bottom-0 left-3/4 w-16 h-24 origin-bottom animate-sway"
-        style={{
-          backgroundImage: `url(${assets.seaweed})`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'bottom',
-          backgroundRepeat: 'no-repeat',
-          animationDelay: '-1.5s',
-          filter: 'brightness(0.85)',
-          mixBlendMode: 'multiply'
-        }}
-      />
+        
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
+        
+        <Pufferfish breathPhase={breathPhase} />
+        <Bubbles breathPhase={breathPhase} />
+        <Seaweed />
+        <Coral />
+        
+        {/* Background */}
+        <mesh position={[0, 0, -5]}>
+          <planeGeometry args={[20, 20]} />
+          <meshBasicMaterial map={useLoader(TextureLoader, assets.background)} />
+        </mesh>
+      </Canvas>
 
       {/* Breathing Instructions */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/80 px-6 py-2 rounded-full">
