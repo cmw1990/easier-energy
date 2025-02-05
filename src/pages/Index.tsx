@@ -7,15 +7,12 @@ import { MeditationStats } from "@/components/meditation/MeditationStats";
 import { GroupSession } from "@/components/social/GroupSession";
 import { MeditationAudioPlayer } from "@/components/audio/MeditationAudioPlayer";
 import { BackgroundMusicPlayer } from "@/components/audio/BackgroundMusicPlayer";
-import GomokuGame from "@/components/games/GomokuGame";
-import BrainMatch3 from "@/components/games/BrainMatch3";
-import { useAchievementTriggers } from "@/hooks/useAchievementTriggers";
+import { MotivationSection } from "@/components/motivation/MotivationSection";
 import { motion } from "framer-motion";
 
 export default function Index() {
   const navigate = useNavigate();
   const { session } = useAuth();
-  useAchievementTriggers();
 
   if (!session) {
     return (
@@ -87,13 +84,7 @@ export default function Index() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1.2 }}
       >
-        <Card className="p-6">
-          <h2 className="text-2xl font-bold mb-4">Brain Training</h2>
-          <div className="space-y-4">
-            <GomokuGame />
-            <BrainMatch3 />
-          </div>
-        </Card>
+        <MotivationSection />
       </motion.div>
     </motion.div>
   );
