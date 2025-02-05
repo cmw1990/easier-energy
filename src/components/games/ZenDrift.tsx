@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Wind, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls, PerspectiveCamera, useKeyboardControls } from "@react-three/drei";
+import { Environment, OrbitControls, PerspectiveCamera, KeyboardControls } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing";
 import { CarPhysics } from "./physics/CarPhysics";
@@ -19,6 +19,15 @@ interface GameAsset {
   image: HTMLImageElement;
   index: number;
 }
+
+// Define keyboard controls map
+const keyboardMap = [
+  { name: "forward", keys: ["ArrowUp", "KeyW"] },
+  { name: "backward", keys: ["ArrowDown", "KeyS"] },
+  { name: "left", keys: ["ArrowLeft", "KeyA"] },
+  { name: "right", keys: ["ArrowRight", "KeyD"] },
+  { name: "drift", keys: ["Space"] },
+];
 
 const ZenDrift = () => {
   const [isPaused, setIsPaused] = useState(false);
@@ -127,27 +136,6 @@ const ZenDrift = () => {
     </div>
   );
 
-  const [subscribeKeys, getKeys] = useKeyboardControls();
-
-  useEffect(() => {
-    const keyMap = [
-      { name: "forward", keys: ["ArrowUp", "KeyW"] },
-      { name: "backward", keys: ["ArrowDown", "KeyS"] },
-      { name: "left", keys: ["ArrowLeft", "KeyA"] },
-      { name: "right", keys: ["ArrowRight", "KeyD"] },
-      { name: "drift", keys: ["Space"] },
-    ];
-
-    const unsubscribe = subscribeKeys((state) => {
-      // Handle control state changes if needed
-      console.log("Control state:", state);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [subscribeKeys]);
-
   return (
     <Card className="p-6 bg-gradient-to-r from-primary/5 to-accent/5 border-2 border-primary/20">
       <div className="flex flex-col items-center space-y-4">
@@ -217,76 +205,78 @@ const ZenDrift = () => {
               onError={handleError}
             >
               <Suspense fallback={null}>
-                <Canvas
-                  ref={canvasRef}
-                  shadows
-                  gl={{ 
-                    antialias: true,
-                    alpha: true,
-                    stencil: true,
-                    depth: true,
-                    powerPreference: "high-performance"
-                  }}
-                  camera={{ position: [0, 15, 20], fov: 75 }}
-                  style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
-                  dpr={[1, 2]}
-                >
-                  <PerspectiveCamera makeDefault position={[0, 15, 20]} />
-                  
-                  <ambientLight intensity={0.5} />
-                  <directionalLight
-                    castShadow
-                    position={[10, 10, 10]}
-                    intensity={1.5}
-                    shadow-mapSize={[2048, 2048]}
-                  />
-                  
-                  <Physics>
-                    <CarPhysics
-                      position={[0, 0, 0]}
-                      rotation={[0, 0, 0]}
-                      scale={1}
+                <KeyboardControls map={keyboardMap}>
+                  <Canvas
+                    ref={canvasRef}
+                    shadows
+                    gl={{ 
+                      antialias: true,
+                      alpha: true,
+                      stencil: true,
+                      depth: true,
+                      powerPreference: "high-performance"
+                    }}
+                    camera={{ position: [0, 15, 20], fov: 75 }}
+                    style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
+                    dpr={[1, 2]}
+                  >
+                    <PerspectiveCamera makeDefault position={[0, 15, 20]} />
+                    
+                    <ambientLight intensity={0.5} />
+                    <directionalLight
+                      castShadow
+                      position={[10, 10, 10]}
+                      intensity={1.5}
+                      shadow-mapSize={[2048, 2048]}
                     />
-
-                    <mesh
-                      receiveShadow
-                      rotation={[-Math.PI / 2, 0, 0]}
-                      position={[0, -0.5, 0]}
-                    >
-                      <planeGeometry args={[100, 100]} />
-                      <meshStandardMaterial
-                        color="#a8e6cf"
-                        metalness={0.1}
-                        roughness={0.9}
+                    
+                    <Physics>
+                      <CarPhysics
+                        position={[0, 0, 0]}
+                        rotation={[0, 0, 0]}
+                        scale={1}
                       />
-                    </mesh>
-                  </Physics>
 
-                  <Environment preset="sunset" />
-                  
-                  {!isPaused && (
-                    <EffectComposer>
-                      <DepthOfField
-                        focusDistance={0}
-                        focalLength={0.02}
-                        bokehScale={2}
-                        height={480}
-                      />
-                      <Bloom
-                        intensity={1.5}
-                        luminanceThreshold={0.5}
-                        luminanceSmoothing={0.9}
-                      />
-                    </EffectComposer>
-                  )}
+                      <mesh
+                        receiveShadow
+                        rotation={[-Math.PI / 2, 0, 0]}
+                        position={[0, -0.5, 0]}
+                      >
+                        <planeGeometry args={[100, 100]} />
+                        <meshStandardMaterial
+                          color="#a8e6cf"
+                          metalness={0.1}
+                          roughness={0.9}
+                        />
+                      </mesh>
+                    </Physics>
 
-                  <OrbitControls
-                    enableZoom={false}
-                    enablePan={false}
-                    maxPolarAngle={Math.PI / 2.5}
-                    minPolarAngle={Math.PI / 3}
-                  />
-                </Canvas>
+                    <Environment preset="sunset" />
+                    
+                    {!isPaused && (
+                      <EffectComposer>
+                        <DepthOfField
+                          focusDistance={0}
+                          focalLength={0.02}
+                          bokehScale={2}
+                          height={480}
+                        />
+                        <Bloom
+                          intensity={1.5}
+                          luminanceThreshold={0.5}
+                          luminanceSmoothing={0.9}
+                        />
+                      </EffectComposer>
+                    )}
+
+                    <OrbitControls
+                      enableZoom={false}
+                      enablePan={false}
+                      maxPolarAngle={Math.PI / 2.5}
+                      minPolarAngle={Math.PI / 3}
+                    />
+                  </Canvas>
+                </KeyboardControls>
               </Suspense>
             </ErrorBoundary>
           )}
