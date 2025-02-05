@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Wind, Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { Wind, Pause, Play, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls, PerspectiveCamera, KeyboardControls } from "@react-three/drei";
@@ -11,7 +11,6 @@ import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing
 import { CarPhysics } from "./physics/CarPhysics";
 import { ZenDriftAssetsGenerator } from "./ZenDriftAssetsGenerator";
 import { supabase } from "@/integrations/supabase/client";
-import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 interface GameAsset {
@@ -29,6 +28,26 @@ const keyboardMap = [
   { name: "drift", keys: ["Space"] },
 ];
 
+const LoadingScreen = () => (
+  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
+    <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+    <p className="text-primary animate-pulse">Loading Zen Drift...</p>
+  </div>
+);
+
+const Scene = () => {
+  return (
+    <Physics>
+      <CarPhysics position={[0, 0, 0]} rotation={[0, 0, 0]} scale={1} />
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}>
+        <planeGeometry args={[100, 100]} />
+        <meshStandardMaterial color="#a8e6cf" metalness={0.1} roughness={0.9} />
+      </mesh>
+      <Environment preset="sunset" />
+    </Physics>
+  );
+};
+
 const ZenDrift = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -36,6 +55,7 @@ const ZenDrift = () => {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [assets, setAssets] = useState<GameAsset[]>([]);
   const [hasError, setHasError] = useState(false);
+  const [isSceneReady, setIsSceneReady] = useState(false);
   const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -47,7 +67,7 @@ const ZenDrift = () => {
       const newAssets: GameAsset[] = [];
       let totalAssets = 24;
       let loadedAssets = 0;
-      
+
       const assetTypes = [
         { type: 'car', count: 8 },
         { type: 'background', count: 8 },
@@ -60,7 +80,7 @@ const ZenDrift = () => {
             const { data: { publicUrl } } = supabase.storage
               .from('game-assets')
               .getPublicUrl(`zen-drift/${type}s/${type}_${i}.png`);
-              
+
             if (publicUrl) {
               const img = new Image();
               img.src = publicUrl;
@@ -70,10 +90,7 @@ const ZenDrift = () => {
                   setLoadingProgress(Math.round((loadedAssets / totalAssets) * 100));
                   resolve(true);
                 };
-                img.onerror = () => {
-                  console.error(`Failed to load ${type}_${i}.png`);
-                  reject(new Error(`Failed to load ${type}_${i}.png`));
-                };
+                img.onerror = () => reject(new Error(`Failed to load ${type}_${i}.png`));
               });
               newAssets.push({ type: type as 'car' | 'background' | 'effect', image: img, index: i - 1 });
             }
@@ -89,7 +106,8 @@ const ZenDrift = () => {
 
       setAssets(newAssets);
       console.log(`Loaded ${newAssets.length} assets successfully`);
-      
+      setIsSceneReady(true);
+
       if (newAssets.length > 0) {
         toast({
           title: "Assets Loaded",
@@ -127,10 +145,7 @@ const ZenDrift = () => {
     <div className="flex flex-col items-center justify-center p-4 text-destructive space-y-4">
       <p className="font-semibold">Something went wrong with the game renderer:</p>
       <p className="text-sm">{error.message}</p>
-      <Button 
-        variant="outline" 
-        onClick={resetErrorBoundary}
-      >
+      <Button variant="outline" onClick={resetErrorBoundary}>
         Try again
       </Button>
     </div>
@@ -149,11 +164,7 @@ const ZenDrift = () => {
               onClick={() => setIsMuted(!isMuted)}
               className="hover:bg-primary/10"
             >
-              {isMuted ? (
-                <VolumeX className="h-4 w-4" />
-              ) : (
-                <Volume2 className="h-4 w-4" />
-              )}
+              {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
             </Button>
             <Button
               variant="ghost"
@@ -161,22 +172,19 @@ const ZenDrift = () => {
               onClick={() => setIsPaused(!isPaused)}
               className="hover:bg-primary/10"
             >
-              {isPaused ? (
-                <Play className="h-4 w-4" />
-              ) : (
-                <Pause className="h-4 w-4" />
-              )}
+              {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
             </Button>
           </div>
         </div>
 
         <ZenDriftAssetsGenerator />
-        
+
         <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-primary/20 shadow-lg">
           {(isLoadingAssets || hasError) && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm z-50">
               {isLoadingAssets ? (
                 <>
+                  <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
                   <div className="text-primary mb-2">Loading assets... {loadingProgress}%</div>
                   <div className="w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div 
@@ -188,96 +196,69 @@ const ZenDrift = () => {
               ) : hasError && (
                 <div className="text-center p-4">
                   <p className="text-destructive mb-2">Failed to load game assets</p>
-                  <Button 
-                    variant="outline"
-                    onClick={() => loadAssets()}
-                  >
+                  <Button variant="outline" onClick={() => loadAssets()}>
                     Retry Loading
                   </Button>
                 </div>
               )}
             </div>
           )}
-          
-          {!isLoadingAssets && !hasError && (
-            <ErrorBoundary
-              FallbackComponent={ErrorFallback}
-              onError={handleError}
-            >
-              <Suspense fallback={null}>
-                <KeyboardControls map={keyboardMap}>
-                  <Canvas
-                    ref={canvasRef}
-                    shadows
-                    gl={{ 
-                      antialias: true,
-                      alpha: true,
-                      stencil: true,
-                      depth: true,
-                      powerPreference: "high-performance"
-                    }}
-                    camera={{ position: [0, 15, 20], fov: 75 }}
-                    style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
-                    dpr={[1, 2]}
-                  >
-                    <PerspectiveCamera makeDefault position={[0, 15, 20]} />
-                    
-                    <ambientLight intensity={0.5} />
-                    <directionalLight
-                      castShadow
-                      position={[10, 10, 10]}
-                      intensity={1.5}
-                      shadow-mapSize={[2048, 2048]}
-                    />
-                    
-                    <Physics>
-                      <CarPhysics
-                        position={[0, 0, 0]}
-                        rotation={[0, 0, 0]}
-                        scale={1}
-                      />
 
-                      <mesh
-                        receiveShadow
-                        rotation={[-Math.PI / 2, 0, 0]}
-                        position={[0, -0.5, 0]}
-                      >
-                        <planeGeometry args={[100, 100]} />
-                        <meshStandardMaterial
-                          color="#a8e6cf"
-                          metalness={0.1}
-                          roughness={0.9}
-                        />
-                      </mesh>
-                    </Physics>
-
-                    <Environment preset="sunset" />
-                    
-                    {!isPaused && (
-                      <EffectComposer>
-                        <DepthOfField
-                          focusDistance={0}
-                          focalLength={0.02}
-                          bokehScale={2}
-                          height={480}
-                        />
-                        <Bloom
+          {!hasError && (
+            <ErrorBoundary FallbackComponent={ErrorFallback} onError={handleError}>
+              <KeyboardControls map={keyboardMap}>
+                <Canvas
+                  ref={canvasRef}
+                  shadows
+                  gl={{ 
+                    antialias: true,
+                    alpha: true,
+                    stencil: true,
+                    depth: true,
+                    powerPreference: "high-performance"
+                  }}
+                  camera={{ position: [0, 15, 20], fov: 75 }}
+                  style={{ background: 'linear-gradient(to bottom, #2c3e50, #34495e)' }}
+                  dpr={[1, 2]}
+                >
+                  <Suspense fallback={<LoadingScreen />}>
+                    {isSceneReady && (
+                      <>
+                        <PerspectiveCamera makeDefault position={[0, 15, 20]} />
+                        <ambientLight intensity={0.5} />
+                        <directionalLight
+                          castShadow
+                          position={[10, 10, 10]}
                           intensity={1.5}
-                          luminanceThreshold={0.5}
-                          luminanceSmoothing={0.9}
+                          shadow-mapSize={[2048, 2048]}
                         />
-                      </EffectComposer>
+                        <Scene />
+                        {!isPaused && (
+                          <EffectComposer>
+                            <DepthOfField
+                              focusDistance={0}
+                              focalLength={0.02}
+                              bokehScale={2}
+                              height={480}
+                            />
+                            <Bloom
+                              intensity={1.5}
+                              luminanceThreshold={0.5}
+                              luminanceSmoothing={0.9}
+                            />
+                          </EffectComposer>
+                        )}
+                        <OrbitControls
+                          enableZoom={false}
+                          enablePan={false}
+                          maxPolarAngle={Math.PI / 2.5}
+                          minPolarAngle={Math.PI / 3}
+                        />
+                      </>
                     )}
-
-                    <OrbitControls
-                      enableZoom={false}
-                      enablePan={false}
-                      maxPolarAngle={Math.PI / 2.5}
-                      minPolarAngle={Math.PI / 3}
-                    />
-                  </Canvas>
-                </KeyboardControls>
-              </Suspense>
+                  </Suspense>
+                </Canvas>
+              </KeyboardControls>
             </ErrorBoundary>
           )}
         </div>
