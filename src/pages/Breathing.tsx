@@ -11,6 +11,19 @@ const Breathing = () => {
   const [selectedGame, setSelectedGame] = useState<string>("pufferfish");
   const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale' | 'rest'>('rest');
 
+  // Breathing phase timer
+  const startBreathing = () => {
+    const phases = ['inhale', 'hold', 'exhale', 'rest'];
+    let currentPhaseIndex = 0;
+
+    const interval = setInterval(() => {
+      currentPhaseIndex = (currentPhaseIndex + 1) % phases.length;
+      setBreathPhase(phases[currentPhaseIndex] as 'inhale' | 'hold' | 'exhale' | 'rest');
+    }, 4000); // 4 seconds per phase
+
+    return () => clearInterval(interval);
+  };
+
   return (
     <div className="container max-w-4xl mx-auto p-4 space-y-8">
       <Tabs defaultValue="exercises" className="w-full">
@@ -33,7 +46,9 @@ const Breathing = () => {
         <TabsContent value="games" className="space-y-4">
           <Tabs value={selectedGame} onValueChange={setSelectedGame}>
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="pufferfish">Pufferfish</TabsTrigger>
+              <TabsTrigger value="pufferfish" onClick={startBreathing}>
+                Pufferfish
+              </TabsTrigger>
               <TabsTrigger value="balloon">Balloon Journey</TabsTrigger>
               <TabsTrigger value="breathing">Breathing Game</TabsTrigger>
             </TabsList>
