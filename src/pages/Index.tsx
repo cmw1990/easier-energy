@@ -9,6 +9,7 @@ import { MeditationAudioPlayer } from "@/components/audio/MeditationAudioPlayer"
 import { BackgroundMusicPlayer } from "@/components/audio/BackgroundMusicPlayer";
 import { MotivationSection } from "@/components/motivation/MotivationSection";
 import { HealthImprovements } from "@/components/sobriety/HealthImprovements";
+import { CravingTracker } from "@/components/sobriety/CravingTracker";
 import { motion } from "framer-motion";
 
 export default function Index() {
@@ -97,6 +98,14 @@ export default function Index() {
           <HealthImprovements />
         </motion.div>
       </div>
+
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 1.6 }}
+      >
+        <CravingTracker />
+      </motion.div>
     </motion.div>
   );
 }
