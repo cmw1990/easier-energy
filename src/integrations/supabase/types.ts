@@ -3746,6 +3746,7 @@ export type Database = {
           product_type: string
           retail_availability: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
+          searchable_text: unknown | null
           shipping_restrictions: string[] | null
           shipping_weight_grams: number | null
           size_reference: Json | null
@@ -3788,6 +3789,7 @@ export type Database = {
           product_type?: string
           retail_availability?: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
+          searchable_text?: unknown | null
           shipping_restrictions?: string[] | null
           shipping_weight_grams?: number | null
           size_reference?: Json | null
@@ -3830,6 +3832,7 @@ export type Database = {
           product_type?: string
           retail_availability?: Json | null
           risk_level?: Database["public"]["Enums"]["risk_level"]
+          searchable_text?: unknown | null
           shipping_restrictions?: string[] | null
           shipping_weight_grams?: number | null
           size_reference?: Json | null
@@ -4287,6 +4290,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_research_participants_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "research_participants_project_id_fkey"
             columns: ["project_id"]
@@ -5813,6 +5823,15 @@ export type Database = {
           comment_id: string
         }
         Returns: undefined
+      }
+      products_to_tsvector: {
+        Args: {
+          name: string
+          description: string
+          brand: string
+          materials: string[]
+        }
+        Returns: unknown
       }
     }
     Enums: {
