@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,17 +70,17 @@ export const ADHDTaskBreakdown = () => {
     try {
       const { error } = await supabase.from("focus_task_breakdowns").insert({
         user_id: session.user.id,
-        micro_steps: microSteps,
+        micro_steps: JSON.stringify(microSteps),
         energy_level_required: energyLevel,
         motivation_notes: motivationNotes,
-        rewards: { reward },
-        time_estimates: {
+        rewards: JSON.stringify({ reward }),
+        time_estimates: JSON.stringify({
           total_minutes: microSteps.reduce((acc, step) => acc + step.estimatedMinutes, 0),
           steps: microSteps.map(step => ({
             description: step.description,
             minutes: step.estimatedMinutes,
           })),
-        },
+        }),
       });
 
       if (error) throw error;
