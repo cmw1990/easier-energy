@@ -51,11 +51,12 @@ export const FocusRoutineCard = () => {
     }
 
     try {
+      const totalDuration = steps.reduce((acc, step) => acc + step.duration, 0);
       const { error } = await supabase.from("focus_routines").insert({
         user_id: session.user.id,
         name,
-        steps: steps,
-        duration_minutes: steps.reduce((acc, step) => acc + step.duration, 0),
+        steps: JSON.stringify(steps), // Convert steps array to JSON string
+        duration_minutes: totalDuration,
       });
 
       if (error) throw error;
