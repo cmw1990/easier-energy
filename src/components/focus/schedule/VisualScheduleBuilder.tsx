@@ -112,14 +112,25 @@ export const VisualScheduleBuilder = () => {
 
   const saveSchedule = async () => {
     try {
-      const { error } = await supabase.from("visual_schedules").insert({
+      // Transform the data to match Supabase's expected format
+      const scheduleData = {
         user_id: session?.user.id,
         schedule_type: currentSchedule.schedule_type,
-        visual_format: currentSchedule.visual_format,
-        time_blocks: currentSchedule.time_blocks,
+        visual_format: JSON.stringify(currentSchedule.visual_format),
+        time_blocks: currentSchedule.time_blocks.map(block => ({
+          id: block.id,
+          start_time: block.start_time,
+          end_time: block.end_time,
+          activity: block.activity,
+          color: block.color
+        })),
         color_coding: currentSchedule.color_coding,
-        break_reminders: currentSchedule.break_reminders,
-      });
+        break_reminders: JSON.stringify(currentSchedule.break_reminders),
+      };
+
+      const { error } = await supabase
+        .from("visual_schedules")
+        .insert(scheduleData);
 
       if (error) throw error;
 
