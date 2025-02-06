@@ -17,6 +17,7 @@ const WhiteNoise = () => {
   const {
     isPlaying,
     settings,
+    setSettings,
     toggleSound,
     updateNoiseType,
     updateNatureSound,

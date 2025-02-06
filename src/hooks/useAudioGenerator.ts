@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { createNoiseBuffer } from "@/utils/audio/createNoiseBuffer";
 import { generateBinauralBeat, generateNatureSound } from "@/utils/audio";
 import type { AudioState, AudioSettings } from "@/types/audio";
+import type { NatureSound } from "@/utils/audio/natureTypes";
 
 export const useAudioGenerator = () => {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
@@ -144,6 +145,7 @@ export const useAudioGenerator = () => {
   return {
     isPlaying,
     settings,
+    setSettings,
     toggleSound,
     updateNoiseType,
     updateNatureSound,
