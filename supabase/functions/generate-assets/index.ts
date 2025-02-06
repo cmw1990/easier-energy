@@ -24,9 +24,27 @@ serve(async (req) => {
     const { type, batch, description, style } = await req.json();
     console.log(`Request received - Type: ${type}, Batch: ${batch}, Description: ${description}`);
 
-    if (!type || (type === 'exercise-assets' && !batch)) {
+    let prompt;
+    let customStyle;
+
+    if (type === 'exercise-assets') {
+      if (!batch) {
+        return new Response(
+          JSON.stringify({ error: 'Missing batch parameter for exercise assets' }),
+          { 
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
+      }
+      prompt = `Professional illustration of ${batch.replace(/-/g, ' ')} eye exercise, showing eye movement pattern and proper technique, simple vector style, clean design`;
+      customStyle = "clean vector illustration style with soft colors, medical illustration quality";
+    } else if (type === 'meditation-backgrounds') {
+      prompt = description || 'Serene and calming meditation background with soft, ethereal elements';
+      customStyle = style || "ethereal, dreamlike, soft colors, minimalist zen style";
+    } else {
       return new Response(
-        JSON.stringify({ error: 'Missing required parameters' }),
+        JSON.stringify({ error: 'Invalid asset type' }),
         { 
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -51,8 +69,8 @@ serve(async (req) => {
 
     // Generate image
     console.log('Generating image with DALL-E...');
-    const prompt = `${description} Style: ${style}`;
-    console.log('Using prompt:', prompt);
+    const finalPrompt = `${prompt} Style: ${customStyle}`;
+    console.log('Using prompt:', finalPrompt);
 
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
@@ -62,7 +80,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "dall-e-3",
-        prompt: prompt,
+        prompt: finalPrompt,
         n: 1,
         size: "1024x1024",
         response_format: "url"

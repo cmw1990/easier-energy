@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,22 +12,22 @@ export const GenerateBackgroundsButton = () => {
   const generateAllBackgrounds = async () => {
     setIsGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke(
-        'generate-meditation-backgrounds',
+      const response = await supabase.functions.invoke(
+        'generate-assets',
         {
-          body: { generateAll: true }
+          body: {
+            type: 'meditation-backgrounds',
+            description: 'Serene and calming meditation background with ethereal elements and soft colors',
+            style: 'ethereal, dreamlike, soft colors, minimalist zen style'
+          }
         }
       );
 
-      if (error) throw error;
-
-      const successCount = data.results.filter(r => r.success).length;
-      const failCount = data.results.filter(r => !r.success).length;
+      if (response.error) throw response.error;
 
       toast({
         title: 'Background Generation Complete',
-        description: `Successfully generated ${successCount} backgrounds${failCount > 0 ? `, ${failCount} failed` : ''}`,
-        variant: successCount > 0 ? 'default' : 'destructive',
+        description: 'Successfully generated new meditation background',
       });
 
     } catch (error) {
