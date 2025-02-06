@@ -318,6 +318,44 @@ export type Database = {
         }
         Relationships: []
       }
+      card_sorting_responses: {
+        Row: {
+          card_groups: Json
+          completion_time: number | null
+          created_at: string | null
+          feedback: string | null
+          id: string
+          participant_id: string | null
+          study_id: string | null
+        }
+        Insert: {
+          card_groups: Json
+          completion_time?: number | null
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          participant_id?: string | null
+          study_id?: string | null
+        }
+        Update: {
+          card_groups?: Json
+          completion_time?: number | null
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          participant_id?: string | null
+          study_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_sorting_responses_study_id_fkey"
+            columns: ["study_id"]
+            isOneToOne: false
+            referencedRelation: "card_sorting_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       card_sorting_studies: {
         Row: {
           cards: Json | null
@@ -1076,6 +1114,44 @@ export type Database = {
         }
         Relationships: []
       }
+      first_click_responses: {
+        Row: {
+          click_coordinates: Json
+          created_at: string | null
+          id: string
+          is_success: boolean | null
+          participant_id: string | null
+          test_id: string | null
+          time_to_click: number | null
+        }
+        Insert: {
+          click_coordinates: Json
+          created_at?: string | null
+          id?: string
+          is_success?: boolean | null
+          participant_id?: string | null
+          test_id?: string | null
+          time_to_click?: number | null
+        }
+        Update: {
+          click_coordinates?: Json
+          created_at?: string | null
+          id?: string
+          is_success?: boolean | null
+          participant_id?: string | null
+          test_id?: string | null
+          time_to_click?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "first_click_responses_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "first_click_tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       first_click_tests: {
         Row: {
           created_at: string | null
@@ -1111,6 +1187,41 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      five_second_responses: {
+        Row: {
+          accuracy_score: number | null
+          created_at: string | null
+          id: string
+          participant_id: string | null
+          responses: Json
+          test_id: string | null
+        }
+        Insert: {
+          accuracy_score?: number | null
+          created_at?: string | null
+          id?: string
+          participant_id?: string | null
+          responses: Json
+          test_id?: string | null
+        }
+        Update: {
+          accuracy_score?: number | null
+          created_at?: string | null
+          id?: string
+          participant_id?: string | null
+          responses?: Json
+          test_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "five_second_responses_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "five_second_tests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       five_second_tests: {
         Row: {
@@ -1922,6 +2033,44 @@ export type Database = {
           study_type?: string
         }
         Relationships: []
+      }
+      preference_test_responses: {
+        Row: {
+          completion_time: number | null
+          created_at: string | null
+          feedback: string | null
+          id: string
+          participant_id: string | null
+          preferences: Json
+          test_id: string | null
+        }
+        Insert: {
+          completion_time?: number | null
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          participant_id?: string | null
+          preferences: Json
+          test_id?: string | null
+        }
+        Update: {
+          completion_time?: number | null
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          participant_id?: string | null
+          preferences?: Json
+          test_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preference_test_responses_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "preference_tests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       preference_tests: {
         Row: {
@@ -3516,6 +3665,44 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      tree_testing_responses: {
+        Row: {
+          completion_time: number | null
+          created_at: string | null
+          id: string
+          participant_id: string | null
+          study_id: string | null
+          success_rate: number | null
+          task_responses: Json
+        }
+        Insert: {
+          completion_time?: number | null
+          created_at?: string | null
+          id?: string
+          participant_id?: string | null
+          study_id?: string | null
+          success_rate?: number | null
+          task_responses: Json
+        }
+        Update: {
+          completion_time?: number | null
+          created_at?: string | null
+          id?: string
+          participant_id?: string | null
+          study_id?: string | null
+          success_rate?: number | null
+          task_responses?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tree_testing_responses_study_id_fkey"
+            columns: ["study_id"]
+            isOneToOne: false
+            referencedRelation: "tree_testing_studies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tree_testing_studies: {
         Row: {
