@@ -24,6 +24,7 @@ import { BreathingPatternExercise } from "@/components/exercises/BreathingPatter
 import { DynamicControlExercises } from "@/components/exercises/DynamicControlExercises";
 import { SpecializedTrainingExercises } from "@/components/exercises/SpecializedTrainingExercises";
 import { FocusEnhancementTools } from "@/components/focus/FocusEnhancementTools";
+import { TaskManagementTools } from "@/components/focus/TaskManagementTools";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -95,28 +96,9 @@ export default function Index() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="col-span-1"
+          className="col-span-full lg:col-span-2"
         >
-          <Card className="p-4 h-full">
-            <div className="flex items-center gap-2 mb-4">
-              <Brain className="h-5 w-5 text-purple-500" />
-              <h3 className="font-semibold">Focus Tools</h3>
-            </div>
-            <div className="space-y-2">
-              <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/focus")}>
-                <Coffee className="h-4 w-4 mr-2" />
-                Focus Session
-              </Button>
-              <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/meditation")}>
-                <Wind className="h-4 w-4 mr-2" />
-                Quick Meditation
-              </Button>
-              <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/sleep")}>
-                <Moon className="h-4 w-4 mr-2" />
-                Power Nap
-              </Button>
-            </div>
-          </Card>
+          <TaskManagementTools />
         </motion.div>
 
         <motion.div
