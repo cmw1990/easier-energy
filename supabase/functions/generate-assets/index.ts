@@ -40,9 +40,9 @@ function getCacheKey(type: string, batch?: string, description?: string): string
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
+    return new Response('', {
       status: 204,
       headers: corsHeaders
     });
@@ -51,12 +51,14 @@ serve(async (req) => {
   try {
     const openAIKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIKey) {
+      console.error('OpenAI API key is not configured');
       throw new Error('OpenAI API key is not configured');
     }
 
     // Parse request and get user ID from authorization header
     const auth = req.headers.get('authorization')?.split('Bearer ')[1];
     if (!auth) {
+      console.error('Missing authorization header');
       throw new Error('Missing authorization header');
     }
 
@@ -64,9 +66,11 @@ serve(async (req) => {
     try {
       body = await req.json();
     } catch (e) {
+      console.error('Invalid request body:', e);
       throw new Error('Invalid request body');
     }
 
+    console.log('Request body:', body);
     const { type, batch, description, style } = body;
     
     // Check rate limit
@@ -128,18 +132,20 @@ serve(async (req) => {
         model: "dall-e-3",
         prompt: finalPrompt,
         n: 1,
-        size: "1024x1024", // Using standard size to reduce costs
-        quality: "standard", // Using standard quality to reduce costs
+        size: "1024x1024",
+        quality: "standard",
         response_format: "url"
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.error('OpenAI API error:', errorData);
       throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
     }
 
     const imageData = await response.json();
+    console.log('Generated image data:', imageData);
     
     // Cache the successful result
     const result = { 
