@@ -11,9 +11,9 @@ const LandingPage = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="container mx-auto p-4 flex justify-between items-center">
+      <nav className="container mx-auto p-4 flex justify-between items-center border-b">
         <div className="flex items-center gap-2">
           <Battery className="h-6 w-6 text-primary" />
           <span className="text-xl font-semibold">The Well-Charged</span>
@@ -45,7 +45,7 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-6">
+        <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6">
           Optimize Your Energy & Performance
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
@@ -71,7 +71,7 @@ const LandingPage = () => {
       {/* Features Section */}
       <section className="container mx-auto px-4 py-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="bg-background/60 backdrop-blur">
+          <Card className="bg-background border-2 border-primary/20">
             <CardHeader>
               <Brain className="h-8 w-8 text-primary mb-2" />
               <CardTitle>Cognitive Enhancement</CardTitle>
@@ -80,7 +80,7 @@ const LandingPage = () => {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="bg-background/60 backdrop-blur">
+          <Card className="bg-background border-2 border-primary/20">
             <CardHeader>
               <Globe className="h-8 w-8 text-primary mb-2" />
               <CardTitle>Global Community</CardTitle>
@@ -89,7 +89,7 @@ const LandingPage = () => {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="bg-background/60 backdrop-blur">
+          <Card className="bg-background border-2 border-primary/20">
             <CardHeader>
               <Zap className="h-8 w-8 text-primary mb-2" />
               <CardTitle>Energy Management</CardTitle>
@@ -105,7 +105,6 @@ const LandingPage = () => {
       <section className="container mx-auto px-4 py-20">
         <h2 className="text-3xl font-bold text-center mb-12">Featured Tools</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Featured tools from WebTools.tsx */}
           {[
             {
               title: "White Noise Generator",
@@ -127,7 +126,7 @@ const LandingPage = () => {
             }
           ].map((tool) => (
             <Link key={tool.title} to={tool.path}>
-              <Card className="h-full hover:shadow-lg transition-shadow">
+              <Card className="h-full hover:shadow-lg transition-shadow border-2 border-primary/20">
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <div className="p-2 bg-primary/10 rounded-full">
@@ -156,7 +155,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t">
+      <footer className="border-t bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
@@ -179,4 +178,3 @@ const LandingPage = () => {
 }
 
 export default LandingPage
-
