@@ -27,6 +27,13 @@ import ReactionTimeTest from "@/components/games/ReactionTimeTest";
 import ZenDrift from "@/components/games/ZenDrift";
 import { BreathingTechniques } from "@/components/breathing/BreathingTechniques";
 
+import { FocusTimerTools } from "@/components/focus/FocusTimerTools";
+import { FocusZoneCard } from "@/components/focus/zones/FocusZoneCard";
+import { FocusRoutineCard } from "@/components/focus/routines/FocusRoutineCard";
+import { TimeBlockingCard } from "@/components/focus/tools/TimeBlockingCard";
+import { FocusAnalyticsDashboard } from "@/components/focus/analytics/FocusAnalyticsDashboard";
+import { FocusEnvironment } from "@/components/focus/FocusEnvironment";
+
 const Focus = () => {
   const { session } = useAuth();
   const { toast } = useToast();
@@ -61,16 +68,30 @@ const Focus = () => {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto space-y-8 p-4">
+    <div className="container max-w-6xl mx-auto space-y-8 p-4">
       <div className="flex items-center gap-3">
         <div className="p-2 bg-primary/10 rounded-full animate-float">
           <Brain className="h-6 w-6 text-primary" />
         </div>
         <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          Brain & Focus Training
+          Focus Dashboard
         </h1>
       </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <FocusTimerTools />
+        <FocusEnvironment />
+      </div>
+
+      <FocusAnalyticsDashboard />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <FocusZoneCard />
+        <FocusRoutineCard />
+        <TimeBlockingCard />
+      </div>
+
+      {/* Original games section */}
       <Tabs defaultValue="quick" className="space-y-4">
         <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <TabsTrigger value="quick" className="flex items-center gap-2">
@@ -139,6 +160,7 @@ const Focus = () => {
         </TabsContent>
       </Tabs>
 
+      {/* Original about section */}
       <Card className="p-6 hover:shadow-lg transition-shadow">
         <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent flex items-center gap-2">
           <BookOpen className="h-5 w-5" />
