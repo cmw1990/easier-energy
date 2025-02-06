@@ -1242,6 +1242,39 @@ export type Database = {
         }
         Relationships: []
       }
+      eye_exercise_logs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          duration_seconds: number
+          effectiveness_rating: number | null
+          exercise_type: string
+          id: string
+          notes: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          duration_seconds: number
+          effectiveness_rating?: number | null
+          exercise_type: string
+          id?: string
+          notes?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          duration_seconds?: number
+          effectiveness_rating?: number | null
+          exercise_type?: string
+          id?: string
+          notes?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       favorite_foods: {
         Row: {
           calories: number | null

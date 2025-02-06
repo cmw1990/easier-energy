@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Timer, RotateCw, MoveHorizontal, MoveVertical, Maximize2, Minimize2 } from "lucide-react";
 import { EyeExerciseTimer } from "@/components/exercises/EyeExerciseTimer";
@@ -61,10 +62,10 @@ const EyeExercises = () => {
   const handleComplete = async (exerciseId: string) => {
     try {
       const { error } = await supabase
-        .from('exercise_tracking')
+        .from('eye_exercise_logs')
         .insert({
           user_id: session?.user?.id,
-          exercise_type: 'eye_exercise',
+          exercise_type: exerciseId,
           duration_seconds: exercises.find(e => e.id === exerciseId)?.duration || 0,
           notes: exerciseId
         });
