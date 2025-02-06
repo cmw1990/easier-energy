@@ -1,46 +1,14 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { Trophy, Star, Target, Medal } from "lucide-react";
-
-interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  unlocked: boolean;
-}
-
-interface Challenge {
-  id: string;
-  title: string;
-  description: string;
-  points: number;
-  completed: boolean;
-}
-
-interface GamificationData {
-  id: string;
-  points_earned: number;
-  streak_count: number;
-  level: number;
-  achievements: Achievement[];
-  daily_challenges: Challenge[];
-}
-
-interface RawGamificationData {
-  id: string;
-  points_earned: number | null;
-  streak_count: number | null;
-  level: number | null;
-  achievements: Json;
-  daily_challenges: Json;
-}
+import { Trophy, Star } from "lucide-react";
+import { GamificationData, RawGamificationData } from "./types";
+import { AchievementItem } from "./AchievementItem";
+import { ChallengeItem } from "./ChallengeItem";
 
 export const FocusGamificationCard = () => {
   const { session } = useAuth();
@@ -64,37 +32,20 @@ export const FocusGamificationCard = () => {
 
       if (error) throw error;
 
-      // Cast achievements and daily_challenges from Json to their respective types
-      const achievements = rawData.achievements as Array<{
-        id: string;
-        title: string;
-        description: string;
-        icon?: string;
-        unlocked?: boolean;
-      }>;
-
-      const dailyChallenges = rawData.daily_challenges as Array<{
-        id: string;
-        title: string;
-        description: string;
-        points?: number;
-        completed?: boolean;
-      }>;
-
       // Transform the raw data into the correct types
       const transformedData: GamificationData = {
         id: rawData.id,
         points_earned: rawData.points_earned || 0,
         streak_count: rawData.streak_count || 0,
         level: rawData.level || 1,
-        achievements: (achievements || []).map(achievement => ({
+        achievements: (rawData.achievements || []).map((achievement: any) => ({
           id: achievement.id,
           title: achievement.title,
           description: achievement.description,
           icon: achievement.icon || 'trophy',
           unlocked: achievement.unlocked || false
         })),
-        daily_challenges: (dailyChallenges || []).map(challenge => ({
+        daily_challenges: (rawData.daily_challenges || []).map((challenge: any) => ({
           id: challenge.id,
           title: challenge.title,
           description: challenge.description,
@@ -202,63 +153,25 @@ export const FocusGamificationCard = () => {
 
             <div className="space-y-4">
               <h3 className="font-semibold">Daily Challenges</h3>
-              {gamificationData.daily_challenges?.map((challenge) => (
-                <div
-                  key={challenge.id}
-                  className="flex items-center justify-between p-3 bg-white/50 dark:bg-white/5 rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <Target className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="font-medium">{challenge.title}</p>
-                      <p className="text-sm text-muted-foreground">{challenge.description}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">+{challenge.points} pts</span>
-                    <Button
-                      variant={challenge.completed ? "ghost" : "outline"}
-                      size="sm"
-                      disabled={challenge.completed}
-                      onClick={() => handleChallengeComplete(challenge.id)}
-                    >
-                      {challenge.completed ? "Completed" : "Complete"}
-                    </Button>
-                  </div>
-                </div>
-              ))}
+              <div className="space-y-3">
+                {gamificationData.daily_challenges.map((challenge) => (
+                  <ChallengeItem
+                    key={challenge.id}
+                    challenge={challenge}
+                    onComplete={handleChallengeComplete}
+                  />
+                ))}
+              </div>
             </div>
 
             <div className="space-y-4">
               <h3 className="font-semibold">Recent Achievements</h3>
               <div className="grid grid-cols-2 gap-4">
-                {gamificationData.achievements?.slice(0, 4).map((achievement) => (
-                  <div
+                {gamificationData.achievements.slice(0, 4).map((achievement) => (
+                  <AchievementItem
                     key={achievement.id}
-                    className={`p-4 rounded-lg ${
-                      achievement.unlocked
-                        ? "bg-primary/10"
-                        : "bg-muted/50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      {achievement.icon === 'medal' ? (
-                        <Medal className={`h-5 w-5 ${
-                          achievement.unlocked ? "text-primary" : "text-muted-foreground"
-                        }`} />
-                      ) : (
-                        <Trophy className={`h-5 w-5 ${
-                          achievement.unlocked ? "text-primary" : "text-muted-foreground"
-                        }`} />
-                      )}
-                      <div>
-                        <p className="font-medium">{achievement.title}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {achievement.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                    achievement={achievement}
+                  />
                 ))}
               </div>
             </div>
@@ -266,7 +179,6 @@ export const FocusGamificationCard = () => {
         ) : (
           <div className="text-center space-y-4">
             <p className="text-muted-foreground">No gamification data available</p>
-            <Button>Start Your Journey</Button>
           </div>
         )}
       </CardContent>
