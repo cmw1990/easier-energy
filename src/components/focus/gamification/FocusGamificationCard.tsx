@@ -38,20 +38,20 @@ export const FocusGamificationCard = () => {
         points_earned: rawData.points_earned || 0,
         streak_count: rawData.streak_count || 0,
         level: rawData.level || 1,
-        achievements: (rawData.achievements || []).map((achievement: any) => ({
+        achievements: Array.isArray(rawData.achievements) ? rawData.achievements.map((achievement: any) => ({
           id: achievement.id,
           title: achievement.title,
           description: achievement.description,
           icon: achievement.icon || 'trophy',
           unlocked: achievement.unlocked || false
-        })),
-        daily_challenges: (rawData.daily_challenges || []).map((challenge: any) => ({
+        })) : [],
+        daily_challenges: Array.isArray(rawData.daily_challenges) ? rawData.daily_challenges.map((challenge: any) => ({
           id: challenge.id,
           title: challenge.title,
           description: challenge.description,
           points: challenge.points || 0,
           completed: challenge.completed || false
-        }))
+        })) : []
       };
       
       setGamificationData(transformedData);

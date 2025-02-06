@@ -408,14 +408,19 @@ export type Database = {
       }
       body_doubling_sessions: {
         Row: {
+          accountability_type: string | null
+          achievement_metrics: Json | null
           created_at: string | null
           description: string | null
           duration_minutes: number | null
+          environment_settings: Json | null
+          feedback_summary: string | null
           host_id: string
           id: string
           is_private: boolean | null
           max_participants: number | null
           meeting_link: string | null
+          session_goals: Json | null
           session_type: string
           start_time: string
           status: string | null
@@ -423,14 +428,19 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          accountability_type?: string | null
+          achievement_metrics?: Json | null
           created_at?: string | null
           description?: string | null
           duration_minutes?: number | null
+          environment_settings?: Json | null
+          feedback_summary?: string | null
           host_id: string
           id?: string
           is_private?: boolean | null
           max_participants?: number | null
           meeting_link?: string | null
+          session_goals?: Json | null
           session_type: string
           start_time: string
           status?: string | null
@@ -438,14 +448,19 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          accountability_type?: string | null
+          achievement_metrics?: Json | null
           created_at?: string | null
           description?: string | null
           duration_minutes?: number | null
+          environment_settings?: Json | null
+          feedback_summary?: string | null
           host_id?: string
           id?: string
           is_private?: boolean | null
           max_participants?: number | null
           meeting_link?: string | null
+          session_goals?: Json | null
           session_type?: string
           start_time?: string
           status?: string | null
@@ -1502,54 +1517,72 @@ export type Database = {
       }
       focus_analytics: {
         Row: {
+          context_switches: number | null
           created_at: string | null
           daily_focus_score: number | null
           date: string
           energy_levels: Json | null
+          flow_state_duration: number | null
           focus_patterns: Json | null
+          hyperfocus_incidents: number | null
           id: string
           interrupted_sessions: number | null
           notes: string | null
           peak_focus_periods: Json | null
           productivity_insights: string | null
           productivity_score: number | null
+          recovery_time_needed: number | null
           successful_sessions: number | null
           suggested_improvements: Json | null
+          task_completion_variance: number | null
           total_focus_time: number | null
+          transition_difficulties: Json | null
           user_id: string
         }
         Insert: {
+          context_switches?: number | null
           created_at?: string | null
           daily_focus_score?: number | null
           date?: string
           energy_levels?: Json | null
+          flow_state_duration?: number | null
           focus_patterns?: Json | null
+          hyperfocus_incidents?: number | null
           id?: string
           interrupted_sessions?: number | null
           notes?: string | null
           peak_focus_periods?: Json | null
           productivity_insights?: string | null
           productivity_score?: number | null
+          recovery_time_needed?: number | null
           successful_sessions?: number | null
           suggested_improvements?: Json | null
+          task_completion_variance?: number | null
           total_focus_time?: number | null
+          transition_difficulties?: Json | null
           user_id: string
         }
         Update: {
+          context_switches?: number | null
           created_at?: string | null
           daily_focus_score?: number | null
           date?: string
           energy_levels?: Json | null
+          flow_state_duration?: number | null
           focus_patterns?: Json | null
+          hyperfocus_incidents?: number | null
           id?: string
           interrupted_sessions?: number | null
           notes?: string | null
           peak_focus_periods?: Json | null
           productivity_insights?: string | null
           productivity_score?: number | null
+          recovery_time_needed?: number | null
           successful_sessions?: number | null
           suggested_improvements?: Json | null
+          task_completion_variance?: number | null
           total_focus_time?: number | null
+          transition_difficulties?: Json | null
           user_id?: string
         }
         Relationships: []
@@ -1912,38 +1945,53 @@ export type Database = {
       }
       focus_rewards: {
         Row: {
+          adaptive_difficulty: boolean | null
           claimed_at: string | null
+          completion_criteria: Json | null
           created_at: string | null
           description: string | null
           expires_at: string | null
           id: string
           is_claimed: boolean | null
+          motivation_triggers: Json | null
           points_required: number
+          reward_category: string | null
           reward_type: string
+          streak_bonus: number | null
           title: string
           user_id: string
         }
         Insert: {
+          adaptive_difficulty?: boolean | null
           claimed_at?: string | null
+          completion_criteria?: Json | null
           created_at?: string | null
           description?: string | null
           expires_at?: string | null
           id?: string
           is_claimed?: boolean | null
+          motivation_triggers?: Json | null
           points_required: number
+          reward_category?: string | null
           reward_type: string
+          streak_bonus?: number | null
           title: string
           user_id: string
         }
         Update: {
+          adaptive_difficulty?: boolean | null
           claimed_at?: string | null
+          completion_criteria?: Json | null
           created_at?: string | null
           description?: string | null
           expires_at?: string | null
           id?: string
           is_claimed?: boolean | null
+          motivation_triggers?: Json | null
           points_required?: number
+          reward_category?: string | null
           reward_type?: string
+          streak_bonus?: number | null
           title?: string
           user_id?: string
         }
@@ -2032,6 +2080,7 @@ export type Database = {
           micro_steps: Json
           motivation_notes: string | null
           rewards: Json | null
+          sensory_preferences: Json | null
           task_id: string | null
           time_estimates: Json | null
           updated_at: string | null
@@ -2045,6 +2094,7 @@ export type Database = {
           micro_steps?: Json
           motivation_notes?: string | null
           rewards?: Json | null
+          sensory_preferences?: Json | null
           task_id?: string | null
           time_estimates?: Json | null
           updated_at?: string | null
@@ -2058,6 +2108,7 @@ export type Database = {
           micro_steps?: Json
           motivation_notes?: string | null
           rewards?: Json | null
+          sensory_preferences?: Json | null
           task_id?: string | null
           time_estimates?: Json | null
           updated_at?: string | null
@@ -2914,23 +2965,35 @@ export type Database = {
       }
       notification_preferences: {
         Row: {
+          break_reminder_style: Json | null
+          context_aware_settings: Json | null
           created_at: string | null
+          focus_check_frequency: unknown | null
           id: string
           preferences: Json
+          transition_reminders: boolean | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          break_reminder_style?: Json | null
+          context_aware_settings?: Json | null
           created_at?: string | null
+          focus_check_frequency?: unknown | null
           id?: string
           preferences?: Json
+          transition_reminders?: boolean | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          break_reminder_style?: Json | null
+          context_aware_settings?: Json | null
           created_at?: string | null
+          focus_check_frequency?: unknown | null
           id?: string
           preferences?: Json
+          transition_reminders?: boolean | null
           updated_at?: string | null
           user_id?: string
         }
@@ -3857,6 +3920,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string | null
+          email: string | null
           id: string
           is_verified: boolean | null
           notification_settings: Json | null
@@ -3867,6 +3931,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          email?: string | null
           id: string
           is_verified?: boolean | null
           notification_settings?: Json | null
@@ -3877,6 +3942,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          email?: string | null
           id?: string
           is_verified?: boolean | null
           notification_settings?: Json | null
@@ -5141,6 +5207,42 @@ export type Database = {
         }
         Relationships: []
       }
+      task_completion_patterns: {
+        Row: {
+          coping_strategies: Json | null
+          created_at: string | null
+          difficulty_patterns: Json | null
+          distraction_triggers: Json | null
+          environment_factors: Json | null
+          id: string
+          success_rate: number | null
+          time_of_day: string[] | null
+          user_id: string | null
+        }
+        Insert: {
+          coping_strategies?: Json | null
+          created_at?: string | null
+          difficulty_patterns?: Json | null
+          distraction_triggers?: Json | null
+          environment_factors?: Json | null
+          id?: string
+          success_rate?: number | null
+          time_of_day?: string[] | null
+          user_id?: string | null
+        }
+        Update: {
+          coping_strategies?: Json | null
+          created_at?: string | null
+          difficulty_patterns?: Json | null
+          distraction_triggers?: Json | null
+          environment_factors?: Json | null
+          id?: string
+          success_rate?: number | null
+          time_of_day?: string[] | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       task_prioritization: {
         Row: {
           created_at: string | null
@@ -5176,6 +5278,101 @@ export type Database = {
           {
             foreignKeyName: "task_prioritization_task_id_fkey"
             columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_time_estimates: {
+        Row: {
+          accuracy_score: number | null
+          actual_time: number | null
+          context_factors: Json | null
+          created_at: string | null
+          estimated_time: number | null
+          id: string
+          task_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          accuracy_score?: number | null
+          actual_time?: number | null
+          context_factors?: Json | null
+          created_at?: string | null
+          estimated_time?: number | null
+          id?: string
+          task_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          accuracy_score?: number | null
+          actual_time?: number | null
+          context_factors?: Json | null
+          created_at?: string | null
+          estimated_time?: number | null
+          id?: string
+          task_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_time_estimates_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_transitions: {
+        Row: {
+          created_at: string | null
+          difficulty_rating: number | null
+          from_task_id: string | null
+          id: string
+          strategies_used: Json | null
+          success_factors: Json | null
+          to_task_id: string | null
+          transition_duration: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          difficulty_rating?: number | null
+          from_task_id?: string | null
+          id?: string
+          strategies_used?: Json | null
+          success_factors?: Json | null
+          to_task_id?: string | null
+          transition_duration?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          difficulty_rating?: number | null
+          from_task_id?: string | null
+          id?: string
+          strategies_used?: Json | null
+          success_factors?: Json | null
+          to_task_id?: string | null
+          transition_duration?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_transitions_from_task_id_fkey"
+            columns: ["from_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_transitions_to_task_id_fkey"
+            columns: ["to_task_id"]
             isOneToOne: false
             referencedRelation: "tasks"
             referencedColumns: ["id"]
@@ -5761,6 +5958,45 @@ export type Database = {
           tool_type?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      visual_schedules: {
+        Row: {
+          break_reminders: Json | null
+          color_coding: Json | null
+          created_at: string | null
+          flexibility_rules: Json | null
+          id: string
+          schedule_type: string
+          time_blocks: Json[] | null
+          updated_at: string | null
+          user_id: string | null
+          visual_format: Json
+        }
+        Insert: {
+          break_reminders?: Json | null
+          color_coding?: Json | null
+          created_at?: string | null
+          flexibility_rules?: Json | null
+          id?: string
+          schedule_type: string
+          time_blocks?: Json[] | null
+          updated_at?: string | null
+          user_id?: string | null
+          visual_format: Json
+        }
+        Update: {
+          break_reminders?: Json | null
+          color_coding?: Json | null
+          created_at?: string | null
+          flexibility_rules?: Json | null
+          id?: string
+          schedule_type?: string
+          time_blocks?: Json[] | null
+          updated_at?: string | null
+          user_id?: string | null
+          visual_format?: Json
         }
         Relationships: []
       }
