@@ -10,6 +10,21 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        // Style 1 - Color Palette
+        'primary': 'hsl(var(--primary))',
+        'primary-foreground': 'hsl(var(--primary-foreground))',
+        'secondary': 'hsl(var(--secondary))',
+        'secondary-foreground': 'hsl(var(--secondary-foreground))',
+        'background': 'hsl(var(--background))',
+        'foreground': 'hsl(var(--foreground))',
+        'muted': 'hsl(var(--muted))',
+        'muted-foreground': 'hsl(var(--muted-foreground))',
+        'accent': 'hsl(var(--accent))',
+        'accent-foreground': 'hsl(var(--accent-foreground))',
+        'border': 'hsl(var(--border))',
+        'ring': 'hsl(var(--ring))',
+      },
       keyframes: {
         "float-up": {
           '0%': { transform: 'translate(-50%, -50%)' },
@@ -28,7 +43,12 @@ export default {
         "float-up": "float-up 2s ease-in-out forwards",
         "float-down": "float-down 2s ease-in-out forwards",
         "sway": "sway 2s ease-in-out infinite"
-      }
+      },
+      borderRadius: {
+        'lg': 'var(--radius)',
+        'md': 'calc(var(--radius) - 2px)',
+        'sm': 'calc(var(--radius) - 4px)',
+      },
     },
   },
   plugins: [],
