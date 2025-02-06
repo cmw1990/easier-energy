@@ -12,16 +12,16 @@ const Dashboard = () => {
       <h1 className="text-2xl font-bold">Dashboard</h1>
       
       {/* Mood and Energy Overview */}
-      <MoodOverview />
+      <div className="grid gap-6 md:grid-cols-2">
+        <MoodOverview />
+        <WaterIntakeTracker />
+      </div>
       
-      {/* Water Intake Tracking */}
-      <WaterIntakeTracker />
-      
-      {/* Activity Tracking */}
-      <ActivityTracker />
-      
-      {/* Energy Pattern Analysis */}
-      <EnergyPatternAnalysis />
+      {/* Health Tracking Section */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <ActivityTracker />
+        <EnergyPatternAnalysis />
+      </div>
       
       {/* Personalized Recommendations */}
       <TailoredRecommendations />
