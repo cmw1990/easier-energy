@@ -23,15 +23,9 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured');
     }
 
-    let body;
-    try {
-      body = await req.json();
-    } catch (e) {
-      console.error('Invalid request body:', e);
-      throw new Error('Invalid request body');
-    }
-
+    const body = await req.json();
     console.log('Request body:', body);
+
     const { type, batch, description, style } = body;
 
     let prompt;
@@ -58,50 +52,47 @@ serve(async (req) => {
     const finalPrompt = `${prompt} Style: ${customStyle}`;
     console.log('Using prompt:', finalPrompt);
 
-    try {
-      const response = await fetch('https://api.openai.com/v1/images/generations', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "dall-e-3",
-          prompt: finalPrompt,
-          n: 1,
-          size: "1024x1024",
-          quality: "standard",
-          response_format: "url"
-        })
-      });
+    const response = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openAIKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: "dall-e-3",
+        prompt: finalPrompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "standard",
+        response_format: "url"
+      })
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('OpenAI API error:', errorData);
-        throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
-      }
+    console.log('OpenAI API response status:', response.status);
 
-      const imageData = await response.json();
-      console.log('Generated image data:', imageData);
-
-      if (!imageData.data?.[0]?.url) {
-        throw new Error('No image URL in response');
-      }
-
-      return new Response(
-        JSON.stringify({ 
-          url: imageData.data[0].url,
-          message: 'Asset generated successfully'
-        }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    } catch (error) {
-      console.error('Error generating image:', error);
-      throw new Error(`Failed to generate image: ${error.message}`);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('OpenAI API error details:', errorData);
+      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
     }
+
+    const imageData = await response.json();
+    console.log('Generated image data:', imageData);
+
+    if (!imageData.data?.[0]?.url) {
+      throw new Error('No image URL in response');
+    }
+
+    return new Response(
+      JSON.stringify({ 
+        url: imageData.data[0].url,
+        message: 'Asset generated successfully'
+      }),
+      { 
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
   } catch (error) {
     console.error('Error in generate-assets function:', error);
     return new Response(
