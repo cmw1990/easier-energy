@@ -1275,6 +1275,45 @@ export type Database = {
         }
         Relationships: []
       }
+      eye_exercise_stats: {
+        Row: {
+          avg_effectiveness: number | null
+          created_at: string | null
+          current_streak: number | null
+          id: string
+          last_exercise_at: string | null
+          longest_streak: number | null
+          total_duration_seconds: number | null
+          total_exercises: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avg_effectiveness?: number | null
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_exercise_at?: string | null
+          longest_streak?: number | null
+          total_duration_seconds?: number | null
+          total_exercises?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avg_effectiveness?: number | null
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_exercise_at?: string | null
+          longest_streak?: number | null
+          total_duration_seconds?: number | null
+          total_exercises?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       favorite_foods: {
         Row: {
           calories: number | null
