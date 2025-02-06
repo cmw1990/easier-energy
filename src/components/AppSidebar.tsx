@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -21,6 +22,7 @@ import {
   Package,
   Heart,
   Eye,
+  Wrench,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -98,6 +100,12 @@ const navigationGroups = [
         icon: Heart,
         label: "Sobriety",
       },
+      // Development Tools link (only shown in dev mode)
+      ...(import.meta.env.DEV ? [{
+        to: "/development",
+        icon: Wrench,
+        label: "Development Tools",
+      }] : []),
     ]
   },
 ];

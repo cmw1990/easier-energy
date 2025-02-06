@@ -1,3 +1,4 @@
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
@@ -31,6 +32,7 @@ import SupportPage from "@/pages/Support"
 import BreathingGame from "@/components/games/BreathingGame"
 import BalloonJourney from "@/components/games/BalloonJourney"
 import ZenGarden from "@/components/games/ZenGarden"
+import DevelopmentTools from "@/pages/DevelopmentTools"
 
 const queryClient = new QueryClient()
 
@@ -81,6 +83,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <DashboardPage />,
+      },
+      {
+        path: "/development",
+        element: <DevelopmentTools />,
       },
       {
         path: "/distraction-blocker",
