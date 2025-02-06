@@ -1,189 +1,188 @@
-import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Timer, Heart, ChartLine } from 'lucide-react';
-import { AnimatedExerciseDisplay } from './AnimatedExerciseDisplay';
-import { useToast } from '@/hooks/use-toast';
-
-interface ExerciseSet {
-  name: string;
-  type: 'quick' | 'endurance' | 'coordination' | 'relaxation';
-  duration: number;
-  contractionTime: number;
-  relaxationTime: number;
-  repetitions: number;
-  description: string;
-  targetMuscles: string[];
-  benefits: string[];
-}
-
-const exerciseSets: ExerciseSet[] = [
-  {
-    name: "Quick Response Training",
-    type: "quick",
-    duration: 300,
-    contractionTime: 1,
-    relaxationTime: 2,
-    repetitions: 15,
-    description: "Fast-twitch muscle fiber activation for improved reactivity",
-    targetMuscles: ["Fast-twitch muscle fibers", "Pelvic floor"],
-    benefits: ["Improved muscle reactivity", "Better stress response"]
-  },
-  {
-    name: "Endurance Builder",
-    type: "endurance",
-    duration: 420,
-    contractionTime: 10,
-    relaxationTime: 10,
-    repetitions: 12,
-    description: "Long-hold exercises for building muscle endurance",
-    targetMuscles: ["Deep pelvic floor muscles", "Core stabilizers"],
-    benefits: ["Enhanced endurance", "Improved muscle tone"]
-  },
-  {
-    name: "Coordination Complex",
-    type: "coordination",
-    duration: 360,
-    contractionTime: 3,
-    relaxationTime: 3,
-    repetitions: 20,
-    description: "Coordinated movement patterns for better muscle control",
-    targetMuscles: ["Pelvic floor", "Lower abdominals", "Deep core"],
-    benefits: ["Better muscle coordination", "Improved functional strength"]
-  },
-  {
-    name: "Relaxation Focus",
-    type: "relaxation",
-    duration: 300,
-    contractionTime: 5,
-    relaxationTime: 15,
-    repetitions: 10,
-    description: "Focus on complete muscle relaxation between contractions",
-    targetMuscles: ["Pelvic floor", "Supporting muscles"],
-    benefits: ["Enhanced relaxation", "Reduced muscle tension"]
-  }
-];
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Brain, Focus, Timer, Zap } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
 
 export const SpecializedTrainingExercises = () => {
-  const [selectedExercise, setSelectedExercise] = useState<ExerciseSet | null>(null);
-  const [isActive, setIsActive] = useState(false);
-  const [currentRep, setCurrentRep] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(0);
+  const { session } = useAuth();
   const { toast } = useToast();
+  const [activeExercise, setActiveExercise] = useState<string | null>(null);
+  const [isTimerActive, setIsTimerActive] = useState(false);
 
-  const startExercise = (exercise: ExerciseSet) => {
-    setSelectedExercise(exercise);
-    setCurrentRep(1);
-    setTimeLeft(exercise.duration);
-    setIsActive(true);
+  const exercises = [
+    {
+      id: "body-doubling",
+      title: "Body Doubling Session",
+      description: "Work alongside a virtual partner to maintain focus",
+      icon: <Focus className="h-5 w-5 text-primary" />,
+      duration: 25,
+    },
+    {
+      id: "micro-tasks",
+      title: "Micro-Task Training",
+      description: "Break down complex tasks into 2-minute segments",
+      icon: <Timer className="h-5 w-5 text-primary" />,
+      duration: 2,
+    },
+    {
+      id: "energy-mapping",
+      title: "Energy Mapping",
+      description: "Track and optimize your daily energy patterns",
+      icon: <Zap className="h-5 w-5 text-primary" />,
+      duration: 5,
+    },
+    {
+      id: "task-initiation",
+      title: "Task Initiation Training",
+      description: "Practice starting tasks with decreasing preparation time",
+      icon: <Brain className="h-5 w-5 text-primary" />,
+      duration: 10,
+    },
+  ];
+
+  const startExercise = async (exerciseId: string) => {
+    if (!session?.user?.id) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be signed in to track exercise progress",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setActiveExercise(exerciseId);
+    setIsTimerActive(true);
+
+    const exercise = exercises.find((e) => e.id === exerciseId);
+    
+    try {
+      await supabase.from("energy_focus_logs").insert({
+        user_id: session.user.id,
+        activity_type: "specialized_training",
+        activity_name: exercise?.title,
+        duration_minutes: exercise?.duration,
+        focus_rating: null, // Will be updated after completion
+        notes: `Started ${exercise?.title} training session`,
+      });
+
+      toast({
+        title: "Exercise started",
+        description: `${exercise?.title} session has begun`,
+      });
+    } catch (error) {
+      console.error("Error logging exercise:", error);
+      toast({
+        title: "Error starting exercise",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
   };
 
-  const completeExercise = () => {
-    toast({
-      title: "Exercise Complete!",
-      description: `Great job completing ${selectedExercise?.name}!`,
-    });
-    setIsActive(false);
-    setSelectedExercise(null);
+  const completeExercise = async () => {
+    if (!activeExercise || !session?.user?.id) return;
+
+    try {
+      const exercise = exercises.find((e) => e.id === activeExercise);
+      
+      await supabase.from("energy_focus_logs").insert({
+        user_id: session.user.id,
+        activity_type: "specialized_training",
+        activity_name: exercise?.title,
+        duration_minutes: exercise?.duration,
+        focus_rating: 85, // Example rating
+        notes: `Completed ${exercise?.title} training session`,
+      });
+
+      toast({
+        title: "Exercise completed",
+        description: "Great job! Your progress has been saved.",
+      });
+    } catch (error) {
+      console.error("Error completing exercise:", error);
+      toast({
+        title: "Error saving progress",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
+
+    setActiveExercise(null);
+    setIsTimerActive(false);
   };
 
   return (
-    <Card className="p-4 space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <Heart className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold">Specialized Training</h3>
-      </div>
-
-      {!selectedExercise ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {exerciseSets.map((exercise) => (
-            <Button
-              key={exercise.name}
-              variant="outline"
-              className="p-4 h-auto flex flex-col items-start gap-2"
-              onClick={() => startExercise(exercise)}
-            >
-              <span className="font-medium">{exercise.name}</span>
-              <span className="text-sm text-muted-foreground">
-                {exercise.description}
-              </span>
-            </Button>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Brain className="h-5 w-5" />
+          Specialized Focus Training
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid gap-4 md:grid-cols-2">
+          {exercises.map((exercise) => (
+            <Card key={exercise.id} className="relative overflow-hidden">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      {exercise.icon}
+                      <h3 className="font-semibold">{exercise.title}</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {exercise.description}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Timer className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">
+                        {exercise.duration} minutes
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor={`exercise-${exercise.id}`} className="sr-only">
+                      Toggle {exercise.title}
+                    </Label>
+                    <Switch
+                      id={`exercise-${exercise.id}`}
+                      checked={activeExercise === exercise.id}
+                      onCheckedChange={() => {
+                        if (activeExercise === exercise.id) {
+                          completeExercise();
+                        } else {
+                          startExercise(exercise.id);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
-      ) : (
-        <div className="space-y-4">
-          <AnimatedExerciseDisplay
-            imageUrl="/placeholder.svg"
-            exerciseType={selectedExercise.type}
-            isActive={isActive}
-            progress={(currentRep / selectedExercise.repetitions) * 100}
-            instructions={[
-              `Contract for ${selectedExercise.contractionTime}s`,
-              `Relax for ${selectedExercise.relaxationTime}s`,
-              `Complete ${selectedExercise.repetitions} repetitions`,
-              "Focus on proper form and breathing"
-            ]}
-          />
 
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Progress</span>
-              <span>{currentRep}/{selectedExercise.repetitions} reps</span>
-            </div>
-            <Progress 
-              value={(currentRep / selectedExercise.repetitions) * 100}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <h4 className="font-medium">Target Muscles</h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedExercise.targetMuscles.map((muscle) => (
-                  <span
-                    key={muscle}
-                    className="px-2 py-1 bg-primary/10 rounded-full text-sm"
-                  >
-                    {muscle}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="font-medium">Benefits</h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedExercise.benefits.map((benefit) => (
-                  <span
-                    key={benefit}
-                    className="px-2 py-1 bg-secondary/10 rounded-full text-sm"
-                  >
-                    {benefit}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-between">
+        {activeExercise && (
+          <div className="mt-4 p-4 bg-muted rounded-lg">
+            <h4 className="font-semibold mb-2">Active Session</h4>
+            <p className="text-sm text-muted-foreground">
+              {exercises.find((e) => e.id === activeExercise)?.description}
+            </p>
             <Button
-              variant="outline"
-              onClick={() => setSelectedExercise(null)}
-            >
-              Back to Exercises
-            </Button>
-            <Button
-              variant="default"
               onClick={completeExercise}
-              className="gap-2"
+              className="mt-4"
+              variant="secondary"
             >
-              <ChartLine className="h-4 w-4" />
-              Complete Exercise
+              Complete Session
             </Button>
           </div>
-        </div>
-      )}
+        )}
+      </CardContent>
     </Card>
   );
 };
