@@ -1,3 +1,4 @@
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
@@ -41,9 +42,19 @@ const router = createBrowserRouter([
     path: "/auth",
     element: <Auth />,
   },
+  // Public web tools routes
   {
     path: "/tools",
-    element: <WebTools />,
+    children: [
+      {
+        path: "",
+        element: <WebTools />,
+      },
+      {
+        path: ":toolSlug",
+        element: <WebTools />,
+      }
+    ],
   },
   // Standalone breathing game routes outside the main layout
   {
@@ -58,7 +69,7 @@ const router = createBrowserRouter([
     path: "/breathing-zen",
     element: <ZenGarden />,
   },
-  // Main app routes
+  // Main app routes (protected)
   {
     path: "/",
     element: (
@@ -70,7 +81,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Index />,
+        element: <DashboardPage />,
       },
       {
         path: "/breathing",
@@ -83,10 +94,6 @@ const router = createBrowserRouter([
       {
         path: "/cbt",
         element: <CBTPage />,
-      },
-      {
-        path: "/dashboard",
-        element: <DashboardPage />,
       },
       {
         path: "/development",
