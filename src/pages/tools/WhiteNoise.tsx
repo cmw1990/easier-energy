@@ -2,66 +2,32 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Wind, Play, Pause, User, Volume2, Waves, Music2 } from "lucide-react";
+import { Wind, Play, Pause, User } from "lucide-react";
 import { TopNav } from "@/components/layout/TopNav";
-import { createNoiseBuffer } from "@/utils/audio/createNoiseBuffer";
-import { generateBinauralBeat, generateNatureSound } from "@/utils/audio";
+import { NoiseControls } from "@/components/audio/NoiseControls";
+import { NatureSoundControls } from "@/components/audio/NatureSoundControls";
+import { BinauralControls } from "@/components/audio/BinauralControls";
+import { useAudioGenerator } from "@/hooks/useAudioGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import type { NatureSound } from "@/utils/audio/natureTypes";
 import type { Json } from "@/integrations/supabase/types";
 
-interface AudioState {
-  noise: AudioBufferSourceNode | null;
-  nature: ReturnType<typeof generateNatureSound> | null;
-  binaural: ReturnType<typeof generateBinauralBeat> | null;
-}
-
-interface AudioSettings {
-  noiseType: 'white' | 'pink' | 'brown' | 'off';
-  noiseVolume: number;
-  natureSoundType: NatureSound | null;
-  natureSoundVolume: number;
-  binauralFrequency: number | null;
-  binauralVolume: number;
-}
-
 const WhiteNoise = () => {
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [gainNode, setGainNode] = useState<GainNode | null>(null);
-  const [audioState, setAudioState] = useState<AudioState>({
-    noise: null,
-    nature: null,
-    binaural: null
-  });
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [settings, setSettings] = useState<AudioSettings>({
-    noiseType: 'white',
-    noiseVolume: 0.5,
-    natureSoundType: null,
-    natureSoundVolume: 0,
-    binauralFrequency: null,
-    binauralVolume: 0
-  });
+  const {
+    isPlaying,
+    settings,
+    toggleSound,
+    updateNoiseType,
+    updateNatureSound,
+    updateVolume
+  } = useAudioGenerator();
+  
   const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
   const [user, setUser] = useState(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    const initAudio = async () => {
-      const context = new AudioContext();
-      const gain = context.createGain();
-      gain.connect(context.destination);
-      gain.gain.value = settings.noiseVolume;
-      
-      setAudioContext(context);
-      setGainNode(gain);
-    };
-
-    initAudio();
-
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user || null);
@@ -72,13 +38,7 @@ const WhiteNoise = () => {
       setUser(session?.user || null);
     });
 
-    return () => {
-      stopAllSounds();
-      if (audioContext) {
-        audioContext.close();
-      }
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const logSession = async () => {
@@ -91,7 +51,7 @@ const WhiteNoise = () => {
         tool_type: "audio",
         tool_name: "noise_generator",
         session_duration: sessionDuration,
-        audio_settings: settings as unknown as Json // Type assertion to match Supabase's Json type
+        audio_settings: settings as unknown as Json
       });
 
       if (error) throw error;
@@ -105,106 +65,14 @@ const WhiteNoise = () => {
     }
   };
 
-  const stopAllSounds = () => {
-    if (audioState.noise) {
-      audioState.noise.stop();
-    }
-    if (audioState.nature) {
-      audioState.nature.stop();
-    }
-    if (audioState.binaural) {
-      audioState.binaural.stop();
-    }
-    setAudioState({ noise: null, nature: null, binaural: null });
-  };
-
-  const toggleSound = async () => {
-    if (!audioContext || !gainNode) return;
-
-    if (isPlaying) {
-      stopAllSounds();
-      setIsPlaying(false);
+  const handleToggle = async () => {
+    const started = await toggleSound();
+    if (started) {
+      setSessionStartTime(Date.now());
+    } else {
       if (sessionStartTime) {
         await logSession();
         setSessionStartTime(null);
-      }
-    } else {
-      const newState: AudioState = { noise: null, nature: null, binaural: null };
-
-      // Generate noise if selected
-      if (settings.noiseType !== 'off' && settings.noiseVolume > 0) {
-        const buffer = createNoiseBuffer(audioContext, settings.noiseType);
-        const source = audioContext.createBufferSource();
-        source.buffer = buffer;
-        source.loop = true;
-        
-        const noiseGain = audioContext.createGain();
-        noiseGain.gain.value = settings.noiseVolume;
-        source.connect(noiseGain);
-        noiseGain.connect(gainNode);
-        
-        source.start();
-        newState.noise = source;
-      }
-
-      // Add nature sounds if selected
-      if (settings.natureSoundType && settings.natureSoundVolume > 0) {
-        const natureSound = generateNatureSound(settings.natureSoundType, settings.natureSoundVolume);
-        newState.nature = natureSound;
-      }
-
-      // Add binaural beats if frequency is set
-      if (settings.binauralFrequency && settings.binauralVolume > 0) {
-        const binauralBeat = generateBinauralBeat(432, settings.binauralFrequency, settings.binauralVolume);
-        newState.binaural = binauralBeat;
-      }
-
-      setAudioState(newState);
-      setIsPlaying(true);
-      setSessionStartTime(Date.now());
-    }
-  };
-
-  const updateNoiseType = (type: AudioSettings['noiseType']) => {
-    if (isPlaying) {
-      stopAllSounds();
-      setIsPlaying(false);
-    }
-    setSettings(prev => ({ ...prev, noiseType: type }));
-  };
-
-  const updateNatureSound = (type: NatureSound | null) => {
-    if (audioState.nature) {
-      audioState.nature.stop();
-    }
-    setSettings(prev => ({ ...prev, natureSoundType: type }));
-  };
-
-  const updateVolume = (type: 'noise' | 'nature' | 'binaural', value: number[]) => {
-    const newVolume = value[0];
-    
-    setSettings(prev => ({
-      ...prev,
-      [`${type}Volume`]: newVolume
-    }));
-
-    if (isPlaying) {
-      switch (type) {
-        case 'noise':
-          if (gainNode) {
-            gainNode.gain.value = newVolume;
-          }
-          break;
-        case 'nature':
-          if (audioState.nature) {
-            audioState.nature.setVolume(newVolume);
-          }
-          break;
-        case 'binaural':
-          if (audioState.binaural) {
-            audioState.binaural.setVolume(newVolume);
-          }
-          break;
       }
     }
   };
@@ -233,7 +101,7 @@ const WhiteNoise = () => {
             <div className="flex justify-center">
               <Button
                 size="lg"
-                onClick={toggleSound}
+                onClick={handleToggle}
                 className="w-24 h-24 rounded-full"
               >
                 {isPlaying ? (
@@ -245,101 +113,26 @@ const WhiteNoise = () => {
             </div>
 
             <div className="space-y-4">
-              <div className="flex flex-wrap gap-2">
-                {(['white', 'pink', 'brown', 'off'] as const).map((type) => (
-                  <Button
-                    key={type}
-                    variant={settings.noiseType === type ? "default" : "outline"}
-                    onClick={() => updateNoiseType(type)}
-                    className="capitalize"
-                  >
-                    {type} Noise
-                  </Button>
-                ))}
-              </div>
+              <NoiseControls
+                noiseType={settings.noiseType}
+                noiseVolume={settings.noiseVolume}
+                onNoiseTypeChange={updateNoiseType}
+                onVolumeChange={(v) => updateVolume('noise', v)}
+              />
 
-              {settings.noiseType !== 'off' && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Volume2 className="h-4 w-4" />
-                    <span className="text-sm font-medium">Noise Volume</span>
-                  </div>
-                  <Slider
-                    value={[settings.noiseVolume]}
-                    onValueChange={(v) => updateVolume('noise', v)}
-                    max={1}
-                    step={0.01}
-                    className="w-full"
-                  />
-                </div>
-              )}
+              <NatureSoundControls
+                natureSoundType={settings.natureSoundType}
+                natureSoundVolume={settings.natureSoundVolume}
+                onNatureSoundChange={updateNatureSound}
+                onVolumeChange={(v) => updateVolume('nature', v)}
+              />
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Music2 className="h-4 w-4" />
-                  <span className="text-sm font-medium">Nature Sounds</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {(['rain', 'ocean', 'forest', 'stream', 'wind'] as NatureSound[]).map((type) => (
-                    <Button
-                      key={type}
-                      variant={settings.natureSoundType === type ? "default" : "outline"}
-                      onClick={() => updateNatureSound(type)}
-                      className="capitalize"
-                    >
-                      {type}
-                    </Button>
-                  ))}
-                  <Button
-                    variant={settings.natureSoundType === null ? "default" : "outline"}
-                    onClick={() => updateNatureSound(null)}
-                  >
-                    Off
-                  </Button>
-                </div>
-                {settings.natureSoundType && (
-                  <Slider
-                    value={[settings.natureSoundVolume]}
-                    onValueChange={(v) => updateVolume('nature', v)}
-                    max={1}
-                    step={0.01}
-                    className="w-full"
-                  />
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Waves className="h-4 w-4" />
-                  <span className="text-sm font-medium">Binaural Beats</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {[4, 8, 12, 16].map((freq) => (
-                    <Button
-                      key={freq}
-                      variant={settings.binauralFrequency === freq ? "default" : "outline"}
-                      onClick={() => setSettings(prev => ({ ...prev, binauralFrequency: freq }))}
-                    >
-                      {freq}Hz
-                    </Button>
-                  ))}
-                  <Button
-                    variant={settings.binauralFrequency === null ? "default" : "outline"}
-                    onClick={() => setSettings(prev => ({ ...prev, binauralFrequency: null }))}
-                  >
-                    Off
-                  </Button>
-                </div>
-                {settings.binauralFrequency && (
-                  <Slider
-                    value={[settings.binauralVolume]}
-                    onValueChange={(v) => updateVolume('binaural', v)}
-                    max={1}
-                    step={0.01}
-                    className="w-full"
-                  />
-                )}
-              </div>
+              <BinauralControls
+                binauralFrequency={settings.binauralFrequency}
+                binauralVolume={settings.binauralVolume}
+                onFrequencyChange={(freq) => setSettings(prev => ({ ...prev, binauralFrequency: freq }))}
+                onVolumeChange={(v) => updateVolume('binaural', v)}
+              />
             </div>
 
             <div className="text-sm text-muted-foreground text-center">
