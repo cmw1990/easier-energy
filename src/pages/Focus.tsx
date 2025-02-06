@@ -33,6 +33,7 @@ import { FocusRoutineCard } from "@/components/focus/routines/FocusRoutineCard";
 import { TimeBlockingCard } from "@/components/focus/tools/TimeBlockingCard";
 import { FocusAnalyticsDashboard } from "@/components/focus/analytics/FocusAnalyticsDashboard";
 import { FocusEnvironment } from "@/components/focus/FocusEnvironment";
+import { ADHDTaskBreakdown } from "@/components/focus/tasks/ADHDTaskBreakdown";
 
 const Focus = () => {
   const { session } = useAuth();
@@ -80,7 +81,7 @@ const Focus = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FocusTimerTools />
-        <FocusEnvironment />
+        <ADHDTaskBreakdown />
       </div>
 
       <FocusAnalyticsDashboard />
@@ -90,6 +91,8 @@ const Focus = () => {
         <FocusRoutineCard />
         <TimeBlockingCard />
       </div>
+
+      <FocusEnvironment />
 
       {/* Original games section */}
       <Tabs defaultValue="quick" className="space-y-4">

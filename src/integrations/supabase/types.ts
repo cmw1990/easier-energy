@@ -1464,42 +1464,87 @@ export type Database = {
       focus_analytics: {
         Row: {
           created_at: string | null
+          daily_focus_score: number | null
           date: string
           energy_levels: Json | null
+          focus_patterns: Json | null
           id: string
           interrupted_sessions: number | null
           notes: string | null
           peak_focus_periods: Json | null
+          productivity_insights: string | null
           productivity_score: number | null
           successful_sessions: number | null
+          suggested_improvements: Json | null
           total_focus_time: number | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
+          daily_focus_score?: number | null
           date?: string
           energy_levels?: Json | null
+          focus_patterns?: Json | null
           id?: string
           interrupted_sessions?: number | null
           notes?: string | null
           peak_focus_periods?: Json | null
+          productivity_insights?: string | null
           productivity_score?: number | null
           successful_sessions?: number | null
+          suggested_improvements?: Json | null
           total_focus_time?: number | null
           user_id: string
         }
         Update: {
           created_at?: string | null
+          daily_focus_score?: number | null
           date?: string
           energy_levels?: Json | null
+          focus_patterns?: Json | null
           id?: string
           interrupted_sessions?: number | null
           notes?: string | null
           peak_focus_periods?: Json | null
+          productivity_insights?: string | null
           productivity_score?: number | null
           successful_sessions?: number | null
+          suggested_improvements?: Json | null
           total_focus_time?: number | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      focus_celebrations: {
+        Row: {
+          achievement_type: string
+          celebration_message: string | null
+          created_at: string | null
+          id: string
+          milestone_reached: string
+          points_earned: number | null
+          reward_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          achievement_type: string
+          celebration_message?: string | null
+          created_at?: string | null
+          id?: string
+          milestone_reached: string
+          points_earned?: number | null
+          reward_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          achievement_type?: string
+          celebration_message?: string | null
+          created_at?: string | null
+          id?: string
+          milestone_reached?: string
+          points_earned?: number | null
+          reward_type?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1538,6 +1583,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      focus_interruption_logs: {
+        Row: {
+          context: string | null
+          coping_strategy: string | null
+          created_at: string | null
+          duration_seconds: number | null
+          effectiveness_rating: number | null
+          id: string
+          interruption_type: string
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          context?: string | null
+          coping_strategy?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          effectiveness_rating?: number | null
+          id?: string
+          interruption_type: string
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          context?: string | null
+          coping_strategy?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          effectiveness_rating?: number | null
+          id?: string
+          interruption_type?: string
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "focus_interruption_logs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "focus_timer_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       focus_music: {
         Row: {
@@ -1655,6 +1744,56 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      focus_task_breakdowns: {
+        Row: {
+          created_at: string | null
+          energy_level_required: number | null
+          id: string
+          micro_steps: Json
+          motivation_notes: string | null
+          rewards: Json | null
+          task_id: string | null
+          time_estimates: Json | null
+          updated_at: string | null
+          user_id: string | null
+          visual_aids: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          energy_level_required?: number | null
+          id?: string
+          micro_steps?: Json
+          motivation_notes?: string | null
+          rewards?: Json | null
+          task_id?: string | null
+          time_estimates?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+          visual_aids?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          energy_level_required?: number | null
+          id?: string
+          micro_steps?: Json
+          motivation_notes?: string | null
+          rewards?: Json | null
+          task_id?: string | null
+          time_estimates?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+          visual_aids?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "focus_task_breakdowns_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       focus_timer_sessions: {
         Row: {
