@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import type { NatureSound } from "@/utils/audio/natureTypes";
+import type { Json } from "@/integrations/supabase/types";
 
 interface AudioState {
   noise: AudioBufferSourceNode | null;
@@ -90,7 +91,7 @@ const WhiteNoise = () => {
         tool_type: "audio",
         tool_name: "noise_generator",
         session_duration: sessionDuration,
-        audio_settings: settings
+        audio_settings: settings as unknown as Json // Type assertion to match Supabase's Json type
       });
 
       if (error) throw error;
