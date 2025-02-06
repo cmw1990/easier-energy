@@ -31,8 +31,11 @@ const WhiteNoise = () => {
     setGainNode(gain);
 
     // Check authentication status
-    const { data: { session } } = supabase.auth.getSession();
-    setUser(session?.user || null);
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    checkUser();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
