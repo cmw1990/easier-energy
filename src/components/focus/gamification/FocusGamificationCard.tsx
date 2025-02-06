@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy, Star } from "lucide-react";
-import { Achievement, Challenge, GamificationData } from "./types";
+import { Achievement, Challenge, GamificationData, RawGamificationData, GamificationDataUpdate } from "./types";
 import { AchievementItem } from "./AchievementItem";
 import { ChallengeItem } from "./ChallengeItem";
 
@@ -86,21 +86,31 @@ export const FocusGamificationCard = () => {
         challenge.id === challengeId ? { ...challenge, completed: true } : challenge
       );
 
-      const updatedData = {
-        ...gamificationData,
-        daily_challenges: updatedChallenges,
-        points_earned: gamificationData.points_earned + (updatedChallenges.find(c => c.id === challengeId)?.points || 0)
+      const updatedPoints = gamificationData.points_earned + 
+        (gamificationData.daily_challenges.find(c => c.id === challengeId)?.points || 0);
+
+      // Prepare the update payload
+      const updatePayload: GamificationDataUpdate = {
+        daily_challenges: updatedChallenges.map(challenge => ({
+          id: challenge.id,
+          title: challenge.title,
+          description: challenge.description,
+          points: challenge.points,
+          completed: challenge.completed
+        })),
+        points_earned: updatedPoints
       };
 
-      setGamificationData(updatedData);
+      setGamificationData({
+        ...gamificationData,
+        daily_challenges: updatedChallenges,
+        points_earned: updatedPoints
+      });
 
       // Update in the database
       const { error } = await supabase
         .from('focus_gamification')
-        .update({
-          daily_challenges: updatedChallenges,
-          points_earned: updatedData.points_earned
-        })
+        .update(updatePayload)
         .eq('user_id', session.user.id);
 
       if (error) throw error;

@@ -24,6 +24,7 @@ export interface GamificationData {
   daily_challenges: Challenge[];
 }
 
+// Type for raw data from Supabase before transformation
 export interface RawGamificationData {
   id: string;
   points_earned: number | null;
@@ -31,4 +32,10 @@ export interface RawGamificationData {
   level: number | null;
   achievements: Record<string, any>[];
   daily_challenges: Record<string, any>[];
+}
+
+// Type for the database updates to ensure JSON compatibility
+export interface GamificationDataUpdate {
+  daily_challenges: Record<string, any>[];
+  points_earned?: number;
 }
