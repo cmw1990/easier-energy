@@ -42,6 +42,7 @@ import { MedicationReminders } from "@/components/focus/medication/MedicationRem
 import { NoiseSensitivitySettings } from "@/components/focus/noise/NoiseSensitivitySettings";
 import { VisualOrganizationTools } from "@/components/focus/visual/VisualOrganizationTools";
 import { FocusPriorityQueue } from "@/components/focus/priority/FocusPriorityQueue";
+import { BodyDoublingTemplates } from "@/components/focus/body-doubling/BodyDoublingTemplates";
 
 interface BodyDoublingSession {
   id: string;
@@ -217,7 +218,12 @@ const Focus = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FocusPriorityQueue />
+        <BodyDoublingTemplates />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FocusJournal />
+        <FocusHabitTracker />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

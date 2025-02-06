@@ -10,12 +10,14 @@ import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { ListPlus, Battery, Clock, Tags, CheckCircle2, XCircle } from "lucide-react";
 
+type PriorityLevel = "now" | "soon" | "later";
+
 interface Task {
   id: string;
   task_name: string;
   energy_level: number;
   time_estimate_minutes: number;
-  priority_level: 'now' | 'soon' | 'later';
+  priority_level: PriorityLevel;
   context_tags: string[];
   completed: boolean;
   reward_points: number;
@@ -29,7 +31,7 @@ export const FocusPriorityQueue = () => {
     task_name: "",
     energy_level: 5,
     time_estimate_minutes: 30,
-    priority_level: "soon" as const,
+    priority_level: "soon" as PriorityLevel,
     context_tags: [] as string[],
   });
   const [tagInput, setTagInput] = useState("");
@@ -49,7 +51,16 @@ export const FocusPriorityQueue = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setTasks(data || []);
+      
+      // Ensure the data conforms to our Task type
+      const typedTasks: Task[] = data.map(task => ({
+        ...task,
+        priority_level: task.priority_level as PriorityLevel,
+        context_tags: task.context_tags || [],
+        completed: task.completed || false
+      }));
+      
+      setTasks(typedTasks);
     } catch (error) {
       console.error('Error loading tasks:', error);
       toast({
