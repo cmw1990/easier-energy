@@ -22,6 +22,7 @@ import { AdvancedExercisePatterns } from "@/components/exercises/AdvancedExercis
 import { ExerciseProgressChart } from "@/components/exercises/ExerciseProgressChart";
 import { BreathingPatternExercise } from "@/components/exercises/BreathingPatternExercise";
 import { DynamicControlExercises } from "@/components/exercises/DynamicControlExercises";
+import { SpecializedTrainingExercises } from "@/components/exercises/SpecializedTrainingExercises";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -259,6 +260,18 @@ export default function Index() {
       >
         <div className="space-y-4">
           <DynamicControlExercises />
+        </div>
+      </motion.div>
+
+      {/* Add Specialized Training Section */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.8 }}
+        className="col-span-1"
+      >
+        <div className="space-y-4">
+          <SpecializedTrainingExercises />
         </div>
       </motion.div>
 
