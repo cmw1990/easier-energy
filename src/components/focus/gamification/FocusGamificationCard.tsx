@@ -35,11 +35,23 @@ interface GamificationData {
 
 interface RawGamificationData {
   id: string;
-  points_earned: number;
-  streak_count: number;
-  level: number;
-  achievements: any[];
-  daily_challenges: any[];
+  points_earned: number | null;
+  streak_count: number | null;
+  level: number | null;
+  achievements: Array<{
+    id: string;
+    title: string;
+    description: string;
+    icon?: string;
+    unlocked?: boolean;
+  }> | null;
+  daily_challenges: Array<{
+    id: string;
+    title: string;
+    description: string;
+    points?: number;
+    completed?: boolean;
+  }> | null;
 }
 
 export const FocusGamificationCard = () => {
@@ -64,20 +76,21 @@ export const FocusGamificationCard = () => {
 
       if (error) throw error;
 
+      const data = rawData as RawGamificationData;
       // Transform the raw data into the correct types
       const transformedData: GamificationData = {
-        id: rawData.id,
-        points_earned: rawData.points_earned || 0,
-        streak_count: rawData.streak_count || 0,
-        level: rawData.level || 1,
-        achievements: (rawData.achievements || []).map((achievement: any) => ({
+        id: data.id,
+        points_earned: data.points_earned || 0,
+        streak_count: data.streak_count || 0,
+        level: data.level || 1,
+        achievements: (data.achievements || []).map(achievement => ({
           id: achievement.id,
           title: achievement.title,
           description: achievement.description,
           icon: achievement.icon || 'trophy',
           unlocked: achievement.unlocked || false
         })),
-        daily_challenges: (rawData.daily_challenges || []).map((challenge: any) => ({
+        daily_challenges: (data.daily_challenges || []).map(challenge => ({
           id: challenge.id,
           title: challenge.title,
           description: challenge.description,
@@ -262,4 +275,3 @@ export const FocusGamificationCard = () => {
     </Card>
   );
 };
-
