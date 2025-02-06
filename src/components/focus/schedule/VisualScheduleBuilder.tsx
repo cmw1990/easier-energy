@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -175,4 +174,68 @@ export const VisualScheduleBuilder = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space
+        <div className="space-y-4">
+          <Label htmlFor="scheduleType">Schedule Type</Label>
+          <Input
+            type="text"
+            id="scheduleType"
+            value={currentSchedule.schedule_type}
+            onChange={(e) =>
+              setCurrentSchedule({
+                ...currentSchedule,
+                schedule_type: e.target.value,
+              })
+            }
+          />
+
+          <Label>Time Blocks</Label>
+          {currentSchedule.time_blocks.map((block) => (
+            <div key={block.id} className="grid grid-cols-6 gap-2">
+              <Input
+                type="time"
+                value={block.start_time}
+                onChange={(e) =>
+                  updateTimeBlock(block.id, { start_time: e.target.value })
+                }
+              />
+              <Input
+                type="time"
+                value={block.end_time}
+                onChange={(e) =>
+                  updateTimeBlock(block.id, { end_time: e.target.value })
+                }
+              />
+              <Input
+                type="text"
+                value={block.activity}
+                onChange={(e) =>
+                  updateTimeBlock(block.id, { activity: e.target.value })
+                }
+              />
+              <Input
+                type="color"
+                value={block.color}
+                onChange={(e) =>
+                  updateTimeBlock(block.id, { color: e.target.value })
+                }
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => removeTimeBlock(block.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          <Button variant="secondary" onClick={addTimeBlock}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Time Block
+          </Button>
+
+          <Button onClick={saveSchedule}>Save Schedule</Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};

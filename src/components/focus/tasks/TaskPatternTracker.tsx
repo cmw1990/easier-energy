@@ -268,6 +268,5 @@ export const TaskPatternTracker = () => {
         </div>
       </CardContent>
     </Card>
-  </aside>
-);
+  );
 };
