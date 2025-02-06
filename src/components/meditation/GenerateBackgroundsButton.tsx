@@ -12,6 +12,7 @@ export const GenerateBackgroundsButton = () => {
   const generateAllBackgrounds = async () => {
     setIsGenerating(true);
     try {
+      console.log('Calling generate-assets function...');
       const response = await supabase.functions.invoke(
         'generate-assets',
         {
@@ -24,6 +25,8 @@ export const GenerateBackgroundsButton = () => {
       );
 
       if (response.error) throw response.error;
+      
+      console.log('Generation response:', response.data);
 
       toast({
         title: 'Background Generation Complete',

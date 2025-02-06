@@ -97,8 +97,8 @@ export const ExerciseAssetsGenerator = () => {
             'generate-assets',
             {
               body: {
-                batch,
                 type: 'exercise-assets',
+                batch,
                 description: `Professional illustration of ${batch.replace(/-/g, ' ')} eye exercise, showing eye movement pattern and proper technique, simple vector style, clean design`,
                 style: "clean vector illustration style with soft colors, medical illustration quality"
               }

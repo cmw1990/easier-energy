@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,16 +12,22 @@ export const ZenDriftAssetsGenerator = () => {
   const generateAssets = async () => {
     setIsGenerating(true);
     try {
+      console.log('Calling generate-assets function...');
       const { data, error } = await supabase.functions.invoke(
-        'generate-zen-drift-assets',
+        'generate-assets',
         {
-          body: JSON.stringify({
-            type: 'zen-drift'
-          })
+          body: {
+            type: 'zen-drift',
+            description: 'A minimalist and serene landscape for a peaceful driving experience. The scene should feature elegant curves, zen garden elements, and a calming color palette.',
+            style: 'zen-like, artistic, minimalist, ethereal'
+          }
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        console.error('Function error:', error);
+        throw error;
+      }
       
       console.log('Generation response:', data);
       
