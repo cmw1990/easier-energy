@@ -1,4 +1,3 @@
-
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
@@ -8,6 +7,7 @@ import Layout from "@/components/layout/Layout"
 import NotFound from "@/components/layout/NotFound"
 import Index from "@/pages/Index"
 import Auth from "@/pages/Auth"
+import LandingPage from "@/pages/LandingPage"
 import CBTPage from "@/pages/CBT"
 import BreathingPage from "@/pages/Breathing"
 import CaffeinePage from "@/pages/Caffeine"
@@ -38,6 +38,14 @@ import DevelopmentTools from "@/pages/DevelopmentTools"
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/desktop",
+    element: <Index />,
+  },
   {
     path: "/auth",
     element: <Auth />,
@@ -71,7 +79,7 @@ const router = createBrowserRouter([
   },
   // Main app routes (protected)
   {
-    path: "/",
+    path: "/app",
     element: (
       <AuthProvider>
         <Layout />
@@ -80,7 +88,7 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {
-        path: "/",
+        path: "",
         element: <DashboardPage />,
       },
       {

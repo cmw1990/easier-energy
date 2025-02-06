@@ -41,6 +41,7 @@ const Layout = ({ children }: LayoutProps) => {
         title: "Signed out successfully",
         description: "Come back soon!",
       });
+      navigate("/");
     } catch (error) {
       toast({
         title: "Error signing out",
