@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface EnergyLevels {
   current: number;
-  average?: number;
 }
 
 interface FocusAnalytics {
@@ -26,7 +25,7 @@ export const FocusAnalyticsDashboard = () => {
         .select('*')
         .order('date', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data as unknown as FocusAnalytics;
@@ -70,7 +69,7 @@ export const FocusAnalyticsDashboard = () => {
             </div>
             <Progress 
               value={analytics?.successful_sessions ? 
-                (analytics.successful_sessions / (analytics.successful_sessions + analytics.interrupted_sessions)) * 100 
+                (analytics.successful_sessions / (analytics.successful_sessions + (analytics.interrupted_sessions || 0))) * 100 
                 : 0
               } 
               className="mt-2" 
