@@ -1242,6 +1242,36 @@ export type Database = {
         }
         Relationships: []
       }
+      eye_exercise_achievements: {
+        Row: {
+          achievement_type: string
+          created_at: string | null
+          id: string
+          streak_requirement: number | null
+          total_exercises_requirement: number | null
+          unlocked_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          achievement_type: string
+          created_at?: string | null
+          id?: string
+          streak_requirement?: number | null
+          total_exercises_requirement?: number | null
+          unlocked_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          achievement_type?: string
+          created_at?: string | null
+          id?: string
+          streak_requirement?: number | null
+          total_exercises_requirement?: number | null
+          unlocked_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       eye_exercise_logs: {
         Row: {
           completed_at: string | null
@@ -1252,6 +1282,7 @@ export type Database = {
           id: string
           notes: string | null
           user_id: string | null
+          visual_guide_url: string | null
         }
         Insert: {
           completed_at?: string | null
@@ -1262,6 +1293,7 @@ export type Database = {
           id?: string
           notes?: string | null
           user_id?: string | null
+          visual_guide_url?: string | null
         }
         Update: {
           completed_at?: string | null
@@ -1272,6 +1304,7 @@ export type Database = {
           id?: string
           notes?: string | null
           user_id?: string | null
+          visual_guide_url?: string | null
         }
         Relationships: []
       }
@@ -3076,6 +3109,7 @@ export type Database = {
           break_reminder_style: Json | null
           context_aware_settings: Json | null
           created_at: string | null
+          exercise_reminders: Json | null
           focus_check_frequency: unknown | null
           id: string
           preferences: Json
@@ -3087,6 +3121,7 @@ export type Database = {
           break_reminder_style?: Json | null
           context_aware_settings?: Json | null
           created_at?: string | null
+          exercise_reminders?: Json | null
           focus_check_frequency?: unknown | null
           id?: string
           preferences?: Json
@@ -3098,6 +3133,7 @@ export type Database = {
           break_reminder_style?: Json | null
           context_aware_settings?: Json | null
           created_at?: string | null
+          exercise_reminders?: Json | null
           focus_check_frequency?: unknown | null
           id?: string
           preferences?: Json
