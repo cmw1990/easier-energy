@@ -23,6 +23,7 @@ import { ExerciseProgressChart } from "@/components/exercises/ExerciseProgressCh
 import { BreathingPatternExercise } from "@/components/exercises/BreathingPatternExercise";
 import { DynamicControlExercises } from "@/components/exercises/DynamicControlExercises";
 import { SpecializedTrainingExercises } from "@/components/exercises/SpecializedTrainingExercises";
+import { FocusEnhancementTools } from "@/components/focus/FocusEnhancementTools";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -54,7 +55,6 @@ export default function Index() {
         <GameAssetsGenerator />
       </div>
 
-      {/* Add Balloon Adventure Game Button */}
       <Card className="p-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 hover:shadow-lg transition-all duration-300">
         <div className="flex items-center gap-3 mb-4">
           <Gamepad2 className="h-6 w-6 text-pink-500" />
@@ -75,7 +75,6 @@ export default function Index() {
         </div>
       </Card>
 
-      {/* Energy Overview Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
@@ -92,7 +91,6 @@ export default function Index() {
           </Card>
         </motion.div>
 
-        {/* Quick Access Tools */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -121,7 +119,6 @@ export default function Index() {
           </Card>
         </motion.div>
 
-        {/* Audio Tools with Reproductive Health Exercises */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -130,7 +127,7 @@ export default function Index() {
         >
           <div className="space-y-4">
             <BackgroundMusicPlayer />
-            <ReproductiveHealthExercises />
+            <FocusEnhancementTools />
           </div>
         </motion.div>
 
@@ -220,7 +217,6 @@ export default function Index() {
         </motion.div>
       </div>
 
-      {/* Advanced Exercise Section */}
       <div className="grid gap-4 md:grid-cols-2">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
@@ -239,7 +235,6 @@ export default function Index() {
         </motion.div>
       </div>
 
-      {/* New Breathing Pattern Exercise Section */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -251,7 +246,6 @@ export default function Index() {
         </div>
       </motion.div>
 
-      {/* New Dynamic Control Exercises Section */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -263,7 +257,6 @@ export default function Index() {
         </div>
       </motion.div>
 
-      {/* Add Specialized Training Section */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -275,7 +268,6 @@ export default function Index() {
         </div>
       </motion.div>
 
-      {/* Main Dashboard Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
@@ -312,7 +304,6 @@ export default function Index() {
         </motion.div>
       </div>
 
-      {/* Achievement Section */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -321,7 +312,6 @@ export default function Index() {
         <AchievementWall />
       </motion.div>
 
-      {/* Support Tools */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
