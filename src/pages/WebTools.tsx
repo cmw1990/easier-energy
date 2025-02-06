@@ -2,12 +2,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
 import { Link, useParams } from "react-router-dom";
-import { Brain, Leaf, HeartPulse, Pill, Settings, ChartBar, Waves, Music2, Focus, Wind, Footprints, Moon } from "lucide-react";
+import { Brain, Leaf, HeartPulse, Pill, Settings, ChartBar, Waves, Music2, Focus, Wind, Footprints, Moon, Coffee, Cigarette, Battery, Droplets } from "lucide-react";
 
 const WebTools = () => {
   const { toolSlug } = useParams();
 
   const tools = [
+    // Sound & Focus Tools
     {
       title: "White Noise Generator",
       description: "Customize and play different types of white, pink, and brown noise to enhance focus",
@@ -24,6 +25,16 @@ const WebTools = () => {
       tags: ["meditation", "focus", "sound"],
       category: "sound"
     },
+    {
+      title: "Nature Sounds",
+      description: "Calming nature sounds for relaxation and focus",
+      icon: Music2,
+      path: "/tools/nature-sounds",
+      tags: ["relaxation", "sound", "focus"],
+      category: "sound"
+    },
+
+    // Meditation & Breathing Tools
     {
       title: "Breathing Exercises",
       description: "Interactive breathing patterns and exercises for stress relief and focus",
@@ -56,21 +67,55 @@ const WebTools = () => {
       tags: ["meditation", "exercise"],
       category: "meditation"
     },
+
+    // Health & Supplement Guides
     {
-      title: "Nature Sounds",
-      description: "Calming nature sounds for relaxation and focus",
-      icon: Music2,
-      path: "/tools/nature-sounds",
-      tags: ["relaxation", "sound", "focus"],
-      category: "sound"
+      title: "Sleep Guide",
+      description: "Comprehensive guide to improving sleep quality and habits",
+      icon: Moon,
+      path: "/tools/sleep-guide",
+      tags: ["health", "sleep", "wellness"],
+      category: "guides"
     },
     {
       title: "Supplement Guide",
-      description: "Comprehensive guide to nootropics and supplements",
+      description: "Comprehensive guide to nootropics and supplements for cognitive enhancement",
       icon: Pill,
       path: "/tools/supplement-guide",
-      tags: ["health", "nootropics"],
-      category: "health"
+      tags: ["health", "nootropics", "supplements"],
+      category: "guides"
+    },
+    {
+      title: "Caffeine Guide",
+      description: "Understanding caffeine, timing, and optimal usage for energy and focus",
+      icon: Coffee,
+      path: "/tools/caffeine-guide",
+      tags: ["health", "energy", "focus"],
+      category: "guides"
+    },
+    {
+      title: "Energy Drinks Guide",
+      description: "Comprehensive analysis of energy drinks, ingredients, and healthier alternatives",
+      icon: Battery,
+      path: "/tools/energy-drinks-guide",
+      tags: ["health", "energy", "wellness"],
+      category: "guides"
+    },
+    {
+      title: "Nicotine Guide",
+      description: "Safe usage guide for non-smoking nicotine products and alternatives",
+      icon: Cigarette,
+      path: "/tools/nicotine-guide",
+      tags: ["health", "focus", "alternatives"],
+      category: "guides"
+    },
+    {
+      title: "Hydration Guide",
+      description: "Optimize your hydration for better energy and cognitive performance",
+      icon: Droplets,
+      path: "/tools/hydration-guide",
+      tags: ["health", "energy", "wellness"],
+      category: "guides"
     }
   ];
 
@@ -86,14 +131,14 @@ const WebTools = () => {
             Free Wellness & Focus Tools
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Access our collection of free online tools for focus, meditation, and wellness. 
+            Access our collection of free online tools and guides for focus, meditation, and wellness. 
             No installation required - use directly in your browser.
           </p>
         </div>
 
         {categories.map(category => (
           <div key={category} className="space-y-4">
-            <h2 className="text-2xl font-semibold capitalize">{category} Tools</h2>
+            <h2 className="text-2xl font-semibold capitalize">{category}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tools
                 .filter(tool => tool.category === category)

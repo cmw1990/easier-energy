@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill } from "lucide-react"
+import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee } from "lucide-react"
 import { Link } from "react-router-dom"
 import { TopNav } from "@/components/layout/TopNav"
 
@@ -16,7 +16,7 @@ const LandingPage = () => {
           Optimize Your Energy & Performance
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-          Access powerful tools and insights to enhance your focus, energy, and overall well-being. 
+          Access powerful tools and comprehensive guides to enhance your focus, energy, and overall well-being. 
           Join thousands of high performers who trust The Well-Charged.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -43,16 +43,16 @@ const LandingPage = () => {
               <Brain className="h-8 w-8 text-primary mb-2" />
               <CardTitle>Cognitive Enhancement</CardTitle>
               <CardDescription>
-                Science-backed tools and techniques to optimize your mental performance
+                Science-backed tools and comprehensive guides for optimal mental performance
               </CardDescription>
             </CardHeader>
           </Card>
           <Card className="bg-background border-2 border-primary/20">
             <CardHeader>
               <Globe className="h-8 w-8 text-primary mb-2" />
-              <CardTitle>Global Community</CardTitle>
+              <CardTitle>Accessible Anywhere</CardTitle>
               <CardDescription>
-                Connect with like-minded individuals focused on personal optimization
+                Use our tools directly in your browser - no downloads or installations needed
               </CardDescription>
             </CardHeader>
           </Card>
@@ -61,7 +61,7 @@ const LandingPage = () => {
               <Zap className="h-8 w-8 text-primary mb-2" />
               <CardTitle>Energy Management</CardTitle>
               <CardDescription>
-                Track and optimize your energy levels throughout the day
+                Optimize your energy levels with our guides and tracking tools
               </CardDescription>
             </CardHeader>
           </Card>
@@ -70,26 +70,26 @@ const LandingPage = () => {
 
       {/* Tools Preview Section */}
       <section className="container mx-auto px-4 py-20">
-        <h2 className="text-3xl font-bold text-center mb-12">Featured Tools</h2>
+        <h2 className="text-3xl font-bold text-center mb-12">Featured Tools & Guides</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
             {
               title: "White Noise Generator",
               description: "Enhance focus and productivity with customizable white noise",
-              icon: Settings,
+              icon: Wind,
               path: "/tools/white-noise"
             },
             {
-              title: "Binaural Beats",
-              description: "Science-backed audio frequencies for meditation and concentration",
-              icon: Settings,
-              path: "/tools/binaural-beats"
-            },
-            {
               title: "Supplement Guide",
-              description: "Comprehensive guide to nootropics and supplements",
+              description: "Comprehensive guide to nootropics and cognitive enhancement",
               icon: Pill,
               path: "/tools/supplement-guide"
+            },
+            {
+              title: "Caffeine Guide",
+              description: "Optimize your caffeine intake for better energy and focus",
+              icon: Coffee,
+              path: "/tools/caffeine-guide"
             }
           ].map((tool) => (
             <Link key={tool.title} to={tool.path}>
