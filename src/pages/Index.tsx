@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
 import { Card } from "@/components/ui/card";
@@ -10,6 +11,8 @@ import { ADHDTaskManager } from "@/components/focus/ADHDTaskManager";
 import { FocusAnalyticsDashboard } from "@/components/focus/FocusAnalyticsDashboard";
 import { FocusAchievements } from "@/components/focus/FocusAchievements";
 import { EisenhowerMatrix } from "@/components/focus/EisenhowerMatrix";
+import { FocusTimerTools } from "@/components/focus/FocusTimerTools";
+import { FocusEnvironment } from "@/components/focus/FocusEnvironment";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -90,6 +93,24 @@ export default function Index() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
+          className="col-span-full lg:col-span-2"
+        >
+          <FocusTimerTools />
+        </motion.div>
+
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="col-span-full lg:col-span-2"
+        >
+          <FocusEnvironment />
+        </motion.div>
+
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
           className="col-span-full"
         >
           <EisenhowerMatrix />
@@ -98,7 +119,7 @@ export default function Index() {
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.6 }}
           className="col-span-full lg:col-span-2"
         >
           <FocusAnalyticsDashboard />
@@ -107,7 +128,7 @@ export default function Index() {
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.7 }}
           className="col-span-full lg:col-span-2"
         >
           <FocusAchievements />

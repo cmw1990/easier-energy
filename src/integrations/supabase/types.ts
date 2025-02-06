@@ -1074,6 +1074,39 @@ export type Database = {
         }
         Relationships: []
       }
+      executive_function_tools: {
+        Row: {
+          active_reminders: Json[] | null
+          created_at: string | null
+          id: string
+          schedule: Json | null
+          settings: Json | null
+          tool_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          active_reminders?: Json[] | null
+          created_at?: string | null
+          id?: string
+          schedule?: Json | null
+          settings?: Json | null
+          tool_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          active_reminders?: Json[] | null
+          created_at?: string | null
+          id?: string
+          schedule?: Json | null
+          settings?: Json | null
+          tool_type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       exercise_assets: {
         Row: {
           asset_url: string
@@ -1470,6 +1503,42 @@ export type Database = {
         }
         Relationships: []
       }
+      focus_environment_preferences: {
+        Row: {
+          background_type: string | null
+          created_at: string | null
+          custom_settings: Json | null
+          id: string
+          light_preference: string | null
+          noise_type: string[] | null
+          temperature_preference: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          background_type?: string | null
+          created_at?: string | null
+          custom_settings?: Json | null
+          id?: string
+          light_preference?: string | null
+          noise_type?: string[] | null
+          temperature_preference?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          background_type?: string | null
+          created_at?: string | null
+          custom_settings?: Json | null
+          id?: string
+          light_preference?: string | null
+          noise_type?: string[] | null
+          temperature_preference?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       focus_music: {
         Row: {
           artist: string | null
@@ -1544,6 +1613,141 @@ export type Database = {
           points_required?: number
           reward_type?: string
           title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      focus_routines: {
+        Row: {
+          best_time_of_day: string[] | null
+          created_at: string | null
+          duration_minutes: number | null
+          effectiveness_rating: number | null
+          energy_required: number | null
+          id: string
+          name: string
+          steps: Json
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          best_time_of_day?: string[] | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          effectiveness_rating?: number | null
+          energy_required?: number | null
+          id?: string
+          name: string
+          steps: Json
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          best_time_of_day?: string[] | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          effectiveness_rating?: number | null
+          energy_required?: number | null
+          id?: string
+          name?: string
+          steps?: Json
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      focus_timer_sessions: {
+        Row: {
+          actual_duration: number | null
+          break_duration: number | null
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          energy_level: number | null
+          id: string
+          interrupted_count: number | null
+          mood_after: number | null
+          mood_before: number | null
+          notes: string | null
+          started_at: string | null
+          tags: string[] | null
+          timer_type: string
+          user_id: string
+          work_duration: number
+        }
+        Insert: {
+          actual_duration?: number | null
+          break_duration?: number | null
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          energy_level?: number | null
+          id?: string
+          interrupted_count?: number | null
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          started_at?: string | null
+          tags?: string[] | null
+          timer_type: string
+          user_id: string
+          work_duration: number
+        }
+        Update: {
+          actual_duration?: number | null
+          break_duration?: number | null
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          energy_level?: number | null
+          id?: string
+          interrupted_count?: number | null
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          started_at?: string | null
+          tags?: string[] | null
+          timer_type?: string
+          user_id?: string
+          work_duration?: number
+        }
+        Relationships: []
+      }
+      focus_zones: {
+        Row: {
+          amenities: string[] | null
+          created_at: string | null
+          custom_settings: Json | null
+          effectiveness_rating: number | null
+          id: string
+          location_type: string | null
+          name: string
+          notes: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amenities?: string[] | null
+          created_at?: string | null
+          custom_settings?: Json | null
+          effectiveness_rating?: number | null
+          id?: string
+          location_type?: string | null
+          name: string
+          notes?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amenities?: string[] | null
+          created_at?: string | null
+          custom_settings?: Json | null
+          effectiveness_rating?: number | null
+          id?: string
+          location_type?: string | null
+          name?: string
+          notes?: string | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
