@@ -10,8 +10,8 @@ const corsHeaders = {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('', {
-      status: 204,
+    return new Response('ok', {
+      status: 200,
       headers: corsHeaders
     });
   }
@@ -40,8 +40,8 @@ serve(async (req) => {
       throw new Error('Invalid request parameters');
     }
 
-    // Generate image
-    const prompt = `Professional illustration of ${batch.replace(/-/g, ' ')} eye exercise technique, showing clear eye movement pattern, simple vector style with clear instructional elements, calming colors suitable for medical instruction`;
+    // Generate image with more descriptive prompt
+    const prompt = `Professional illustration of ${batch.replace(/-/g, ' ')} eye exercise technique, showing clear eye movement pattern, simple vector style with clear instructional elements, calming colors suitable for medical instruction, including numbered steps if relevant, on a clean white background`;
     console.log('Generated prompt:', prompt);
 
     const response = await fetch('https://api.openai.com/v1/images/generations', {
