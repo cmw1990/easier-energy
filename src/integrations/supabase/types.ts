@@ -4250,6 +4250,56 @@ export type Database = {
           },
         ]
       }
+      research_artifacts: {
+        Row: {
+          artifact_type: string
+          created_at: string | null
+          description: string | null
+          file_size: number | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          project_id: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          artifact_type: string
+          created_at?: string | null
+          description?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          project_id: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          artifact_type?: string
+          created_at?: string | null
+          description?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          project_id?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_artifacts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "research_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       research_data_points: {
         Row: {
           collected_at: string
@@ -4295,6 +4345,111 @@ export type Database = {
           },
         ]
       }
+      research_feedback: {
+        Row: {
+          created_at: string | null
+          feedback_text: string | null
+          id: string
+          participant_id: string
+          project_id: string
+          rating: number | null
+          sentiment_score: number | null
+          tags: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string
+          participant_id: string
+          project_id: string
+          rating?: number | null
+          sentiment_score?: number | null
+          tags?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string
+          participant_id?: string
+          project_id?: string
+          rating?: number | null
+          sentiment_score?: number | null
+          tags?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_feedback_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "research_participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_feedback_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "research_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_interviews: {
+        Row: {
+          created_at: string | null
+          duration_minutes: number | null
+          id: string
+          notes: string | null
+          participant_id: string
+          project_id: string
+          recording_url: string | null
+          scheduled_at: string
+          status: string | null
+          transcript: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          participant_id: string
+          project_id: string
+          recording_url?: string | null
+          scheduled_at: string
+          status?: string | null
+          transcript?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          participant_id?: string
+          project_id?: string
+          recording_url?: string | null
+          scheduled_at?: string
+          status?: string | null
+          transcript?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_interviews_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "research_participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_interviews_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "research_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       research_notes: {
         Row: {
           content: string
@@ -4323,6 +4478,54 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "research_notes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "research_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_observations: {
+        Row: {
+          content: string
+          context_data: Json | null
+          created_at: string | null
+          id: string
+          observation_type: string
+          participant_id: string
+          project_id: string
+          tags: string[] | null
+        }
+        Insert: {
+          content: string
+          context_data?: Json | null
+          created_at?: string | null
+          id?: string
+          observation_type: string
+          participant_id: string
+          project_id: string
+          tags?: string[] | null
+        }
+        Update: {
+          content?: string
+          context_data?: Json | null
+          created_at?: string | null
+          id?: string
+          observation_type?: string
+          participant_id?: string
+          project_id?: string
+          tags?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_observations_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "research_participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_observations_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "research_projects"
