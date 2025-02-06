@@ -318,6 +318,45 @@ export type Database = {
         }
         Relationships: []
       }
+      card_sorting_studies: {
+        Row: {
+          cards: Json | null
+          categories: Json | null
+          created_at: string | null
+          description: string | null
+          id: string
+          instructions: string | null
+          sort_type: string
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cards?: Json | null
+          categories?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          sort_type: string
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cards?: Json | null
+          categories?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          sort_type?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       cbt_exercises: {
         Row: {
           alternative_thoughts: string | null
@@ -606,6 +645,39 @@ export type Database = {
           stress_level?: number | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      design_surveys: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          design_url: string | null
+          id: string
+          questions: Json | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          design_url?: string | null
+          id?: string
+          questions?: Json | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          design_url?: string | null
+          id?: string
+          questions?: Json | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1001,6 +1073,78 @@ export type Database = {
           id?: string
           notes?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      first_click_tests: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          question: string
+          success_zones: Json | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          question: string
+          success_zones?: Json | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          question?: string
+          success_zones?: Json | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      five_second_tests: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_duration: number | null
+          id: string
+          image_url: string
+          questions: Json | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_duration?: number | null
+          id?: string
+          image_url: string
+          questions?: Json | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_duration?: number | null
+          id?: string
+          image_url?: string
+          questions?: Json | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1739,6 +1883,122 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      participant_sessions: {
+        Row: {
+          created_at: string | null
+          end_time: string | null
+          id: string
+          participant_id: string | null
+          responses: Json | null
+          screen_recording_url: string | null
+          session_recording_url: string | null
+          start_time: string | null
+          study_id: string
+          study_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          end_time?: string | null
+          id?: string
+          participant_id?: string | null
+          responses?: Json | null
+          screen_recording_url?: string | null
+          session_recording_url?: string | null
+          start_time?: string | null
+          study_id: string
+          study_type: string
+        }
+        Update: {
+          created_at?: string | null
+          end_time?: string | null
+          id?: string
+          participant_id?: string | null
+          responses?: Json | null
+          screen_recording_url?: string | null
+          session_recording_url?: string | null
+          start_time?: string | null
+          study_id?: string
+          study_type?: string
+        }
+        Relationships: []
+      }
+      preference_tests: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          questions: Json | null
+          test_type: string
+          title: string
+          updated_at: string | null
+          user_id: string | null
+          variants: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          questions?: Json | null
+          test_type: string
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+          variants?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          questions?: Json | null
+          test_type?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+          variants?: Json | null
+        }
+        Relationships: []
+      }
+      product_ai_insights: {
+        Row: {
+          created_at: string | null
+          id: string
+          key_features: string[] | null
+          product_id: string | null
+          similar_products: string[] | null
+          summary: string | null
+          target_audience: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          key_features?: string[] | null
+          product_id?: string | null
+          similar_products?: string[] | null
+          summary?: string | null
+          target_audience?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          key_features?: string[] | null
+          product_id?: string | null
+          similar_products?: string[] | null
+          summary?: string | null
+          target_audience?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_ai_insights_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_analytics: {
         Row: {
@@ -3257,6 +3517,42 @@ export type Database = {
         }
         Relationships: []
       }
+      tree_testing_studies: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          instructions: string | null
+          tasks: Json | null
+          title: string
+          tree_structure: Json | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          tasks?: Json | null
+          title: string
+          tree_structure?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          tasks?: Json | null
+          title?: string
+          tree_structure?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       trigger_patterns: {
         Row: {
           coping_strategies: string[] | null
@@ -3299,6 +3595,51 @@ export type Database = {
           trigger_type?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      usability_test_sessions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          recording_enabled: boolean | null
+          scenario: string | null
+          screen_recording_enabled: boolean | null
+          tasks: Json | null
+          test_type: string
+          think_aloud_enabled: boolean | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          recording_enabled?: boolean | null
+          scenario?: string | null
+          screen_recording_enabled?: boolean | null
+          tasks?: Json | null
+          test_type: string
+          think_aloud_enabled?: boolean | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          recording_enabled?: boolean | null
+          scenario?: string | null
+          screen_recording_enabled?: boolean | null
+          tasks?: Json | null
+          test_type?: string
+          think_aloud_enabled?: boolean | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -3399,6 +3740,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          id: string
+          interaction_history: Json | null
+          preferred_categories: string[] | null
+          preferred_product_types: string[] | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          interaction_history?: Json | null
+          preferred_categories?: string[] | null
+          preferred_product_types?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          interaction_history?: Json | null
+          preferred_categories?: string[] | null
+          preferred_product_types?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
