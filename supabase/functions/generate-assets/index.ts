@@ -39,6 +39,7 @@ serve(async (req) => {
     const testResponse = await fetch('https://api.openai.com/v1/models', {
       headers: {
         'Authorization': `Bearer ${openAIKey}`,
+        'Content-Type': 'application/json',
       },
     });
 
