@@ -83,7 +83,7 @@ export const VisualScheduleBuilder = () => {
         schedule_type: schedule.schedule_type,
         visual_format: typeof schedule.visual_format === 'string' 
           ? JSON.parse(schedule.visual_format)
-          : schedule.visual_format,
+          : schedule.visual_format || { layout: "timeline", theme: "default" },
         time_blocks: Array.isArray(schedule.time_blocks) 
           ? schedule.time_blocks.map((block: any) => ({
               id: block.id || Math.random().toString(36).substr(2, 9),
