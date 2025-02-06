@@ -38,20 +38,8 @@ interface RawGamificationData {
   points_earned: number | null;
   streak_count: number | null;
   level: number | null;
-  achievements: Array<{
-    id: string;
-    title: string;
-    description: string;
-    icon?: string;
-    unlocked?: boolean;
-  }> | null;
-  daily_challenges: Array<{
-    id: string;
-    title: string;
-    description: string;
-    points?: number;
-    completed?: boolean;
-  }> | null;
+  achievements: Json;
+  daily_challenges: Json;
 }
 
 export const FocusGamificationCard = () => {
@@ -76,21 +64,37 @@ export const FocusGamificationCard = () => {
 
       if (error) throw error;
 
-      const data = rawData as RawGamificationData;
+      // Cast achievements and daily_challenges from Json to their respective types
+      const achievements = rawData.achievements as Array<{
+        id: string;
+        title: string;
+        description: string;
+        icon?: string;
+        unlocked?: boolean;
+      }>;
+
+      const dailyChallenges = rawData.daily_challenges as Array<{
+        id: string;
+        title: string;
+        description: string;
+        points?: number;
+        completed?: boolean;
+      }>;
+
       // Transform the raw data into the correct types
       const transformedData: GamificationData = {
-        id: data.id,
-        points_earned: data.points_earned || 0,
-        streak_count: data.streak_count || 0,
-        level: data.level || 1,
-        achievements: (data.achievements || []).map(achievement => ({
+        id: rawData.id,
+        points_earned: rawData.points_earned || 0,
+        streak_count: rawData.streak_count || 0,
+        level: rawData.level || 1,
+        achievements: (achievements || []).map(achievement => ({
           id: achievement.id,
           title: achievement.title,
           description: achievement.description,
           icon: achievement.icon || 'trophy',
           unlocked: achievement.unlocked || false
         })),
-        daily_challenges: (data.daily_challenges || []).map(challenge => ({
+        daily_challenges: (dailyChallenges || []).map(challenge => ({
           id: challenge.id,
           title: challenge.title,
           description: challenge.description,
@@ -136,17 +140,11 @@ export const FocusGamificationCard = () => {
         daily_challenges: updatedChallenges
       });
 
-      // Update in the database - convert the challenges to a plain object array
+      // Update in the database
       const { error } = await supabase
         .from('focus_gamification')
         .update({
-          daily_challenges: updatedChallenges.map(challenge => ({
-            id: challenge.id,
-            title: challenge.title,
-            description: challenge.description,
-            points: challenge.points,
-            completed: challenge.completed
-          }))
+          daily_challenges: updatedChallenges
         })
         .eq('user_id', session.user.id);
 
