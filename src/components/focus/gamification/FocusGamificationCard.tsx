@@ -8,15 +8,6 @@ import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy, Star, Target, Medal } from "lucide-react";
 
-interface GamificationData {
-  id: string;
-  points_earned: number;
-  streak_count: number;
-  level: number;
-  achievements: Achievement[];
-  daily_challenges: Challenge[];
-}
-
 interface Achievement {
   id: string;
   title: string;
@@ -33,6 +24,24 @@ interface Challenge {
   completed: boolean;
 }
 
+interface GamificationData {
+  id: string;
+  points_earned: number;
+  streak_count: number;
+  level: number;
+  achievements: Achievement[];
+  daily_challenges: Challenge[];
+}
+
+interface RawGamificationData {
+  id: string;
+  points_earned: number;
+  streak_count: number;
+  level: number;
+  achievements: any[];
+  daily_challenges: any[];
+}
+
 export const FocusGamificationCard = () => {
   const { session } = useAuth();
   const { toast } = useToast();
@@ -47,22 +56,34 @@ export const FocusGamificationCard = () => {
 
   const loadGamificationData = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: rawData, error } = await supabase
         .from('focus_gamification')
         .select('*')
         .eq('user_id', session?.user.id)
         .single();
 
       if (error) throw error;
-      
-      // Transform the data to match our interface
+
+      // Transform the raw data into the correct types
       const transformedData: GamificationData = {
-        id: data.id,
-        points_earned: data.points_earned,
-        streak_count: data.streak_count,
-        level: data.level,
-        achievements: Array.isArray(data.achievements) ? data.achievements : [],
-        daily_challenges: Array.isArray(data.daily_challenges) ? data.daily_challenges : []
+        id: rawData.id,
+        points_earned: rawData.points_earned || 0,
+        streak_count: rawData.streak_count || 0,
+        level: rawData.level || 1,
+        achievements: (rawData.achievements || []).map((achievement: any) => ({
+          id: achievement.id,
+          title: achievement.title,
+          description: achievement.description,
+          icon: achievement.icon || 'trophy',
+          unlocked: achievement.unlocked || false
+        })),
+        daily_challenges: (rawData.daily_challenges || []).map((challenge: any) => ({
+          id: challenge.id,
+          title: challenge.title,
+          description: challenge.description,
+          points: challenge.points || 0,
+          completed: challenge.completed || false
+        }))
       };
       
       setGamificationData(transformedData);
@@ -102,11 +123,17 @@ export const FocusGamificationCard = () => {
         daily_challenges: updatedChallenges
       });
 
-      // Update in the database
+      // Update in the database - convert the challenges to a plain object array
       const { error } = await supabase
         .from('focus_gamification')
         .update({
-          daily_challenges: updatedChallenges
+          daily_challenges: updatedChallenges.map(challenge => ({
+            id: challenge.id,
+            title: challenge.title,
+            description: challenge.description,
+            points: challenge.points,
+            completed: challenge.completed
+          }))
         })
         .eq('user_id', session.user.id);
 
@@ -235,3 +262,4 @@ export const FocusGamificationCard = () => {
     </Card>
   );
 };
+
