@@ -31,6 +31,7 @@ import SubstanceLogPage from "@/pages/SubstanceLog"
 import SupplementsPage from "@/pages/Supplements"
 import SupportPage from "@/pages/Support"
 import WebTools from "@/pages/WebTools"
+import WhiteNoise from "@/pages/tools/WhiteNoise"
 import BreathingGame from "@/components/games/BreathingGame"
 import BalloonJourney from "@/components/games/BalloonJourney"
 import ZenGarden from "@/components/games/ZenGarden"
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <WebTools />,
+      },
+      {
+        path: "white-noise",
+        element: <WhiteNoise />,
       },
       {
         path: ":toolSlug",
