@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,6 +34,8 @@ import { TimeBlockingCard } from "@/components/focus/tools/TimeBlockingCard";
 import { FocusAnalyticsDashboard } from "@/components/focus/analytics/FocusAnalyticsDashboard";
 import { FocusEnvironment } from "@/components/focus/FocusEnvironment";
 import { ADHDTaskBreakdown } from "@/components/focus/tasks/ADHDTaskBreakdown";
+import { FocusInterruptionTracker } from "@/components/focus/FocusInterruptionTracker";
+import { SmartBreakSuggestions } from "@/components/focus/SmartBreakSuggestions";
 
 interface BodyDoublingSession {
   id: string;
@@ -206,6 +207,11 @@ const Focus = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FocusTimerTools />
         <ADHDTaskBreakdown />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <FocusInterruptionTracker />
+        <SmartBreakSuggestions />
       </div>
 
       <FocusAnalyticsDashboard />
