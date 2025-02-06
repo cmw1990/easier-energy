@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Timer, RotateCw, MoveHorizontal, MoveVertical, Maximize2, Minimize2, AlertCircle } from "lucide-react";
 import { EyeExerciseTimer } from "@/components/exercises/EyeExerciseTimer";
@@ -14,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AnimatedExerciseDisplay } from "@/components/exercises/AnimatedExerciseDisplay";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ExerciseAssetsGenerator } from "@/components/exercises/ExerciseAssetsGenerator";
 
 type AnimationType = "svg" | "css";
 
@@ -218,6 +218,13 @@ const EyeExercises = () => {
             Take breaks between exercises and ensure proper lighting conditions.
           </AlertDescription>
         </Alert>
+
+        {/* Add ExerciseAssetsGenerator in development */}
+        {import.meta.env.DEV && (
+          <div className="mb-4">
+            <ExerciseAssetsGenerator />
+          </div>
+        )}
       </div>
       
       <EyeExerciseStats />
