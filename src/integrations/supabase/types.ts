@@ -5487,6 +5487,57 @@ export type Database = {
           },
         ]
       }
+      task_switching_strategies: {
+        Row: {
+          context_tags: string[] | null
+          created_at: string | null
+          description: string | null
+          effectiveness_rating: number | null
+          environmental_adjustments: Json | null
+          id: string
+          mindfulness_elements: Json | null
+          physical_elements: Json | null
+          strategy_name: string
+          strategy_type: string
+          success_metrics: Json | null
+          trigger_patterns: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          context_tags?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          effectiveness_rating?: number | null
+          environmental_adjustments?: Json | null
+          id?: string
+          mindfulness_elements?: Json | null
+          physical_elements?: Json | null
+          strategy_name: string
+          strategy_type: string
+          success_metrics?: Json | null
+          trigger_patterns?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          context_tags?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          effectiveness_rating?: number | null
+          environmental_adjustments?: Json | null
+          id?: string
+          mindfulness_elements?: Json | null
+          physical_elements?: Json | null
+          strategy_name?: string
+          strategy_type?: string
+          success_metrics?: Json | null
+          trigger_patterns?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       task_time_estimates: {
         Row: {
           accuracy_score: number | null

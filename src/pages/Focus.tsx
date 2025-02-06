@@ -44,6 +44,8 @@ import { VisualOrganizationTools } from "@/components/focus/visual/VisualOrganiz
 import { FocusPriorityQueue } from "@/components/focus/priority/FocusPriorityQueue";
 import { BodyDoublingTemplates } from "@/components/focus/body-doubling/BodyDoublingTemplates";
 import { FocusGamificationCard } from "@/components/focus/gamification/FocusGamificationCard";
+import { TaskTransitionTimer } from "@/components/focus/task-transitions/TaskTransitionTimer";
+import { TaskSwitchingStrategies } from "@/components/focus/task-transitions/TaskSwitchingStrategies";
 
 interface BodyDoublingSession {
   id: string;
@@ -276,6 +278,11 @@ const Focus = () => {
       </div>
 
       <FocusEnvironment />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TaskSwitchingStrategies />
+        <TaskTransitionTimer />
+      </div>
 
       {/* Games section */}
       <Tabs defaultValue="quick" className="space-y-4">
