@@ -3,8 +3,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowRight, Brain, Globe, Zap, Wrench, LogIn, Battery, Settings2 as Settings, Pill } from "lucide-react"
 import { Link } from "react-router-dom"
+import { Switch } from "@/components/ui/switch"
+import { useNavigate } from "react-router-dom"
+import { Label } from "@/components/ui/label"
 
 const LandingPage = () => {
+  const navigate = useNavigate()
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
       {/* Navigation */}
@@ -14,6 +19,18 @@ const LandingPage = () => {
           <span className="text-xl font-semibold">The Well-Charged</span>
         </div>
         <div className="flex items-center gap-4">
+          {/* Development Switch */}
+          <div className="flex items-center gap-2 border rounded-lg p-2 bg-background/80">
+            <Label htmlFor="desktop-mode" className="text-sm">Desktop Mode</Label>
+            <Switch
+              id="desktop-mode"
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  navigate('/desktop')
+                }
+              }}
+            />
+          </div>
           <Link to="/tools">
             <Button variant="ghost">Tools</Button>
           </Link>
