@@ -25,6 +25,7 @@ import { DynamicControlExercises } from "@/components/exercises/DynamicControlEx
 import { SpecializedTrainingExercises } from "@/components/exercises/SpecializedTrainingExercises";
 import { FocusEnhancementTools } from "@/components/focus/FocusEnhancementTools";
 import { TaskManagementTools } from "@/components/focus/TaskManagementTools";
+import { TimeBlockingTools } from "@/components/focus/TimeBlockingTools";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -108,7 +109,7 @@ export default function Index() {
           className="col-span-1"
         >
           <div className="space-y-4">
-            <BackgroundMusicPlayer />
+            <TimeBlockingTools />
             <FocusEnhancementTools />
           </div>
         </motion.div>
