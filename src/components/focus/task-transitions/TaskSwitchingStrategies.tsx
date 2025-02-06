@@ -36,7 +36,8 @@ export const TaskSwitchingStrategies = () => {
   const { session } = useAuth();
   const { toast } = useToast();
   const [strategies, setStrategies] = useState<TaskSwitchingStrategy[]>([]);
-  const [newStrategy, setNewStrategy] = useState<Partial<TaskSwitchingStrategy>>({
+  const [newStrategy, setNewStrategy] = useState<TaskSwitchingStrategy>({
+    id: "",
     strategy_name: "",
     strategy_type: "mindfulness",
     description: "",
@@ -60,7 +61,7 @@ export const TaskSwitchingStrategies = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setStrategies(data || []);
+      setStrategies(data as TaskSwitchingStrategy[]);
     } catch (error) {
       console.error("Error loading strategies:", error);
       toast({
@@ -82,11 +83,16 @@ export const TaskSwitchingStrategies = () => {
         return;
       }
 
+      const strategyData = {
+        ...newStrategy,
+        user_id: session.user.id,
+      };
+
       if (editingId) {
         const { error } = await supabase
           .from("task_switching_strategies")
           .update({
-            ...newStrategy,
+            ...strategyData,
             updated_at: new Date().toISOString()
           })
           .eq("id", editingId);
@@ -100,12 +106,7 @@ export const TaskSwitchingStrategies = () => {
       } else {
         const { error } = await supabase
           .from("task_switching_strategies")
-          .insert([
-            {
-              ...newStrategy,
-              user_id: session.user.id
-            }
-          ]);
+          .insert([strategyData]);
 
         if (error) throw error;
 
@@ -116,6 +117,7 @@ export const TaskSwitchingStrategies = () => {
       }
 
       setNewStrategy({
+        id: "",
         strategy_name: "",
         strategy_type: "mindfulness",
         description: "",
