@@ -13,7 +13,8 @@ interface Achievement {
   id: string;
   achievement_type: string;
   points_earned: number;
-  details: AchievementDetails;
+  details: string;
+  streak_count: number;
 }
 
 export const FocusAchievements = () => {
@@ -27,9 +28,17 @@ export const FocusAchievements = () => {
         .limit(3);
 
       if (error) throw error;
-      return data as Achievement[];
+      return data as unknown as Achievement[];
     }
   });
+
+  const parseDetails = (detailsStr: string): AchievementDetails => {
+    try {
+      return JSON.parse(detailsStr);
+    } catch {
+      return { title: 'Achievement Unlocked!' };
+    }
+  };
 
   return (
     <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
@@ -59,7 +68,7 @@ export const FocusAchievements = () => {
                   </div>
                   <div>
                     <p className="font-medium">
-                      {achievement.details?.title || 'Achievement Unlocked!'}
+                      {parseDetails(achievement.details).title}
                     </p>
                     <p className="text-sm text-muted-foreground">+{achievement.points_earned} points</p>
                   </div>

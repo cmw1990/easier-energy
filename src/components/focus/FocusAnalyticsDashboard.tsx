@@ -14,7 +14,7 @@ interface FocusAnalytics {
   total_focus_time: number;
   successful_sessions: number;
   interrupted_sessions: number;
-  energy_levels: EnergyLevels;
+  energy_levels: string;
 }
 
 export const FocusAnalyticsDashboard = () => {
@@ -29,9 +29,19 @@ export const FocusAnalyticsDashboard = () => {
         .single();
 
       if (error) throw error;
-      return data as FocusAnalytics;
+      return data as unknown as FocusAnalytics;
     }
   });
+
+  const parseEnergyLevels = (levelsStr: string | null): EnergyLevels => {
+    try {
+      return JSON.parse(levelsStr || '{"current": 0}');
+    } catch {
+      return { current: 0 };
+    }
+  };
+
+  const energyLevels = analytics ? parseEnergyLevels(analytics.energy_levels) : { current: 0 };
 
   return (
     <Card className="bg-gradient-to-br from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20">
@@ -73,8 +83,8 @@ export const FocusAnalyticsDashboard = () => {
               <h3 className="font-medium">Energy Level</h3>
             </div>
             <div className="space-y-2">
-              <Progress value={analytics?.energy_levels?.current || 0} className="mt-2" />
-              <p className="text-sm text-muted-foreground">Current Energy: {analytics?.energy_levels?.current || 0}%</p>
+              <Progress value={energyLevels.current} className="mt-2" />
+              <p className="text-sm text-muted-foreground">Current Energy: {energyLevels.current}%</p>
             </div>
           </Card>
         </div>

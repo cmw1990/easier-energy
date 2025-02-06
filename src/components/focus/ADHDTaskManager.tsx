@@ -24,7 +24,7 @@ interface Task {
   id: string;
   title: string;
   description: string;
-  adhd_task_organization: ADHDTaskOrganization;
+  adhd_task_organization: ADHDTaskOrganization[];
 }
 
 export const ADHDTaskManager = () => {
@@ -43,7 +43,7 @@ export const ADHDTaskManager = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as Task[];
+      return data as unknown as Task[];
     }
   });
 
@@ -97,7 +97,9 @@ export const ADHDTaskManager = () => {
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
                     <Zap className="h-4 w-4 text-yellow-500" />
-                    <span className="text-sm">{task.adhd_task_organization?.energy_required || 0}/5</span>
+                    <span className="text-sm">
+                      {task.adhd_task_organization[0]?.energy_required || 0}/5
+                    </span>
                   </div>
                 </div>
               </div>
