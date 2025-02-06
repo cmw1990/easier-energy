@@ -2544,6 +2544,42 @@ export type Database = {
         }
         Relationships: []
       }
+      list_products: {
+        Row: {
+          added_at: string | null
+          list_id: string
+          notes: string | null
+          product_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          list_id: string
+          notes?: string | null
+          product_id: string
+        }
+        Update: {
+          added_at?: string | null
+          list_id?: string
+          notes?: string | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "list_products_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "user_product_lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "list_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medication_logs: {
         Row: {
           created_at: string | null
@@ -3273,6 +3309,38 @@ export type Database = {
         }
         Relationships: []
       }
+      price_history: {
+        Row: {
+          currency: string | null
+          id: string
+          price: number
+          product_id: string | null
+          recorded_at: string | null
+        }
+        Insert: {
+          currency?: string | null
+          id?: string
+          price: number
+          product_id?: string | null
+          recorded_at?: string | null
+        }
+        Update: {
+          currency?: string | null
+          id?: string
+          price?: number
+          product_id?: string | null
+          recorded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_history_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_ai_insights: {
         Row: {
           created_at: string | null
@@ -3438,6 +3506,41 @@ export type Database = {
           },
         ]
       }
+      product_categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon_url: string | null
+          id: string
+          name: string
+          parent_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_comparisons: {
         Row: {
           compared_with_id: string | null
@@ -3514,6 +3617,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "product_discussions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_engagement: {
+        Row: {
+          click_path: Json | null
+          created_at: string | null
+          engagement_type: string
+          id: string
+          product_id: string | null
+          session_duration: number | null
+          user_id: string | null
+        }
+        Insert: {
+          click_path?: Json | null
+          created_at?: string | null
+          engagement_type: string
+          id?: string
+          product_id?: string | null
+          session_duration?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          click_path?: Json | null
+          created_at?: string | null
+          engagement_type?: string
+          id?: string
+          product_id?: string | null
+          session_duration?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_engagement_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
@@ -3733,6 +3874,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "product_updates_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_verifications: {
+        Row: {
+          created_at: string | null
+          evidence_urls: string[] | null
+          id: string
+          product_id: string | null
+          verification_details: Json | null
+          verification_type: string
+          verified_by: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          evidence_urls?: string[] | null
+          id?: string
+          product_id?: string | null
+          verification_details?: Json | null
+          verification_type: string
+          verified_by?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          evidence_urls?: string[] | null
+          id?: string
+          product_id?: string | null
+          verification_details?: Json | null
+          verification_type?: string
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_verifications_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
@@ -6006,6 +6185,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_product_lists: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -6325,6 +6528,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_similar_products: {
+        Args: {
+          product_id: string
+        }
+        Returns: {
+          similar_product_id: string
+          similarity_score: number
+        }[]
+      }
       has_role: {
         Args: {
           _user_id: string
