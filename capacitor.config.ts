@@ -1,3 +1,4 @@
+
 import { CapacitorConfig } from '@capacitor/core';
 
 const config: CapacitorConfig = {

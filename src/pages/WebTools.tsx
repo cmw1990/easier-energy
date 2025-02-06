@@ -6,56 +6,56 @@ import { Brain, Leaf, HeartPulse, Pill, Settings, ChartBar, Info } from "lucide-
 const WebTools = () => {
   const tools = [
     {
-      title: "White Noise Generator",
+      title: "The Well-Charged Guide to White Noise",
       description: "Enhance focus and productivity with customizable white noise",
       icon: Settings,
       path: "/tools/white-noise",
       tags: ["focus", "productivity", "sound"]
     },
     {
-      title: "Binaural Beats Player",
+      title: "The Well-Charged Guide to Binaural Beats",
       description: "Science-backed audio frequencies for meditation and concentration",
       icon: Settings,
       path: "/tools/binaural-beats",
       tags: ["meditation", "brain", "frequency"]
     },
     {
-      title: "Supplement Guide",
+      title: "The Well-Charged Guide to Supplements",
       description: "Comprehensive guide to nootropics and supplements",
       icon: Pill,
       path: "/tools/supplement-guide",
       tags: ["nootropics", "health", "optimization"]
     },
     {
-      title: "Supplement Interaction Checker",
+      title: "The Well-Charged Supplement Interaction Checker",
       description: "Check potential interactions between supplements",
       icon: Info,
       path: "/tools/supplement-checker",
       tags: ["safety", "health", "supplements"]
     },
     {
-      title: "Focus Games",
+      title: "The Well-Charged Guide to Focus Games",
       description: "Brain training games to improve cognitive function",
       icon: Brain,
       path: "/focus",
       tags: ["cognitive", "brain", "training"]
     },
     {
-      title: "Biometrics Guide",
+      title: "The Well-Charged Guide to Biometrics",
       description: "Learn how to track and interpret your biometric data",
       icon: HeartPulse,
       path: "/tools/biometrics",
       tags: ["tracking", "data", "health"]
     },
     {
-      title: "Performance Analytics",
+      title: "The Well-Charged Performance Analytics",
       description: "Tools to analyze and optimize your performance metrics",
       icon: ChartBar,
       path: "/tools/analytics",
       tags: ["data", "optimization", "tracking"]
     },
     {
-      title: "Smart Supplement Stack Builder",
+      title: "The Well-Charged Supplement Stack Builder",
       description: "Build your personalized supplement stack based on goals",
       icon: Leaf,
       path: "/tools/stack-builder",
@@ -67,7 +67,7 @@ const WebTools = () => {
     <div className="container mx-auto p-4 space-y-6">
       <div className="text-center space-y-4 mb-8">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          Biohacking Web Tools
+          The Well-Charged Biohacking Tools
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Free online tools for biohackers, optimizers, and health enthusiasts. 

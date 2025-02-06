@@ -1,3 +1,4 @@
+
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/components/AuthProvider";
@@ -57,7 +58,7 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="h-full flex flex-col">
       <div className="flex items-center gap-2 p-4 border-b">
         <Battery className="h-5 w-5 text-emerald-500" />
-        <h1 className="text-xl font-semibold">Energy Support</h1>
+        <h1 className="text-xl font-semibold">The Well-Charged</h1>
       </div>
       <AppSidebar />
     </div>
@@ -89,7 +90,7 @@ const Layout = ({ children }: LayoutProps) => {
                 {!isMobile && (
                   <>
                     <Battery className="h-5 w-5 text-emerald-500" />
-                    <h1 className="text-xl font-semibold">Energy Dashboard</h1>
+                    <h1 className="text-xl font-semibold">The Well-Charged Dashboard</h1>
                   </>
                 )}
               </div>
