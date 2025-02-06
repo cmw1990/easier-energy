@@ -56,7 +56,30 @@ export const TaskPatternTracker = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setPatterns(data || []);
+
+      // Transform the data to match our CompletionPattern interface
+      const transformedPatterns: CompletionPattern[] = (data || []).map((pattern: any) => ({
+        id: pattern.id,
+        time_of_day: Array.isArray(pattern.time_of_day) ? pattern.time_of_day : [],
+        success_rate: pattern.success_rate || 0,
+        environment_factors: typeof pattern.environment_factors === 'string'
+          ? JSON.parse(pattern.environment_factors)
+          : pattern.environment_factors || {
+              noise_level: "moderate",
+              lighting: "moderate",
+              temperature: "moderate"
+            },
+        distraction_triggers: (pattern.distraction_triggers || []).map((trigger: any) => ({
+          type: trigger.type || "",
+          frequency: trigger.frequency || 0
+        })),
+        coping_strategies: (pattern.coping_strategies || []).map((strategy: any) => ({
+          strategy: strategy.strategy || "",
+          effectiveness: strategy.effectiveness || 0
+        }))
+      }));
+
+      setPatterns(transformedPatterns);
     } catch (error) {
       console.error("Error loading patterns:", error);
       toast({

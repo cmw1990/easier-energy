@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -75,7 +76,30 @@ export const VisualScheduleBuilder = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setSchedules(data || []);
+
+      // Transform the data to match our VisualSchedule interface
+      const transformedSchedules: VisualSchedule[] = (data || []).map((schedule: any) => ({
+        id: schedule.id,
+        schedule_type: schedule.schedule_type,
+        visual_format: typeof schedule.visual_format === 'string' 
+          ? JSON.parse(schedule.visual_format)
+          : schedule.visual_format,
+        time_blocks: Array.isArray(schedule.time_blocks) 
+          ? schedule.time_blocks.map((block: any) => ({
+              id: block.id || Math.random().toString(36).substr(2, 9),
+              start_time: block.start_time || "",
+              end_time: block.end_time || "",
+              activity: block.activity || "",
+              color: block.color || "#000000"
+            }))
+          : [],
+        color_coding: schedule.color_coding || {},
+        break_reminders: typeof schedule.break_reminders === 'string'
+          ? JSON.parse(schedule.break_reminders)
+          : schedule.break_reminders || { frequency: 60, duration: 10 }
+      }));
+
+      setSchedules(transformedSchedules);
     } catch (error) {
       console.error("Error loading schedules:", error);
       toast({
