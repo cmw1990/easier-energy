@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -52,7 +53,7 @@ const Auth = () => {
       });
 
       if (error) throw error;
-      navigate("/");
+      navigate("/app");
     } catch (error) {
       toast({
         title: "Error",
