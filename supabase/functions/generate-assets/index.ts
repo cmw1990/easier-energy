@@ -5,23 +5,67 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts"
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, {
+      status: 204,
+      headers: corsHeaders
+    });
   }
 
   try {
     const openAIKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIKey) {
-      throw new Error('OpenAI API key is not configured');
+      console.error('OpenAI API key is not configured');
+      return new Response(
+        JSON.stringify({ 
+          error: 'OpenAI API key is not configured',
+          details: 'Please configure the OPENAI_API_KEY in Supabase Edge Function settings'
+        }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
-    console.log('Starting asset generation process...');
-    
-    const { type, batch, description, style } = await req.json();
+    // Test OpenAI API connection first
+    console.log('Testing OpenAI API connection...');
+    const testResponse = await fetch('https://api.openai.com/v1/models', {
+      headers: {
+        'Authorization': `Bearer ${openAIKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!testResponse.ok) {
+      const errorText = await testResponse.text();
+      console.error('OpenAI API connection test failed:', errorText);
+      throw new Error('Failed to connect to OpenAI API: ' + errorText);
+    }
+
+    console.log('OpenAI API connection test successful');
+
+    // Parse request body
+    let body;
+    try {
+      body = await req.json();
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      return new Response(
+        JSON.stringify({ error: 'Invalid request body' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    const { type, batch, description, style } = body;
     console.log(`Request received - Type: ${type}, Batch: ${batch}, Description: ${description}`);
 
     let prompt;
@@ -51,21 +95,6 @@ serve(async (req) => {
         }
       );
     }
-
-    // Test OpenAI API connection
-    console.log('Testing OpenAI API connection...');
-    const testResponse = await fetch('https://api.openai.com/v1/models', {
-      headers: {
-        'Authorization': `Bearer ${openAIKey}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!testResponse.ok) {
-      console.error('OpenAI API connection test failed:', await testResponse.text());
-      throw new Error('Failed to connect to OpenAI API');
-    }
-    console.log('OpenAI API connection test successful');
 
     // Generate image
     console.log('Generating image with DALL-E...');
