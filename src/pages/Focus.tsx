@@ -43,6 +43,7 @@ import { NoiseSensitivitySettings } from "@/components/focus/noise/NoiseSensitiv
 import { VisualOrganizationTools } from "@/components/focus/visual/VisualOrganizationTools";
 import { FocusPriorityQueue } from "@/components/focus/priority/FocusPriorityQueue";
 import { BodyDoublingTemplates } from "@/components/focus/body-doubling/BodyDoublingTemplates";
+import { FocusGamificationCard } from "@/components/focus/gamification/FocusGamificationCard";
 
 interface BodyDoublingSession {
   id: string;
@@ -223,7 +224,7 @@ const Focus = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FocusJournal />
-        <FocusHabitTracker />
+        <FocusGamificationCard />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

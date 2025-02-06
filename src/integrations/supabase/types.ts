@@ -2409,6 +2409,57 @@ export type Database = {
           },
         ]
       }
+      inventory_tracking: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_restock_date: string | null
+          location_id: string | null
+          low_stock_threshold: number | null
+          next_restock_date: string | null
+          product_id: string | null
+          quantity: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_restock_date?: string | null
+          location_id?: string | null
+          low_stock_threshold?: number | null
+          next_restock_date?: string | null
+          product_id?: string | null
+          quantity?: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_restock_date?: string | null
+          location_id?: string | null
+          low_stock_threshold?: number | null
+          next_restock_date?: string | null
+          product_id?: string | null
+          quantity?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_tracking_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "retail_locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_tracking_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       journal_entries: {
         Row: {
           content: string
@@ -3031,6 +3082,60 @@ export type Database = {
         }
         Relationships: []
       }
+      physical_product_comparisons: {
+        Row: {
+          compared_with_id: string | null
+          created_at: string | null
+          created_by: string | null
+          feature_comparison: Json | null
+          id: string
+          material_differences: string[] | null
+          price_difference: number | null
+          product_id: string | null
+          size_difference: Json | null
+          weight_difference: number | null
+        }
+        Insert: {
+          compared_with_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          feature_comparison?: Json | null
+          id?: string
+          material_differences?: string[] | null
+          price_difference?: number | null
+          product_id?: string | null
+          size_difference?: Json | null
+          weight_difference?: number | null
+        }
+        Update: {
+          compared_with_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          feature_comparison?: Json | null
+          id?: string
+          material_differences?: string[] | null
+          price_difference?: number | null
+          product_id?: string | null
+          size_difference?: Json | null
+          weight_difference?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "physical_product_comparisons_compared_with_id_fkey"
+            columns: ["compared_with_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "physical_product_comparisons_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       preference_test_responses: {
         Row: {
           completion_time: number | null
@@ -3353,6 +3458,44 @@ export type Database = {
           },
         ]
       }
+      product_measurements: {
+        Row: {
+          created_at: string | null
+          id: string
+          measurement_type: string
+          notes: string | null
+          product_id: string | null
+          unit: string
+          value: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          measurement_type: string
+          notes?: string | null
+          product_id?: string | null
+          unit: string
+          value: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          measurement_type?: string
+          notes?: string | null
+          product_id?: string | null
+          unit?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_measurements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_retail_availability: {
         Row: {
           id: string
@@ -3572,16 +3715,21 @@ export type Database = {
       }
       products: {
         Row: {
+          assembly_required: boolean | null
+          assembly_time_minutes: number | null
           authenticity_verified: boolean | null
           brand: string
+          care_instructions: string[] | null
           category: string | null
           certifications: string[] | null
           chemicals: string[] | null
           comments_count: number | null
           condition: string | null
+          country_of_origin: string | null
           created_at: string | null
           description: string | null
           dimensions: Json | null
+          eco_friendly_packaging: boolean | null
           featured_date: string | null
           featured_score: number | null
           flavor: string
@@ -3594,27 +3742,36 @@ export type Database = {
           materials: string[] | null
           media_gallery: Json[] | null
           name: string
+          package_dimensions: Json | null
           product_type: string
           retail_availability: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
+          shipping_restrictions: string[] | null
+          shipping_weight_grams: number | null
           size_reference: Json | null
           strength: Database["public"]["Enums"]["strength_level"]
           tags: string[] | null
           updated_at: string | null
           upvotes_count: number | null
+          warranty_info: Json | null
           weight_grams: number | null
         }
         Insert: {
+          assembly_required?: boolean | null
+          assembly_time_minutes?: number | null
           authenticity_verified?: boolean | null
           brand?: string
+          care_instructions?: string[] | null
           category?: string | null
           certifications?: string[] | null
           chemicals?: string[] | null
           comments_count?: number | null
           condition?: string | null
+          country_of_origin?: string | null
           created_at?: string | null
           description?: string | null
           dimensions?: Json | null
+          eco_friendly_packaging?: boolean | null
           featured_date?: string | null
           featured_score?: number | null
           flavor: string
@@ -3627,27 +3784,36 @@ export type Database = {
           materials?: string[] | null
           media_gallery?: Json[] | null
           name: string
+          package_dimensions?: Json | null
           product_type?: string
           retail_availability?: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
+          shipping_restrictions?: string[] | null
+          shipping_weight_grams?: number | null
           size_reference?: Json | null
           strength: Database["public"]["Enums"]["strength_level"]
           tags?: string[] | null
           updated_at?: string | null
           upvotes_count?: number | null
+          warranty_info?: Json | null
           weight_grams?: number | null
         }
         Update: {
+          assembly_required?: boolean | null
+          assembly_time_minutes?: number | null
           authenticity_verified?: boolean | null
           brand?: string
+          care_instructions?: string[] | null
           category?: string | null
           certifications?: string[] | null
           chemicals?: string[] | null
           comments_count?: number | null
           condition?: string | null
+          country_of_origin?: string | null
           created_at?: string | null
           description?: string | null
           dimensions?: Json | null
+          eco_friendly_packaging?: boolean | null
           featured_date?: string | null
           featured_score?: number | null
           flavor?: string
@@ -3660,14 +3826,18 @@ export type Database = {
           materials?: string[] | null
           media_gallery?: Json[] | null
           name?: string
+          package_dimensions?: Json | null
           product_type?: string
           retail_availability?: Json | null
           risk_level?: Database["public"]["Enums"]["risk_level"]
+          shipping_restrictions?: string[] | null
+          shipping_weight_grams?: number | null
           size_reference?: Json | null
           strength?: Database["public"]["Enums"]["strength_level"]
           tags?: string[] | null
           updated_at?: string | null
           upvotes_count?: number | null
+          warranty_info?: Json | null
           weight_grams?: number | null
         }
         Relationships: [
@@ -4168,32 +4338,53 @@ export type Database = {
       retail_locations: {
         Row: {
           address: string
+          available_services: string[] | null
           contact_info: Json | null
           coordinates: unknown | null
           created_at: string | null
+          delivery_radius_km: number | null
+          has_delivery: boolean | null
+          has_pickup: boolean | null
           id: string
           name: string
           operating_hours: Json | null
+          parking_info: string | null
+          store_hours: Json | null
+          store_type: string | null
           updated_at: string | null
         }
         Insert: {
           address: string
+          available_services?: string[] | null
           contact_info?: Json | null
           coordinates?: unknown | null
           created_at?: string | null
+          delivery_radius_km?: number | null
+          has_delivery?: boolean | null
+          has_pickup?: boolean | null
           id?: string
           name: string
           operating_hours?: Json | null
+          parking_info?: string | null
+          store_hours?: Json | null
+          store_type?: string | null
           updated_at?: string | null
         }
         Update: {
           address?: string
+          available_services?: string[] | null
           contact_info?: Json | null
           coordinates?: unknown | null
           created_at?: string | null
+          delivery_radius_km?: number | null
+          has_delivery?: boolean | null
+          has_pickup?: boolean | null
           id?: string
           name?: string
           operating_hours?: Json | null
+          parking_info?: string | null
+          store_hours?: Json | null
+          store_type?: string | null
           updated_at?: string | null
         }
         Relationships: []
