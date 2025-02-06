@@ -22,10 +22,19 @@ export const FocusAnalyticsDashboard = () => {
         .select('*')
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      return data as FocusMetrics;
+      
+      // Return default values if no data found
+      return {
+        total_focus_time: 0,
+        successful_sessions: 0,
+        interrupted_sessions: 0,
+        peak_focus_periods: [],
+        productivity_score: 0,
+        ...data
+      } as FocusMetrics;
     }
   });
 
@@ -45,7 +54,7 @@ export const FocusAnalyticsDashboard = () => {
               <h3 className="font-medium">Focus Time</h3>
             </div>
             <p className="text-2xl font-bold">
-              {analytics?.total_focus_time ? Math.floor(analytics.total_focus_time / 60) : 0}h {analytics?.total_focus_time ? analytics.total_focus_time % 60 : 0}m
+              {Math.floor((analytics?.total_focus_time || 0) / 60)}h {(analytics?.total_focus_time || 0) % 60}m
             </p>
           </Card>
 
