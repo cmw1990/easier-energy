@@ -21,11 +21,11 @@ export const TimeBlockingTools = () => {
   const { session } = useAuth();
   const { toast } = useToast();
   const [blocks, setBlocks] = useState<TimeBlock[]>([]);
-  const [newBlock, setNewBlock] = useState({
+  const [newBlock, setNewBlock] = useState<Omit<TimeBlock, 'id'>>({
     title: "",
     startTime: "",
     duration: 30,
-    priority: "medium" as const,
+    priority: "medium",
     energyLevel: 5
   });
 
@@ -49,7 +49,7 @@ export const TimeBlockingTools = () => {
       });
 
       if (error) throw error;
-
+      
       setBlocks([...blocks, block]);
       setNewBlock({
         title: "",
