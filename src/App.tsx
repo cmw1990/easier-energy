@@ -1,3 +1,4 @@
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
@@ -92,87 +93,87 @@ const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       {
-        path: "/breathing",
+        path: "breathing",
         element: <BreathingPage />,
       },
       {
-        path: "/caffeine",
+        path: "caffeine",
         element: <CaffeinePage />,
       },
       {
-        path: "/cbt",
+        path: "cbt",
         element: <CBTPage />,
       },
       {
-        path: "/development",
+        path: "development",
         element: <DevelopmentTools />,
       },
       {
-        path: "/distraction-blocker",
+        path: "distraction-blocker",
         element: <DistractionBlockerPage />,
       },
       {
-        path: "/exercise",
+        path: "exercise",
         element: <ExercisePage />,
       },
       {
-        path: "/eye-exercises",
+        path: "eye-exercises",
         element: <EyeExercisesPage />,
       },
       {
-        path: "/focus",
+        path: "focus",
         element: <FocusPage />,
       },
       {
-        path: "/food",
+        path: "food",
         element: <FoodPage />,
       },
       {
-        path: "/meditation",
+        path: "meditation",
         element: <MeditationPage />,
       },
       {
-        path: "/motivation",
+        path: "motivation",
         element: <MotivationPage />,
       },
       {
-        path: "/nicotine",
+        path: "nicotine",
         element: <NicotinePage />,
       },
       {
-        path: "/quit-plan",
+        path: "quit-plan",
         element: <QuitPlanPage />,
       },
       {
-        path: "/recovery",
+        path: "recovery",
         element: <RecoveryPage />,
       },
       {
-        path: "/relax",
+        path: "relax",
         element: <RelaxPage />,
       },
       {
-        path: "/sleep",
+        path: "sleep",
         element: <SleepPage />,
       },
       {
-        path: "/sleep-track",
+        path: "sleep-track",
         element: <SleepTrackPage />,
       },
       {
-        path: "/sobriety",
+        path: "sobriety",
         element: <SobrietyPage />,
       },
       {
-        path: "/substance-log",
+        path: "substance-log",
         element: <SubstanceLogPage />,
       },
       {
-        path: "/supplements",
+        path: "supplements",
         element: <SupplementsPage />,
       },
       {
-        path: "/support",
+        path: "support",
         element: <SupportPage />,
       },
     ],
