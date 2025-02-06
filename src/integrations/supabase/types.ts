@@ -2771,6 +2771,48 @@ export type Database = {
           },
         ]
       }
+      product_comparisons: {
+        Row: {
+          compared_with_id: string | null
+          comparison_data: Json
+          created_at: string | null
+          created_by: string | null
+          id: string
+          product_id: string | null
+        }
+        Insert: {
+          compared_with_id?: string | null
+          comparison_data: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          product_id?: string | null
+        }
+        Update: {
+          compared_with_id?: string | null
+          comparison_data?: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          product_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_comparisons_compared_with_id_fkey"
+            columns: ["compared_with_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_comparisons_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_discussions: {
         Row: {
           content: string
@@ -2805,6 +2847,51 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "product_discussions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_retail_availability: {
+        Row: {
+          id: string
+          in_stock: boolean | null
+          last_updated: string | null
+          location_id: string | null
+          price: number
+          product_id: string | null
+          stock_quantity: number | null
+        }
+        Insert: {
+          id?: string
+          in_stock?: boolean | null
+          last_updated?: string | null
+          location_id?: string | null
+          price: number
+          product_id?: string | null
+          stock_quantity?: number | null
+        }
+        Update: {
+          id?: string
+          in_stock?: boolean | null
+          last_updated?: string | null
+          location_id?: string | null
+          price?: number
+          product_id?: string | null
+          stock_quantity?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_retail_availability_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "retail_locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_retail_availability_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
@@ -2986,12 +3073,16 @@ export type Database = {
       }
       products: {
         Row: {
+          authenticity_verified: boolean | null
           brand: string
           category: string | null
+          certifications: string[] | null
           chemicals: string[] | null
           comments_count: number | null
+          condition: string | null
           created_at: string | null
           description: string | null
+          dimensions: Json | null
           featured_date: string | null
           featured_score: number | null
           flavor: string
@@ -3001,22 +3092,30 @@ export type Database = {
           is_nrt_certified: boolean
           launch_date: string | null
           maker_id: string | null
+          materials: string[] | null
           media_gallery: Json[] | null
           name: string
           product_type: string
+          retail_availability: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
+          size_reference: Json | null
           strength: Database["public"]["Enums"]["strength_level"]
           tags: string[] | null
           updated_at: string | null
           upvotes_count: number | null
+          weight_grams: number | null
         }
         Insert: {
+          authenticity_verified?: boolean | null
           brand?: string
           category?: string | null
+          certifications?: string[] | null
           chemicals?: string[] | null
           comments_count?: number | null
+          condition?: string | null
           created_at?: string | null
           description?: string | null
+          dimensions?: Json | null
           featured_date?: string | null
           featured_score?: number | null
           flavor: string
@@ -3026,22 +3125,30 @@ export type Database = {
           is_nrt_certified?: boolean
           launch_date?: string | null
           maker_id?: string | null
+          materials?: string[] | null
           media_gallery?: Json[] | null
           name: string
           product_type?: string
+          retail_availability?: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
+          size_reference?: Json | null
           strength: Database["public"]["Enums"]["strength_level"]
           tags?: string[] | null
           updated_at?: string | null
           upvotes_count?: number | null
+          weight_grams?: number | null
         }
         Update: {
+          authenticity_verified?: boolean | null
           brand?: string
           category?: string | null
+          certifications?: string[] | null
           chemicals?: string[] | null
           comments_count?: number | null
+          condition?: string | null
           created_at?: string | null
           description?: string | null
+          dimensions?: Json | null
           featured_date?: string | null
           featured_score?: number | null
           flavor?: string
@@ -3051,14 +3158,18 @@ export type Database = {
           is_nrt_certified?: boolean
           launch_date?: string | null
           maker_id?: string | null
+          materials?: string[] | null
           media_gallery?: Json[] | null
           name?: string
           product_type?: string
+          retail_availability?: Json | null
           risk_level?: Database["public"]["Enums"]["risk_level"]
+          size_reference?: Json | null
           strength?: Database["public"]["Enums"]["strength_level"]
           tags?: string[] | null
           updated_at?: string | null
           upvotes_count?: number | null
+          weight_grams?: number | null
         }
         Relationships: [
           {
@@ -3552,6 +3663,39 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      retail_locations: {
+        Row: {
+          address: string
+          contact_info: Json | null
+          coordinates: unknown | null
+          created_at: string | null
+          id: string
+          name: string
+          operating_hours: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          address: string
+          contact_info?: Json | null
+          coordinates?: unknown | null
+          created_at?: string | null
+          id?: string
+          name: string
+          operating_hours?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string
+          contact_info?: Json | null
+          coordinates?: unknown | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          operating_hours?: Json | null
+          updated_at?: string | null
         }
         Relationships: []
       }
