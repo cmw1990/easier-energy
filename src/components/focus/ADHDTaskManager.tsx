@@ -6,6 +6,27 @@ import { Brain, ListCheck, Target, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+interface ADHDTaskOrganization {
+  id: string;
+  user_id: string;
+  task_id: string;
+  priority_method: string;
+  energy_required: number;
+  difficulty_level: number;
+  estimated_focus_blocks: number;
+  visual_tags: any;
+  reward_points: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  adhd_task_organization: ADHDTaskOrganization;
+}
+
 export const ADHDTaskManager = () => {
   const { toast } = useToast();
   const [isAddingTask, setIsAddingTask] = useState(false);
@@ -22,7 +43,7 @@ export const ADHDTaskManager = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as Task[];
     }
   });
 
@@ -74,10 +95,9 @@ export const ADHDTaskManager = () => {
                   <p className="text-sm text-muted-foreground">{task.description}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {/* Energy level indicator */}
                   <div className="flex items-center gap-1">
                     <Zap className="h-4 w-4 text-yellow-500" />
-                    <span className="text-sm">{task.adhd_task_organization?.energy_required}/5</span>
+                    <span className="text-sm">{task.adhd_task_organization?.energy_required || 0}/5</span>
                   </div>
                 </div>
               </div>

@@ -4,6 +4,19 @@ import { Brain, Clock, Target, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+interface EnergyLevels {
+  current: number;
+  average?: number;
+}
+
+interface FocusAnalytics {
+  id: string;
+  total_focus_time: number;
+  successful_sessions: number;
+  interrupted_sessions: number;
+  energy_levels: EnergyLevels;
+}
+
 export const FocusAnalyticsDashboard = () => {
   const { data: analytics } = useQuery({
     queryKey: ['focus-analytics'],
@@ -16,7 +29,7 @@ export const FocusAnalyticsDashboard = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as FocusAnalytics;
     }
   });
 

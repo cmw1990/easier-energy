@@ -4,6 +4,18 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
+interface AchievementDetails {
+  title: string;
+  description?: string;
+}
+
+interface Achievement {
+  id: string;
+  achievement_type: string;
+  points_earned: number;
+  details: AchievementDetails;
+}
+
 export const FocusAchievements = () => {
   const { data: achievements } = useQuery({
     queryKey: ['focus-achievements'],
@@ -15,7 +27,7 @@ export const FocusAchievements = () => {
         .limit(3);
 
       if (error) throw error;
-      return data;
+      return data as Achievement[];
     }
   });
 
@@ -46,7 +58,9 @@ export const FocusAchievements = () => {
                     )}
                   </div>
                   <div>
-                    <p className="font-medium">{achievement.details?.title || 'Achievement Unlocked!'}</p>
+                    <p className="font-medium">
+                      {achievement.details?.title || 'Achievement Unlocked!'}
+                    </p>
                     <p className="text-sm text-muted-foreground">+{achievement.points_earned} points</p>
                   </div>
                 </div>
