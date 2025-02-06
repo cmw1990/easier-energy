@@ -1584,6 +1584,42 @@ export type Database = {
         }
         Relationships: []
       }
+      focus_habits: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          frequency: string
+          habit_name: string
+          id: string
+          reminder_time: string | null
+          streak_count: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          frequency: string
+          habit_name: string
+          id?: string
+          reminder_time?: string | null
+          streak_count?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          frequency?: string
+          habit_name?: string
+          id?: string
+          reminder_time?: string | null
+          streak_count?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       focus_interruption_logs: {
         Row: {
           context: string | null
@@ -1627,6 +1663,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      focus_journal: {
+        Row: {
+          created_at: string | null
+          energy_level: number | null
+          entry_date: string | null
+          focus_challenges: string[] | null
+          id: string
+          improvements: string[] | null
+          notes: string | null
+          productivity_rating: number | null
+          strategies_used: string[] | null
+          updated_at: string | null
+          user_id: string
+          wins: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          energy_level?: number | null
+          entry_date?: string | null
+          focus_challenges?: string[] | null
+          id?: string
+          improvements?: string[] | null
+          notes?: string | null
+          productivity_rating?: number | null
+          strategies_used?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          wins?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          energy_level?: number | null
+          entry_date?: string | null
+          focus_challenges?: string[] | null
+          id?: string
+          improvements?: string[] | null
+          notes?: string | null
+          productivity_rating?: number | null
+          strategies_used?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          wins?: string[] | null
+        }
+        Relationships: []
       }
       focus_music: {
         Row: {
@@ -2199,6 +2280,51 @@ export type Database = {
         }
         Relationships: []
       }
+      medication_reminders: {
+        Row: {
+          created_at: string | null
+          days_of_week: string[] | null
+          dosage: string
+          end_date: string | null
+          frequency: string
+          id: string
+          medication_name: string
+          notes: string | null
+          reminder_times: string[]
+          start_date: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          days_of_week?: string[] | null
+          dosage: string
+          end_date?: string | null
+          frequency: string
+          id?: string
+          medication_name: string
+          notes?: string | null
+          reminder_times: string[]
+          start_date?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          days_of_week?: string[] | null
+          dosage?: string
+          end_date?: string | null
+          frequency?: string
+          id?: string
+          medication_name?: string
+          notes?: string | null
+          reminder_times?: string[]
+          start_date?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       meditation_audio: {
         Row: {
           audio_url: string
@@ -2498,6 +2624,42 @@ export type Database = {
           reflection?: string | null
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      noise_sensitivity_settings: {
+        Row: {
+          auto_adjust_enabled: boolean | null
+          created_at: string | null
+          focus_mode_settings: Json | null
+          id: string
+          preferred_sounds: string[] | null
+          updated_at: string | null
+          user_id: string
+          volume_level: number | null
+          white_noise_enabled: boolean | null
+        }
+        Insert: {
+          auto_adjust_enabled?: boolean | null
+          created_at?: string | null
+          focus_mode_settings?: Json | null
+          id?: string
+          preferred_sounds?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          volume_level?: number | null
+          white_noise_enabled?: boolean | null
+        }
+        Update: {
+          auto_adjust_enabled?: boolean | null
+          created_at?: string | null
+          focus_mode_settings?: Json | null
+          id?: string
+          preferred_sounds?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          volume_level?: number | null
+          white_noise_enabled?: boolean | null
         }
         Relationships: []
       }
@@ -5166,6 +5328,39 @@ export type Database = {
           reviewed_at?: string | null
           reviewer_notes?: string | null
           status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      visual_organization_tools: {
+        Row: {
+          color_scheme: string[] | null
+          content: Json | null
+          created_at: string | null
+          id: string
+          layout_preferences: Json | null
+          tool_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          color_scheme?: string[] | null
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          layout_preferences?: Json | null
+          tool_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          color_scheme?: string[] | null
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          layout_preferences?: Json | null
+          tool_type?: string
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []

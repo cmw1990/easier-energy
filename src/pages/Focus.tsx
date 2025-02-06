@@ -36,6 +36,8 @@ import { FocusEnvironment } from "@/components/focus/FocusEnvironment";
 import { ADHDTaskBreakdown } from "@/components/focus/tasks/ADHDTaskBreakdown";
 import { FocusInterruptionTracker } from "@/components/focus/FocusInterruptionTracker";
 import { SmartBreakSuggestions } from "@/components/focus/SmartBreakSuggestions";
+import { FocusHabitTracker } from "@/components/focus/habits/FocusHabitTracker";
+import { FocusJournal } from "@/components/focus/journal/FocusJournal";
 
 interface BodyDoublingSession {
   id: string;
@@ -210,6 +212,11 @@ const Focus = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <FocusHabitTracker />
+        <FocusJournal />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FocusInterruptionTracker />
         <SmartBreakSuggestions />
       </div>
@@ -253,7 +260,7 @@ const Focus = () => {
 
       <FocusEnvironment />
 
-      {/* Original games section */}
+      {/* Games section */}
       <Tabs defaultValue="quick" className="space-y-4">
         <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <TabsTrigger value="quick" className="flex items-center gap-2">
@@ -322,7 +329,7 @@ const Focus = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Original about section */}
+      {/* About section */}
       <Card className="p-6 hover:shadow-lg transition-shadow">
         <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent flex items-center gap-2">
           <BookOpen className="h-5 w-5" />
