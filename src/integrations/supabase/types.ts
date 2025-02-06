@@ -3401,6 +3401,160 @@ export type Database = {
           },
         ]
       }
+      research_data_points: {
+        Row: {
+          collected_at: string
+          created_at: string
+          data_type: string
+          data_value: Json
+          id: string
+          participant_id: string
+          project_id: string
+        }
+        Insert: {
+          collected_at?: string
+          created_at?: string
+          data_type: string
+          data_value: Json
+          id?: string
+          participant_id: string
+          project_id: string
+        }
+        Update: {
+          collected_at?: string
+          created_at?: string
+          data_type?: string
+          data_value?: Json
+          id?: string
+          participant_id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_data_points_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "research_participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_data_points_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "research_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_notes: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          project_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          project_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          project_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_notes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "research_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_participants: {
+        Row: {
+          created_at: string
+          enrollment_date: string | null
+          id: string
+          project_id: string
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enrollment_date?: string | null
+          id?: string
+          project_id: string
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enrollment_date?: string | null
+          id?: string
+          project_id?: string
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_participants_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "research_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_projects: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          research_type: Database["public"]["Enums"]["research_type"]
+          start_date: string | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          research_type: Database["public"]["Enums"]["research_type"]
+          start_date?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          research_type?: Database["public"]["Enums"]["research_type"]
+          start_date?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           appearance_rating: number | null
@@ -4863,6 +5017,19 @@ export type Database = {
         | "hip_mobility"
         | "breathing"
         | "relaxation"
+      research_type:
+        | "survey"
+        | "clinical_trial"
+        | "remote_trial"
+        | "experience_sampling"
+        | "longitudinal"
+        | "ema"
+        | "mhealth"
+        | "remote_monitoring"
+        | "digital_therapeutics"
+        | "market_research"
+        | "behavioral"
+        | "biomedical"
       review_type: "product" | "alternative" | "experience"
       risk_level: "low" | "medium" | "high"
       smoking_log_type: "cigarette" | "cigar" | "vape" | "pouch" | "gum"
