@@ -36,7 +36,7 @@ const EyeExercises = () => {
         "Keep your head still and maintain focus",
         "Blink naturally throughout the exercise"
       ],
-      animationType: "css"
+      animationType: "css" as const
     },
     {
       id: "figure-eight",
@@ -50,7 +50,7 @@ const EyeExercises = () => {
         "Keep your head still while moving your eyes",
         "Switch direction halfway through"
       ],
-      animationType: "svg"
+      animationType: "svg" as const
     },
     {
       id: "near-far",
@@ -64,7 +64,7 @@ const EyeExercises = () => {
         "Look at something 20 feet away for 5 seconds",
         "Repeat the cycle"
       ],
-      animationType: "css"
+      animationType: "css" as const
     },
     {
       id: "horizontal",
@@ -78,7 +78,7 @@ const EyeExercises = () => {
         "Keep your head still",
         "Repeat the movement smoothly"
       ],
-      animationType: "svg"
+      animationType: "svg" as const
     },
     {
       id: "vertical",
@@ -92,7 +92,7 @@ const EyeExercises = () => {
         "Keep your head still",
         "Repeat the movement smoothly"
       ],
-      animationType: "svg"
+      animationType: "svg" as const
     },
     {
       id: "palming",
@@ -106,7 +106,7 @@ const EyeExercises = () => {
         "Ensure no light enters through gaps",
         "Focus on complete darkness and relaxation"
       ],
-      animationType: "css"
+      animationType: "css" as const
     }
   ];
 
