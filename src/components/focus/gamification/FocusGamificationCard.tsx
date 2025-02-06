@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy, Star } from "lucide-react";
-import { GamificationData, RawGamificationData } from "./types";
+import { Achievement, Challenge, GamificationData } from "./types";
 import { AchievementItem } from "./AchievementItem";
 import { ChallengeItem } from "./ChallengeItem";
 
@@ -86,16 +86,20 @@ export const FocusGamificationCard = () => {
         challenge.id === challengeId ? { ...challenge, completed: true } : challenge
       );
 
-      setGamificationData({
+      const updatedData = {
         ...gamificationData,
-        daily_challenges: updatedChallenges
-      });
+        daily_challenges: updatedChallenges,
+        points_earned: gamificationData.points_earned + (updatedChallenges.find(c => c.id === challengeId)?.points || 0)
+      };
+
+      setGamificationData(updatedData);
 
       // Update in the database
       const { error } = await supabase
         .from('focus_gamification')
         .update({
-          daily_challenges: updatedChallenges
+          daily_challenges: updatedChallenges,
+          points_earned: updatedData.points_earned
         })
         .eq('user_id', session.user.id);
 

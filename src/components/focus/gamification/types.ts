@@ -29,6 +29,6 @@ export interface RawGamificationData {
   points_earned: number | null;
   streak_count: number | null;
   level: number | null;
-  achievements: any;
-  daily_challenges: any;
+  achievements: Record<string, any>[];
+  daily_challenges: Record<string, any>[];
 }
