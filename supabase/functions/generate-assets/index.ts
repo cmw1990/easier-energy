@@ -33,15 +33,35 @@ serve(async (req) => {
       throw new Error('Invalid request format');
     }
 
-    const { type, batch } = body;
-    console.log('Processing request for:', { type, batch });
+    const { type, batch, exerciseType = 'eye_exercise' } = body;
+    console.log('Processing request for:', { type, batch, exerciseType });
 
     if (type !== 'exercise-assets' || !batch) {
       throw new Error('Invalid request parameters');
     }
 
-    // Generate image with more descriptive prompt
-    const prompt = `Professional illustration of ${batch.replace(/-/g, ' ')} eye exercise technique, showing clear eye movement pattern, simple vector style with clear instructional elements, calming colors suitable for medical instruction, including numbered steps if relevant, on a clean white background`;
+    // Generate appropriate prompt based on exercise type
+    let prompt;
+    switch (exerciseType) {
+      case 'eye_exercise':
+        prompt = `Professional illustration of ${batch.replace(/-/g, ' ')} eye exercise technique, showing clear eye movement pattern, simple vector style with clear instructional elements, calming colors suitable for medical instruction, including numbered steps if relevant, on a clean white background`;
+        break;
+      case 'desk_yoga':
+        prompt = `Clean, professional illustration of ${batch.replace(/-/g, ' ')} yoga pose performed at a desk or office chair, simple vector style with clear instructional elements showing proper form and alignment, using calming colors, including numbered steps if relevant, on a clean white background`;
+        break;
+      case 'walking':
+        prompt = `Professional illustration demonstrating proper ${batch.replace(/-/g, ' ')} for walking exercise, simple vector style showing clear body positioning and movement, using encouraging colors, including instructional elements and proper form indicators, on a clean white background`;
+        break;
+      case 'running':
+        prompt = `Clear, professional illustration showing proper ${batch.replace(/-/g, ' ')} for running technique, simple vector style with anatomical accuracy, demonstrating correct form and movement patterns, using dynamic colors, including instructional elements, on a clean white background`;
+        break;
+      case 'stretch':
+        prompt = `Professional illustration demonstrating proper ${batch.replace(/-/g, ' ')} technique, simple vector style showing clear body positioning and muscle engagement, using calming colors, including directional arrows and form indicators, on a clean white background`;
+        break;
+      default:
+        prompt = `Professional fitness illustration demonstrating ${batch.replace(/-/g, ' ')} exercise, simple vector style with clear instructional elements, on a clean white background`;
+    }
+
     console.log('Generated prompt:', prompt);
 
     const response = await fetch('https://api.openai.com/v1/images/generations', {

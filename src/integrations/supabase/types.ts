@@ -6852,29 +6852,44 @@ export type Database = {
       wishlists: {
         Row: {
           created_at: string
+          folder: string | null
           id: string
+          is_private: boolean | null
+          last_price_check: string | null
           notes: string | null
           notification_price: number | null
+          price_history: Json | null
           priority: number | null
           product_id: string
+          quantity_desired: number | null
           user_id: string
         }
         Insert: {
           created_at?: string
+          folder?: string | null
           id?: string
+          is_private?: boolean | null
+          last_price_check?: string | null
           notes?: string | null
           notification_price?: number | null
+          price_history?: Json | null
           priority?: number | null
           product_id: string
+          quantity_desired?: number | null
           user_id: string
         }
         Update: {
           created_at?: string
+          folder?: string | null
           id?: string
+          is_private?: boolean | null
+          last_price_check?: string | null
           notes?: string | null
           notification_price?: number | null
+          price_history?: Json | null
           priority?: number | null
           product_id?: string
+          quantity_desired?: number | null
           user_id?: string
         }
         Relationships: [
