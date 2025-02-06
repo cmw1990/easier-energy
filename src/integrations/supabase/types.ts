@@ -1089,6 +1089,72 @@ export type Database = {
         }
         Relationships: []
       }
+      ease_tag_ratings: {
+        Row: {
+          created_at: string
+          ease_tag_id: string | null
+          id: string
+          product_id: string | null
+          rating: Database["public"]["Enums"]["ease_rating_type"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          ease_tag_id?: string | null
+          id?: string
+          product_id?: string | null
+          rating: Database["public"]["Enums"]["ease_rating_type"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          ease_tag_id?: string | null
+          id?: string
+          product_id?: string | null
+          rating?: Database["public"]["Enums"]["ease_rating_type"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ease_tag_ratings_ease_tag_id_fkey"
+            columns: ["ease_tag_id"]
+            isOneToOne: false
+            referencedRelation: "ease_tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ease_tag_ratings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ease_tags: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       energy_focus_logs: {
         Row: {
           activity_name: string
@@ -3758,6 +3824,42 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "product_discussions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_ease_tags: {
+        Row: {
+          created_at: string
+          ease_tag_id: string | null
+          id: string
+          product_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          ease_tag_id?: string | null
+          id?: string
+          product_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          ease_tag_id?: string | null
+          id?: string
+          product_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_ease_tags_ease_tag_id_fkey"
+            columns: ["ease_tag_id"]
+            isOneToOne: false
+            referencedRelation: "ease_tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_ease_tags_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
@@ -6747,6 +6849,7 @@ export type Database = {
         | "relaxation"
       discussion_status: "open" | "closed" | "archived"
       distraction_type: "app" | "website" | "notification" | "social_media"
+      ease_rating_type: "agree" | "disagree" | "not_sure"
       exercise_type:
         | "walking"
         | "running"
