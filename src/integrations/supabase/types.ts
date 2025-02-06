@@ -6730,6 +6730,89 @@ export type Database = {
         }
         Relationships: []
       }
+      web_tool_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          tool_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          tool_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          tool_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "web_tool_comments_tool_id_fkey"
+            columns: ["tool_id"]
+            isOneToOne: false
+            referencedRelation: "web_tools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      web_tools: {
+        Row: {
+          affiliate_links: Json | null
+          content: string
+          created_at: string
+          description: string
+          id: string
+          published: boolean | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          tags: string[]
+          title: string
+          updated_at: string
+          view_count: number | null
+        }
+        Insert: {
+          affiliate_links?: Json | null
+          content: string
+          created_at?: string
+          description: string
+          id?: string
+          published?: boolean | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          view_count?: number | null
+        }
+        Update: {
+          affiliate_links?: Json | null
+          content?: string
+          created_at?: string
+          description?: string
+          id?: string
+          published?: boolean | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          view_count?: number | null
+        }
+        Relationships: []
+      }
       wishlists: {
         Row: {
           created_at: string
