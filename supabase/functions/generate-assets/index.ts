@@ -19,10 +19,12 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured');
     }
 
+    console.log('Starting asset generation process...');
+    
     const { type, batch, description, style } = await req.json();
-    console.log(`Generating assets for type: ${type}, batch: ${batch}`);
+    console.log(`Request received - Type: ${type}, Batch: ${batch}`);
 
-    if (!type || (type === 'game-assets' && !batch)) {
+    if (!type || (type === 'exercise-assets' && !batch)) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameters' }),
         { 
@@ -32,6 +34,25 @@ serve(async (req) => {
       );
     }
 
+    // Test OpenAI API connection
+    console.log('Testing OpenAI API connection...');
+    const testResponse = await fetch('https://api.openai.com/v1/models', {
+      headers: {
+        'Authorization': `Bearer ${openAIKey}`,
+      },
+    });
+
+    if (!testResponse.ok) {
+      console.error('OpenAI API connection test failed:', await testResponse.text());
+      throw new Error('Failed to connect to OpenAI API');
+    }
+    console.log('OpenAI API connection test successful');
+
+    // Generate image
+    console.log('Generating image with DALL-E...');
+    const prompt = `${description} Style: ${style}`;
+    console.log('Using prompt:', prompt);
+
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
@@ -40,7 +61,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "dall-e-3",
-        prompt: `${description} Style: ${style}`,
+        prompt: prompt,
         n: 1,
         size: "1024x1024",
         response_format: "url"
@@ -48,16 +69,17 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+      const errorData = await response.json();
+      console.error('OpenAI API error:', errorData);
+      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
     }
 
     const imageData = await response.json();
-    const imageUrl = imageData.data[0].url;
-
+    console.log('Image generated successfully');
+    
     return new Response(
       JSON.stringify({ 
-        url: imageUrl,
+        url: imageData.data[0].url,
         message: 'Asset generated successfully'
       }),
       { 
