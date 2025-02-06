@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Timer, RotateCw, MoveHorizontal, MoveVertical, Maximize2, Minimize2 } from "lucide-react";
+import { Eye, Timer, RotateCw, MoveHorizontal, MoveVertical, Maximize2, Minimize2, AlertCircle } from "lucide-react";
 import { EyeExerciseTimer } from "@/components/exercises/EyeExerciseTimer";
 import { EyeRelaxationGuide } from "@/components/exercises/EyeRelaxationGuide";
 import { EyeExerciseStats } from "@/components/exercises/EyeExerciseStats";
@@ -12,6 +12,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { AnimatedExerciseDisplay } from "@/components/exercises/AnimatedExerciseDisplay";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const EyeExercises = () => {
   const [activeExercise, setActiveExercise] = useState<string | null>(null);
@@ -28,6 +30,13 @@ const EyeExercises = () => {
       description: "Every 20 minutes, look at something 20 feet away for 20 seconds",
       icon: Eye,
       duration: 20,
+      instructions: [
+        "Find an object or point approximately 20 feet away",
+        "Focus your gaze on that point",
+        "Keep your head still and maintain focus",
+        "Blink naturally throughout the exercise"
+      ],
+      animationType: "css"
     },
     {
       id: "figure-eight",
@@ -35,6 +44,13 @@ const EyeExercises = () => {
       description: "Move your eyes in a figure-eight pattern",
       icon: RotateCw,
       duration: 30,
+      instructions: [
+        "Imagine a large figure 8 in front of you",
+        "Trace the pattern slowly with your eyes",
+        "Keep your head still while moving your eyes",
+        "Switch direction halfway through"
+      ],
+      animationType: "svg"
     },
     {
       id: "near-far",
@@ -42,6 +58,13 @@ const EyeExercises = () => {
       description: "Alternate focusing between near and far objects",
       icon: Maximize2,
       duration: 60,
+      instructions: [
+        "Hold your thumb about 10 inches from your face",
+        "Focus on your thumb for 5 seconds",
+        "Look at something 20 feet away for 5 seconds",
+        "Repeat the cycle"
+      ],
+      animationType: "css"
     },
     {
       id: "horizontal",
@@ -49,6 +72,13 @@ const EyeExercises = () => {
       description: "Move eyes slowly from left to right",
       icon: MoveHorizontal,
       duration: 30,
+      instructions: [
+        "Look as far left as comfortable",
+        "Slowly move your gaze to the right",
+        "Keep your head still",
+        "Repeat the movement smoothly"
+      ],
+      animationType: "svg"
     },
     {
       id: "vertical",
@@ -56,6 +86,13 @@ const EyeExercises = () => {
       description: "Move eyes slowly up and down",
       icon: MoveVertical,
       duration: 30,
+      instructions: [
+        "Look up as far as comfortable",
+        "Slowly move your gaze downward",
+        "Keep your head still",
+        "Repeat the movement smoothly"
+      ],
+      animationType: "svg"
     },
     {
       id: "palming",
@@ -63,6 +100,13 @@ const EyeExercises = () => {
       description: "Cover your eyes with your palms and relax",
       icon: Minimize2,
       duration: 120,
+      instructions: [
+        "Rub your palms together to warm them",
+        "Cup your palms over your closed eyes",
+        "Ensure no light enters through gaps",
+        "Focus on complete darkness and relaxation"
+      ],
+      animationType: "css"
     }
   ];
 
@@ -73,24 +117,26 @@ const EyeExercises = () => {
   };
 
   const handleRatingSubmit = async () => {
-    if (!completedExercise) return;
+    if (!completedExercise || !session?.user?.id) return;
 
     try {
+      const exercise = exercises.find(e => e.id === completedExercise);
+      
       const { error } = await supabase
         .from('eye_exercise_logs')
         .insert({
-          user_id: session?.user?.id,
+          user_id: session.user.id,
           exercise_type: completedExercise,
-          duration_seconds: exercises.find(e => e.id === completedExercise)?.duration || 0,
+          duration_seconds: exercise?.duration || 0,
           effectiveness_rating: rating,
-          notes: completedExercise
+          notes: `Completed ${exercise?.title}`
         });
 
       if (error) throw error;
 
       toast({
-        title: "Exercise Completed!",
-        description: "Your progress has been saved.",
+        title: "Exercise Completed! 🎉",
+        description: "Your progress has been saved and counts toward achievements.",
       });
     } catch (error) {
       console.error('Error saving exercise:', error);
@@ -108,7 +154,17 @@ const EyeExercises = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Eye Exercises & Relaxation</h1>
+      <div className="flex flex-col gap-4">
+        <h1 className="text-2xl font-bold">Eye Exercises & Relaxation</h1>
+        
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Remember to blink regularly and stop any exercise if you feel discomfort.
+            Take breaks between exercises and ensure proper lighting conditions.
+          </AlertDescription>
+        </Alert>
+      </div>
       
       <EyeExerciseStats />
       
@@ -124,11 +180,21 @@ const EyeExercises = () => {
             <CardContent>
               <p className="text-muted-foreground mb-4">{exercise.description}</p>
               {activeExercise === exercise.id ? (
-                <EyeExerciseTimer
-                  duration={exercise.duration}
-                  onComplete={() => handleComplete(exercise.id)}
-                  onCancel={() => setActiveExercise(null)}
-                />
+                <div className="space-y-4">
+                  <AnimatedExerciseDisplay
+                    exerciseType={exercise.id}
+                    imageUrl={`/assets/exercises/${exercise.id}.svg`}
+                    animationType={exercise.animationType}
+                    isActive={true}
+                    progress={(exercise.duration - 0) / exercise.duration * 100}
+                    instructions={exercise.instructions}
+                  />
+                  <EyeExerciseTimer
+                    duration={exercise.duration}
+                    onComplete={() => handleComplete(exercise.id)}
+                    onCancel={() => setActiveExercise(null)}
+                  />
+                </div>
               ) : (
                 <Button 
                   onClick={() => setActiveExercise(exercise.id)}
