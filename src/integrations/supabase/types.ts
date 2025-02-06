@@ -454,6 +454,45 @@ export type Database = {
         }
         Relationships: []
       }
+      body_doubling_templates: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_minutes: number | null
+          focus_area: string[] | null
+          id: string
+          max_participants: number | null
+          recurring_schedule: Json | null
+          template_name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          focus_area?: string[] | null
+          id?: string
+          max_participants?: number | null
+          recurring_schedule?: Json | null
+          template_name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          focus_area?: string[] | null
+          id?: string
+          max_participants?: number | null
+          recurring_schedule?: Json | null
+          template_name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       card_sorting_responses: {
         Row: {
           card_groups: Json
@@ -1548,6 +1587,45 @@ export type Database = {
         }
         Relationships: []
       }
+      focus_energy_schedule: {
+        Row: {
+          created_at: string | null
+          day_of_week: number | null
+          energy_level: number | null
+          id: string
+          optimal_activities: string[] | null
+          productivity_score: number | null
+          schedule_preferences: Json | null
+          time_block: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          day_of_week?: number | null
+          energy_level?: number | null
+          id?: string
+          optimal_activities?: string[] | null
+          productivity_score?: number | null
+          schedule_preferences?: Json | null
+          time_block?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          day_of_week?: number | null
+          energy_level?: number | null
+          id?: string
+          optimal_activities?: string[] | null
+          productivity_score?: number | null
+          schedule_preferences?: Json | null
+          time_block?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       focus_environment_preferences: {
         Row: {
           background_type: string | null
@@ -1579,6 +1657,48 @@ export type Database = {
           light_preference?: string | null
           noise_type?: string[] | null
           temperature_preference?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      focus_gamification: {
+        Row: {
+          achievements: Json | null
+          activity_type: string
+          created_at: string | null
+          daily_challenges: Json | null
+          id: string
+          last_activity_at: string | null
+          level: number | null
+          points_earned: number | null
+          streak_count: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          achievements?: Json | null
+          activity_type: string
+          created_at?: string | null
+          daily_challenges?: Json | null
+          id?: string
+          last_activity_at?: string | null
+          level?: number | null
+          points_earned?: number | null
+          streak_count?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          achievements?: Json | null
+          activity_type?: string
+          created_at?: string | null
+          daily_challenges?: Json | null
+          id?: string
+          last_activity_at?: string | null
+          level?: number | null
+          points_earned?: number | null
+          streak_count?: number | null
           updated_at?: string | null
           user_id?: string
         }
@@ -1748,6 +1868,48 @@ export type Database = {
         }
         Relationships: []
       }
+      focus_priority_queue: {
+        Row: {
+          completed: boolean | null
+          context_tags: string[] | null
+          created_at: string | null
+          energy_level: number | null
+          id: string
+          priority_level: string | null
+          reward_points: number | null
+          task_name: string
+          time_estimate_minutes: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          context_tags?: string[] | null
+          created_at?: string | null
+          energy_level?: number | null
+          id?: string
+          priority_level?: string | null
+          reward_points?: number | null
+          task_name: string
+          time_estimate_minutes?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          context_tags?: string[] | null
+          created_at?: string | null
+          energy_level?: number | null
+          id?: string
+          priority_level?: string | null
+          reward_points?: number | null
+          task_name?: string
+          time_estimate_minutes?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       focus_rewards: {
         Row: {
           claimed_at: string | null
@@ -1822,6 +1984,42 @@ export type Database = {
           name?: string
           steps?: Json
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      focus_skill_training: {
+        Row: {
+          accuracy_score: number | null
+          completion_time: number | null
+          created_at: string | null
+          difficulty_level: number | null
+          id: string
+          notes: string | null
+          skill_type: string
+          training_date: string | null
+          user_id: string
+        }
+        Insert: {
+          accuracy_score?: number | null
+          completion_time?: number | null
+          created_at?: string | null
+          difficulty_level?: number | null
+          id?: string
+          notes?: string | null
+          skill_type: string
+          training_date?: string | null
+          user_id: string
+        }
+        Update: {
+          accuracy_score?: number | null
+          completion_time?: number | null
+          created_at?: string | null
+          difficulty_level?: number | null
+          id?: string
+          notes?: string | null
+          skill_type?: string
+          training_date?: string | null
           user_id?: string
         }
         Relationships: []
