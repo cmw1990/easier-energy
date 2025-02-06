@@ -38,6 +38,9 @@ import { FocusInterruptionTracker } from "@/components/focus/FocusInterruptionTr
 import { SmartBreakSuggestions } from "@/components/focus/SmartBreakSuggestions";
 import { FocusHabitTracker } from "@/components/focus/habits/FocusHabitTracker";
 import { FocusJournal } from "@/components/focus/journal/FocusJournal";
+import { MedicationReminders } from "@/components/focus/medication/MedicationReminders";
+import { NoiseSensitivitySettings } from "@/components/focus/noise/NoiseSensitivitySettings";
+import { VisualOrganizationTools } from "@/components/focus/visual/VisualOrganizationTools";
 
 interface BodyDoublingSession {
   id: string;
@@ -214,6 +217,12 @@ const Focus = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FocusHabitTracker />
         <FocusJournal />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <MedicationReminders />
+        <NoiseSensitivitySettings />
+        <VisualOrganizationTools />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
