@@ -15,6 +15,19 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AnimatedExerciseDisplay } from "@/components/exercises/AnimatedExerciseDisplay";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+type AnimationType = "svg" | "css";
+
+interface Exercise {
+  id: string;
+  title: string;
+  description: string;
+  icon: any;
+  duration: number;
+  instructions: string[];
+  animationType: AnimationType;
+  visualGuideUrl?: string;
+}
+
 const EyeExercises = () => {
   const [activeExercise, setActiveExercise] = useState<string | null>(null);
   const [showRating, setShowRating] = useState(false);
@@ -23,7 +36,7 @@ const EyeExercises = () => {
   const { toast } = useToast();
   const { session } = useAuth();
 
-  const exercises = [
+  const exercises: Exercise[] = [
     {
       id: "20-20-20",
       title: "20-20-20 Rule",
@@ -36,7 +49,8 @@ const EyeExercises = () => {
         "Keep your head still and maintain focus",
         "Blink naturally throughout the exercise"
       ],
-      animationType: "css" as const
+      animationType: "css",
+      visualGuideUrl: "/assets/exercises/20-20-20.svg"
     },
     {
       id: "figure-eight",
@@ -50,7 +64,8 @@ const EyeExercises = () => {
         "Keep your head still while moving your eyes",
         "Switch direction halfway through"
       ],
-      animationType: "svg" as const
+      animationType: "svg",
+      visualGuideUrl: "/assets/exercises/figure-eight.svg"
     },
     {
       id: "near-far",
@@ -64,7 +79,8 @@ const EyeExercises = () => {
         "Look at something 20 feet away for 5 seconds",
         "Repeat the cycle"
       ],
-      animationType: "css" as const
+      animationType: "css",
+      visualGuideUrl: "/assets/exercises/near-far.svg"
     },
     {
       id: "horizontal",
@@ -78,7 +94,8 @@ const EyeExercises = () => {
         "Keep your head still",
         "Repeat the movement smoothly"
       ],
-      animationType: "svg" as const
+      animationType: "svg",
+      visualGuideUrl: "/assets/exercises/horizontal.svg"
     },
     {
       id: "vertical",
@@ -92,7 +109,8 @@ const EyeExercises = () => {
         "Keep your head still",
         "Repeat the movement smoothly"
       ],
-      animationType: "svg" as const
+      animationType: "svg",
+      visualGuideUrl: "/assets/exercises/vertical.svg"
     },
     {
       id: "palming",
@@ -106,14 +124,49 @@ const EyeExercises = () => {
         "Ensure no light enters through gaps",
         "Focus on complete darkness and relaxation"
       ],
-      animationType: "css" as const
+      animationType: "css",
+      visualGuideUrl: "/assets/exercises/palming.svg"
     }
   ];
 
   const handleComplete = async (exerciseId: string) => {
+    if (!session?.user?.id) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be signed in to track your exercises.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const exercise = exercises.find(e => e.id === exerciseId);
+    if (!exercise) return;
+
     setCompletedExercise(exerciseId);
     setShowRating(true);
     setActiveExercise(null);
+
+    try {
+      const { error } = await supabase
+        .from('eye_exercise_logs')
+        .insert({
+          user_id: session.user.id,
+          exercise_type: exerciseId,
+          duration_seconds: exercise.duration,
+          visual_guide_url: exercise.visualGuideUrl,
+          notes: `Completed ${exercise.title}`
+        });
+
+      if (error) throw error;
+
+    } catch (error) {
+      console.error('Error logging exercise:', error);
+      toast({
+        title: "Error saving exercise",
+        description: "There was a problem saving your progress.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleRatingSubmit = async () => {
@@ -129,6 +182,7 @@ const EyeExercises = () => {
           exercise_type: completedExercise,
           duration_seconds: exercise?.duration || 0,
           effectiveness_rating: rating,
+          visual_guide_url: exercise?.visualGuideUrl,
           notes: `Completed ${exercise?.title}`
         });
 
@@ -183,7 +237,7 @@ const EyeExercises = () => {
                 <div className="space-y-4">
                   <AnimatedExerciseDisplay
                     exerciseType={exercise.id}
-                    imageUrl={`/assets/exercises/${exercise.id}.svg`}
+                    imageUrl={exercise.visualGuideUrl}
                     animationType={exercise.animationType}
                     isActive={true}
                     progress={(exercise.duration - 0) / exercise.duration * 100}
