@@ -6090,6 +6090,7 @@ export type Database = {
       }
       tool_usage_logs: {
         Row: {
+          audio_settings: Json | null
           created_at: string | null
           device_type: string | null
           id: string
@@ -6100,6 +6101,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          audio_settings?: Json | null
           created_at?: string | null
           device_type?: string | null
           id?: string
@@ -6110,6 +6112,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          audio_settings?: Json | null
           created_at?: string | null
           device_type?: string | null
           id?: string
