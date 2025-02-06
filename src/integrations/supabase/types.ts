@@ -6088,6 +6088,39 @@ export type Database = {
         }
         Relationships: []
       }
+      tool_usage_logs: {
+        Row: {
+          created_at: string | null
+          device_type: string | null
+          id: string
+          session_duration: number | null
+          settings: Json | null
+          tool_name: string
+          tool_type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          session_duration?: number | null
+          settings?: Json | null
+          tool_name: string
+          tool_type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          session_duration?: number | null
+          settings?: Json | null
+          tool_name?: string
+          tool_type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       topics: {
         Row: {
           created_at: string | null
