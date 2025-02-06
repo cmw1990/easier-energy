@@ -368,6 +368,92 @@ export type Database = {
         }
         Relationships: []
       }
+      body_doubling_participants: {
+        Row: {
+          created_at: string | null
+          id: string
+          join_time: string | null
+          leave_time: string | null
+          session_id: string
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          join_time?: string | null
+          leave_time?: string | null
+          session_id: string
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          join_time?: string | null
+          leave_time?: string | null
+          session_id?: string
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "body_doubling_participants_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "body_doubling_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      body_doubling_sessions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_minutes: number | null
+          host_id: string
+          id: string
+          is_private: boolean | null
+          max_participants: number | null
+          meeting_link: string | null
+          session_type: string
+          start_time: string
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          host_id: string
+          id?: string
+          is_private?: boolean | null
+          max_participants?: number | null
+          meeting_link?: string | null
+          session_type: string
+          start_time: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          host_id?: string
+          id?: string
+          is_private?: boolean | null
+          max_participants?: number | null
+          meeting_link?: string | null
+          session_type?: string
+          start_time?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       card_sorting_responses: {
         Row: {
           card_groups: Json
@@ -1420,6 +1506,45 @@ export type Database = {
           tags?: string[] | null
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      focus_rewards: {
+        Row: {
+          claimed_at: string | null
+          created_at: string | null
+          description: string | null
+          expires_at: string | null
+          id: string
+          is_claimed: boolean | null
+          points_required: number
+          reward_type: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_claimed?: boolean | null
+          points_required: number
+          reward_type: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_claimed?: boolean | null
+          points_required?: number
+          reward_type?: string
+          title?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -3769,6 +3894,47 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      task_prioritization: {
+        Row: {
+          created_at: string | null
+          energy_required: number | null
+          id: string
+          importance_level: number
+          quadrant: number
+          task_id: string
+          updated_at: string | null
+          urgency_level: number
+        }
+        Insert: {
+          created_at?: string | null
+          energy_required?: number | null
+          id?: string
+          importance_level: number
+          quadrant: number
+          task_id: string
+          updated_at?: string | null
+          urgency_level: number
+        }
+        Update: {
+          created_at?: string | null
+          energy_required?: number | null
+          id?: string
+          importance_level?: number
+          quadrant?: number
+          task_id?: string
+          updated_at?: string | null
+          urgency_level?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_prioritization_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {

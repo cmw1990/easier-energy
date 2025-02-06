@@ -9,6 +9,7 @@ import { MoodOverview } from "@/components/MoodOverview";
 import { ADHDTaskManager } from "@/components/focus/ADHDTaskManager";
 import { FocusAnalyticsDashboard } from "@/components/focus/FocusAnalyticsDashboard";
 import { FocusAchievements } from "@/components/focus/FocusAchievements";
+import { EisenhowerMatrix } from "@/components/focus/EisenhowerMatrix";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -89,6 +90,15 @@ export default function Index() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
+          className="col-span-full"
+        >
+          <EisenhowerMatrix />
+        </motion.div>
+
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
           className="col-span-full lg:col-span-2"
         >
           <FocusAnalyticsDashboard />
@@ -97,7 +107,7 @@ export default function Index() {
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.6 }}
           className="col-span-full lg:col-span-2"
         >
           <FocusAchievements />
