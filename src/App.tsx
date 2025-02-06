@@ -53,6 +53,12 @@ const router = createBrowserRouter([
     path: "/auth",
     element: <Auth />,
   },
+  // Development route (outside of protected routes)
+  {
+    path: "/development",
+    element: <DevelopmentTools />,
+    errorElement: <NotFound />,
+  },
   // Public web tools routes
   {
     path: "/tools",
