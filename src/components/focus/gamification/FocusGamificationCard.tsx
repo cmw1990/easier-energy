@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { Trophy, Star, Target, Medal, ArrowUp } from "lucide-react";
+import { Trophy, Star, Target, Medal } from "lucide-react";
 
 interface GamificationData {
   id: string;
@@ -55,7 +55,17 @@ export const FocusGamificationCard = () => {
 
       if (error) throw error;
       
-      setGamificationData(data);
+      // Transform the data to match our interface
+      const transformedData: GamificationData = {
+        id: data.id,
+        points_earned: data.points_earned,
+        streak_count: data.streak_count,
+        level: data.level,
+        achievements: Array.isArray(data.achievements) ? data.achievements : [],
+        daily_challenges: Array.isArray(data.daily_challenges) ? data.daily_challenges : []
+      };
+      
+      setGamificationData(transformedData);
     } catch (error) {
       console.error('Error loading gamification data:', error);
       toast({
@@ -76,6 +86,44 @@ export const FocusGamificationCard = () => {
     if (!gamificationData) return 0;
     const nextLevelPoints = getNextLevelPoints(gamificationData.level);
     return (gamificationData.points_earned % nextLevelPoints) / nextLevelPoints * 100;
+  };
+
+  const handleChallengeComplete = async (challengeId: string) => {
+    if (!session?.user || !gamificationData) return;
+
+    try {
+      // Update the local state first for immediate feedback
+      const updatedChallenges = gamificationData.daily_challenges.map(challenge => 
+        challenge.id === challengeId ? { ...challenge, completed: true } : challenge
+      );
+
+      setGamificationData({
+        ...gamificationData,
+        daily_challenges: updatedChallenges
+      });
+
+      // Update in the database
+      const { error } = await supabase
+        .from('focus_gamification')
+        .update({
+          daily_challenges: updatedChallenges
+        })
+        .eq('user_id', session.user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Challenge completed!",
+        description: "You've earned points for completing this challenge.",
+      });
+    } catch (error) {
+      console.error('Error completing challenge:', error);
+      toast({
+        title: "Error completing challenge",
+        description: "Please try again later",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -134,6 +182,7 @@ export const FocusGamificationCard = () => {
                       variant={challenge.completed ? "ghost" : "outline"}
                       size="sm"
                       disabled={challenge.completed}
+                      onClick={() => handleChallengeComplete(challenge.id)}
                     >
                       {challenge.completed ? "Completed" : "Complete"}
                     </Button>
