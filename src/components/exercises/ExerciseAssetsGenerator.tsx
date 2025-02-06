@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,35 +70,17 @@ export const ExerciseAssetsGenerator = () => {
     setIsDeleting(true);
     try {
       const batches = [
-        {
-          name: 'desk-exercises',
-          description: 'Professional illustration of workplace wellness activities, featuring gentle neck and shoulder movements in an office setting',
-        },
-        {
-          name: 'walking-exercise',
-          description: 'Professional illustration of a person taking a walk in a park setting, demonstrating proper walking posture',
-        },
-        {
-          name: 'running-exercise',
-          description: 'Professional illustration of proper running form in an outdoor setting, focusing on posture and movement',
-        },
-        {
-          name: 'stretching',
-          description: 'Professional illustration of basic stretching exercises, showing safe and effective stretching positions',
-        },
-        {
-          name: 'desk-yoga',
-          description: 'Professional illustration of gentle seated stretches suitable for office breaks, focusing on proper form',
-        },
-        {
-          name: 'traditional-yoga',
-          description: 'Professional illustration of basic yoga poses in a calm setting, emphasizing proper alignment and form',
-        }
+        '20-20-20',
+        'figure-eight',
+        'near-far',
+        'horizontal',
+        'vertical',
+        'palming'
       ];
 
       // Delete all existing assets first
       for (const batch of batches) {
-        await deleteExistingAssets(batch.name);
+        await deleteExistingAssets(batch);
       }
 
       setIsDeleting(false);
@@ -106,37 +89,37 @@ export const ExerciseAssetsGenerator = () => {
       // Generate new assets
       for (const batch of batches) {
         try {
-          console.log(`Starting process for ${batch.name}...`);
+          console.log(`Starting process for ${batch}...`);
           
-          console.log(`Invoking edge function for ${batch.name}...`);
+          console.log(`Invoking edge function for ${batch}...`);
           
           const { data, error } = await supabase.functions.invoke(
-            'generate-exercise-assets',
+            'generate-assets',
             {
               body: {
-                batch: batch.name,
+                batch,
                 type: 'exercise-assets',
-                is3D: true,
-                description: batch.description
+                description: `Professional illustration of ${batch.replace(/-/g, ' ')} eye exercise, showing eye movement pattern and proper technique, simple vector style, clean design`,
+                style: 'clean vector illustration style with soft colors, medical illustration quality'
               }
             }
           );
 
           if (error) {
-            console.error(`Error generating ${batch.name} assets:`, error);
+            console.error(`Error generating ${batch} assets:`, error);
             toast({
-              title: `Error generating ${batch.name} assets`,
+              title: `Error generating ${batch} assets`,
               description: error.message || 'Unknown error occurred',
               variant: 'destructive',
             });
             continue;
           }
           
-          console.log(`${batch.name} generation response:`, data);
+          console.log(`${batch} generation response:`, data);
           
           toast({
             title: 'Success',
-            description: `Generated assets for ${batch.name}`,
+            description: `Generated assets for ${batch}`,
           });
           
           // Add delay between batches to avoid rate limits
@@ -144,9 +127,9 @@ export const ExerciseAssetsGenerator = () => {
             await new Promise(resolve => setTimeout(resolve, 5000));
           }
         } catch (batchError) {
-          console.error(`Error processing batch ${batch.name}:`, batchError);
+          console.error(`Error processing batch ${batch}:`, batchError);
           toast({
-            title: `Error with ${batch.name}`,
+            title: `Error with ${batch}`,
             description: batchError.message || 'Failed to process batch',
             variant: 'destructive',
           });
