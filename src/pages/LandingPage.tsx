@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Brain, Globe, Zap, Wrench, LogIn } from "lucide-react"
+import { ArrowRight, Brain, Globe, Zap, Wrench, LogIn, Battery, Settings2 as Settings, Pill } from "lucide-react"
 import { Link } from "react-router-dom"
 
 const LandingPage = () => {
@@ -162,3 +162,4 @@ const LandingPage = () => {
 }
 
 export default LandingPage
+
