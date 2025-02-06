@@ -4,58 +4,67 @@ import { ExerciseAssetsGenerator } from "@/components/exercises/ExerciseAssetsGe
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
 import { ZenDriftAssetsGenerator } from "@/components/games/ZenDriftAssetsGenerator";
 import { GenerateBackgroundsButton } from "@/components/meditation/GenerateBackgroundsButton";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { TopNav } from "@/components/layout/TopNav";
 
 const DevelopmentTools = () => {
-  // Only show in development mode
-  if (!import.meta.env.DEV) {
-    return (
-      <div className="p-4">
-        <h1 className="text-2xl font-bold mb-4">Development Tools</h1>
-        <p>This page is only available in development mode.</p>
-      </div>
-    );
+  const navigate = useNavigate();
+  const isDev = import.meta.env.DEV;
+
+  useEffect(() => {
+    if (!isDev) {
+      navigate("/app");
+    }
+  }, [navigate]);
+
+  if (!isDev) {
+    return null;
   }
 
   return (
-    <div className="p-4 space-y-6">
-      <h1 className="text-2xl font-bold">Development Tools</h1>
-      
-      <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Eye Exercise Assets</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ExerciseAssetsGenerator />
-          </CardContent>
-        </Card>
+    <div className="min-h-screen bg-background">
+      <TopNav />
+      <div className="container mx-auto p-4 space-y-6">
+        <h1 className="text-2xl font-bold">Development Tools</h1>
+        
+        <div className="grid gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Eye Exercise Assets</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ExerciseAssetsGenerator />
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Game Assets</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <GameAssetsGenerator />
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Game Assets</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <GameAssetsGenerator />
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Zen Drift Assets</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ZenDriftAssetsGenerator />
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Zen Drift Assets</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ZenDriftAssetsGenerator />
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Meditation Backgrounds</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <GenerateBackgroundsButton />
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Meditation Backgrounds</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <GenerateBackgroundsButton />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
