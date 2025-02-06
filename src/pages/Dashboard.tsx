@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { MoodOverview } from '@/components/MoodOverview';
 import { EnergyPatternAnalysis } from '@/components/health/EnergyPatternAnalysis';
 import { TailoredRecommendations } from '@/components/health/TailoredRecommendations';
 import { ActivityTracker } from '@/components/health/ActivityTracker';
+import { WaterIntakeTracker } from '@/components/health/WaterIntakeTracker';
 
 const Dashboard = () => {
   return (
@@ -11,6 +13,9 @@ const Dashboard = () => {
       
       {/* Mood and Energy Overview */}
       <MoodOverview />
+      
+      {/* Water Intake Tracking */}
+      <WaterIntakeTracker />
       
       {/* Activity Tracking */}
       <ActivityTracker />

@@ -6254,6 +6254,36 @@ export type Database = {
         }
         Relationships: []
       }
+      water_intake: {
+        Row: {
+          amount_ml: number
+          created_at: string | null
+          id: string
+          intake_type: string | null
+          notes: string | null
+          timestamp: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount_ml: number
+          created_at?: string | null
+          id?: string
+          intake_type?: string | null
+          notes?: string | null
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount_ml?: number
+          created_at?: string | null
+          id?: string
+          intake_type?: string | null
+          notes?: string | null
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       withdrawal_symptoms: {
         Row: {
           coping_methods: string[] | null
