@@ -8,8 +8,39 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+// Simple in-memory cache (resets when function cold starts)
+const cache = new Map();
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+
+// Rate limiting map
+const rateLimits = new Map();
+const RATE_LIMIT = 5; // requests per minute
+const RATE_WINDOW = 60 * 1000; // 1 minute
+
+function isRateLimited(userId: string): boolean {
+  const now = Date.now();
+  const userRateData = rateLimits.get(userId) || { count: 0, timestamp: now };
+  
+  if (now - userRateData.timestamp > RATE_WINDOW) {
+    // Reset if window has passed
+    userRateData.count = 1;
+    userRateData.timestamp = now;
+  } else if (userRateData.count >= RATE_LIMIT) {
+    return true;
+  } else {
+    userRateData.count++;
+  }
+  
+  rateLimits.set(userId, userRateData);
+  return false;
+}
+
+function getCacheKey(type: string, batch?: string, description?: string): string {
+  return `${type}-${batch || ''}-${description || ''}`;
+}
+
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -20,66 +51,58 @@ serve(async (req) => {
   try {
     const openAIKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIKey) {
-      console.error('OpenAI API key is not configured');
-      return new Response(
-        JSON.stringify({ 
-          error: 'OpenAI API key is not configured',
-          details: 'Please configure the OPENAI_API_KEY in Supabase Edge Function settings'
-        }),
-        { 
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
+      throw new Error('OpenAI API key is not configured');
     }
 
-    // Test OpenAI API connection first
-    console.log('Testing OpenAI API connection...');
-    const testResponse = await fetch('https://api.openai.com/v1/models', {
-      headers: {
-        'Authorization': `Bearer ${openAIKey}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!testResponse.ok) {
-      const errorText = await testResponse.text();
-      console.error('OpenAI API connection test failed:', errorText);
-      throw new Error('Failed to connect to OpenAI API: ' + errorText);
+    // Parse request and get user ID from authorization header
+    const auth = req.headers.get('authorization')?.split('Bearer ')[1];
+    if (!auth) {
+      throw new Error('Missing authorization header');
     }
 
-    console.log('OpenAI API connection test successful');
-
-    // Parse request body
     let body;
     try {
       body = await req.json();
     } catch (e) {
-      console.error('Error parsing request body:', e);
+      throw new Error('Invalid request body');
+    }
+
+    const { type, batch, description, style } = body;
+    
+    // Check rate limit
+    if (isRateLimited(auth)) {
       return new Response(
-        JSON.stringify({ error: 'Invalid request body' }),
+        JSON.stringify({ 
+          error: 'Rate limit exceeded. Please try again later.',
+          details: 'Maximum 5 requests per minute allowed'
+        }),
         { 
-          status: 400,
+          status: 429,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       );
     }
 
-    const { type, batch, description, style } = body;
-    console.log(`Request received - Type: ${type}, Batch: ${batch}, Description: ${description}`);
+    // Check cache
+    const cacheKey = getCacheKey(type, batch, description);
+    const cachedResult = cache.get(cacheKey);
+    if (cachedResult && Date.now() - cachedResult.timestamp < CACHE_DURATION) {
+      console.log('Returning cached result for:', cacheKey);
+      return new Response(
+        JSON.stringify(cachedResult.data),
+        { 
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
     let prompt;
     let customStyle;
 
     if (type === 'exercise-assets') {
       if (!batch) {
-        return new Response(
-          JSON.stringify({ error: 'Missing batch parameter for exercise assets' }),
-          { 
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          }
-        );
+        throw new Error('Missing batch parameter for exercise assets');
       }
       prompt = `Professional illustration of ${batch.replace(/-/g, ' ')} eye exercise, showing eye movement pattern and proper technique, simple vector style, clean design`;
       customStyle = "clean vector illustration style with soft colors, medical illustration quality";
@@ -87,16 +110,10 @@ serve(async (req) => {
       prompt = description || 'Serene and calming meditation background with soft, ethereal elements';
       customStyle = style || "ethereal, dreamlike, soft colors, minimalist zen style";
     } else {
-      return new Response(
-        JSON.stringify({ error: 'Invalid asset type' }),
-        { 
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
+      throw new Error('Invalid asset type');
     }
 
-    // Generate image
+    // Generate image with optimized settings
     console.log('Generating image with DALL-E...');
     const finalPrompt = `${prompt} Style: ${customStyle}`;
     console.log('Using prompt:', finalPrompt);
@@ -111,25 +128,32 @@ serve(async (req) => {
         model: "dall-e-3",
         prompt: finalPrompt,
         n: 1,
-        size: "1024x1024",
+        size: "1024x1024", // Using standard size to reduce costs
+        quality: "standard", // Using standard quality to reduce costs
         response_format: "url"
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('OpenAI API error:', errorData);
       throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
     }
 
     const imageData = await response.json();
-    console.log('Image generated successfully');
     
+    // Cache the successful result
+    const result = { 
+      url: imageData.data[0].url,
+      message: 'Asset generated successfully'
+    };
+    
+    cache.set(cacheKey, {
+      timestamp: Date.now(),
+      data: result
+    });
+
     return new Response(
-      JSON.stringify({ 
-        url: imageData.data[0].url,
-        message: 'Asset generated successfully'
-      }),
+      JSON.stringify(result),
       { 
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -144,7 +168,7 @@ serve(async (req) => {
         details: error.toString()
       }),
       { 
-        status: 500,
+        status: error.status || 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     );
