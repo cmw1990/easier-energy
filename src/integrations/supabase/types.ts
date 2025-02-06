@@ -261,6 +261,56 @@ export type Database = {
         }
         Relationships: []
       }
+      adhd_task_organization: {
+        Row: {
+          created_at: string | null
+          difficulty_level: number | null
+          energy_required: number | null
+          estimated_focus_blocks: number | null
+          id: string
+          priority_method: string
+          reward_points: number | null
+          task_id: string
+          updated_at: string | null
+          user_id: string
+          visual_tags: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          difficulty_level?: number | null
+          energy_required?: number | null
+          estimated_focus_blocks?: number | null
+          id?: string
+          priority_method: string
+          reward_points?: number | null
+          task_id: string
+          updated_at?: string | null
+          user_id: string
+          visual_tags?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          difficulty_level?: number | null
+          energy_required?: number | null
+          estimated_focus_blocks?: number | null
+          id?: string
+          priority_method?: string
+          reward_points?: number | null
+          task_id?: string
+          updated_at?: string | null
+          user_id?: string
+          visual_tags?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adhd_task_organization_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       board_games: {
         Row: {
           board_size: number | null
@@ -1256,6 +1306,81 @@ export type Database = {
           title?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      focus_achievements: {
+        Row: {
+          achieved_at: string | null
+          achievement_type: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          points_earned: number | null
+          streak_count: number | null
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string | null
+          achievement_type: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          points_earned?: number | null
+          streak_count?: number | null
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string | null
+          achievement_type?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          points_earned?: number | null
+          streak_count?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      focus_analytics: {
+        Row: {
+          created_at: string | null
+          date: string
+          energy_levels: Json | null
+          id: string
+          interrupted_sessions: number | null
+          notes: string | null
+          peak_focus_periods: Json | null
+          productivity_score: number | null
+          successful_sessions: number | null
+          total_focus_time: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string
+          energy_levels?: Json | null
+          id?: string
+          interrupted_sessions?: number | null
+          notes?: string | null
+          peak_focus_periods?: Json | null
+          productivity_score?: number | null
+          successful_sessions?: number | null
+          total_focus_time?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          energy_levels?: Json | null
+          id?: string
+          interrupted_sessions?: number | null
+          notes?: string | null
+          peak_focus_periods?: Json | null
+          productivity_score?: number | null
+          successful_sessions?: number | null
+          total_focus_time?: number | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -3642,6 +3767,39 @@ export type Database = {
           id?: string
           priority?: number | null
           title?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          status: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }

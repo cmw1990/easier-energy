@@ -1,31 +1,14 @@
-import { AchievementWall } from "@/components/achievements/AchievementWall";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
-import { MeditationStats } from "@/components/meditation/MeditationStats";
-import { GroupSession } from "@/components/social/GroupSession";
-import { MeditationAudioPlayer } from "@/components/audio/MeditationAudioPlayer";
-import { BackgroundMusicPlayer } from "@/components/audio/BackgroundMusicPlayer";
-import { MotivationSection } from "@/components/motivation/MotivationSection";
-import { HealthImprovements } from "@/components/sobriety/HealthImprovements";
-import { CravingTracker } from "@/components/sobriety/CravingTracker";
-import { MoodOverview } from "@/components/MoodOverview";
-import { WithdrawalTracker } from "@/components/sobriety/WithdrawalTracker";
-import { TriggerPatternAnalysis } from "@/components/sobriety/TriggerPatternAnalysis";
-import { Battery, Brain, Coffee, Moon, Wind, Gamepad2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Battery, Brain, Gamepad2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { GameAssetsGenerator } from "@/components/GameAssetsGenerator";
-import { ReproductiveHealthExercises } from "@/components/exercises/ReproductiveHealthExercises";
-import { ExerciseRoutine } from "@/components/exercises/ExerciseRoutine";
-import { AdvancedExercisePatterns } from "@/components/exercises/AdvancedExercisePatterns";
-import { ExerciseProgressChart } from "@/components/exercises/ExerciseProgressChart";
-import { BreathingPatternExercise } from "@/components/exercises/BreathingPatternExercise";
-import { DynamicControlExercises } from "@/components/exercises/DynamicControlExercises";
-import { SpecializedTrainingExercises } from "@/components/exercises/SpecializedTrainingExercises";
-import { FocusEnhancementTools } from "@/components/focus/FocusEnhancementTools";
-import { TaskManagementTools } from "@/components/focus/TaskManagementTools";
-import { TimeBlockingTools } from "@/components/focus/TimeBlockingTools";
+import { MoodOverview } from "@/components/MoodOverview";
+import { ADHDTaskManager } from "@/components/focus/ADHDTaskManager";
+import { FocusAnalyticsDashboard } from "@/components/focus/FocusAnalyticsDashboard";
+import { FocusAchievements } from "@/components/focus/FocusAchievements";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -99,217 +82,25 @@ export default function Index() {
           transition={{ delay: 0.3 }}
           className="col-span-full lg:col-span-2"
         >
-          <TaskManagementTools />
+          <ADHDTaskManager />
         </motion.div>
 
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="col-span-1"
+          className="col-span-full lg:col-span-2"
         >
-          <div className="space-y-4">
-            <TimeBlockingTools />
-            <FocusEnhancementTools />
-          </div>
+          <FocusAnalyticsDashboard />
         </motion.div>
 
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="col-span-1"
-        >
-          <div className="space-y-4">
-            <ExerciseRoutine
-              routineName="Daily Energy Training"
-              exercises={[
-                {
-                  name: "Pelvic Floor Warm-up",
-                  type: "breathing",
-                  sets: 1,
-                  reps: 10,
-                  holdDuration: 5,
-                  restDuration: 3,
-                  instructions: [
-                    "Find a comfortable position",
-                    "Take deep breaths",
-                    "Focus on relaxing your pelvic floor",
-                    "Maintain good posture"
-                  ]
-                },
-                {
-                  name: "Basic Strengthening",
-                  type: "kegel_basic",
-                  sets: 3,
-                  reps: 10,
-                  holdDuration: 5,
-                  restDuration: 5,
-                  instructions: [
-                    "Contract your pelvic floor muscles",
-                    "Hold for 5 seconds",
-                    "Release completely",
-                    "Rest for 5 seconds"
-                  ]
-                },
-                {
-                  name: "Advanced Training",
-                  type: "kegel_advanced",
-                  sets: 2,
-                  reps: 15,
-                  holdDuration: 2,
-                  restDuration: 3,
-                  instructions: [
-                    "Quick, strong contractions",
-                    "Focus on full release",
-                    "Maintain breathing",
-                    "Keep your core relaxed"
-                  ]
-                },
-                {
-                  name: "Core Integration",
-                  type: "core_strength",
-                  sets: 3,
-                  reps: 12,
-                  holdDuration: 5,
-                  restDuration: 10,
-                  instructions: [
-                    "Engage your core muscles",
-                    "Coordinate with pelvic floor",
-                    "Maintain neutral spine",
-                    "Breathe steadily"
-                  ]
-                },
-                {
-                  name: "Cool Down",
-                  type: "relaxation",
-                  sets: 1,
-                  reps: 1,
-                  holdDuration: 300,
-                  restDuration: 0,
-                  instructions: [
-                    "Progressive muscle relaxation",
-                    "Focus on breathing",
-                    "Release any tension",
-                    "Stay mindful and present"
-                  ]
-                }
-              ]}
-            />
-          </div>
-        </motion.div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          <AdvancedExercisePatterns />
-        </motion.div>
-        
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5 }}
+          className="col-span-full lg:col-span-2"
         >
-          <ExerciseProgressChart />
-        </motion.div>
-      </div>
-
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="col-span-1"
-      >
-        <div className="space-y-4">
-          <BreathingPatternExercise />
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.7 }}
-        className="col-span-1"
-      >
-        <div className="space-y-4">
-          <DynamicControlExercises />
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="col-span-1"
-      >
-        <div className="space-y-4">
-          <SpecializedTrainingExercises />
-        </div>
-      </motion.div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="lg:col-span-2"
-        >
-          <MeditationStats />
-        </motion.div>
-
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <GroupSession />
-        </motion.div>
-
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.7 }}
-        >
-          <HealthImprovements />
-        </motion.div>
-
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="lg:col-span-2"
-        >
-          <TriggerPatternAnalysis />
-        </motion.div>
-      </div>
-
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.9 }}
-      >
-        <AchievementWall />
-      </motion.div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1.0 }}
-        >
-          <CravingTracker />
-        </motion.div>
-        
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 1.1 }}
-        >
-          <WithdrawalTracker />
+          <FocusAchievements />
         </motion.div>
       </div>
     </motion.div>
