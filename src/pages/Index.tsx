@@ -20,6 +20,8 @@ import { ReproductiveHealthExercises } from "@/components/exercises/Reproductive
 import { ExerciseRoutine } from "@/components/exercises/ExerciseRoutine";
 import { AdvancedExercisePatterns } from "@/components/exercises/AdvancedExercisePatterns";
 import { ExerciseProgressChart } from "@/components/exercises/ExerciseProgressChart";
+import { BreathingPatternExercise } from "@/components/exercises/BreathingPatternExercise";
+import { DynamicControlExercises } from "@/components/exercises/DynamicControlExercises";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -235,6 +237,30 @@ export default function Index() {
           <ExerciseProgressChart />
         </motion.div>
       </div>
+
+      {/* New Breathing Pattern Exercise Section */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="col-span-1"
+      >
+        <div className="space-y-4">
+          <BreathingPatternExercise />
+        </div>
+      </motion.div>
+
+      {/* New Dynamic Control Exercises Section */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        className="col-span-1"
+      >
+        <div className="space-y-4">
+          <DynamicControlExercises />
+        </div>
+      </motion.div>
 
       {/* Main Dashboard Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
