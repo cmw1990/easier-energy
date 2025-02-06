@@ -22,7 +22,7 @@ serve(async (req) => {
     console.log('Starting asset generation process...');
     
     const { type, batch, description, style } = await req.json();
-    console.log(`Request received - Type: ${type}, Batch: ${batch}`);
+    console.log(`Request received - Type: ${type}, Batch: ${batch}, Description: ${description}`);
 
     if (!type || (type === 'exercise-assets' && !batch)) {
       return new Response(
