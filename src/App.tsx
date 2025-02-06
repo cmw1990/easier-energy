@@ -1,4 +1,3 @@
-
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
@@ -29,6 +28,7 @@ import SobrietyPage from "@/pages/Sobriety"
 import SubstanceLogPage from "@/pages/SubstanceLog"
 import SupplementsPage from "@/pages/Supplements"
 import SupportPage from "@/pages/Support"
+import WebTools from "@/pages/WebTools"
 import BreathingGame from "@/components/games/BreathingGame"
 import BalloonJourney from "@/components/games/BalloonJourney"
 import ZenGarden from "@/components/games/ZenGarden"
@@ -40,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: "/auth",
     element: <Auth />,
+  },
+  {
+    path: "/tools",
+    element: <WebTools />,
   },
   // Standalone breathing game routes outside the main layout
   {
