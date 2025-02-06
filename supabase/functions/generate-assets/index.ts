@@ -5,38 +5,6 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts"
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
-
-// Simple in-memory cache (resets when function cold starts)
-const cache = new Map();
-const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
-
-// Rate limiting map
-const rateLimits = new Map();
-const RATE_LIMIT = 5; // requests per minute
-const RATE_WINDOW = 60 * 1000; // 1 minute
-
-function isRateLimited(userId: string): boolean {
-  const now = Date.now();
-  const userRateData = rateLimits.get(userId) || { count: 0, timestamp: now };
-  
-  if (now - userRateData.timestamp > RATE_WINDOW) {
-    // Reset if window has passed
-    userRateData.count = 1;
-    userRateData.timestamp = now;
-  } else if (userRateData.count >= RATE_LIMIT) {
-    return true;
-  } else {
-    userRateData.count++;
-  }
-  
-  rateLimits.set(userId, userRateData);
-  return false;
-}
-
-function getCacheKey(type: string, batch?: string, description?: string): string {
-  return `${type}-${batch || ''}-${description || ''}`;
 }
 
 serve(async (req) => {
@@ -55,13 +23,6 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured');
     }
 
-    // Parse request and get user ID from authorization header
-    const auth = req.headers.get('authorization')?.split('Bearer ')[1];
-    if (!auth) {
-      console.error('Missing authorization header');
-      throw new Error('Missing authorization header');
-    }
-
     let body;
     try {
       body = await req.json();
@@ -72,34 +33,6 @@ serve(async (req) => {
 
     console.log('Request body:', body);
     const { type, batch, description, style } = body;
-    
-    // Check rate limit
-    if (isRateLimited(auth)) {
-      return new Response(
-        JSON.stringify({ 
-          error: 'Rate limit exceeded. Please try again later.',
-          details: 'Maximum 5 requests per minute allowed'
-        }),
-        { 
-          status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    // Check cache
-    const cacheKey = getCacheKey(type, batch, description);
-    const cachedResult = cache.get(cacheKey);
-    if (cachedResult && Date.now() - cachedResult.timestamp < CACHE_DURATION) {
-      console.log('Returning cached result for:', cacheKey);
-      return new Response(
-        JSON.stringify(cachedResult.data),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
 
     let prompt;
     let customStyle;
@@ -113,6 +46,9 @@ serve(async (req) => {
     } else if (type === 'meditation-backgrounds') {
       prompt = description || 'Serene and calming meditation background with soft, ethereal elements';
       customStyle = style || "ethereal, dreamlike, soft colors, minimalist zen style";
+    } else if (type === 'game-assets') {
+      prompt = description || 'Beautiful and peaceful game assets with a calming atmosphere';
+      customStyle = style || "zen-like, artistic, dreamy, ethereal";
     } else {
       throw new Error('Invalid asset type');
     }
@@ -146,20 +82,12 @@ serve(async (req) => {
 
     const imageData = await response.json();
     console.log('Generated image data:', imageData);
-    
-    // Cache the successful result
-    const result = { 
-      url: imageData.data[0].url,
-      message: 'Asset generated successfully'
-    };
-    
-    cache.set(cacheKey, {
-      timestamp: Date.now(),
-      data: result
-    });
 
     return new Response(
-      JSON.stringify(result),
+      JSON.stringify({ 
+        url: imageData.data[0].url,
+        message: 'Asset generated successfully'
+      }),
       { 
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
