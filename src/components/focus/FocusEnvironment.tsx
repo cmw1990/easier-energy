@@ -9,8 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Sun, Moon, Volume2, Wind, Lightbulb, Settings } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
 
 export const FocusEnvironment = () => {
+  const { session } = useAuth();
   const { toast } = useToast();
   const [whiteNoise, setWhiteNoise] = useState(false);
   const [brightness, setBrightness] = useState(100);
@@ -19,23 +21,35 @@ export const FocusEnvironment = () => {
   const { data: preferences } = useQuery({
     queryKey: ['focus-environment'],
     queryFn: async () => {
+      if (!session?.user?.id) return null;
+      
       const { data, error } = await supabase
         .from('focus_environment_preferences')
         .select('*')
+        .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
       return data;
-    }
+    },
+    enabled: !!session?.user?.id
   });
 
   const updatePreferences = useMutation({
     mutationFn: async (preferences: any) => {
+      if (!session?.user?.id) throw new Error("No user ID");
+
       const { error } = await supabase
         .from('focus_environment_preferences')
-        .upsert(preferences);
+        .upsert({
+          user_id: session.user.id,
+          noise_type: whiteNoise ? ['white'] : [],
+          light_preference: `${brightness}%`,
+          temperature_preference: `${temperature}F`,
+          ...preferences
+        });
 
       if (error) throw error;
     },
@@ -46,6 +60,14 @@ export const FocusEnvironment = () => {
       });
     },
   });
+
+  useEffect(() => {
+    if (preferences) {
+      setWhiteNoise(preferences.noise_type?.includes('white') || false);
+      setBrightness(parseInt(preferences.light_preference) || 100);
+      setTemperature(parseInt(preferences.temperature_preference) || 72);
+    }
+  }, [preferences]);
 
   return (
     <Card className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20">
@@ -102,17 +124,21 @@ export const FocusEnvironment = () => {
         </div>
 
         <Button 
-          onClick={() => updatePreferences.mutate({
-            noise_type: whiteNoise ? ['white'] : [],
-            light_preference: `${brightness}%`,
-            temperature_preference: `${temperature}F`
-          })}
+          onClick={() => updatePreferences.mutate({})}
           className="w-full"
+          disabled={!session?.user?.id}
         >
           <Lightbulb className="h-4 w-4 mr-2" />
           Save Settings
         </Button>
+
+        {!session?.user?.id && (
+          <p className="text-sm text-muted-foreground text-center">
+            Sign in to save your environment preferences
+          </p>
+        )}
       </CardContent>
     </Card>
   );
 };
+

@@ -9,8 +9,10 @@ import { Timer, Pause, Play, RefreshCw, Clock, Brain } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BackgroundMusicPlayer } from "@/components/audio/BackgroundMusicPlayer";
+import { useAuth } from "@/components/AuthProvider";
 
 export const FocusTimerTools = () => {
+  const { session } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isActive, setIsActive] = useState(false);
@@ -23,9 +25,12 @@ export const FocusTimerTools = () => {
 
   const startSession = useMutation({
     mutationFn: async () => {
+      if (!session?.user?.id) throw new Error("No user ID");
+      
       const { error } = await supabase
         .from('focus_timer_sessions')
         .insert({
+          user_id: session.user.id,
           timer_type: 'pomodoro',
           work_duration: workDuration,
           break_duration: breakDuration,
@@ -112,6 +117,15 @@ export const FocusTimerTools = () => {
   };
 
   const handleStart = () => {
+    if (!session?.user?.id) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be signed in to use the focus timer.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!moodBefore || !energyLevel) {
       toast({
         title: "Please rate your state",
@@ -227,3 +241,4 @@ export const FocusTimerTools = () => {
     </Card>
   );
 };
+

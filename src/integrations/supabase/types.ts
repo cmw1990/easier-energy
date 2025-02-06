@@ -2386,6 +2386,50 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_queue: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          device_token: string
+          id: string
+          notification_id: string | null
+          sent_at: string | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          device_token: string
+          id?: string
+          notification_id?: string | null
+          sent_at?: string | null
+          title: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          device_token?: string
+          id?: string
+          notification_id?: string | null
+          sent_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_queue_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           content: string | null
@@ -4354,6 +4398,33 @@ export type Database = {
           think_aloud_enabled?: boolean | null
           title?: string
           updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_devices: {
+        Row: {
+          created_at: string | null
+          device_token: string
+          id: string
+          last_seen: string | null
+          platform: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          device_token: string
+          id?: string
+          last_seen?: string | null
+          platform: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          device_token?: string
+          id?: string
+          last_seen?: string | null
+          platform?: string
           user_id?: string | null
         }
         Relationships: []
