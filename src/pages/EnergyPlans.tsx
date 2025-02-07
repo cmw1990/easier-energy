@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -19,7 +20,6 @@ import {
   Timer,
   Share2 
 } from "lucide-react"
-import { Database } from "@/types/supabase"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 
@@ -48,6 +48,15 @@ type Plan = {
   energy_plan_components: PlanComponent[]
 }
 
+type Progress = {
+  id: string
+  user_id: string
+  plan_id: string
+  component_id: string
+  completed_at: string | null
+  created_at: string
+}
+
 const PlanTypeIcons = {
   quick_boost: Zap,
   sustained_energy: Coffee,
@@ -74,8 +83,7 @@ const EnergyPlans = () => {
   const [selectedCategory, setSelectedCategory] = useState<'charged' | 'recharged' | null>(null)
   const queryClient = useQueryClient()
 
-  // Type the query explicitly with the flat type
-  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery({
+  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery<Plan[]>({
     queryKey: ['energy-plans', 'public', selectedCategory],
     queryFn: async () => {
       let query = supabase
@@ -102,7 +110,7 @@ const EnergyPlans = () => {
     }
   })
 
-  const { data: myPlans, isLoading: isLoadingMyPlans } = useQuery({
+  const { data: myPlans, isLoading: isLoadingMyPlans } = useQuery<Plan[]>({
     queryKey: ['energy-plans', 'my-plans', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return []
@@ -127,7 +135,7 @@ const EnergyPlans = () => {
     enabled: !!session?.user?.id
   })
 
-  const { data: savedPlans, isLoading: isLoadingSaved } = useQuery({
+  const { data: savedPlans, isLoading: isLoadingSaved } = useQuery<Plan[]>({
     queryKey: ['energy-plans', 'saved', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return []
@@ -154,7 +162,7 @@ const EnergyPlans = () => {
     enabled: !!session?.user?.id
   })
 
-  const { data: planProgress } = useQuery({
+  const { data: planProgress } = useQuery<Progress[]>({
     queryKey: ['energy-plans', 'progress', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return []
@@ -165,7 +173,7 @@ const EnergyPlans = () => {
         .eq('user_id', session.user.id)
       
       if (error) throw error
-      return data as EnergyPlanProgress[]
+      return data as Progress[]
     },
     enabled: !!session?.user?.id
   })
