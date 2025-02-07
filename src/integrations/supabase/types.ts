@@ -490,6 +490,45 @@ export type Database = {
           },
         ]
       }
+      bathing_routines: {
+        Row: {
+          benefits: string[]
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          mood_tags: string[]
+          name: string
+          scientific_sources: string[] | null
+          steps: string[]
+          water_temperature: string
+        }
+        Insert: {
+          benefits: string[]
+          created_at?: string
+          description?: string | null
+          duration_minutes: number
+          id?: string
+          mood_tags: string[]
+          name: string
+          scientific_sources?: string[] | null
+          steps: string[]
+          water_temperature: string
+        }
+        Update: {
+          benefits?: string[]
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          mood_tags?: string[]
+          name?: string
+          scientific_sources?: string[] | null
+          steps?: string[]
+          water_temperature?: string
+        }
+        Relationships: []
+      }
       board_games: {
         Row: {
           board_size: number | null
@@ -6911,6 +6950,56 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      user_bathing_logs: {
+        Row: {
+          created_at: string
+          duration_minutes: number | null
+          energy_level_after: number | null
+          energy_level_before: number | null
+          id: string
+          mood_after: number | null
+          mood_before: number | null
+          notes: string | null
+          routine_id: string | null
+          user_id: string
+          water_temperature: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_minutes?: number | null
+          energy_level_after?: number | null
+          energy_level_before?: number | null
+          id?: string
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          routine_id?: string | null
+          user_id: string
+          water_temperature?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_minutes?: number | null
+          energy_level_after?: number | null
+          energy_level_before?: number | null
+          id?: string
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          routine_id?: string | null
+          user_id?: string
+          water_temperature?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_bathing_logs_routine_id_fkey"
+            columns: ["routine_id"]
+            isOneToOne: false
+            referencedRelation: "bathing_routines"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_devices: {
         Row: {
