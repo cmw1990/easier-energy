@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee, Smartphone, Tablet, Laptop, Desktop, Chrome } from "lucide-react"
+import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee, Smartphone, Tablet, Laptop, Monitor, Chrome } from "lucide-react"
 import { Link } from "react-router-dom"
 import { TopNav } from "@/components/layout/TopNav"
 
@@ -48,7 +48,7 @@ const LandingPage = () => {
                 <span>Mac App</span>
               </Link>
               <Link to="/download/windows" className="flex items-center gap-2 p-3 rounded-lg hover:bg-primary/10 transition-colors">
-                <Desktop className="h-5 w-5 text-primary" />
+                <Monitor className="h-5 w-5 text-primary" />
                 <span>Windows App</span>
               </Link>
               <Link to="/chrome-extension" className="flex items-center gap-2 p-3 rounded-lg hover:bg-primary/10 transition-colors">
