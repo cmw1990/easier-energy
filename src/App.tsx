@@ -14,7 +14,7 @@ import BreathingPage from "@/pages/Breathing"
 import CaffeinePage from "@/pages/Caffeine"
 import DashboardPage from "@/pages/Dashboard"
 import DistractionBlockerPage from "@/pages/DistractionBlocker"
-import ExercisePage from "@/pages/Exercise"
+import Exercise from "@/pages/Exercise"
 import EyeExercisesPage from "@/pages/EyeExercises"
 import FocusPage from "@/pages/Focus"
 import FoodPage from "@/pages/Food"
@@ -126,7 +126,7 @@ const router = createBrowserRouter([
       },
       {
         path: "exercise",
-        element: <ExercisePage />,
+        element: <Exercise />,
       },
       {
         path: "eye-exercises",

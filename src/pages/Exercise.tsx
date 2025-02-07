@@ -1,3 +1,4 @@
+
 import { DeskExercises } from "@/components/exercises/DeskExercises";
 import { DeskYoga } from "@/components/exercises/DeskYoga";
 import { WalkingExercise } from "@/components/exercises/WalkingExercise";
