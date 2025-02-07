@@ -7295,6 +7295,36 @@ export type Database = {
           },
         ]
       }
+      tool_types: {
+        Row: {
+          category: Database["public"]["Enums"]["tool_category"]
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["tool_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["tool_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tool_usage_logs: {
         Row: {
           audio_settings: Json | null
@@ -8317,6 +8347,16 @@ export type Database = {
         }
         Relationships: []
       }
+      tool_analytics_summary: {
+        Row: {
+          avg_session_duration: number | null
+          category: Database["public"]["Enums"]["tool_category"] | null
+          tool_name: string | null
+          total_sessions: number | null
+          unique_users: number | null
+        }
+        Relationships: []
+      }
       tool_popularity: {
         Row: {
           avg_rating: number | null
@@ -8469,6 +8509,7 @@ export type Database = {
       strength_level: "light" | "medium" | "strong" | "extra_strong"
       subscription_tier: "free" | "premium"
       substance_type: "alcohol" | "tobacco" | "other"
+      tool_category: "health" | "focus" | "relaxation" | "games" | "meditation"
     }
     CompositeTypes: {
       [_ in never]: never
