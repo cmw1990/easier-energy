@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
@@ -18,7 +17,7 @@ interface WebTool {
   icon?: LucideIcon;
   tags: string[];
   category: string;
-  isPremium?: boolean;
+  is_premium?: boolean;
   view_count?: number;
   published?: boolean;
 }
@@ -51,7 +50,8 @@ const seedWebTools = async () => {
       path: "/tools/white-noise",
       tags: ["focus", "sound", "productivity"],
       category: "meditation",
-      published: true
+      published: true,
+      is_premium: false
     },
     {
       title: "Binaural Beats",
@@ -60,7 +60,8 @@ const seedWebTools = async () => {
       path: "/tools/binaural-beats",
       tags: ["meditation", "focus", "sound"],
       category: "meditation",
-      published: true
+      published: true,
+      is_premium: true
     },
     {
       title: "Nature Sounds",
@@ -78,7 +79,7 @@ const seedWebTools = async () => {
       path: "/tools/bmi-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
-      isPremium: false,
+      is_premium: false,
       published: true
     },
     {
@@ -88,7 +89,7 @@ const seedWebTools = async () => {
       path: "/tools/body-fat-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
-      isPremium: false,
+      is_premium: false,
       published: true
     },
     {
@@ -98,7 +99,7 @@ const seedWebTools = async () => {
       path: "/tools/bmr-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
-      isPremium: false,
+      is_premium: false,
       published: true
     },
     {
@@ -108,7 +109,7 @@ const seedWebTools = async () => {
       path: "/tools/hrv-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
-      isPremium: false,
+      is_premium: false,
       published: true
     },
     {
@@ -228,7 +229,7 @@ const WebTools = () => {
       path: "/tools/white-noise",
       tags: ["focus", "sound", "productivity"],
       category: "meditation",
-      isPremium: false
+      is_premium: false
     },
     {
       title: "Binaural Beats",
@@ -237,7 +238,7 @@ const WebTools = () => {
       path: "/tools/binaural-beats",
       tags: ["meditation", "focus", "sound"],
       category: "meditation",
-      isPremium: true
+      is_premium: true
     },
     {
       title: "Nature Sounds",
@@ -246,7 +247,7 @@ const WebTools = () => {
       path: "/tools/nature-sounds",
       tags: ["relaxation", "sound", "focus"],
       category: "meditation",
-      isPremium: true
+      is_premium: true
     },
     {
       title: "BMI Calculator",
@@ -255,7 +256,7 @@ const WebTools = () => {
       path: "/tools/bmi-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
-      isPremium: false
+      is_premium: false
     },
     {
       title: "Body Fat Calculator",
@@ -264,7 +265,7 @@ const WebTools = () => {
       path: "/tools/body-fat-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
-      isPremium: false
+      is_premium: false
     },
     {
       title: "BMR Calculator",
@@ -273,7 +274,7 @@ const WebTools = () => {
       path: "/tools/bmr-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
-      isPremium: false
+      is_premium: false
     },
     {
       title: "HRV Calculator",
@@ -282,7 +283,7 @@ const WebTools = () => {
       path: "/tools/hrv-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
-      isPremium: false
+      is_premium: false
     }
   ];
 
@@ -365,7 +366,7 @@ const WebTools = () => {
                               {tag}
                             </span>
                           ))}
-                          {tool.isPremium && (
+                          {tool.is_premium && (
                             <span className="px-2 py-1 bg-primary/10 text-primary text-sm rounded-full">
                               Premium Available
                             </span>
