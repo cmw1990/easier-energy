@@ -1,7 +1,6 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
-import { HeartHandshake, Lightbulb, PiggyBank, Brain, Share2, Activity, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react"
+import { HeartHandshake, Lightbulb, PiggyBank, Brain, Share2, Activity, ArrowLeft, ChevronDown, ChevronUp, Sparkles, BookOpen, Blocks, Target, LineChart, Focus, ListChecks, ClipboardCheck, Waves, Music2, Calculator } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { useState } from "react"
@@ -31,7 +30,10 @@ const WhyUs = () => {
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl">Understanding The Well-Charged Approach</CardTitle>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-primary" />
+              Discover Our Comprehensive Approach
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="prose max-w-none dark:prose-invert">
@@ -45,54 +47,185 @@ const WhyUs = () => {
                   className="flex items-center gap-2"
                   onClick={() => setShowFullArticle(true)}
                 >
-                  Read Full Article <ChevronDown className="h-4 w-4" />
+                  Explore Our Vision <Sparkles className="h-4 w-4" />
                 </Button>
               ) : (
                 <>
-                  <h3>The Science Behind Our Approach</h3>
-                  <p>
-                    Our platform is built on the latest research in chronobiology, sleep science, and energy management. We understand that optimal performance isn't just about getting enough sleep or exercising regularly – it's about synchronizing all aspects of your life with your natural rhythms.
-                  </p>
+                  <div className="space-y-8">
+                    <section>
+                      <h3 className="flex items-center gap-2">
+                        <Brain className="h-5 w-5 text-primary" />
+                        The Science Behind Our Approach
+                      </h3>
+                      <p>
+                        Our platform is built on cutting-edge research in chronobiology, sleep science, and energy management. We understand that optimal performance isn't just about getting enough sleep or exercising regularly – it's about synchronizing all aspects of your life with your natural rhythms and creating sustainable, healthy habits that work together harmoniously.
+                      </p>
+                      <p>
+                        Through years of research and collaboration with health professionals, we've developed a unique approach that combines traditional wellness practices with modern technology and scientific understanding. Our methods are continuously updated based on the latest peer-reviewed research in:
+                      </p>
+                      <ul className="space-y-2">
+                        <li className="flex items-center gap-2">
+                          <ClipboardCheck className="h-4 w-4 text-primary" />
+                          Chronobiology and circadian rhythm optimization
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <ClipboardCheck className="h-4 w-4 text-primary" />
+                          Sleep science and recovery protocols
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <ClipboardCheck className="h-4 w-4 text-primary" />
+                          Cognitive performance enhancement
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <ClipboardCheck className="h-4 w-4 text-primary" />
+                          Stress management and resilience building
+                        </li>
+                      </ul>
+                    </section>
 
-                  <h3>Integrated Tools for Complete Wellness</h3>
-                  <ul>
-                    <li>
-                      <strong>Sound Therapy Suite:</strong> Access scientifically-tuned{" "}
-                      <Link to="/tools/white-noise" className="text-primary hover:underline">white noise</Link>,{" "}
-                      <Link to="/tools/binaural-beats" className="text-primary hover:underline">binaural beats</Link>, and{" "}
-                      <Link to="/tools/nature-sounds" className="text-primary hover:underline">nature sounds</Link> for enhanced focus and relaxation.
-                    </li>
-                    <li>
-                      <strong>Health Calculators:</strong> Make informed decisions with our{" "}
-                      <Link to="/tools/bmi-calculator" className="text-primary hover:underline">BMI</Link>,{" "}
-                      <Link to="/tools/body-fat-calculator" className="text-primary hover:underline">body fat</Link>, and{" "}
-                      <Link to="/tools/bmr-calculator" className="text-primary hover:underline">metabolic rate</Link> calculators.
-                    </li>
-                    <li>
-                      <strong>Sleep Optimization:</strong> Transform your rest with our comprehensive{" "}
-                      <Link to="/tools/sleep-guide" className="text-primary hover:underline">sleep guide</Link> and tracking tools.
-                    </li>
-                  </ul>
+                    <section>
+                      <h3 className="flex items-center gap-2">
+                        <Blocks className="h-5 w-5 text-primary" />
+                        Integrated Tools for Complete Wellness
+                      </h3>
+                      <div className="grid md:grid-cols-2 gap-6 mt-4">
+                        <div className="space-y-4">
+                          <h4 className="font-semibold text-primary">Sound Therapy Suite</h4>
+                          <ul className="space-y-2">
+                            <li>
+                              <Link to="/tools/white-noise" className="text-primary hover:underline flex items-center gap-2">
+                                <Focus className="h-4 w-4" />
+                                White Noise Generator
+                              </Link>
+                              <p className="text-sm text-muted-foreground">
+                                Customizable ambient sounds for enhanced focus and productivity
+                              </p>
+                            </li>
+                            <li>
+                              <Link to="/tools/binaural-beats" className="text-primary hover:underline flex items-center gap-2">
+                                <Waves className="h-4 w-4" />
+                                Binaural Beats
+                              </Link>
+                              <p className="text-sm text-muted-foreground">
+                                Scientifically-tuned frequencies for deep meditation and concentration
+                              </p>
+                            </li>
+                            <li>
+                              <Link to="/tools/nature-sounds" className="text-primary hover:underline flex items-center gap-2">
+                                <Music2 className="h-4 w-4" />
+                                Nature Sounds
+                              </Link>
+                              <p className="text-sm text-muted-foreground">
+                                Immersive natural soundscapes for relaxation and stress relief
+                              </p>
+                            </li>
+                          </ul>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <h4 className="font-semibold text-primary">Health Analytics</h4>
+                          <ul className="space-y-2">
+                            <li>
+                              <Link to="/tools/bmi-calculator" className="text-primary hover:underline flex items-center gap-2">
+                                <Calculator className="h-4 w-4" />
+                                BMI Calculator
+                              </Link>
+                              <p className="text-sm text-muted-foreground">
+                                Quick health assessment with personalized recommendations
+                              </p>
+                            </li>
+                            <li>
+                              <Link to="/tools/body-fat-calculator" className="text-primary hover:underline flex items-center gap-2">
+                                <Calculator className="h-4 w-4" />
+                                Body Fat Calculator
+                              </Link>
+                              <p className="text-sm text-muted-foreground">
+                                Accurate body composition analysis using proven methods
+                              </p>
+                            </li>
+                            <li>
+                              <Link to="/tools/bmr-calculator" className="text-primary hover:underline flex items-center gap-2">
+                                <Calculator className="h-4 w-4" />
+                                Metabolic Rate Calculator
+                              </Link>
+                              <p className="text-sm text-muted-foreground">
+                                Calculate your daily energy needs for optimal performance
+                              </p>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </section>
 
-                  <h3>AI-Powered Personalization</h3>
-                  <p>
-                    Our artificial intelligence engine analyzes your usage patterns, biometric data, and personal preferences to create highly personalized recommendations. This isn't one-size-fits-all wellness – it's precision-tuned to your unique needs.
-                  </p>
+                    <section>
+                      <h3 className="flex items-center gap-2">
+                        <Target className="h-5 w-5 text-primary" />
+                        AI-Powered Personalization
+                      </h3>
+                      <p>
+                        Our artificial intelligence engine takes personalization to the next level by analyzing your:
+                      </p>
+                      <ul className="space-y-2">
+                        <li>Daily activity patterns and energy fluctuations</li>
+                        <li>Sleep quality and duration metrics</li>
+                        <li>Focus and productivity data</li>
+                        <li>Environmental factors affecting your performance</li>
+                        <li>Personal preferences and goals</li>
+                      </ul>
+                      <p className="mt-4">
+                        This comprehensive analysis enables us to create highly personalized recommendations that evolve with you. Whether you're looking to optimize your work performance, enhance your athletic recovery, or simply maintain better energy levels throughout the day, our AI adapts to your unique needs and circumstances.
+                      </p>
+                    </section>
 
-                  <h3>Scientific Foundation</h3>
-                  <p>
-                    Every feature in our platform is grounded in peer-reviewed research and validated by health professionals. We continuously update our methodologies based on the latest scientific findings in:
-                  </p>
-                  <ul>
-                    <li>Chronobiology and circadian rhythm optimization</li>
-                    <li>Sleep science and recovery protocols</li>
-                    <li>Cognitive performance enhancement</li>
-                    <li>Stress management and resilience building</li>
-                  </ul>
+                    <section>
+                      <h3 className="flex items-center gap-2">
+                        <LineChart className="h-5 w-5 text-primary" />
+                        Progress Tracking & Insights
+                      </h3>
+                      <p>
+                        Track your journey with our comprehensive analytics dashboard. Monitor your:
+                      </p>
+                      <ul className="space-y-2">
+                        <li>Energy levels and patterns</li>
+                        <li>Sleep quality improvements</li>
+                        <li>Productivity metrics</li>
+                        <li>Wellness goals progress</li>
+                        <li>Long-term health trends</li>
+                      </ul>
+                      <p className="mt-4">
+                        Our platform doesn't just collect data – it transforms it into actionable insights that help you make informed decisions about your health and wellness journey.
+                      </p>
+                    </section>
+
+                    <section>
+                      <h3 className="flex items-center gap-2">
+                        <ListChecks className="h-5 w-5 text-primary" />
+                        Getting Started
+                      </h3>
+                      <p>
+                        Begin your journey to optimal energy and wellness in three simple steps:
+                      </p>
+                      <ol className="space-y-2 mt-4">
+                        <li className="flex items-center gap-2">
+                          <div className="bg-primary/10 rounded-full w-6 h-6 flex items-center justify-center text-primary">1</div>
+                          Create your free account and complete our comprehensive wellness assessment
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="bg-primary/10 rounded-full w-6 h-6 flex items-center justify-center text-primary">2</div>
+                          Explore our suite of tools and select the ones that align with your goals
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="bg-primary/10 rounded-full w-6 h-6 flex items-center justify-center text-primary">3</div>
+                          Let our AI create your personalized wellness plan and start your journey
+                        </li>
+                      </ol>
+                    </section>
+
+                  </div>
 
                   <Button 
                     variant="ghost" 
-                    className="flex items-center gap-2 mt-4"
+                    className="flex items-center gap-2 mt-8"
                     onClick={() => setShowFullArticle(false)}
                   >
                     Show Less <ChevronUp className="h-4 w-4" />
@@ -167,7 +300,7 @@ const WhyUs = () => {
 
         <Card className="mt-8">
           <CardHeader>
-            <CardTitle className="text-2xl">Ready to Optimize Your Energy?</CardTitle>
+            <CardTitle className="text-2xl">Ready to Transform Your Energy?</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
@@ -179,7 +312,7 @@ const WhyUs = () => {
               </Link>
               <Link to="/app">
                 <Button variant="outline" size="lg">
-                  Explore Features
+                  Try Demo
                 </Button>
               </Link>
             </div>
