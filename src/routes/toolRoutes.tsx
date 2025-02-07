@@ -42,6 +42,7 @@ const SleepHygieneChecklist = lazy(() => import("@/pages/tools/SleepHygieneCheck
 const SleepEnvironment = lazy(() => import("@/pages/tools/SleepEnvironment"))
 const SleepAnalytics = lazy(() => import("@/pages/tools/SleepAnalytics"))
 const SleepGoals = lazy(() => import("@/pages/tools/SleepGoals"))
+const SmartAlarm = lazy(() => import("@/pages/tools/SmartAlarm"))
 
 export const toolRoutes = {
   path: "/tools",
@@ -379,6 +380,14 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <SleepGoals />
+        </Suspense>
+      ),
+    },
+    {
+      path: "smart-alarm",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <SmartAlarm />
         </Suspense>
       ),
     },
