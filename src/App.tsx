@@ -39,6 +39,7 @@ const BalloonJourney = lazy(() => import("@/components/games/BalloonJourney"))
 const ZenGarden = lazy(() => import("@/components/games/ZenGarden"))
 const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
 const BMICalculator = lazy(() => import("@/pages/tools/BMICalculator"))
+const BiologicalAgeCalculator = lazy(() => import("@/pages/tools/BiologicalAgeCalculator"))
 
 const queryClient = new QueryClient()
 
@@ -93,6 +94,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <BMICalculator />
+          </Suspense>
+        ),
+      },
+      {
+        path: "biological-age-calculator",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <BiologicalAgeCalculator />
           </Suspense>
         ),
       },
