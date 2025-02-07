@@ -6735,6 +6735,51 @@ export type Database = {
         }
         Relationships: []
       }
+      sleep_hygiene_checklist: {
+        Row: {
+          bedroom_temperature_optimal: boolean | null
+          created_at: string | null
+          dark_room: boolean | null
+          date: string
+          exercise_completed: boolean | null
+          id: string
+          no_caffeine_after_2pm: boolean | null
+          no_screens_before_bed: boolean | null
+          quiet_environment: boolean | null
+          relaxation_routine_completed: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          bedroom_temperature_optimal?: boolean | null
+          created_at?: string | null
+          dark_room?: boolean | null
+          date: string
+          exercise_completed?: boolean | null
+          id?: string
+          no_caffeine_after_2pm?: boolean | null
+          no_screens_before_bed?: boolean | null
+          quiet_environment?: boolean | null
+          relaxation_routine_completed?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          bedroom_temperature_optimal?: boolean | null
+          created_at?: string | null
+          dark_room?: boolean | null
+          date?: string
+          exercise_completed?: boolean | null
+          id?: string
+          no_caffeine_after_2pm?: boolean | null
+          no_screens_before_bed?: boolean | null
+          quiet_environment?: boolean | null
+          relaxation_routine_completed?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       sleep_product_reviews: {
         Row: {
           cons: string[] | null
@@ -6875,6 +6920,39 @@ export type Database = {
           summary?: string
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      sleep_tracking: {
+        Row: {
+          bedtime: string
+          created_at: string | null
+          date: string
+          id: string
+          sleep_quality: number | null
+          updated_at: string | null
+          user_id: string
+          wake_time: string
+        }
+        Insert: {
+          bedtime: string
+          created_at?: string | null
+          date: string
+          id?: string
+          sleep_quality?: number | null
+          updated_at?: string | null
+          user_id: string
+          wake_time: string
+        }
+        Update: {
+          bedtime?: string
+          created_at?: string | null
+          date?: string
+          id?: string
+          sleep_quality?: number | null
+          updated_at?: string | null
+          user_id?: string
+          wake_time?: string
         }
         Relationships: []
       }
