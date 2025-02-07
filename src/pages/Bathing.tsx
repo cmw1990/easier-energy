@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Bath, Drop, Heart } from "lucide-react"
+import { Bath, Droplet, Heart } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/AuthProvider"
 import { supabase } from "@/integrations/supabase/client"
@@ -141,7 +141,7 @@ export default function Bathing() {
         <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Drop className="h-5 w-5 text-blue-500" />
+              <Droplet className="h-5 w-5 text-blue-500" />
               Active Session
             </CardTitle>
             <CardDescription>
@@ -157,7 +157,7 @@ export default function Bathing() {
             />
             <Button 
               className="w-full"
-              onClick={() => endRoutine(7, 8)} // For demo, using fixed values
+              onClick={() => endRoutine(7, 8)}
             >
               End Session
             </Button>

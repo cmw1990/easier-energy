@@ -490,6 +490,36 @@ export type Database = {
           },
         ]
       }
+      analytics_access: {
+        Row: {
+          access_level: string
+          created_at: string | null
+          expires_at: string | null
+          granted_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_level: string
+          created_at?: string | null
+          expires_at?: string | null
+          granted_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_level?: string
+          created_at?: string | null
+          expires_at?: string | null
+          granted_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       bathing_routines: {
         Row: {
           benefits: string[]
@@ -3796,6 +3826,42 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           variants?: Json | null
+        }
+        Relationships: []
+      }
+      premium_features: {
+        Row: {
+          access_level: string
+          created_at: string | null
+          expires_at: string | null
+          feature_name: string
+          granted_at: string | null
+          id: string
+          is_active: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_level: string
+          created_at?: string | null
+          expires_at?: string | null
+          feature_name: string
+          granted_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_level?: string
+          created_at?: string | null
+          expires_at?: string | null
+          feature_name?: string
+          granted_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
