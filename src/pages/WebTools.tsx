@@ -145,6 +145,15 @@ const seedWebTools = async () => {
       tags: ["light", "health", "wellness"],
       category: "health",
       published: true
+    },
+    {
+      title: "The Well-Recharged Guide to Sleep",
+      description: "Comprehensive sleep resource hub with science-backed guides, product reviews, and tools for better sleep. Access sleep tracking, environment optimization, and expert advice.",
+      slug: "sleep-guide",
+      path: "/tools/sleep-guide",
+      tags: ["sleep", "health", "wellness", "education"],
+      category: "health",
+      published: true
     }
   ];
 

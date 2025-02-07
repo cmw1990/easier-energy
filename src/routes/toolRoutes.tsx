@@ -35,6 +35,7 @@ const ColdTherapy = lazy(() => import("@/pages/tools/ColdTherapy"))
 const EMFProtection = lazy(() => import("@/pages/tools/EMFProtection"))
 const BlueLightBlockers = lazy(() => import("@/pages/tools/BlueLightBlockers"))
 const Grounding = lazy(() => import("@/pages/tools/Grounding"))
+const SleepGuide = lazy(() => import("@/pages/tools/SleepGuide"))
 
 export const toolRoutes = {
   path: "/tools",
@@ -316,6 +317,14 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <Grounding />
+        </Suspense>
+      ),
+    },
+    {
+      path: "sleep-guide",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <SleepGuide />
         </Suspense>
       ),
     },

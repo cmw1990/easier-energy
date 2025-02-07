@@ -6648,6 +6648,236 @@ export type Database = {
           },
         ]
       }
+      sleep_disorders: {
+        Row: {
+          causes: string[] | null
+          created_at: string | null
+          description: string
+          id: string
+          name: string
+          prevention_tips: string[] | null
+          symptoms: string[] | null
+          treatments: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          causes?: string[] | null
+          created_at?: string | null
+          description: string
+          id?: string
+          name: string
+          prevention_tips?: string[] | null
+          symptoms?: string[] | null
+          treatments?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          causes?: string[] | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          name?: string
+          prevention_tips?: string[] | null
+          symptoms?: string[] | null
+          treatments?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      sleep_guides: {
+        Row: {
+          author_id: string | null
+          category: string
+          content: string
+          content_type: Database["public"]["Enums"]["sleep_content_type"]
+          created_at: string | null
+          featured_image: string | null
+          id: string
+          meta_description: string | null
+          published: boolean | null
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          view_count: number | null
+        }
+        Insert: {
+          author_id?: string | null
+          category: string
+          content: string
+          content_type: Database["public"]["Enums"]["sleep_content_type"]
+          created_at?: string | null
+          featured_image?: string | null
+          id?: string
+          meta_description?: string | null
+          published?: boolean | null
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          author_id?: string | null
+          category?: string
+          content?: string
+          content_type?: Database["public"]["Enums"]["sleep_content_type"]
+          created_at?: string | null
+          featured_image?: string | null
+          id?: string
+          meta_description?: string | null
+          published?: boolean | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Relationships: []
+      }
+      sleep_product_reviews: {
+        Row: {
+          cons: string[] | null
+          created_at: string | null
+          helpful_votes: number | null
+          id: string
+          product_id: string | null
+          pros: string[] | null
+          rating: number | null
+          review_text: string | null
+          updated_at: string | null
+          user_id: string | null
+          verified_purchase: boolean | null
+        }
+        Insert: {
+          cons?: string[] | null
+          created_at?: string | null
+          helpful_votes?: number | null
+          id?: string
+          product_id?: string | null
+          pros?: string[] | null
+          rating?: number | null
+          review_text?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          verified_purchase?: boolean | null
+        }
+        Update: {
+          cons?: string[] | null
+          created_at?: string | null
+          helpful_votes?: number | null
+          id?: string
+          product_id?: string | null
+          pros?: string[] | null
+          rating?: number | null
+          review_text?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          verified_purchase?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "sleep_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sleep_products: {
+        Row: {
+          affiliate_link: string | null
+          category: Database["public"]["Enums"]["sleep_gear_category"]
+          cons: string[] | null
+          created_at: string | null
+          description: string
+          features: string[] | null
+          id: string
+          image_url: string | null
+          name: string
+          price_range: string | null
+          pros: string[] | null
+          rating: number | null
+          review_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          affiliate_link?: string | null
+          category: Database["public"]["Enums"]["sleep_gear_category"]
+          cons?: string[] | null
+          created_at?: string | null
+          description: string
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price_range?: string | null
+          pros?: string[] | null
+          rating?: number | null
+          review_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          affiliate_link?: string | null
+          category?: Database["public"]["Enums"]["sleep_gear_category"]
+          cons?: string[] | null
+          created_at?: string | null
+          description?: string
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price_range?: string | null
+          pros?: string[] | null
+          rating?: number | null
+          review_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      sleep_research: {
+        Row: {
+          created_at: string | null
+          full_content: string | null
+          id: string
+          key_findings: string[] | null
+          methodology: string | null
+          publication_date: string | null
+          source_name: string | null
+          source_url: string | null
+          summary: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          full_content?: string | null
+          id?: string
+          key_findings?: string[] | null
+          methodology?: string | null
+          publication_date?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          summary: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          full_content?: string | null
+          id?: string
+          key_findings?: string[] | null
+          methodology?: string | null
+          publication_date?: string | null
+          source_name?: string | null
+          source_url?: string | null
+          summary?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       smoking_logs: {
         Row: {
           created_at: string | null
@@ -8461,6 +8691,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sleep_profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          light_preference: string | null
+          mattress_preference: string | null
+          noise_preference: string | null
+          pillow_preference: string | null
+          preferred_sleep_time: string | null
+          preferred_wake_time: string | null
+          room_temperature_preference: number | null
+          sleep_challenges: string[] | null
+          sleep_goals: string[] | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          light_preference?: string | null
+          mattress_preference?: string | null
+          noise_preference?: string | null
+          pillow_preference?: string | null
+          preferred_sleep_time?: string | null
+          preferred_wake_time?: string | null
+          room_temperature_preference?: number | null
+          sleep_challenges?: string[] | null
+          sleep_goals?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          light_preference?: string | null
+          mattress_preference?: string | null
+          noise_preference?: string | null
+          pillow_preference?: string | null
+          preferred_sleep_time?: string | null
+          preferred_wake_time?: string | null
+          room_temperature_preference?: number | null
+          sleep_challenges?: string[] | null
+          sleep_goals?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_subscriptions: {
         Row: {
           created_at: string | null
@@ -9217,6 +9495,23 @@ export type Database = {
         | "biomedical"
       review_type: "product" | "alternative" | "experience"
       risk_level: "low" | "medium" | "high"
+      sleep_content_type:
+        | "guide"
+        | "article"
+        | "research"
+        | "product_review"
+        | "sleep_disorder"
+        | "lifestyle"
+        | "tips"
+      sleep_gear_category:
+        | "mattresses"
+        | "pillows"
+        | "bedding"
+        | "sleep_tech"
+        | "sleep_accessories"
+        | "white_noise"
+        | "blackout_solutions"
+        | "temperature_control"
       smoking_log_type: "cigarette" | "cigar" | "vape" | "pouch" | "gum"
       strength_level: "light" | "medium" | "strong" | "extra_strong"
       subscription_tier: "free" | "premium"
