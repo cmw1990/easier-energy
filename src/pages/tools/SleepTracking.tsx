@@ -8,6 +8,17 @@ import { ToolAnalyticsWrapper } from "@/components/tools/ToolAnalyticsWrapper"
 import { Button } from "@/components/ui/button"
 import { Moon, Sun, Calendar } from "lucide-react"
 
+type SleepEntry = {
+  id: string
+  date: string
+  sleep_quality: number
+  bedtime: string
+  wake_time: string
+  user_id: string
+  created_at: string
+  updated_at: string
+}
+
 export default function SleepTracking() {
   const { data: sleepData, isLoading } = useQuery({
     queryKey: ['sleep_tracking'],
@@ -18,8 +29,12 @@ export default function SleepTracking() {
         .order('date', { ascending: false })
         .limit(7)
       
-      if (error) throw error
-      return data
+      if (error) {
+        console.error('Error fetching sleep data:', error)
+        return []
+      }
+      
+      return (data || []) as SleepEntry[]
     }
   })
 
