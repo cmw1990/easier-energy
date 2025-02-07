@@ -109,6 +109,42 @@ const seedWebTools = async () => {
       category: "health",
       isPremium: false,
       published: true
+    },
+    {
+      title: "Tea Database",
+      description: "Comprehensive guide to teas, their compounds, health benefits, and brewing methods.",
+      slug: "tea-database",
+      path: "/tools/tea-database",
+      tags: ["health", "tea", "wellness"],
+      category: "health",
+      published: true
+    },
+    {
+      title: "Energy Enhancement Database",
+      description: "Comprehensive database of energy drinks, stimulants, and natural energy boosters with detailed analysis.",
+      slug: "energy-enhancement",
+      path: "/tools/energy-enhancement",
+      tags: ["energy", "health", "wellness"],
+      category: "health",
+      published: true
+    },
+    {
+      title: "Sleep Optimization",
+      description: "Evidence-based methods for improving sleep quality and recovery.",
+      slug: "sleep",
+      path: "/tools/sleep",
+      tags: ["sleep", "health", "wellness"],
+      category: "health",
+      published: true
+    },
+    {
+      title: "Light Optimization",
+      description: "Strategic light exposure protocols for circadian health and cellular function.",
+      slug: "light",
+      path: "/tools/light",
+      tags: ["light", "health", "wellness"],
+      category: "health",
+      published: true
     }
   ];
 
@@ -118,7 +154,7 @@ const seedWebTools = async () => {
       .upsert(
         { 
           ...tool,
-          content: tool.description // For now, using description as content
+          content: tool.description
         },
         { onConflict: 'slug' }
       );
