@@ -129,6 +129,10 @@ const router = createBrowserRouter([
         element: <EyeExercisesPage />,
       },
       {
+        path: "eye-care",
+        element: <EyeExercisesPage />,
+      },
+      {
         path: "focus",
         element: <FocusPage />,
       },
