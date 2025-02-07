@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -74,6 +73,14 @@ type Plan = {
   energy_plan_components: PlanComponent[]
 }
 
+type ProgressRecord = {
+  id: string
+  user_id: string 
+  plan_id: string
+  component_id: string
+  completed_at: string | null
+}
+
 const PlanTypeIcons: Record<PlanType, any> = {
   energizing_boost: Zap,
   sustained_focus: Coffee,
@@ -98,9 +105,9 @@ const NewPlanDialog = ({ onPlanCreated }: { onPlanCreated: () => void }) => {
     title: "",
     description: "",
     plan_type: "energizing_boost" as PlanType,
-    category: "charged" as Plan["category"],
+    category: "charged" as 'charged' | 'recharged',
     tags: [] as string[],
-    visibility: "private" as Plan["visibility"],
+    visibility: "private" as 'private' | 'public' | 'shared',
     estimated_duration_minutes: 30,
     energy_level_required: 5,
     recommended_time_of_day: [] as string[],
@@ -357,7 +364,7 @@ const EnergyPlans = () => {
       
       const { data, error } = await query
       if (error) throw error
-      return data as Plan[]
+      return data as unknown as Plan[]
     }
   })
 
@@ -381,7 +388,7 @@ const EnergyPlans = () => {
         .order('created_at', { ascending: false })
       
       if (error) throw error
-      return data as Plan[]
+      return data as unknown as Plan[]
     },
     enabled: !!session?.user?.id
   })
@@ -408,12 +415,12 @@ const EnergyPlans = () => {
         .eq('user_id', session.user.id)
       
       if (error) throw error
-      return data.map(item => item.energy_plans) as Plan[]
+      return data.map(item => item.energy_plans) as unknown as Plan[]
     },
     enabled: !!session?.user?.id
   })
 
-  const { data: planProgress } = useQuery<Progress[]>({
+  const { data: planProgress } = useQuery<ProgressRecord[]>({
     queryKey: ['energy-plans', 'progress', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return []
@@ -424,7 +431,7 @@ const EnergyPlans = () => {
         .eq('user_id', session.user.id)
       
       if (error) throw error
-      return data as Progress[]
+      return data as ProgressRecord[]
     },
     enabled: !!session?.user?.id
   })
