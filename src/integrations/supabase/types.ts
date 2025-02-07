@@ -1779,6 +1779,48 @@ export type Database = {
         }
         Relationships: []
       }
+      energy_products: {
+        Row: {
+          caffeine_content: number | null
+          created_at: string
+          description: string
+          id: string
+          ingredients: string[] | null
+          name: string
+          other_stimulants: string[] | null
+          serving_size: string | null
+          type: string
+          updated_at: string
+          warnings: string | null
+        }
+        Insert: {
+          caffeine_content?: number | null
+          created_at?: string
+          description: string
+          id?: string
+          ingredients?: string[] | null
+          name: string
+          other_stimulants?: string[] | null
+          serving_size?: string | null
+          type: string
+          updated_at?: string
+          warnings?: string | null
+        }
+        Update: {
+          caffeine_content?: number | null
+          created_at?: string
+          description?: string
+          id?: string
+          ingredients?: string[] | null
+          name?: string
+          other_stimulants?: string[] | null
+          serving_size?: string | null
+          type?: string
+          updated_at?: string
+          warnings?: string | null
+        }
+        Relationships: []
+      }
       executive_function_tools: {
         Row: {
           active_reminders: Json[] | null
@@ -3832,6 +3874,54 @@ export type Database = {
           user_id?: string
           volume_level?: number | null
           white_noise_enabled?: boolean | null
+        }
+        Relationships: []
+      }
+      nootropics: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          half_life: string | null
+          id: string
+          interactions: string | null
+          mechanism_of_action: string | null
+          name: string
+          recommended_dosage: string
+          research_links: string[] | null
+          safety_considerations: string | null
+          side_effects: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          half_life?: string | null
+          id?: string
+          interactions?: string | null
+          mechanism_of_action?: string | null
+          name: string
+          recommended_dosage: string
+          research_links?: string[] | null
+          safety_considerations?: string | null
+          side_effects?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          half_life?: string | null
+          id?: string
+          interactions?: string | null
+          mechanism_of_action?: string | null
+          name?: string
+          recommended_dosage?: string
+          research_links?: string[] | null
+          safety_considerations?: string | null
+          side_effects?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -7435,6 +7525,48 @@ export type Database = {
         }
         Relationships: []
       }
+      teas: {
+        Row: {
+          brewing_instructions: string | null
+          caffeine_content: string | null
+          compounds: string[] | null
+          created_at: string
+          description: string
+          health_benefits: string[] | null
+          id: string
+          name: string
+          origin: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          brewing_instructions?: string | null
+          caffeine_content?: string | null
+          compounds?: string[] | null
+          created_at?: string
+          description: string
+          health_benefits?: string[] | null
+          id?: string
+          name: string
+          origin?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          brewing_instructions?: string | null
+          caffeine_content?: string | null
+          compounds?: string[] | null
+          created_at?: string
+          description?: string
+          health_benefits?: string[] | null
+          id?: string
+          name?: string
+          origin?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tool_analytics: {
         Row: {
           completed_actions: number | null
@@ -8116,6 +8248,45 @@ export type Database = {
           starts_at?: string
           tier?: Database["public"]["Enums"]["subscription_tier"]
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_substance_logs: {
+        Row: {
+          created_at: string
+          dosage: string
+          effects: string | null
+          id: string
+          notes: string | null
+          side_effects: string | null
+          substance_id: string
+          substance_type: string
+          taken_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dosage: string
+          effects?: string | null
+          id?: string
+          notes?: string | null
+          side_effects?: string | null
+          substance_id: string
+          substance_type: string
+          taken_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dosage?: string
+          effects?: string | null
+          id?: string
+          notes?: string | null
+          side_effects?: string | null
+          substance_id?: string
+          substance_type?: string
+          taken_at?: string
           user_id?: string
         }
         Relationships: []

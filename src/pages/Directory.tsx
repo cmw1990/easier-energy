@@ -1,10 +1,9 @@
-
 import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
-import { Brain, Heart, Zap, Sun, Moon, Leaf, Activity, Shield, Coffee, TestTube, Flaskconical } from "lucide-react"
+import { Brain, Heart, Zap, Sun, Moon, Leaf, Activity, Shield, Coffee, TestTube, FlaskConical } from "lucide-react"
 
 export default function Directory() {
   const categories = [
@@ -67,7 +66,7 @@ export default function Directory() {
     {
       title: "Metabolic Enhancement",
       description: "Protocols for optimizing metabolism and cellular energy production.",
-      icon: Flaskconical,
+      icon: FlaskConical,
       link: "/tools/metabolic",
       subcategories: ["Glucose Optimization", "Mitochondrial Function", "Metabolic Flexibility"]
     }

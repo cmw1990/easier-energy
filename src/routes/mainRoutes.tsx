@@ -30,7 +30,7 @@ const SupplementsPage = lazy(() => import("@/pages/Supplements"))
 const SupportPage = lazy(() => import("@/pages/Support"))
 const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
 const Directory = lazy(() => import("@/pages/Directory"))
-const NootropicsDatabase = lazy(() => import("@/pages/NootropicsDatabase"))
+const NootropicsDatabase = lazy(() => import("@/pages/tools/NootropicsDatabase"))
 
 export const mainRoutes = [
   {
