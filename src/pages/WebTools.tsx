@@ -163,7 +163,8 @@ const seedWebTools = async () => {
       .upsert(
         { 
           ...tool,
-          content: tool.description
+          content: tool.description,
+          path: `/tools/${tool.slug}`
         },
         { onConflict: 'slug' }
       );

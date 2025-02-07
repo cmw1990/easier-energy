@@ -9541,9 +9541,11 @@ export type Database = {
           description: string
           featured_product: string | null
           id: string
+          ispremium: boolean | null
           meta_description: string | null
           meta_keywords: string[] | null
           monetization_enabled: boolean | null
+          path: string | null
           published: boolean | null
           related_products: string[] | null
           related_tools: string[] | null
@@ -9567,9 +9569,11 @@ export type Database = {
           description: string
           featured_product?: string | null
           id?: string
+          ispremium?: boolean | null
           meta_description?: string | null
           meta_keywords?: string[] | null
           monetization_enabled?: boolean | null
+          path?: string | null
           published?: boolean | null
           related_products?: string[] | null
           related_tools?: string[] | null
@@ -9593,9 +9597,11 @@ export type Database = {
           description?: string
           featured_product?: string | null
           id?: string
+          ispremium?: boolean | null
           meta_description?: string | null
           meta_keywords?: string[] | null
           monetization_enabled?: boolean | null
+          path?: string | null
           published?: boolean | null
           related_products?: string[] | null
           related_tools?: string[] | null
