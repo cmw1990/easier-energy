@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -23,7 +24,10 @@ import { Database } from "@/types/supabase"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 
-type EnergyPlan = Database['public']['Tables']['energy_plans']['Row']
+type EnergyPlan = Database['public']['Tables']['energy_plans']['Row'] & {
+  energy_plan_components: Database['public']['Tables']['energy_plan_components']['Row'][]
+}
+
 type PlanProgress = Database['public']['Tables']['energy_plan_progress']['Row']
 
 const PlanTypeIcons = {
