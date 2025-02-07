@@ -2004,6 +2004,145 @@ export type Database = {
         }
         Relationships: []
       }
+      energy_plan_components: {
+        Row: {
+          component_type: string
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          notes: string | null
+          order_number: number
+          plan_id: string
+          settings: Json
+        }
+        Insert: {
+          component_type: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          order_number: number
+          plan_id: string
+          settings?: Json
+        }
+        Update: {
+          component_type?: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          order_number?: number
+          plan_id?: string
+          settings?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "energy_plan_components_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "energy_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      energy_plan_reviews: {
+        Row: {
+          created_at: string
+          id: string
+          plan_id: string
+          rating: number
+          review_text: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          plan_id: string
+          rating: number
+          review_text?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          plan_id?: string
+          rating?: number
+          review_text?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "energy_plan_reviews_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "energy_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "energy_plan_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      energy_plans: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_expert_plan: boolean | null
+          likes_count: number | null
+          plan_type: Database["public"]["Enums"]["energy_plan_type"]
+          saves_count: number | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          visibility: Database["public"]["Enums"]["plan_visibility"] | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_expert_plan?: boolean | null
+          likes_count?: number | null
+          plan_type: Database["public"]["Enums"]["energy_plan_type"]
+          saves_count?: number | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["plan_visibility"] | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_expert_plan?: boolean | null
+          likes_count?: number | null
+          plan_type?: Database["public"]["Enums"]["energy_plan_type"]
+          saves_count?: number | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["plan_visibility"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "energy_plans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       energy_products: {
         Row: {
           caffeine_content: number | null
@@ -2159,6 +2298,50 @@ export type Database = {
           weather_conditions?: Json | null
         }
         Relationships: []
+      }
+      expert_profiles: {
+        Row: {
+          created_at: string
+          credentials: string[]
+          id: string
+          specialties: string[]
+          updated_at: string
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          credentials: string[]
+          id: string
+          specialties: string[]
+          updated_at?: string
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          credentials?: string[]
+          id?: string
+          specialties?: string[]
+          updated_at?: string
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       eye_exercise_achievements: {
         Row: {
@@ -9213,6 +9396,48 @@ export type Database = {
         }
         Relationships: []
       }
+      user_saved_plans: {
+        Row: {
+          customizations: Json | null
+          id: string
+          is_active: boolean | null
+          plan_id: string
+          saved_at: string
+          user_id: string
+        }
+        Insert: {
+          customizations?: Json | null
+          id?: string
+          is_active?: boolean | null
+          plan_id: string
+          saved_at?: string
+          user_id: string
+        }
+        Update: {
+          customizations?: Json | null
+          id?: string
+          is_active?: boolean | null
+          plan_id?: string
+          saved_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_saved_plans_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "energy_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_saved_plans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_sleep_profiles: {
         Row: {
           created_at: string | null
@@ -9953,6 +10178,13 @@ export type Database = {
       discussion_status: "open" | "closed" | "archived"
       distraction_type: "app" | "website" | "notification" | "social_media"
       ease_rating_type: "agree" | "disagree" | "not_sure"
+      energy_plan_type:
+        | "recharge"
+        | "energize"
+        | "recovery"
+        | "sleep"
+        | "focus"
+        | "destress"
       exercise_type:
         | "walking"
         | "running"
@@ -9998,6 +10230,7 @@ export type Database = {
         | "long_term_memory"
         | "migraine"
       mood_category: "positive" | "negative" | "neutral"
+      plan_visibility: "private" | "public" | "shared"
       quit_strategy_type:
         | "cold_turkey"
         | "taper_down"
@@ -10048,6 +10281,7 @@ export type Database = {
       subscription_tier: "free" | "premium"
       substance_type: "alcohol" | "tobacco" | "other"
       tool_category: "health" | "focus" | "relaxation" | "games" | "meditation"
+      verification_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
