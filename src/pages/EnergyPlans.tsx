@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -57,7 +58,7 @@ const EnergyPlans = () => {
   const [selectedCategory, setSelectedCategory] = useState<'charged' | 'recharged' | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery({
+  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery<EnergyPlanWithComponents[]>({
     queryKey: ['energy-plans', 'public', selectedCategory],
     queryFn: async () => {
       let query = supabase
