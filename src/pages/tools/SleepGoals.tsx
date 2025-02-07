@@ -11,16 +11,9 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { Moon, Clock, Bell } from "lucide-react"
 import { format, parse } from "date-fns"
+import { Database } from "@/integrations/supabase/types"
 
-interface SleepGoal {
-  id: string
-  user_id: string
-  target_sleep_duration: number
-  target_bedtime: string
-  target_wake_time: string
-  created_at: string
-  updated_at: string
-}
+type SleepGoal = Database['public']['Tables']['sleep_goals']['Row']
 
 export default function SleepGoals() {
   const { toast } = useToast()
@@ -54,9 +47,12 @@ export default function SleepGoals() {
         
         if (error) throw error
       } else {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error('User not authenticated')
+        
         const { error } = await supabase
           .from('sleep_goals')
-          .insert([values])
+          .insert([{ ...values, user_id: user.id }])
         
         if (error) throw error
       }

@@ -6684,6 +6684,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sleep_goals: {
+        Row: {
+          created_at: string
+          id: string
+          target_bedtime: string
+          target_sleep_duration: number
+          target_wake_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          target_bedtime: string
+          target_sleep_duration: number
+          target_wake_time: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          target_bedtime?: string
+          target_sleep_duration?: number
+          target_wake_time?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       sleep_guides: {
         Row: {
           author_id: string | null
