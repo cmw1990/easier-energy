@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
 import { Link, useParams } from "react-router-dom";
@@ -6,8 +5,23 @@ import { Brain, Leaf, HeartPulse, Settings, ChartBar, Waves, Music2, Focus, Wind
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { LucideIcon } from "lucide-react";
 
-const iconMap = {
+interface WebTool {
+  id?: string;
+  title: string;
+  description: string;
+  slug?: string;
+  path?: string;
+  icon?: LucideIcon;
+  tags: string[];
+  category: string;
+  isPremium?: boolean;
+  view_count?: number;
+  published?: boolean;
+}
+
+const iconMap: Record<string, LucideIcon> = {
   'white-noise': Wind,
   'binaural-beats': Waves,
   'nature-sounds': Music2,
@@ -55,7 +69,7 @@ const WebTools = () => {
   };
 
   // Fallback tools if database is empty
-  const fallbackTools = [
+  const fallbackTools: WebTool[] = [
     {
       title: "White Noise Generator",
       description: "Customize and play different types of white, pink, and brown noise to enhance focus and relaxation. Try our science-backed sound profiles.",
@@ -137,7 +151,7 @@ const WebTools = () => {
     {
       title: "Supplement Guide",
       description: "Comprehensive guide to nootropics and supplements for cognitive enhancement. Access basic supplement information and tracking.",
-      icon: Pill,
+      icon: Leaf,
       path: "/tools/supplement-guide",
       tags: ["health", "nootropics", "supplements"],
       category: "optimization",
@@ -219,7 +233,7 @@ const WebTools = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tools
                 .filter(tool => tool.category === category)
-                .map((tool) => (
+                .map((tool: WebTool) => (
                   <Link 
                     key={tool.id || tool.title} 
                     to={tool.path || `/tools/${tool.slug}`}
@@ -229,12 +243,11 @@ const WebTools = () => {
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <div className="p-2 bg-primary/10 rounded-full">
-                            {tool.icon ? (
+                            {tool.icon && (
                               <tool.icon className="h-6 w-6 text-primary" />
-                            ) : (
-                              <div className="h-6 w-6 text-primary">
-                                {iconMap[tool.slug as keyof typeof iconMap]?.render()}
-                              </div>
+                            )}
+                            {!tool.icon && tool.slug && iconMap[tool.slug] && (
+                              <iconMap[tool.slug] className="h-6 w-6 text-primary" />
                             )}
                           </div>
                           <CardTitle className="text-xl">{tool.title}</CardTitle>
