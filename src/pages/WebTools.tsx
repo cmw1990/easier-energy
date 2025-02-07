@@ -2,14 +2,60 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
 import { Link, useParams } from "react-router-dom";
-import { Brain, Leaf, HeartPulse, Pill, Settings, ChartBar, Waves, Music2, Focus, Wind, Footprints, Moon, Coffee, Cigarette, Battery, Droplets, Bath } from "lucide-react";
+import { Brain, Leaf, HeartPulse, Settings, ChartBar, Waves, Music2, Focus, Wind, Footprints, Moon, Coffee, Cigarette, Battery, Droplets, Bath } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+const iconMap = {
+  'white-noise': Wind,
+  'binaural-beats': Waves,
+  'nature-sounds': Music2,
+  'bathing': Bath,
+  'breathing': Wind,
+  'sleep-guide': Moon,
+  'focus-timer': Focus,
+  'meditation': Moon,
+  'supplement-guide': Leaf,
+  'caffeine-guide': Coffee,
+  'energy-drinks-guide': Battery,
+  'hydration-guide': Droplets
+};
 
 const WebTools = () => {
   const { toolSlug } = useParams();
 
-  const tools = [
-    // Meditation & Relaxation Tools
+  // Fetch tools from database
+  const { data: dbTools, isLoading } = useQuery({
+    queryKey: ['webTools'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('web_tools')
+        .select('*')
+        .eq('published', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Track view when a tool is accessed
+  const trackToolView = async (toolId: string) => {
+    try {
+      const { error } = await supabase
+        .from('web_tools')
+        .update({ view_count: dbTools?.find(t => t.id === toolId)?.view_count + 1 || 1 })
+        .eq('id', toolId);
+      
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error tracking tool view:', err);
+    }
+  };
+
+  // Fallback tools if database is empty
+  const fallbackTools = [
     {
       title: "White Noise Generator",
       description: "Customize and play different types of white, pink, and brown noise to enhance focus and relaxation. Try our science-backed sound profiles.",
@@ -126,7 +172,19 @@ const WebTools = () => {
     }
   ];
 
+  const tools = dbTools?.length ? dbTools : fallbackTools;
   const categories = Array.from(new Set(tools.map(tool => tool.category)));
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <TopNav />
+        <div className="container mx-auto p-4">
+          <div className="text-center">Loading tools...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -162,12 +220,22 @@ const WebTools = () => {
               {tools
                 .filter(tool => tool.category === category)
                 .map((tool) => (
-                  <Link key={tool.title} to={tool.path}>
+                  <Link 
+                    key={tool.id || tool.title} 
+                    to={tool.path || `/tools/${tool.slug}`}
+                    onClick={() => tool.id && trackToolView(tool.id)}
+                  >
                     <Card className="h-full hover:shadow-lg transition-shadow border-2 border-primary/20">
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <div className="p-2 bg-primary/10 rounded-full">
-                            <tool.icon className="h-6 w-6 text-primary" />
+                            {tool.icon ? (
+                              <tool.icon className="h-6 w-6 text-primary" />
+                            ) : (
+                              <div className="h-6 w-6 text-primary">
+                                {iconMap[tool.slug as keyof typeof iconMap]?.render()}
+                              </div>
+                            )}
                           </div>
                           <CardTitle className="text-xl">{tool.title}</CardTitle>
                         </div>
@@ -177,7 +245,7 @@ const WebTools = () => {
                           {tool.description}
                         </CardDescription>
                         <div className="flex flex-wrap gap-2 mt-4">
-                          {tool.tags.map((tag) => (
+                          {tool.tags?.map((tag: string) => (
                             <span
                               key={tag}
                               className="px-2 py-1 bg-secondary/10 text-secondary text-sm rounded-full"
