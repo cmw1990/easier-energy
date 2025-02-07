@@ -2,17 +2,19 @@
 import { supabase } from "@/integrations/supabase/client"
 
 export interface ToolAnalyticsData {
-  toolName: string
-  sessionDuration: number
-  toolSettings?: Record<string, any>
+  tool_name: string
+  tool_type: string
+  session_duration: number
+  settings?: Record<string, any>
 }
 
 export const trackToolUsage = async (data: ToolAnalyticsData) => {
   try {
     const { error } = await supabase.from("tool_usage_logs").insert({
-      tool_name: data.toolName,
-      session_duration: data.sessionDuration,
-      tool_settings: data.toolSettings
+      tool_name: data.tool_name,
+      tool_type: data.tool_type,
+      session_duration: data.session_duration,
+      settings: data.settings
     })
     
     if (error) {

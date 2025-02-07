@@ -4,11 +4,12 @@ import { trackToolUsage } from "@/utils/toolAnalytics"
 
 interface ToolAnalyticsWrapperProps {
   toolName: string
+  toolType: string
   toolSettings?: Record<string, any>
   children: React.ReactNode
 }
 
-export function ToolAnalyticsWrapper({ toolName, toolSettings, children }: ToolAnalyticsWrapperProps) {
+export function ToolAnalyticsWrapper({ toolName, toolType, toolSettings, children }: ToolAnalyticsWrapperProps) {
   const [startTime] = useState<number>(Date.now())
 
   useEffect(() => {
@@ -16,13 +17,14 @@ export function ToolAnalyticsWrapper({ toolName, toolSettings, children }: ToolA
       const sessionDuration = Math.round((Date.now() - startTime) / 1000)
       if (sessionDuration >= 5) { // Only track sessions longer than 5 seconds
         trackToolUsage({
-          toolName,
-          sessionDuration,
-          toolSettings
+          tool_name: toolName,
+          tool_type: toolType,
+          session_duration: sessionDuration,
+          settings: toolSettings
         })
       }
     }
-  }, [toolName, toolSettings, startTime])
+  }, [toolName, toolType, toolSettings, startTime])
 
   return <>{children}</>
 }

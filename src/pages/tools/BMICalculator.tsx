@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
@@ -37,7 +36,11 @@ const BMICalculator = () => {
   }
 
   return (
-    <ToolAnalyticsWrapper toolName="bmi-calculator" toolSettings={currentSettings}>
+    <ToolAnalyticsWrapper 
+      toolName="bmi-calculator" 
+      toolType="health"
+      toolSettings={currentSettings}
+    >
       <div className="min-h-screen bg-background">
         <TopNav />
         <div className="container mx-auto p-4">
