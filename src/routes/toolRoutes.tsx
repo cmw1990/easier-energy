@@ -4,9 +4,9 @@ import WebTools from "@/pages/WebTools"
 const WhiteNoise = lazy(() => import("@/pages/tools/WhiteNoise"))
 const BMICalculator = lazy(() => import("@/pages/tools/BMICalculator"))
 const BodyFatCalculator = lazy(() => import("@/pages/tools/BodyFatCalculator"))
+const BMRCalculator = lazy(() => import("@/pages/tools/BMRCalculator"))
 const BiologicalAgeCalculator = lazy(() => import("@/pages/tools/BiologicalAgeCalculator"))
 const HRVCalculator = lazy(() => import("@/pages/tools/HRVCalculator"))
-const BMRCalculator = lazy(() => import("@/pages/tools/BMRCalculator"))
 
 export const toolRoutes = {
   path: "/tools",
@@ -44,6 +44,14 @@ export const toolRoutes = {
       ),
     },
     {
+      path: "bmr-calculator",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <BMRCalculator />
+        </Suspense>
+      ),
+    },
+    {
       path: "biological-age-calculator",
       element: (
         <Suspense fallback={<div>Loading...</div>}>
@@ -56,14 +64,6 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <HRVCalculator />
-        </Suspense>
-      ),
-    },
-    {
-      path: "bmr-calculator",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <BMRCalculator />
         </Suspense>
       ),
     },

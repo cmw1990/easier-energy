@@ -37,6 +37,7 @@ const iconMap: Record<string, LucideIcon> = {
   'hydration-guide': Droplets,
   'bmi-calculator': Calculator,
   'body-fat-calculator': Calculator,
+  'bmr-calculator': Calculator,
 };
 
 const seedWebTools = async () => {
@@ -83,6 +84,16 @@ const seedWebTools = async () => {
       description: "Calculate your body fat percentage using the U.S. Navy Method. Get accurate measurements and understand your body composition.",
       slug: "body-fat-calculator",
       path: "/tools/body-fat-calculator",
+      tags: ["health", "fitness", "calculator"],
+      category: "health",
+      isPremium: false,
+      published: true
+    },
+    {
+      title: "BMR Calculator",
+      description: "Calculate your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) to understand your daily caloric needs.",
+      slug: "bmr-calculator",
+      path: "/tools/bmr-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
       isPremium: false,
@@ -197,97 +208,11 @@ const WebTools = () => {
       category: "health",
       isPremium: false
     },
-    // Health & Recovery Tools
     {
-      title: "Bathing & Showering Guide",
-      description: "Science-based bathing routines for energy, relaxation, and recovery. Learn the optimal temperature and timing for your goals.",
-      icon: Bath,
-      path: "/tools/bathing",
-      tags: ["wellness", "relaxation", "energy"],
-      category: "health",
-      isPremium: false
-    },
-    {
-      title: "Breathing Exercises",
-      description: "Interactive breathing patterns and exercises for stress relief and focus. Features guided animations and timing.",
-      icon: Wind,
-      path: "/tools/breathing",
-      tags: ["meditation", "health", "stress-relief"],
-      category: "health",
-      isPremium: false
-    },
-    {
-      title: "Sleep Guide",
-      description: "Comprehensive guide to improving sleep quality and habits. Access basic sleep tracking and recommendations.",
-      icon: Moon,
-      path: "/tools/sleep-guide",
-      tags: ["health", "sleep", "wellness"],
-      category: "health",
-      isPremium: true
-    },
-
-    // Focus & Productivity
-    {
-      title: "Focus Timer",
-      description: "Customizable Pomodoro timer with white noise integration. Track your productivity and build better work habits.",
-      icon: Focus,
-      path: "/tools/focus-timer",
-      tags: ["productivity", "time-management"],
-      category: "focus",
-      isPremium: false
-    },
-    {
-      title: "Meditation Timer",
-      description: "Guided and unguided meditation sessions with ambient sounds. Start with our free basic guided sessions.",
-      icon: Moon,
-      path: "/tools/meditation",
-      tags: ["meditation", "mindfulness"],
-      category: "focus",
-      isPremium: true
-    },
-
-    // Health Optimization
-    {
-      title: "Supplement Guide",
-      description: "Comprehensive guide to nootropics and supplements for cognitive enhancement. Access basic supplement information and tracking.",
-      icon: Leaf,
-      path: "/tools/supplement-guide",
-      tags: ["health", "nootropics", "supplements"],
-      category: "optimization",
-      isPremium: true
-    },
-    {
-      title: "Caffeine Guide",
-      description: "Understanding caffeine, timing, and optimal usage for energy and focus. Track your intake and learn optimal timing.",
-      icon: Coffee,
-      path: "/tools/caffeine-guide",
-      tags: ["health", "energy", "focus"],
-      category: "optimization",
-      isPremium: false
-    },
-    {
-      title: "Energy Drinks Guide",
-      description: "Comprehensive analysis of energy drinks, ingredients, and healthier alternatives. Make informed choices about your energy boosters.",
-      icon: Battery,
-      path: "/tools/energy-drinks-guide",
-      tags: ["health", "energy", "wellness"],
-      category: "optimization",
-      isPremium: true
-    },
-    {
-      title: "Hydration Guide",
-      description: "Optimize your hydration for better energy and cognitive performance. Track your intake and get personalized recommendations.",
-      icon: Droplets,
-      path: "/tools/hydration-guide",
-      tags: ["health", "energy", "wellness"],
-      category: "optimization",
-      isPremium: false
-    },
-    {
-      title: "Body Fat Calculator",
-      description: "Calculate your body fat percentage using the U.S. Navy method. Get insights into your body composition and fitness level.",
-      icon: HeartPulse,
-      path: "/tools/body-fat-calculator",
+      title: "BMR Calculator",
+      description: "Calculate your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) to understand your daily caloric needs.",
+      icon: Calculator,
+      path: "/tools/bmr-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
       isPremium: false
