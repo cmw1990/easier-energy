@@ -266,7 +266,7 @@ export const mainRoutes = [
         ),
       },
       {
-        path: "/directory",
+        path: "directory",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <Directory />
@@ -274,7 +274,7 @@ export const mainRoutes = [
         ),
       },
       {
-        path: "/tools/nootropics",
+        path: "tools/nootropics",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <NootropicsDatabase />
@@ -282,7 +282,7 @@ export const mainRoutes = [
         ),
       },
       {
-        path: "/tools/caffeine-calculator",
+        path: "tools/caffeine-calculator",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <CaffeineCalculator />
@@ -290,7 +290,7 @@ export const mainRoutes = [
         ),
       },
       {
-        path: "/tools/tea-database",
+        path: "tools/tea-database",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <TeaDatabase />
@@ -298,7 +298,7 @@ export const mainRoutes = [
         ),
       },
       {
-        path: "/tools/energy-enhancement",
+        path: "tools/energy-enhancement",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <EnergyEnhancement />
@@ -306,7 +306,7 @@ export const mainRoutes = [
         ),
       },
       {
-        path: "/tools/sleep",
+        path: "tools/sleep",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <Sleep />
@@ -314,7 +314,7 @@ export const mainRoutes = [
         ),
       },
       {
-        path: "/tools/light",
+        path: "tools/light",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <Light />
