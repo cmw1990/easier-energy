@@ -3748,6 +3748,53 @@ export type Database = {
           },
         ]
       }
+      product_analytics_aggregated: {
+        Row: {
+          affiliate_clicks_count: number | null
+          avg_price: number | null
+          conversion_rate: number | null
+          created_at: string | null
+          date: string
+          id: string
+          price_alert_count: number | null
+          product_id: string
+          views_count: number | null
+          wishlist_adds_count: number | null
+        }
+        Insert: {
+          affiliate_clicks_count?: number | null
+          avg_price?: number | null
+          conversion_rate?: number | null
+          created_at?: string | null
+          date: string
+          id?: string
+          price_alert_count?: number | null
+          product_id: string
+          views_count?: number | null
+          wishlist_adds_count?: number | null
+        }
+        Update: {
+          affiliate_clicks_count?: number | null
+          avg_price?: number | null
+          conversion_rate?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          price_alert_count?: number | null
+          product_id?: string
+          views_count?: number | null
+          wishlist_adds_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_analytics_aggregated_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_availability: {
         Row: {
           commission_rate: number | null
@@ -5205,6 +5252,39 @@ export type Database = {
           store_hours?: Json | null
           store_type?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      retail_partnerships: {
+        Row: {
+          commission_rate: number | null
+          created_at: string | null
+          ends_at: string | null
+          id: string
+          partnership_level: string
+          retailer_id: string
+          starts_at: string | null
+          terms: string | null
+        }
+        Insert: {
+          commission_rate?: number | null
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          partnership_level: string
+          retailer_id: string
+          starts_at?: string | null
+          terms?: string | null
+        }
+        Update: {
+          commission_rate?: number | null
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          partnership_level?: string
+          retailer_id?: string
+          starts_at?: string | null
+          terms?: string | null
         }
         Relationships: []
       }
