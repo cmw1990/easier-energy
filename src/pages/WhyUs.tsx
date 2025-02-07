@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
 import { HeartHandshake, Lightbulb, PiggyBank, Brain, Share2, Activity, ArrowLeft, ChevronDown, ChevronUp, Sparkles, BookOpen, Blocks, Target, LineChart, Focus, ListChecks, ClipboardCheck, Waves, Music2, Calculator, Share, Users, Puzzle, Layout, TreePine, Droplets, Wind, Sun, Moon, CircleDot, Dna } from "lucide-react"
@@ -87,6 +88,14 @@ const WhyUs = () => {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Your all-in-one platform for holistic energy management and personal wellness optimization
           </p>
+          <div className="bg-primary/5 p-6 rounded-lg max-w-2xl mx-auto mt-6">
+            <p className="text-lg font-medium text-primary">
+              Clear your phone. Cancel your subscriptions. The Well-Charged is the only wellness platform you'll ever need.
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              One integrated solution for your complete well-being journey
+            </p>
+          </div>
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
@@ -804,7 +813,7 @@ const WhyUs = () => {
         </footer>
       </div>
     </div>
-  )
+  );
 }
 
 export default WhyUs
