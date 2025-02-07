@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Bed, Book, Brain, Clock, Moon, ShoppingBag, Thermometer } from "lucide-react"
+import { Book, Brain, Clock, Moon, ShoppingBag, Thermometer } from "lucide-react"
 import { Link } from "react-router-dom"
 
 interface GuideSection {
@@ -194,7 +194,7 @@ export default function SleepGuide() {
               <Link to="/tools/sleep-track">
                 <Card className="hover:shadow-md transition-shadow">
                   <CardHeader>
-                    <Bed className="h-6 w-6 text-primary mb-2" />
+                    <Brain className="h-6 w-6 text-primary mb-2" />
                     <CardTitle className="text-lg">Sleep Tracker</CardTitle>
                   </CardHeader>
                 </Card>
