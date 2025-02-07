@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react"
 import WebTools from "@/pages/WebTools"
 
@@ -11,6 +12,9 @@ const BreathingRateCalculator = lazy(() => import("@/pages/tools/BreathingRateCa
 const CalorieCalculator = lazy(() => import("@/pages/tools/CalorieCalculator"))
 const MacroCalculator = lazy(() => import("@/pages/tools/MacroCalculator"))
 const WaterIntakeCalculator = lazy(() => import("@/pages/tools/WaterIntakeCalculator"))
+const BinauralBeats = lazy(() => import("@/pages/tools/BinauralBeats"))
+const NatureSounds = lazy(() => import("@/pages/tools/NatureSounds"))
+const FocusTimer = lazy(() => import("@/pages/tools/FocusTimer"))
 
 export const toolRoutes = {
   path: "/tools",
@@ -100,6 +104,30 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <WaterIntakeCalculator />
+        </Suspense>
+      ),
+    },
+    {
+      path: "binaural-beats",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <BinauralBeats />
+        </Suspense>
+      ),
+    },
+    {
+      path: "nature-sounds",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <NatureSounds />
+        </Suspense>
+      ),
+    },
+    {
+      path: "focus-timer",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <FocusTimer />
         </Suspense>
       ),
     },
