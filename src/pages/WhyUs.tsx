@@ -1,12 +1,72 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
-import { HeartHandshake, Lightbulb, PiggyBank, Brain, Share2, Activity, ArrowLeft, ChevronDown, ChevronUp, Sparkles, BookOpen, Blocks, Target, LineChart, Focus, ListChecks, ClipboardCheck, Waves, Music2, Calculator } from "lucide-react"
+import { HeartHandshake, Lightbulb, PiggyBank, Brain, Share2, Activity, ArrowLeft, ChevronDown, ChevronUp, Sparkles, BookOpen, Blocks, Target, LineChart, Focus, ListChecks, ClipboardCheck, Waves, Music2, Calculator, Share, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/AuthProvider"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useToast } from "@/components/ui/use-toast"
 
 const WhyUs = () => {
   const [showFullArticle, setShowFullArticle] = useState(false)
+  const [selectedPersona, setSelectedPersona] = useState<string>("")
+  const { session } = useAuth()
+  const { toast } = useToast()
+
+  const { data: personas } = useQuery({
+    queryKey: ['target-personas'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('target_personas')
+        .select('*')
+      
+      if (error) throw error
+      return data
+    }
+  })
+
+  const generateAffiliateLink = async () => {
+    if (!session?.user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to generate your affiliate link",
+        variant: "destructive"
+      })
+      return
+    }
+
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase()
+    
+    const { error } = await supabase
+      .from('affiliate_links')
+      .insert([
+        {
+          user_id: session.user.id,
+          affiliate_code: code,
+          persona_type: selectedPersona
+        }
+      ])
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate affiliate link. Please try again.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    const affiliateUrl = `${window.location.origin}?ref=${code}`
+    
+    await navigator.clipboard.writeText(affiliateUrl)
+    toast({
+      title: "Success!",
+      description: "Affiliate link copied to clipboard",
+    })
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -315,6 +375,92 @@ const WhyUs = () => {
                   Try Demo
                 </Button>
               </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <Share className="h-6 w-6 text-primary" />
+              Spread the Word
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-4">
+              <p className="text-lg text-muted-foreground">
+                Help others discover The Well-Charged by sharing personalized introductions tailored to their needs.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Choose Audience Type</label>
+                  <Select value={selectedPersona} onValueChange={setSelectedPersona}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select target audience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {personas?.map((persona) => (
+                        <SelectItem key={persona.id} value={persona.persona_type}>
+                          For people with {persona.persona_type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {selectedPersona && personas?.map(persona => 
+                  persona.persona_type === selectedPersona && (
+                    <Card key={persona.id} className="bg-secondary">
+                      <CardHeader>
+                        <CardTitle className="text-xl">{persona.headline}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p>{persona.description}</p>
+                        
+                        <div className="space-y-2">
+                          <h4 className="font-semibold">Key Benefits:</h4>
+                          <ul className="list-disc list-inside space-y-1">
+                            {persona.key_benefits.map((benefit, index) => (
+                              <li key={index}>{benefit}</li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="space-y-2">
+                          <h4 className="font-semibold">Recommended Tools:</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {persona.recommended_tools.map((tool, index) => (
+                              <Link 
+                                key={index}
+                                to={`/tools/${tool.toLowerCase()}`}
+                                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                              >
+                                <span>{tool}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                )}
+
+                {selectedPersona && (
+                  <div className="flex flex-col items-center gap-4 pt-4">
+                    <p className="text-center text-muted-foreground">
+                      Want to share this with others and earn rewards? Generate your affiliate link!
+                    </p>
+                    <Button 
+                      onClick={generateAffiliateLink}
+                      className="gap-2"
+                    >
+                      <Users className="h-4 w-4" />
+                      Generate Affiliate Link
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

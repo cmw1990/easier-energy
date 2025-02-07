@@ -442,6 +442,39 @@ export type Database = {
           },
         ]
       }
+      affiliate_links: {
+        Row: {
+          affiliate_code: string
+          clicks: number | null
+          conversions: number | null
+          created_at: string
+          earnings: number | null
+          id: string
+          persona_type: string | null
+          user_id: string
+        }
+        Insert: {
+          affiliate_code: string
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string
+          earnings?: number | null
+          id?: string
+          persona_type?: string | null
+          user_id: string
+        }
+        Update: {
+          affiliate_code?: string
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string
+          earnings?: number | null
+          id?: string
+          persona_type?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       affiliate_tracking: {
         Row: {
           clicked_at: string | null
@@ -8147,6 +8180,36 @@ export type Database = {
           id?: string
           priority?: number | null
           title?: string
+        }
+        Relationships: []
+      }
+      target_personas: {
+        Row: {
+          created_at: string
+          description: string
+          headline: string
+          id: string
+          key_benefits: string[]
+          persona_type: string
+          recommended_tools: string[]
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          headline: string
+          id?: string
+          key_benefits: string[]
+          persona_type: string
+          recommended_tools: string[]
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          headline?: string
+          id?: string
+          key_benefits?: string[]
+          persona_type?: string
+          recommended_tools?: string[]
         }
         Relationships: []
       }
