@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/components/AuthProvider"
 
 import Layout from "@/components/layout/Layout"
-import NotFound from "@/components/layout/NotFound"
+import NotFound from "@/components/NotFound"
 import Index from "@/pages/Index"
 import Auth from "@/pages/Auth"
 import LandingPage from "@/pages/LandingPage"
