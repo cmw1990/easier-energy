@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Timer, RotateCw, MoveHorizontal, MoveVertical, Maximize2, Minimize2, AlertCircle } from "lucide-react";
+import { Eye, Timer, RotateCw, MoveHorizontal, MoveVertical, Maximize2, Minimize2, AlertCircle, ArrowLeft } from "lucide-react";
 import { EyeExerciseTimer } from "@/components/exercises/EyeExerciseTimer";
 import { EyeRelaxationGuide } from "@/components/exercises/EyeRelaxationGuide";
 import { EyeExerciseStats } from "@/components/exercises/EyeExerciseStats";
@@ -16,7 +16,6 @@ import { AnimatedExerciseDisplay } from "@/components/exercises/AnimatedExercise
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ExerciseAssetsGenerator } from "@/components/exercises/ExerciseAssetsGenerator";
 import { Link } from "react-router-dom";
-import { AlertCircle, ArrowLeft } from "lucide-react";
 
 type AnimationType = "svg" | "css";
 
@@ -407,9 +406,9 @@ const EyeExercises = () => {
         <Card className="p-6">
           <CardHeader>
             <CardTitle>Want More Features?</CardTitle>
-            <CardDescription>
+            <AlertDescription>
               Try our full web app for advanced tracking and personalized recommendations
-            </CardDescription>
+            </AlertDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="list-disc text-left pl-6 mb-4 space-y-2">
