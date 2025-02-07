@@ -8,6 +8,7 @@ const BodyFatCalculator = lazy(() => import("@/pages/tools/BodyFatCalculator"))
 const BMRCalculator = lazy(() => import("@/pages/tools/BMRCalculator"))
 const BiologicalAgeCalculator = lazy(() => import("@/pages/tools/BiologicalAgeCalculator"))
 const HRVCalculator = lazy(() => import("@/pages/tools/HRVCalculator"))
+const BreathingRateCalculator = lazy(() => import("@/pages/tools/BreathingRateCalculator"))
 
 export const toolRoutes = {
   path: "/tools",
@@ -65,6 +66,14 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <HRVCalculator />
+        </Suspense>
+      ),
+    },
+    {
+      path: "breathing-rate-calculator",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <BreathingRateCalculator />
         </Suspense>
       ),
     },
