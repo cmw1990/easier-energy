@@ -31,6 +31,7 @@ const SupportPage = lazy(() => import("@/pages/Support"))
 const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
 const Directory = lazy(() => import("@/pages/Directory"))
 const NootropicsDatabase = lazy(() => import("@/pages/tools/NootropicsDatabase"))
+const CaffeineCalculator = lazy(() => import("@/pages/tools/CaffeineCalculator"))
 
 export const mainRoutes = [
   {
@@ -273,6 +274,14 @@ export const mainRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <NootropicsDatabase />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/tools/caffeine-calculator",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <CaffeineCalculator />
           </Suspense>
         ),
       },

@@ -1044,6 +1044,66 @@ export type Database = {
         }
         Relationships: []
       }
+      caffeine_products: {
+        Row: {
+          affiliate_link: string | null
+          brand: string | null
+          caffeine_content: number
+          category: string
+          commission_rate: number | null
+          cons: string[] | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          ingredients: string[] | null
+          name: string
+          price: number | null
+          pros: string[] | null
+          serving_size: string
+          updated_at: string
+          warnings: string[] | null
+        }
+        Insert: {
+          affiliate_link?: string | null
+          brand?: string | null
+          caffeine_content: number
+          category: string
+          commission_rate?: number | null
+          cons?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string[] | null
+          name: string
+          price?: number | null
+          pros?: string[] | null
+          serving_size: string
+          updated_at?: string
+          warnings?: string[] | null
+        }
+        Update: {
+          affiliate_link?: string | null
+          brand?: string | null
+          caffeine_content?: number
+          category?: string
+          commission_rate?: number | null
+          cons?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string[] | null
+          name?: string
+          price?: number | null
+          pros?: string[] | null
+          serving_size?: string
+          updated_at?: string
+          warnings?: string[] | null
+        }
+        Relationships: []
+      }
       card_sorting_responses: {
         Row: {
           card_groups: Json
@@ -1160,6 +1220,138 @@ export type Database = {
           thoughts?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      coffee_brewing_guides: {
+        Row: {
+          brew_time: string | null
+          coffee_to_water_ratio: string | null
+          common_mistakes: string[] | null
+          created_at: string
+          difficulty_level: string | null
+          equipment_needed: string[] | null
+          grind_size: string | null
+          id: string
+          method: string
+          steps: string[]
+          tips: string[] | null
+          updated_at: string
+          water_temperature: string | null
+        }
+        Insert: {
+          brew_time?: string | null
+          coffee_to_water_ratio?: string | null
+          common_mistakes?: string[] | null
+          created_at?: string
+          difficulty_level?: string | null
+          equipment_needed?: string[] | null
+          grind_size?: string | null
+          id?: string
+          method: string
+          steps: string[]
+          tips?: string[] | null
+          updated_at?: string
+          water_temperature?: string | null
+        }
+        Update: {
+          brew_time?: string | null
+          coffee_to_water_ratio?: string | null
+          common_mistakes?: string[] | null
+          created_at?: string
+          difficulty_level?: string | null
+          equipment_needed?: string[] | null
+          grind_size?: string | null
+          id?: string
+          method?: string
+          steps?: string[]
+          tips?: string[] | null
+          updated_at?: string
+          water_temperature?: string | null
+        }
+        Relationships: []
+      }
+      coffee_equipment: {
+        Row: {
+          affiliate_link: string | null
+          best_for: string[] | null
+          category: string
+          commission_rate: number | null
+          created_at: string
+          description: string
+          features: string[] | null
+          id: string
+          image_url: string | null
+          maintenance_tips: string[] | null
+          name: string
+          price_range: string | null
+          updated_at: string
+        }
+        Insert: {
+          affiliate_link?: string | null
+          best_for?: string[] | null
+          category: string
+          commission_rate?: number | null
+          created_at?: string
+          description: string
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          maintenance_tips?: string[] | null
+          name: string
+          price_range?: string | null
+          updated_at?: string
+        }
+        Update: {
+          affiliate_link?: string | null
+          best_for?: string[] | null
+          category?: string
+          commission_rate?: number | null
+          created_at?: string
+          description?: string
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          maintenance_tips?: string[] | null
+          name?: string
+          price_range?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      coffee_types: {
+        Row: {
+          brewing_methods: string[] | null
+          created_at: string
+          description: string
+          flavor_profile: string[] | null
+          id: string
+          name: string
+          origin: string | null
+          roast_level: string | null
+          updated_at: string
+        }
+        Insert: {
+          brewing_methods?: string[] | null
+          created_at?: string
+          description: string
+          flavor_profile?: string[] | null
+          id?: string
+          name: string
+          origin?: string | null
+          roast_level?: string | null
+          updated_at?: string
+        }
+        Update: {
+          brewing_methods?: string[] | null
+          created_at?: string
+          description?: string
+          flavor_profile?: string[] | null
+          id?: string
+          name?: string
+          origin?: string | null
+          roast_level?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -7993,6 +8185,53 @@ export type Database = {
           },
         ]
       }
+      user_caffeine_logs: {
+        Row: {
+          amount: number
+          consumed_at: string
+          created_at: string
+          energy_level: number | null
+          id: string
+          mood_impact: number | null
+          notes: string | null
+          product_id: string | null
+          side_effects: string[] | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          consumed_at?: string
+          created_at?: string
+          energy_level?: number | null
+          id?: string
+          mood_impact?: number | null
+          notes?: string | null
+          product_id?: string | null
+          side_effects?: string[] | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          consumed_at?: string
+          created_at?: string
+          energy_level?: number | null
+          id?: string
+          mood_impact?: number | null
+          notes?: string | null
+          product_id?: string | null
+          side_effects?: string[] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_caffeine_logs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "caffeine_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_devices: {
         Row: {
           created_at: string | null
@@ -8769,6 +9008,13 @@ export type Database = {
         Args: {
           product_id: string
           click_time: string
+        }
+        Returns: number
+      }
+      calculate_daily_caffeine_intake: {
+        Args: {
+          user_uuid: string
+          date_to_check: string
         }
         Returns: number
       }

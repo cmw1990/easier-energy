@@ -69,6 +69,13 @@ export default function Directory() {
       icon: FlaskConical,
       link: "/tools/metabolic",
       subcategories: ["Glucose Optimization", "Mitochondrial Function", "Metabolic Flexibility"]
+    },
+    {
+      title: "Caffeine Guide & Calculator",
+      description: "Comprehensive database of caffeine content in beverages, metabolism calculator, and consumption tracking.",
+      icon: Coffee,
+      link: "/tools/caffeine-calculator",
+      subcategories: ["Coffee Types", "Energy Drinks", "Teas", "Supplements", "Metabolism Calculator"]
     }
   ]
 

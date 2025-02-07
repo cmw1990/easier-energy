@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { TopNav } from "@/components/layout/TopNav"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Battery, Coffee, Clock } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Battery, Coffee, Clock } from "lucide-react"
 
 type CaffeineDrink = {
   name: string
