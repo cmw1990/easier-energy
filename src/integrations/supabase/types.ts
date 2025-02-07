@@ -7803,6 +7803,13 @@ export type Database = {
     Enums: {
       activity_impact: "positive" | "negative" | "neutral"
       app_role: "admin" | "user"
+      bathing_tag:
+        | "energizing"
+        | "relaxing"
+        | "sleep_improvement"
+        | "muscle_recovery"
+        | "stress_relief"
+        | "focus_enhancement"
       cbt_exercise_type:
         | "thought_record"
         | "behavioral_activation"

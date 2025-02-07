@@ -1,12 +1,10 @@
 
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Bath, Droplet, Heart } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/AuthProvider"
 import { supabase } from "@/integrations/supabase/client"
-import { MoodDisplay } from "@/components/meditation/MoodDisplay"
+import { BathingRoutineCard } from "@/components/bathing/BathingRoutineCard"
+import { ActiveSessionCard } from "@/components/bathing/ActiveSessionCard"
 
 interface BathingRoutine {
   id: string
@@ -137,73 +135,21 @@ export default function Bathing() {
         </p>
       </div>
 
-      {logState.isTracking ? (
-        <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Droplet className="h-5 w-5 text-blue-500" />
-              Active Session
-            </CardTitle>
-            <CardDescription>
-              Track your mood and energy levels
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <MoodDisplay 
-              mood={{
-                mood_score: logState.moodBefore,
-                energy_level: logState.energyBefore / 10,
-              }}
-            />
-            <Button 
-              className="w-full"
-              onClick={() => endRoutine(7, 8)}
-            >
-              End Session
-            </Button>
-          </CardContent>
-        </Card>
-      ) : null}
+      {logState.isTracking && (
+        <ActiveSessionCard
+          moodBefore={logState.moodBefore}
+          energyBefore={logState.energyBefore}
+          onEndSession={endRoutine}
+        />
+      )}
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {routines.map((routine) => (
-          <Card key={routine.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bath className="h-5 w-5 text-blue-500" />
-                {routine.name}
-              </CardTitle>
-              <CardDescription>{routine.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <h4 className="font-medium">Steps:</h4>
-                <ul className="list-disc pl-4 space-y-1">
-                  {routine.steps.map((step, index) => (
-                    <li key={index} className="text-sm text-muted-foreground">
-                      {step}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {routine.mood_tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <Button
-                className="w-full"
-                onClick={() => startRoutine(routine)}
-              >
-                Start Routine
-              </Button>
-            </CardContent>
-          </Card>
+          <BathingRoutineCard
+            key={routine.id}
+            routine={routine}
+            onStartRoutine={startRoutine}
+          />
         ))}
       </div>
     </div>
