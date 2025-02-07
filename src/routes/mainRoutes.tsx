@@ -32,6 +32,10 @@ const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
 const Directory = lazy(() => import("@/pages/Directory"))
 const NootropicsDatabase = lazy(() => import("@/pages/tools/NootropicsDatabase"))
 const CaffeineCalculator = lazy(() => import("@/pages/tools/CaffeineCalculator"))
+const TeaDatabase = lazy(() => import("@/pages/tools/TeaDatabase"))
+const EnergyEnhancement = lazy(() => import("@/pages/tools/EnergyEnhancement"))
+const Sleep = lazy(() => import("@/pages/tools/Sleep"))
+const Light = lazy(() => import("@/pages/tools/Light"))
 
 export const mainRoutes = [
   {
@@ -282,6 +286,38 @@ export const mainRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <CaffeineCalculator />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/tools/tea-database",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <TeaDatabase />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/tools/energy-enhancement",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <EnergyEnhancement />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/tools/sleep",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Sleep />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/tools/light",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Light />
           </Suspense>
         ),
       },
