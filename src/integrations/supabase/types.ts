@@ -7775,6 +7775,7 @@ export type Database = {
       web_tools: {
         Row: {
           affiliate_links: Json | null
+          category: string | null
           content: string
           created_at: string
           description: string
@@ -7790,6 +7791,7 @@ export type Database = {
         }
         Insert: {
           affiliate_links?: Json | null
+          category?: string | null
           content: string
           created_at?: string
           description: string
@@ -7805,6 +7807,7 @@ export type Database = {
         }
         Update: {
           affiliate_links?: Json | null
+          category?: string | null
           content?: string
           created_at?: string
           description?: string
