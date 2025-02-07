@@ -7,13 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Award, Star } from "lucide-react"
 import { Database } from "@/types/supabase"
 
-type Profile = Database['public']['Tables']['profiles']['Row']
-type ExpertProfile = {
-  id: string
-  credentials: string[]
-  specialties: string[]
-  verification_status: 'pending' | 'approved' | 'rejected'
-  verified_at: string | null
+type ExpertProfile = Database['public']['Tables']['expert_profiles']['Row'] & {
   profiles: {
     full_name: string | null
     avatar_url: string | null
