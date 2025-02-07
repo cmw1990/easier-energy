@@ -38,6 +38,7 @@ const iconMap: Record<string, LucideIcon> = {
   'bmi-calculator': Calculator,
   'body-fat-calculator': Calculator,
   'bmr-calculator': Calculator,
+  'hrv-calculator': Calculator,
 };
 
 const seedWebTools = async () => {
@@ -94,6 +95,16 @@ const seedWebTools = async () => {
       description: "Calculate your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) to understand your daily caloric needs.",
       slug: "bmr-calculator",
       path: "/tools/bmr-calculator",
+      tags: ["health", "fitness", "calculator"],
+      category: "health",
+      isPremium: false,
+      published: true
+    },
+    {
+      title: "HRV Calculator",
+      description: "Calculate your Heart Rate Variability (HRV) to assess your autonomic nervous system health and stress levels.",
+      slug: "hrv-calculator",
+      path: "/tools/hrv-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
       isPremium: false,
@@ -213,6 +224,15 @@ const WebTools = () => {
       description: "Calculate your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) to understand your daily caloric needs.",
       icon: Calculator,
       path: "/tools/bmr-calculator",
+      tags: ["health", "fitness", "calculator"],
+      category: "health",
+      isPremium: false
+    },
+    {
+      title: "HRV Calculator",
+      description: "Calculate your Heart Rate Variability (HRV) to assess your autonomic nervous system health and stress levels.",
+      icon: Calculator,
+      path: "/tools/hrv-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
       isPremium: false
