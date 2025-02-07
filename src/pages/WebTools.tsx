@@ -247,7 +247,9 @@ const WebTools = () => {
                               <tool.icon className="h-6 w-6 text-primary" />
                             )}
                             {!tool.icon && tool.slug && iconMap[tool.slug] && (
-                              <iconMap[tool.slug] className="h-6 w-6 text-primary" />
+                              React.createElement(iconMap[tool.slug], {
+                                className: "h-6 w-6 text-primary"
+                              })
                             )}
                           </div>
                           <CardTitle className="text-xl">{tool.title}</CardTitle>
