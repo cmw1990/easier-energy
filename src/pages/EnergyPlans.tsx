@@ -28,7 +28,7 @@ type EnergyPlan = Database['public']['Tables']['energy_plans']['Row']
 type EnergyPlanComponent = Database['public']['Tables']['energy_plan_components']['Row']
 type EnergyPlanProgress = Database['public']['Tables']['energy_plan_progress']['Row']
 
-type EnergyPlanWithComponents = EnergyPlan & {
+interface EnergyPlanWithComponents extends Omit<EnergyPlan, 'energy_plan_components'> {
   energy_plan_components: EnergyPlanComponent[]
 }
 
@@ -58,8 +58,8 @@ const EnergyPlans = () => {
   const [selectedCategory, setSelectedCategory] = useState<'charged' | 'recharged' | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery<EnergyPlanWithComponents[]>({
-    queryKey: ['energy-plans', 'public', selectedCategory],
+  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery({
+    queryKey: ['energy-plans', 'public', selectedCategory] as const,
     queryFn: async () => {
       let query = supabase
         .from('energy_plans')
