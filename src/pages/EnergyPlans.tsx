@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -28,7 +27,20 @@ type EnergyPlan = Database['public']['Tables']['energy_plans']['Row']
 type EnergyPlanComponent = Database['public']['Tables']['energy_plan_components']['Row']
 type EnergyPlanProgress = Database['public']['Tables']['energy_plan_progress']['Row']
 
-interface EnergyPlanWithComponents extends Omit<EnergyPlan, 'energy_plan_components'> {
+type EnergyPlanWithComponents = {
+  id: string
+  created_at: string
+  updated_at: string
+  created_by: string
+  title: string
+  description: string | null
+  plan_type: 'quick_boost' | 'sustained_energy' | 'mental_clarity' | 'physical_energy' | 'morning_routine' | 'deep_relaxation' | 'stress_relief' | 'wind_down' | 'sleep_prep' | 'recovery' | 'meditation'
+  category: 'charged' | 'recharged'
+  visibility: 'private' | 'public' | 'shared'
+  is_expert_plan: boolean
+  tags: string[]
+  likes_count: number
+  saves_count: number
   energy_plan_components: EnergyPlanComponent[]
 }
 
@@ -58,7 +70,7 @@ const EnergyPlans = () => {
   const [selectedCategory, setSelectedCategory] = useState<'charged' | 'recharged' | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery({
+  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery<EnergyPlanWithComponents[]>({
     queryKey: ['energy-plans', 'public', selectedCategory] as const,
     queryFn: async () => {
       let query = supabase
