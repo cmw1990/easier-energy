@@ -5,7 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Award, Star } from "lucide-react"
+import { Database } from "@/types/supabase"
 
+type Profile = Database['public']['Tables']['profiles']['Row']
 type ExpertProfile = {
   id: string
   credentials: string[]
@@ -13,7 +15,7 @@ type ExpertProfile = {
   verification_status: 'pending' | 'approved' | 'rejected'
   verified_at: string | null
   profiles: {
-    full_name: string
+    full_name: string | null
     avatar_url: string | null
   }
 }
@@ -25,7 +27,11 @@ const ExpertConsultancy = () => {
       const { data, error } = await supabase
         .from('expert_profiles')
         .select(`
-          *,
+          id,
+          credentials,
+          specialties,
+          verification_status,
+          verified_at,
           profiles (
             full_name,
             avatar_url
@@ -61,7 +67,7 @@ const ExpertConsultancy = () => {
                   {expert.profiles.avatar_url ? (
                     <img
                       src={expert.profiles.avatar_url}
-                      alt={expert.profiles.full_name}
+                      alt={expert.profiles.full_name || 'Expert'}
                       className="w-12 h-12 rounded-full"
                     />
                   ) : (
@@ -70,7 +76,7 @@ const ExpertConsultancy = () => {
                     </div>
                   )}
                   <div>
-                    <CardTitle>{expert.profiles.full_name}</CardTitle>
+                    <CardTitle>{expert.profiles.full_name || 'Anonymous Expert'}</CardTitle>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Star className="h-4 w-4 text-yellow-500" />
                       <span>Verified Expert</span>
