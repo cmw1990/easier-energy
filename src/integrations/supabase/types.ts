@@ -261,6 +261,41 @@ export type Database = {
         }
         Relationships: []
       }
+      ad_impressions: {
+        Row: {
+          clicked_at: string | null
+          cost: number | null
+          id: string
+          impressed_at: string | null
+          sponsored_product_id: string
+          user_id: string | null
+        }
+        Insert: {
+          clicked_at?: string | null
+          cost?: number | null
+          id?: string
+          impressed_at?: string | null
+          sponsored_product_id: string
+          user_id?: string | null
+        }
+        Update: {
+          clicked_at?: string | null
+          cost?: number | null
+          id?: string
+          impressed_at?: string | null
+          sponsored_product_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_impressions_sponsored_product_id_fkey"
+            columns: ["sponsored_product_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       adhd_task_organization: {
         Row: {
           created_at: string | null
@@ -5316,6 +5351,56 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      sponsored_products: {
+        Row: {
+          budget: number
+          cpc: number
+          created_at: string | null
+          ends_at: string
+          id: string
+          placement_type: string
+          product_id: string
+          spent: number | null
+          sponsor_id: string
+          starts_at: string
+          status: string | null
+        }
+        Insert: {
+          budget: number
+          cpc: number
+          created_at?: string | null
+          ends_at: string
+          id?: string
+          placement_type: string
+          product_id: string
+          spent?: number | null
+          sponsor_id: string
+          starts_at?: string
+          status?: string | null
+        }
+        Update: {
+          budget?: number
+          cpc?: number
+          created_at?: string | null
+          ends_at?: string
+          id?: string
+          placement_type?: string
+          product_id?: string
+          spent?: number | null
+          sponsor_id?: string
+          starts_at?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsored_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       substance_logs: {
         Row: {
