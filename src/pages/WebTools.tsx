@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
@@ -306,24 +307,37 @@ const WebTools = () => {
       <TopNav />
       
       <div className="container mx-auto p-4 space-y-6">
-        <div className="text-center space-y-4 mb-8">
-          <h1 className="text-4xl font-bold text-primary">
-            Free Wellness & Focus Tools
+        <div className="text-center space-y-6 mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-primary">
+            Transform Your Well-being with Science-Backed Tools
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Access our collection of free online tools and guides. For advanced features and tracking, try our full web app.
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+            Experience our comprehensive collection of wellness tools designed to optimize your focus, energy, and health. 
+            From advanced sound therapy to precise health calculators - all backed by scientific research.
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
             <Link to="/auth">
-              <Button variant="default" size="lg">
-                Sign Up Free
+              <Button variant="default" size="lg" className="w-full sm:w-auto">
+                Get Started Free
+              </Button>
+            </Link>
+            <Link to="/why-us">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                Why The Well-Charged?
               </Button>
             </Link>
             <Link to="/app">
-              <Button variant="outline" size="lg">
+              <Button variant="secondary" size="lg" className="w-full sm:w-auto">
                 Open Web App
               </Button>
             </Link>
+          </div>
+          <div className="flex justify-center gap-4 items-center text-sm text-muted-foreground mt-4">
+            <span>✨ No credit card required</span>
+            <span className="hidden sm:inline">•</span>
+            <span>🔒 Privacy focused</span>
+            <span className="hidden sm:inline">•</span>
+            <span>🚀 Instant access</span>
           </div>
         </div>
 
