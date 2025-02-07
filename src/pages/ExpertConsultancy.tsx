@@ -5,13 +5,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Award, Star } from "lucide-react"
-import { Database } from "@/types/supabase"
 
-type ExpertProfile = Database['public']['Tables']['expert_profiles']['Row'] & {
+type ExpertProfile = {
+  id: string
+  created_at: string
+  updated_at: string
+  credentials: string[]
+  specialties: string[]
+  verification_status: 'pending' | 'approved' | 'rejected'
+  verified_at: string | null
   profiles: {
     full_name: string | null
     avatar_url: string | null
-  }
+  } | null
 }
 
 const ExpertConsultancy = () => {
@@ -22,6 +28,8 @@ const ExpertConsultancy = () => {
         .from('expert_profiles')
         .select(`
           id,
+          created_at,
+          updated_at,
           credentials,
           specialties,
           verification_status,
@@ -58,7 +66,7 @@ const ExpertConsultancy = () => {
             <Card key={expert.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-center gap-4">
-                  {expert.profiles.avatar_url ? (
+                  {expert.profiles?.avatar_url ? (
                     <img
                       src={expert.profiles.avatar_url}
                       alt={expert.profiles.full_name || 'Expert'}
@@ -70,7 +78,7 @@ const ExpertConsultancy = () => {
                     </div>
                   )}
                   <div>
-                    <CardTitle>{expert.profiles.full_name || 'Anonymous Expert'}</CardTitle>
+                    <CardTitle>{expert.profiles?.full_name || 'Anonymous Expert'}</CardTitle>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Star className="h-4 w-4 text-yellow-500" />
                       <span>Verified Expert</span>
