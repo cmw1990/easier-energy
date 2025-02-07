@@ -1,7 +1,8 @@
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pills, Wind, Coffee, Smartphone, Laptop, Monitor, Chrome } from "lucide-react"
+import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee, Smartphone, Laptop, Monitor, Chrome, ArrowLeft, Moon, Eye } from "lucide-react"
 import { Link } from "react-router-dom"
 import { TopNav } from "@/components/layout/TopNav"
 import { useQuery } from "@tanstack/react-query"
@@ -122,7 +123,7 @@ const WhyUs = () => {
                   <CardContent className="pt-6">
                     <ul className="space-y-2">
                       <li className="flex items-center gap-2">
-                        <Pills className="h-4 w-4 text-primary" />
+                        <Pill className="h-4 w-4 text-primary" />
                         Supplement Trackers
                       </li>
                       <li className="flex items-center gap-2">
@@ -130,7 +131,7 @@ const WhyUs = () => {
                         Eye Exercise Apps
                       </li>
                       <li className="flex items-center gap-2">
-                        <Focus className="h-4 w-4 text-primary" />
+                        <Brain className="h-4 w-4 text-primary" />
                         Focus Apps
                       </li>
                     </ul>
@@ -258,7 +259,8 @@ const WhyUs = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WhyUs
+export default WhyUs;
+
