@@ -3157,6 +3157,51 @@ export type Database = {
           },
         ]
       }
+      longitudinal_studies: {
+        Row: {
+          created_at: string
+          data_collection_methods: string[] | null
+          description: string | null
+          duration_days: number | null
+          frequency: string
+          id: string
+          objectives: string[] | null
+          participant_criteria: Json | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_collection_methods?: string[] | null
+          description?: string | null
+          duration_days?: number | null
+          frequency: string
+          id?: string
+          objectives?: string[] | null
+          participant_criteria?: Json | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data_collection_methods?: string[] | null
+          description?: string | null
+          duration_days?: number | null
+          frequency?: string
+          id?: string
+          objectives?: string[] | null
+          participant_criteria?: Json | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       medication_logs: {
         Row: {
           created_at: string | null
@@ -6071,6 +6116,83 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_data_points: {
+        Row: {
+          collected_at: string | null
+          created_at: string | null
+          data_type: string
+          data_value: Json
+          id: string
+          participant_id: string | null
+          study_id: string | null
+        }
+        Insert: {
+          collected_at?: string | null
+          created_at?: string | null
+          data_type: string
+          data_value: Json
+          id?: string
+          participant_id?: string | null
+          study_id?: string | null
+        }
+        Update: {
+          collected_at?: string | null
+          created_at?: string | null
+          data_type?: string
+          data_value?: Json
+          id?: string
+          participant_id?: string | null
+          study_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_data_points_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "study_participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_data_points_study_id_fkey"
+            columns: ["study_id"]
+            isOneToOne: false
+            referencedRelation: "longitudinal_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_participants: {
+        Row: {
+          enrolled_at: string | null
+          id: string
+          status: string | null
+          study_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          enrolled_at?: string | null
+          id?: string
+          status?: string | null
+          study_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          enrolled_at?: string | null
+          id?: string
+          status?: string | null
+          study_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_participants_study_id_fkey"
+            columns: ["study_id"]
+            isOneToOne: false
+            referencedRelation: "longitudinal_studies"
             referencedColumns: ["id"]
           },
         ]

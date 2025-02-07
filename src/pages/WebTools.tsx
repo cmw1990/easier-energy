@@ -38,6 +38,52 @@ const iconMap: Record<string, LucideIcon> = {
   'hydration-guide': Droplets
 };
 
+const seedWebTools = async () => {
+  const tools = [
+    {
+      title: "White Noise Generator",
+      description: "Customize and play different types of white, pink, and brown noise to enhance focus and relaxation. Try our science-backed sound profiles.",
+      slug: "white-noise",
+      path: "/tools/white-noise",
+      tags: ["focus", "sound", "productivity"],
+      category: "meditation",
+      published: true
+    },
+    {
+      title: "Binaural Beats",
+      description: "Experience different frequency ranges for meditation, focus, and relaxation. Access basic frequencies for free.",
+      slug: "binaural-beats",
+      path: "/tools/binaural-beats",
+      tags: ["meditation", "focus", "sound"],
+      category: "meditation",
+      published: true
+    },
+    {
+      title: "Nature Sounds",
+      description: "Calming nature sounds for relaxation and focus. Perfect for meditation or background noise while working.",
+      slug: "nature-sounds",
+      path: "/tools/nature-sounds",
+      tags: ["relaxation", "sound", "focus"],
+      category: "meditation",
+      published: true
+    }
+  ];
+
+  for (const tool of tools) {
+    const { data, error } = await supabase
+      .from('web_tools')
+      .upsert(
+        { 
+          ...tool,
+          content: tool.description // For now, using description as content
+        },
+        { onConflict: 'slug' }
+      );
+    
+    if (error) console.error('Error seeding tool:', error);
+  }
+};
+
 const WebTools = () => {
   const { toolSlug } = useParams();
 
@@ -52,6 +98,20 @@ const WebTools = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      
+      // Seed tools if none exist
+      if (!data?.length) {
+        await seedWebTools();
+        const { data: seededData, error: seededError } = await supabase
+          .from('web_tools')
+          .select('*')
+          .eq('published', true)
+          .order('created_at', { ascending: false });
+          
+        if (seededError) throw seededError;
+        return seededData;
+      }
+      
       return data;
     }
   });
@@ -70,7 +130,6 @@ const WebTools = () => {
     }
   };
 
-  // Fallback tools if database is empty
   const fallbackTools: WebTool[] = [
     {
       title: "White Noise Generator",
@@ -245,14 +304,12 @@ const WebTools = () => {
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <div className="p-2 bg-primary/10 rounded-full">
-                            {tool.icon && (
-                              <tool.icon className="h-6 w-6 text-primary" />
-                            )}
-                            {!tool.icon && tool.slug && iconMap[tool.slug] && (
-                              React.createElement(iconMap[tool.slug], {
-                                className: "h-6 w-6 text-primary"
-                              })
-                            )}
+                            {tool.icon && React.createElement(tool.icon, {
+                              className: "h-6 w-6 text-primary"
+                            })}
+                            {!tool.icon && tool.slug && iconMap[tool.slug] && React.createElement(iconMap[tool.slug], {
+                              className: "h-6 w-6 text-primary"
+                            })}
                           </div>
                           <CardTitle className="text-xl">{tool.title}</CardTitle>
                         </div>
