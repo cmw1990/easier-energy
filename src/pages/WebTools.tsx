@@ -35,7 +35,8 @@ const iconMap: Record<string, LucideIcon> = {
   'caffeine-guide': Coffee,
   'energy-drinks-guide': Battery,
   'hydration-guide': Droplets,
-  'bmi-calculator': Calculator
+  'bmi-calculator': Calculator,
+  'body-fat-calculator': Calculator,
 };
 
 const seedWebTools = async () => {
@@ -72,6 +73,16 @@ const seedWebTools = async () => {
       description: "Calculate your Body Mass Index (BMI) to assess if your weight is in a healthy range. Get instant results and interpretations.",
       slug: "bmi-calculator",
       path: "/tools/bmi-calculator",
+      tags: ["health", "fitness", "calculator"],
+      category: "health",
+      isPremium: false,
+      published: true
+    },
+    {
+      title: "Body Fat Calculator",
+      description: "Calculate your body fat percentage using the U.S. Navy Method. Get accurate measurements and understand your body composition.",
+      slug: "body-fat-calculator",
+      path: "/tools/body-fat-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
       isPremium: false,
@@ -170,9 +181,18 @@ const WebTools = () => {
     },
     {
       title: "BMI Calculator",
-      description: "Calculate your Body Mass Index (BMI) to assess if your weight is in a healthy range. Get instant results and interpretations.",
+      description: "Calculate your body mass index (BMI) to assess if your weight is in a healthy range. Get instant results and interpretations.",
       icon: Calculator,
       path: "/tools/bmi-calculator",
+      tags: ["health", "fitness", "calculator"],
+      category: "health",
+      isPremium: false
+    },
+    {
+      title: "Body Fat Calculator",
+      description: "Calculate your body fat percentage using the U.S. Navy Method. Get accurate measurements and understand your body composition.",
+      icon: Calculator,
+      path: "/tools/body-fat-calculator",
       tags: ["health", "fitness", "calculator"],
       category: "health",
       isPremium: false

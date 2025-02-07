@@ -1,100 +1,93 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { TopNav } from "@/components/layout/TopNav"
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TopNav } from "@/components/layout/TopNav";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
-export default function BodyFatCalculator() {
-  const [gender, setGender] = useState<"male" | "female">("male")
-  const [age, setAge] = useState("")
-  const [weight, setWeight] = useState("")
-  const [height, setHeight] = useState("")
-  const [neck, setNeck] = useState("")
-  const [waist, setWaist] = useState("")
-  const [hip, setHip] = useState("")
-  const [bodyFat, setBodyFat] = useState<number | null>(null)
+const BodyFatCalculator = () => {
+  const [gender, setGender] = useState<'male' | 'female'>('male');
+  const [waist, setWaist] = useState('');
+  const [neck, setNeck] = useState('');
+  const [height, setHeight] = useState('');
+  const [hip, setHip] = useState(''); // Only for females
+  const [bodyFat, setBodyFat] = useState<number | null>(null);
+  const { toast } = useToast();
 
   const calculateBodyFat = () => {
-    if (!age || !weight || !height || !neck || !waist || (gender === "female" && !hip)) {
-      return
+    if (!waist || !neck || !height || (gender === 'female' && !hip)) {
+      toast({
+        title: "Missing measurements",
+        description: "Please fill in all required measurements.",
+        variant: "destructive"
+      });
+      return;
     }
 
-    let result: number
-    if (gender === "male") {
-      result = 495 / (1.0324 - 0.19077 * Math.log10(parseFloat(waist) - parseFloat(neck)) + 0.15456 * Math.log10(parseFloat(height))) - 450
+    const w = parseFloat(waist);
+    const n = parseFloat(neck);
+    const h = parseFloat(height);
+    
+    if (gender === 'male') {
+      // U.S. Navy Method for males
+      const bodyFatPercentage = 495 / (1.0324 - 0.19077 * Math.log10(w - n) + 0.15456 * Math.log10(h)) - 450;
+      setBodyFat(parseFloat(bodyFatPercentage.toFixed(1)));
     } else {
-      result = 495 / (1.29579 - 0.35004 * Math.log10(parseFloat(waist) + parseFloat(hip) - parseFloat(neck)) + 0.22100 * Math.log10(parseFloat(height))) - 450
+      // U.S. Navy Method for females
+      const hipMeasurement = parseFloat(hip);
+      const bodyFatPercentage = 495 / (1.29579 - 0.35004 * Math.log10(w + hipMeasurement - n) + 0.22100 * Math.log10(h)) - 450;
+      setBodyFat(parseFloat(bodyFatPercentage.toFixed(1)));
     }
+  };
 
-    setBodyFat(Math.round(result * 10) / 10)
-  }
-
-  const getBodyFatCategory = (bf: number) => {
-    if (gender === "male") {
-      if (bf < 6) return "Essential Fat"
-      if (bf < 14) return "Athletes"
-      if (bf < 18) return "Fitness"
-      if (bf < 25) return "Average"
-      return "Obese"
+  const getCategory = (bf: number) => {
+    if (gender === 'male') {
+      if (bf < 6) return 'Essential Fat';
+      if (bf < 14) return 'Athletes';
+      if (bf < 18) return 'Fitness';
+      if (bf < 25) return 'Average';
+      return 'Above Average';
     } else {
-      if (bf < 14) return "Essential Fat"
-      if (bf < 21) return "Athletes"
-      if (bf < 25) return "Fitness"
-      if (bf < 32) return "Average"
-      return "Obese"
+      if (bf < 14) return 'Essential Fat';
+      if (bf < 21) return 'Athletes';
+      if (bf < 25) return 'Fitness';
+      if (bf < 32) return 'Average';
+      return 'Above Average';
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <TopNav />
-      <div className="container mx-auto p-4 space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Body Fat Calculator</CardTitle>
-            <CardDescription>
-              Calculate your body fat percentage using the U.S. Navy method
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <RadioGroup
-              value={gender}
-              onValueChange={(value) => setGender(value as "male" | "female")}
-              className="flex space-x-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="male" id="male" />
-                <Label htmlFor="male">Male</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="female" id="female" />
-                <Label htmlFor="female">Female</Label>
-              </div>
-            </RadioGroup>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="container mx-auto p-4 space-y-4">
+        <h1 className="text-4xl font-bold text-center mb-8">Body Fat Calculator</h1>
+        
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Enter Your Measurements</CardTitle>
+              <CardDescription>
+                All measurements should be in centimeters (cm)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="age">Age (years)</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  value={age}
-                  onChange={(e) => setAge(e.target.value)}
-                  placeholder="Enter your age"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="weight">Weight (kg)</Label>
-                <Input
-                  id="weight"
-                  type="number"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  placeholder="Enter your weight"
-                />
+                <Label>Gender</Label>
+                <div className="flex gap-4">
+                  <Button
+                    variant={gender === 'male' ? 'default' : 'outline'}
+                    onClick={() => setGender('male')}
+                  >
+                    Male
+                  </Button>
+                  <Button
+                    variant={gender === 'female' ? 'default' : 'outline'}
+                    onClick={() => setGender('female')}
+                  >
+                    Female
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -104,7 +97,7 @@ export default function BodyFatCalculator() {
                   type="number"
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
-                  placeholder="Enter your height"
+                  placeholder="Enter height"
                 />
               </div>
 
@@ -130,7 +123,7 @@ export default function BodyFatCalculator() {
                 />
               </div>
 
-              {gender === "female" && (
+              {gender === 'female' && (
                 <div className="space-y-2">
                   <Label htmlFor="hip">Hip Circumference (cm)</Label>
                   <Input
@@ -142,22 +135,59 @@ export default function BodyFatCalculator() {
                   />
                 </div>
               )}
-            </div>
 
-            <Button onClick={calculateBodyFat} className="w-full">
-              Calculate Body Fat
-            </Button>
+              <Button className="w-full" onClick={calculateBodyFat}>
+                Calculate Body Fat
+              </Button>
+            </CardContent>
+          </Card>
 
-            {bodyFat !== null && (
-              <div className="mt-6 p-4 bg-secondary rounded-lg">
-                <h3 className="text-xl font-semibold">Results</h3>
-                <p className="mt-2">Your body fat percentage: {bodyFat}%</p>
-                <p className="mt-1">Category: {getBodyFatCategory(bodyFat)}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Results</CardTitle>
+              <CardDescription>
+                Using the U.S. Navy Method
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {bodyFat !== null && (
+                <div className="space-y-4">
+                  <div className="text-2xl font-bold">
+                    Body Fat: {bodyFat}%
+                  </div>
+                  <div className="text-lg">
+                    Category: {getCategory(bodyFat)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    <p>Body Fat Percentage Categories ({gender === 'male' ? 'Men' : 'Women'}):</p>
+                    <ul className="list-disc list-inside mt-2">
+                      {gender === 'male' ? (
+                        <>
+                          <li>Essential Fat: 2-5%</li>
+                          <li>Athletes: 6-13%</li>
+                          <li>Fitness: 14-17%</li>
+                          <li>Average: 18-24%</li>
+                          <li>Above Average: 25%+</li>
+                        </>
+                      ) : (
+                        <>
+                          <li>Essential Fat: 10-13%</li>
+                          <li>Athletes: 14-20%</li>
+                          <li>Fitness: 21-24%</li>
+                          <li>Average: 25-31%</li>
+                          <li>Above Average: 32%+</li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default BodyFatCalculator;

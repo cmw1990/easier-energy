@@ -3,10 +3,10 @@ import WebTools from "@/pages/WebTools"
 
 const WhiteNoise = lazy(() => import("@/pages/tools/WhiteNoise"))
 const BMICalculator = lazy(() => import("@/pages/tools/BMICalculator"))
+const BodyFatCalculator = lazy(() => import("@/pages/tools/BodyFatCalculator"))
 const BiologicalAgeCalculator = lazy(() => import("@/pages/tools/BiologicalAgeCalculator"))
 const HRVCalculator = lazy(() => import("@/pages/tools/HRVCalculator"))
 const BMRCalculator = lazy(() => import("@/pages/tools/BMRCalculator"))
-const BodyFatCalculator = lazy(() => import("@/pages/tools/BodyFatCalculator"))
 
 export const toolRoutes = {
   path: "/tools",
@@ -36,6 +36,14 @@ export const toolRoutes = {
       ),
     },
     {
+      path: "body-fat-calculator",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <BodyFatCalculator />
+        </Suspense>
+      ),
+    },
+    {
       path: "biological-age-calculator",
       element: (
         <Suspense fallback={<div>Loading...</div>}>
@@ -56,14 +64,6 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <BMRCalculator />
-        </Suspense>
-      ),
-    },
-    {
-      path: "body-fat-calculator",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <BodyFatCalculator />
         </Suspense>
       ),
     },
