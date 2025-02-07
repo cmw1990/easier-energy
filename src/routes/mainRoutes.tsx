@@ -36,6 +36,7 @@ const TeaDatabase = lazy(() => import("@/pages/tools/TeaDatabase"))
 const EnergyEnhancement = lazy(() => import("@/pages/tools/EnergyEnhancement"))
 const Sleep = lazy(() => import("@/pages/tools/Sleep"))
 const Light = lazy(() => import("@/pages/tools/Light"))
+const SleepAnalytics = lazy(() => import("@/pages/tools/SleepAnalytics"))
 
 export const mainRoutes = [
   {
@@ -318,6 +319,14 @@ export const mainRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <Light />
+          </Suspense>
+        ),
+      },
+      {
+        path: "tools/sleep-analytics",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SleepAnalytics />
           </Suspense>
         ),
       },
