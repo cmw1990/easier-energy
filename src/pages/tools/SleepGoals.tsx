@@ -38,7 +38,11 @@ export default function SleepGoals() {
   })
 
   const updateGoalsMutation = useMutation({
-    mutationFn: async (values: Partial<SleepGoal>) => {
+    mutationFn: async (values: {
+      target_sleep_duration: number
+      target_bedtime: string
+      target_wake_time: string
+    }) => {
       if (sleepGoal?.id) {
         const { error } = await supabase
           .from('sleep_goals')
@@ -52,7 +56,12 @@ export default function SleepGoals() {
         
         const { error } = await supabase
           .from('sleep_goals')
-          .insert([{ ...values, user_id: user.id }])
+          .insert({
+            user_id: user.id,
+            target_sleep_duration: values.target_sleep_duration,
+            target_bedtime: values.target_bedtime,
+            target_wake_time: values.target_wake_time
+          })
         
         if (error) throw error
       }
