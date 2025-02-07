@@ -37,6 +37,31 @@ const EyeExercises = () => {
   const { toast } = useToast();
   const { session } = useAuth();
 
+  // Query exercise assets from Supabase
+  const { data: exerciseAssets, isLoading: isLoadingAssets } = useQuery({
+    queryKey: ["exerciseAssets"],
+    queryFn: async () => {
+      console.log("Fetching exercise assets...");
+      const { data, error } = await supabase
+        .from("exercise_assets")
+        .select("*")
+        .eq("exercise_type", "eye_exercise");
+
+      if (error) {
+        console.error("Error fetching exercise assets:", error);
+        throw error;
+      }
+      console.log("Fetched exercise assets:", data);
+      return data || [];
+    },
+  });
+
+  // Map assets to exercise IDs
+  const assetMap = exerciseAssets?.reduce((acc, asset) => {
+    acc[asset.exercise_name] = asset.asset_url;
+    return acc;
+  }, {} as Record<string, string>) || {};
+
   const exercises: Exercise[] = [
     {
       id: "20-20-20",
@@ -51,7 +76,7 @@ const EyeExercises = () => {
         "Blink naturally throughout the exercise"
       ],
       animationType: "css",
-      visualGuideUrl: "/assets/exercises/20-20-20.svg"
+      visualGuideUrl: assetMap["20-20-20"]
     },
     {
       id: "figure-eight",
@@ -66,7 +91,7 @@ const EyeExercises = () => {
         "Switch direction halfway through"
       ],
       animationType: "svg",
-      visualGuideUrl: "/assets/exercises/figure-eight.svg"
+      visualGuideUrl: assetMap["figure-eight"]
     },
     {
       id: "near-far",
@@ -81,7 +106,7 @@ const EyeExercises = () => {
         "Repeat the cycle"
       ],
       animationType: "css",
-      visualGuideUrl: "/assets/exercises/near-far.svg"
+      visualGuideUrl: assetMap["near-far"]
     },
     {
       id: "horizontal",
@@ -96,7 +121,7 @@ const EyeExercises = () => {
         "Repeat the movement smoothly"
       ],
       animationType: "svg",
-      visualGuideUrl: "/assets/exercises/horizontal.svg"
+      visualGuideUrl: assetMap["horizontal"]
     },
     {
       id: "vertical",
@@ -111,7 +136,7 @@ const EyeExercises = () => {
         "Repeat the movement smoothly"
       ],
       animationType: "svg",
-      visualGuideUrl: "/assets/exercises/vertical.svg"
+      visualGuideUrl: assetMap["vertical"]
     },
     {
       id: "palming",
@@ -126,7 +151,7 @@ const EyeExercises = () => {
         "Focus on complete darkness and relaxation"
       ],
       animationType: "css",
-      visualGuideUrl: "/assets/exercises/palming.svg"
+      visualGuideUrl: assetMap["palming"]
     }
   ];
 
@@ -208,7 +233,7 @@ const EyeExercises = () => {
   };
 
   // Add a query to fetch exercise assets
-  const { data: exerciseAssets } = useQuery({
+  const { data: exerciseAssetsFromQuery } = useQuery({
     queryKey: ["exerciseAssets"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -245,6 +270,10 @@ const EyeExercises = () => {
 
     preloadImages();
   }, [exerciseAssets]);
+
+  if (isLoadingAssets) {
+    return <div>Loading exercise assets...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -284,7 +313,7 @@ const EyeExercises = () => {
                 <div className="space-y-4">
                   <AnimatedExerciseDisplay
                     exerciseType={exercise.id}
-                    imageUrl={exercise.visualGuideUrl}
+                    imageUrl={exercise.visualGuideUrl || ''}
                     animationType={exercise.animationType}
                     isActive={true}
                     progress={(exercise.duration - 0) / exercise.duration * 100}
