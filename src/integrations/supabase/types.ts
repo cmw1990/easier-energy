@@ -5917,6 +5917,38 @@ export type Database = {
           },
         ]
       }
+      shared_bathing_routines: {
+        Row: {
+          created_at: string
+          id: string
+          routine_id: string | null
+          shared_by: string | null
+          shared_with: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          routine_id?: string | null
+          shared_by?: string | null
+          shared_with?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          routine_id?: string | null
+          shared_by?: string | null
+          shared_with?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shared_bathing_routines_routine_id_fkey"
+            columns: ["routine_id"]
+            isOneToOne: false
+            referencedRelation: "bathing_routines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shoutouts: {
         Row: {
           created_at: string | null
@@ -7165,8 +7197,13 @@ export type Database = {
           mood_before: number | null
           notes: string | null
           routine_id: string | null
+          sleep_quality_impact: number | null
+          stress_level_after: number | null
+          stress_level_before: number | null
           user_id: string
           water_temperature: string | null
+          weather_comfort_rating: number | null
+          weather_data: Json | null
         }
         Insert: {
           created_at?: string
@@ -7178,8 +7215,13 @@ export type Database = {
           mood_before?: number | null
           notes?: string | null
           routine_id?: string | null
+          sleep_quality_impact?: number | null
+          stress_level_after?: number | null
+          stress_level_before?: number | null
           user_id: string
           water_temperature?: string | null
+          weather_comfort_rating?: number | null
+          weather_data?: Json | null
         }
         Update: {
           created_at?: string
@@ -7191,8 +7233,13 @@ export type Database = {
           mood_before?: number | null
           notes?: string | null
           routine_id?: string | null
+          sleep_quality_impact?: number | null
+          stress_level_after?: number | null
+          stress_level_before?: number | null
           user_id?: string
           water_temperature?: string | null
+          weather_comfort_rating?: number | null
+          weather_data?: Json | null
         }
         Relationships: [
           {
