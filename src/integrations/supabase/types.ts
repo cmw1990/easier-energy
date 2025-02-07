@@ -6684,6 +6684,51 @@ export type Database = {
         }
         Relationships: []
       }
+      sleep_environment_logs: {
+        Row: {
+          comfort_rating: number | null
+          created_at: string
+          date: string
+          humidity: number | null
+          id: string
+          light_level: number | null
+          noise_level: number | null
+          notes: string | null
+          temperature: number | null
+          updated_at: string
+          user_id: string
+          ventilation_rating: number | null
+        }
+        Insert: {
+          comfort_rating?: number | null
+          created_at?: string
+          date?: string
+          humidity?: number | null
+          id?: string
+          light_level?: number | null
+          noise_level?: number | null
+          notes?: string | null
+          temperature?: number | null
+          updated_at?: string
+          user_id: string
+          ventilation_rating?: number | null
+        }
+        Update: {
+          comfort_rating?: number | null
+          created_at?: string
+          date?: string
+          humidity?: number | null
+          id?: string
+          light_level?: number | null
+          noise_level?: number | null
+          notes?: string | null
+          temperature?: number | null
+          updated_at?: string
+          user_id?: string
+          ventilation_rating?: number | null
+        }
+        Relationships: []
+      }
       sleep_goals: {
         Row: {
           created_at: string
