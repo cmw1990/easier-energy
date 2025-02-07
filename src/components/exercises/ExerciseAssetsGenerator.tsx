@@ -57,22 +57,7 @@ export const ExerciseAssetsGenerator = () => {
     try {
       console.log(`Starting generation for ${batch} (${type})...`);
       
-      const { data: existingAsset } = await supabase
-        .from('exercise_assets')
-        .select('asset_url')
-        .eq('exercise_name', batch)
-        .eq('exercise_type', type)
-        .maybeSingle();
-
-      if (existingAsset?.asset_url) {
-        console.log(`Asset already exists for ${batch}`);
-        toast({
-          title: 'Asset Already Exists',
-          description: `Using existing asset for ${batch}`,
-        });
-        return;
-      }
-
+      // Generate new asset
       const { data, error: functionError } = await supabase.functions.invoke(
         'generate-assets',
         {
@@ -96,8 +81,20 @@ export const ExerciseAssetsGenerator = () => {
 
       console.log(`Generated asset for ${batch}:`, data);
       
-      // Save to exercise_assets table
-      const { error: dbError } = await supabase
+      // Delete existing asset if it exists
+      const { error: deleteError } = await supabase
+        .from('exercise_assets')
+        .delete()
+        .eq('exercise_name', batch)
+        .eq('exercise_type', type);
+
+      if (deleteError) {
+        console.error('Error deleting existing asset:', deleteError);
+        // Continue anyway as the upsert might still work
+      }
+
+      // Insert new asset
+      const { error: insertError } = await supabase
         .from('exercise_assets')
         .insert({
           exercise_name: batch,
@@ -105,14 +102,14 @@ export const ExerciseAssetsGenerator = () => {
           asset_url: data.url
         });
 
-      if (dbError) {
-        console.error('Error saving to database:', dbError);
-        throw new Error(`Failed to save asset to database: ${dbError.message}`);
+      if (insertError) {
+        console.error('Error saving to database:', insertError);
+        throw new Error(`Failed to save asset to database: ${insertError.message}`);
       }
 
       toast({
         title: 'Success',
-        description: `Generated asset for ${batch}`,
+        description: `Generated new asset for ${batch}`,
       });
 
     } catch (error) {
