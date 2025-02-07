@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee } from "lucide-react"
@@ -15,18 +14,13 @@ const LandingPage = () => {
         <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6">
           Optimize Your Energy & Performance
         </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
+          Clear your phone. Cancel your subscriptions. The Well-Charged is the only wellness platform you'll ever need.
+        </p>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
           Access powerful tools and comprehensive guides to enhance your focus, energy, and overall well-being. 
           Join thousands of high performers who trust The Well-Charged.
         </p>
-        <div className="bg-primary/5 p-6 rounded-lg max-w-2xl mx-auto mb-8">
-          <p className="text-lg font-medium text-primary">
-            Clear your phone. Cancel your subscriptions. The Well-Charged is the only wellness platform you'll ever need.
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            One integrated solution for your complete well-being journey
-          </p>
-        </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/auth">
             <Button size="lg" className="group">
