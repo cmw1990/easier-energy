@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Timer, RotateCw, MoveHorizontal, MoveVertical, Maximize2, Minimize2, AlertCircle } from "lucide-react";
 import { EyeExerciseTimer } from "@/components/exercises/EyeExerciseTimer";
 import { EyeRelaxationGuide } from "@/components/exercises/EyeRelaxationGuide";
 import { EyeExerciseStats } from "@/components/exercises/EyeExerciseStats";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -205,6 +206,45 @@ const EyeExercises = () => {
     setCompletedExercise(null);
     setRating(0);
   };
+
+  // Add a query to fetch exercise assets
+  const { data: exerciseAssets } = useQuery({
+    queryKey: ["exerciseAssets"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("exercise_assets")
+        .select("*")
+        .eq("exercise_type", "eye_exercise");
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Preload images when component mounts
+  useEffect(() => {
+    const preloadImages = async () => {
+      if (exerciseAssets) {
+        const imagePromises = exerciseAssets.map(asset => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = asset.asset_url;
+          });
+        });
+
+        try {
+          await Promise.all(imagePromises);
+          console.log('All exercise images preloaded successfully');
+        } catch (error) {
+          console.error('Error preloading images:', error);
+        }
+      }
+    };
+
+    preloadImages();
+  }, [exerciseAssets]);
 
   return (
     <div className="space-y-6">

@@ -1,7 +1,9 @@
+
 import { useState, useEffect } from 'react';
 import { Trophy, Star, ArrowRight, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface AnimatedExerciseDisplayProps {
   imageUrl: string;
@@ -13,6 +15,16 @@ interface AnimatedExerciseDisplayProps {
   currentStep?: number;
   onStepChange?: (step: number) => void;
 }
+
+// Create an image preloader function
+const preloadImage = (src: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = () => reject();
+    img.src = src;
+  });
+};
 
 const SVGAnimation = ({ exerciseType, progress = 0 }: { exerciseType: string; progress?: number }) => {
   const getAnimationPath = () => {
@@ -73,6 +85,32 @@ export const AnimatedExerciseDisplay = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [showAchievement, setShowAchievement] = useState(false);
   const [currentInstruction, setCurrentInstruction] = useState(0);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadImage = async () => {
+      try {
+        await preloadImage(imageUrl);
+        if (mounted) {
+          setIsLoaded(true);
+          setImageError(false);
+        }
+      } catch (error) {
+        if (mounted) {
+          setImageError(true);
+          console.error('Error loading image:', error);
+        }
+      }
+    };
+
+    loadImage();
+
+    return () => {
+      mounted = false;
+    };
+  }, [imageUrl]);
 
   useEffect(() => {
     if (progress >= 100 && !showAchievement) {
@@ -124,12 +162,25 @@ export const AnimatedExerciseDisplay = ({
         "bg-gradient-to-br from-primary/10 to-secondary/10"
       )}
     >
+      {!isLoaded && !imageError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+          <Skeleton className="w-full h-full" />
+        </div>
+      )}
+
+      {imageError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+          <p className="text-muted-foreground">Failed to load exercise visual</p>
+        </div>
+      )}
+
       {animationType === 'css' && (
         <img
           src={imageUrl}
           alt={`${exerciseType} exercise`}
-          className={getAnimationClass()}
+          className={cn(getAnimationClass(), imageError ? 'hidden' : '')}
           onLoad={() => setIsLoaded(true)}
+          onError={() => setImageError(true)}
         />
       )}
 
@@ -139,15 +190,13 @@ export const AnimatedExerciseDisplay = ({
           <img
             src={imageUrl}
             alt={`${exerciseType} exercise`}
-            className="absolute inset-0 w-full h-full object-contain mix-blend-multiply"
+            className={cn(
+              "absolute inset-0 w-full h-full object-contain mix-blend-multiply",
+              imageError ? 'hidden' : ''
+            )}
             onLoad={() => setIsLoaded(true)}
+            onError={() => setImageError(true)}
           />
-        </div>
-      )}
-
-      {!isLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 

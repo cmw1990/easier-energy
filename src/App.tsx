@@ -3,39 +3,41 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/components/AuthProvider"
-
+import { Suspense, lazy } from "react"
 import Layout from "@/components/layout/Layout"
 import NotFound from "@/components/NotFound"
 import Index from "@/pages/Index"
 import Auth from "@/pages/Auth"
 import LandingPage from "@/pages/LandingPage"
-import CBTPage from "@/pages/CBT"
-import BreathingPage from "@/pages/Breathing"
-import CaffeinePage from "@/pages/Caffeine"
-import DashboardPage from "@/pages/Dashboard"
-import DistractionBlockerPage from "@/pages/DistractionBlocker"
-import Exercise from "@/pages/Exercise"
-import EyeExercisesPage from "@/pages/EyeExercises"
-import FocusPage from "@/pages/Focus"
-import FoodPage from "@/pages/Food"
-import MeditationPage from "@/pages/Meditation"
-import MotivationPage from "@/pages/Motivation"
-import NicotinePage from "@/pages/Nicotine"
-import QuitPlanPage from "@/pages/QuitPlan"
-import RecoveryPage from "@/pages/Recovery"
-import RelaxPage from "@/pages/Relax"
-import SleepPage from "@/pages/Sleep"
-import SleepTrackPage from "@/pages/SleepTrack"
-import SobrietyPage from "@/pages/Sobriety"
-import SubstanceLogPage from "@/pages/SubstanceLog"
-import SupplementsPage from "@/pages/Supplements"
-import SupportPage from "@/pages/Support"
-import WebTools from "@/pages/WebTools"
-import WhiteNoise from "@/pages/tools/WhiteNoise"
-import BreathingGame from "@/components/games/BreathingGame"
-import BalloonJourney from "@/components/games/BalloonJourney"
-import ZenGarden from "@/components/games/ZenGarden"
-import DevelopmentTools from "@/pages/DevelopmentTools"
+
+// Lazy load all the other pages
+const CBTPage = lazy(() => import("@/pages/CBT"))
+const BreathingPage = lazy(() => import("@/pages/Breathing"))
+const CaffeinePage = lazy(() => import("@/pages/Caffeine"))
+const DashboardPage = lazy(() => import("@/pages/Dashboard"))
+const DistractionBlockerPage = lazy(() => import("@/pages/DistractionBlocker"))
+const Exercise = lazy(() => import("@/pages/Exercise"))
+const EyeExercisesPage = lazy(() => import("@/pages/EyeExercises"))
+const FocusPage = lazy(() => import("@/pages/Focus"))
+const FoodPage = lazy(() => import("@/pages/Food"))
+const MeditationPage = lazy(() => import("@/pages/Meditation"))
+const MotivationPage = lazy(() => import("@/pages/Motivation"))
+const NicotinePage = lazy(() => import("@/pages/Nicotine"))
+const QuitPlanPage = lazy(() => import("@/pages/QuitPlan"))
+const RecoveryPage = lazy(() => import("@/pages/Recovery"))
+const RelaxPage = lazy(() => import("@/pages/Relax"))
+const SleepPage = lazy(() => import("@/pages/Sleep"))
+const SleepTrackPage = lazy(() => import("@/pages/SleepTrack"))
+const SobrietyPage = lazy(() => import("@/pages/Sobriety"))
+const SubstanceLogPage = lazy(() => import("@/pages/SubstanceLog"))
+const SupplementsPage = lazy(() => import("@/pages/Supplements"))
+const SupportPage = lazy(() => import("@/pages/Support"))
+const WebTools = lazy(() => import("@/pages/WebTools"))
+const WhiteNoise = lazy(() => import("@/pages/tools/WhiteNoise"))
+const BreathingGame = lazy(() => import("@/components/games/BreathingGame"))
+const BalloonJourney = lazy(() => import("@/components/games/BalloonJourney"))
+const ZenGarden = lazy(() => import("@/components/games/ZenGarden"))
+const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
 
 const queryClient = new QueryClient()
 
@@ -55,7 +57,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/development",
-    element: <DevelopmentTools />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <DevelopmentTools />
+      </Suspense>
+    ),
     errorElement: <NotFound />,
   },
   {
@@ -63,29 +69,53 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <WebTools />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <WebTools />
+          </Suspense>
+        ),
       },
       {
         path: "white-noise",
-        element: <WhiteNoise />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <WhiteNoise />
+          </Suspense>
+        ),
       },
       {
         path: ":toolSlug",
-        element: <WebTools />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <WebTools />
+          </Suspense>
+        ),
       }
     ],
   },
   {
     path: "/breathing-pufferfish",
-    element: <BreathingGame />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <BreathingGame />
+      </Suspense>
+    ),
   },
   {
     path: "/breathing-balloon",
-    element: <BalloonJourney />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <BalloonJourney />
+      </Suspense>
+    ),
   },
   {
     path: "/breathing-zen",
-    element: <ZenGarden />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ZenGarden />
+      </Suspense>
+    ),
   },
   {
     path: "/app",
@@ -98,95 +128,187 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <DashboardPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <DashboardPage />
+          </Suspense>
+        ),
       },
       {
         path: "breathing",
-        element: <BreathingPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <BreathingPage />
+          </Suspense>
+        ),
       },
       {
         path: "caffeine",
-        element: <CaffeinePage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <CaffeinePage />
+          </Suspense>
+        ),
       },
       {
         path: "cbt",
-        element: <CBTPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <CBTPage />
+          </Suspense>
+        ),
       },
       {
         path: "development",
-        element: <DevelopmentTools />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <DevelopmentTools />
+          </Suspense>
+        ),
       },
       {
         path: "distraction-blocker",
-        element: <DistractionBlockerPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <DistractionBlockerPage />
+          </Suspense>
+        ),
       },
       {
         path: "exercise",
-        element: <Exercise />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Exercise />
+          </Suspense>
+        ),
       },
       {
         path: "eye-exercises",
-        element: <EyeExercisesPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <EyeExercisesPage />
+          </Suspense>
+        ),
       },
       {
         path: "eye-care",
-        element: <EyeExercisesPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <EyeExercisesPage />
+          </Suspense>
+        ),
       },
       {
         path: "focus",
-        element: <FocusPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <FocusPage />
+          </Suspense>
+        ),
       },
       {
         path: "food",
-        element: <FoodPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <FoodPage />
+          </Suspense>
+        ),
       },
       {
         path: "meditation",
-        element: <MeditationPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <MeditationPage />
+          </Suspense>
+        ),
       },
       {
         path: "motivation",
-        element: <MotivationPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <MotivationPage />
+          </Suspense>
+        ),
       },
       {
         path: "nicotine",
-        element: <NicotinePage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <NicotinePage />
+          </Suspense>
+        ),
       },
       {
         path: "quit-plan",
-        element: <QuitPlanPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <QuitPlanPage />
+          </Suspense>
+        ),
       },
       {
         path: "recovery",
-        element: <RecoveryPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <RecoveryPage />
+          </Suspense>
+        ),
       },
       {
         path: "relax",
-        element: <RelaxPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <RelaxPage />
+          </Suspense>
+        ),
       },
       {
         path: "sleep",
-        element: <SleepPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SleepPage />
+          </Suspense>
+        ),
       },
       {
         path: "sleep-track",
-        element: <SleepTrackPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SleepTrackPage />
+          </Suspense>
+        ),
       },
       {
         path: "sobriety",
-        element: <SobrietyPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SobrietyPage />
+          </Suspense>
+        ),
       },
       {
         path: "substance-log",
-        element: <SubstanceLogPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SubstanceLogPage />
+          </Suspense>
+        ),
       },
       {
         path: "supplements",
-        element: <SupplementsPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SupplementsPage />
+          </Suspense>
+        ),
       },
       {
         path: "support",
-        element: <SupportPage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SupportPage />
+          </Suspense>
+        ),
       },
     ],
   },
