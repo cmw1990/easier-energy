@@ -311,6 +311,47 @@ export type Database = {
           },
         ]
       }
+      affiliate_clicks: {
+        Row: {
+          affiliate_id: string
+          clicked_at: string | null
+          commission_amount: number | null
+          converted_at: string | null
+          id: string
+          product_id: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          clicked_at?: string | null
+          commission_amount?: number | null
+          converted_at?: string | null
+          id?: string
+          product_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          clicked_at?: string | null
+          commission_amount?: number | null
+          converted_at?: string | null
+          id?: string
+          product_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       board_games: {
         Row: {
           board_size: number | null
@@ -3480,6 +3521,48 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           variants?: Json | null
+        }
+        Relationships: []
+      }
+      premium_subscriptions: {
+        Row: {
+          created_at: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean | null
+          payment_id: string | null
+          payment_provider: string | null
+          price: number
+          starts_at: string
+          subscription_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          payment_id?: string | null
+          payment_provider?: string | null
+          price: number
+          starts_at?: string
+          subscription_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          payment_id?: string | null
+          payment_provider?: string | null
+          price?: number
+          starts_at?: string
+          subscription_type?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
