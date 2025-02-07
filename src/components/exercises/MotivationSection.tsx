@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,7 +18,7 @@ export const MotivationSection = () => {
         .from("motivation_quotes")
         .select("*")
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
@@ -31,10 +32,20 @@ export const MotivationSection = () => {
         .from("motivation_streaks")
         .select("*")
         .eq("streak_type", "exercise")
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error("Error fetching streaks:", error);
+        return {
+          current_streak: 0,
+          longest_streak: 0
+        };
+      }
+
+      return data || {
+        current_streak: 0,
+        longest_streak: 0
+      };
     },
   });
 
@@ -42,8 +53,8 @@ export const MotivationSection = () => {
     <div className="space-y-6 animate-fade-in">
       {/* Motivational Quote */}
       <Card className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950">
-        <p className="text-lg italic">"{quote?.content}"</p>
-        <p className="text-sm text-muted-foreground mt-2">- {quote?.author}</p>
+        <p className="text-lg italic">"{quote?.content || "Start your journey today!"}"</p>
+        <p className="text-sm text-muted-foreground mt-2">- {quote?.author || "Mind Mate"}</p>
       </Card>
 
       {/* Exercise Streaks */}
