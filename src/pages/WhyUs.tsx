@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
 import { HeartHandshake, Lightbulb, PiggyBank, Brain, Share2, Activity, ArrowLeft, ChevronDown, ChevronUp, Sparkles, BookOpen, Blocks, Target, LineChart, Focus, ListChecks, ClipboardCheck, Waves, Music2, Calculator, Share, Users, Puzzle, Layout, TreePine, Droplets, Wind, Sun, Moon, CircleDot, Dna } from "lucide-react"
@@ -90,10 +91,10 @@ const WhyUs = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="w-full grid grid-cols-3">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="holistic">Our Holistic Approach</TabsTrigger>
-            <TabsTrigger value="personas">Find Your Solution</TabsTrigger>
+          <TabsList className="w-full grid grid-cols-3 h-auto gap-4 bg-transparent">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Overview</TabsTrigger>
+            <TabsTrigger value="holistic" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Our Holistic Approach</TabsTrigger>
+            <TabsTrigger value="personas" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Find Your Solution</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
@@ -585,22 +586,27 @@ const WhyUs = () => {
                 </section>
 
                 <div className="mt-8 p-6 bg-primary/5 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-4">The Science Behind Our Success</h3>
-                  <p className="mb-4">
-                    Our holistic approach is founded on extensive research in multiple scientific disciplines:
+                  <h3 className="text-xl font-semibold mb-4">More Than Just Tools - A Wellness Ecosystem</h3>
+                  <p className="mb-6">
+                    The Well-Charged transforms how you approach personal wellness by creating a seamless, 
+                    interconnected ecosystem where every tool and feature works in harmony to optimize your energy 
+                    and overall wellbeing. This integrated approach means:
                   </p>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid md:grid-cols-3 gap-4">
                     <div className="p-4 bg-background rounded-lg">
-                      <h4 className="font-semibold text-primary mb-2">Chronobiology</h4>
-                      <p className="text-sm">Understanding and optimizing biological rhythms for peak performance</p>
+                      <h4 className="font-semibold text-primary mb-2">Effortless Integration</h4>
+                      <p className="text-sm">No more juggling multiple apps or piecing together fragmented data. 
+                      Everything you need works together seamlessly in one place.</p>
                     </div>
                     <div className="p-4 bg-background rounded-lg">
-                      <h4 className="font-semibold text-primary mb-2">Neuroscience</h4>
-                      <p className="text-sm">Leveraging brain plasticity and cognitive enhancement techniques</p>
+                      <h4 className="font-semibold text-primary mb-2">Personalized Intelligence</h4>
+                      <p className="text-sm">Our AI learns from your usage patterns to provide increasingly 
+                      accurate and personalized recommendations over time.</p>
                     </div>
                     <div className="p-4 bg-background rounded-lg">
-                      <h4 className="font-semibold text-primary mb-2">Environmental Medicine</h4>
-                      <p className="text-sm">Optimizing environmental factors for wellness</p>
+                      <h4 className="font-semibold text-primary mb-2">Continuous Evolution</h4>
+                      <p className="text-sm">Your wellness journey adapts and grows with you, constantly 
+                      refining strategies based on your progress and changing needs.</p>
                     </div>
                   </div>
                 </div>
@@ -622,7 +628,9 @@ const WhyUs = () => {
                 </p>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {personas?.map((persona) => (
-                    <Card key={persona.id} className="cursor-pointer hover:border-primary transition-colors"
+                    <Card key={persona.id} 
+                          className={`cursor-pointer transition-colors hover:border-primary
+                                    ${selectedPersona === persona.persona_type ? 'border-primary' : ''}`}
                           onClick={() => setSelectedPersona(persona.persona_type)}>
                       <CardHeader>
                         <CardTitle className="text-xl">{persona.headline}</CardTitle>
@@ -644,6 +652,21 @@ const WhyUs = () => {
                     </Card>
                   ))}
                 </div>
+
+                {selectedPersona && (
+                  <div className="flex flex-col items-center gap-4 pt-8">
+                    <p className="text-center text-muted-foreground">
+                      Want to share this with others and earn rewards? Generate your affiliate link!
+                    </p>
+                    <Button 
+                      onClick={generateAffiliateLink}
+                      className="gap-2"
+                    >
+                      <Share className="h-4 w-4" />
+                      Generate Affiliate Link
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
