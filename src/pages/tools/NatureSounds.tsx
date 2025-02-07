@@ -1,11 +1,12 @@
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
 import { Slider } from "@/components/ui/slider"
 import { Toggle } from "@/components/ui/toggle"
 import { Cloud, Waves, Wind, TreePine, Bird } from "lucide-react"
+import { ToolAnalyticsWrapper } from "@/components/tools/ToolAnalyticsWrapper"
 
 type Sound = {
   name: string
@@ -72,42 +73,55 @@ export default function NatureSounds() {
     }))
   }
 
+  const currentSettings = {
+    activeSounds: sounds.filter(s => s.isPlaying).map(s => ({
+      name: s.name,
+      volume: s.volume
+    }))
+  }
+
   return (
-    <div className="min-h-screen bg-background">
-      <TopNav />
-      <div className="container mx-auto p-4 space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Nature Sounds</CardTitle>
-            <CardDescription>
-              Mix different nature sounds to create your perfect ambient environment.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {sounds.map((sound, index) => (
-              <div key={sound.name} className="flex items-center gap-4">
-                <Toggle
-                  pressed={sound.isPlaying}
-                  onPressedChange={() => toggleSound(index)}
-                  className="w-[100px]"
-                >
-                  <sound.icon className="h-4 w-4 mr-2" />
-                  {sound.name}
-                </Toggle>
-                <div className="flex-1">
-                  <Slider
-                    value={[sound.volume]}
-                    onValueChange={(value) => adjustVolume(index, value)}
-                    max={1}
-                    step={0.1}
-                    disabled={!sound.isPlaying}
-                  />
+    <ToolAnalyticsWrapper 
+      toolName="nature-sounds"
+      toolType="relaxation"
+      toolSettings={currentSettings}
+    >
+      <div className="min-h-screen bg-background">
+        <TopNav />
+        <div className="container mx-auto p-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Nature Sounds</CardTitle>
+              <CardDescription>
+                Mix different nature sounds to create your perfect ambient environment.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {sounds.map((sound, index) => (
+                <div key={sound.name} className="flex items-center gap-4">
+                  <Toggle
+                    pressed={sound.isPlaying}
+                    onPressedChange={() => toggleSound(index)}
+                    className="w-[100px]"
+                  >
+                    <sound.icon className="h-4 w-4 mr-2" />
+                    {sound.name}
+                  </Toggle>
+                  <div className="flex-1">
+                    <Slider
+                      value={[sound.volume]}
+                      onValueChange={(value) => adjustVolume(index, value)}
+                      max={1}
+                      step={0.1}
+                      disabled={!sound.isPlaying}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </ToolAnalyticsWrapper>
   )
 }
