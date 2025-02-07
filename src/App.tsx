@@ -40,6 +40,7 @@ const ZenGarden = lazy(() => import("@/components/games/ZenGarden"))
 const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
 const BMICalculator = lazy(() => import("@/pages/tools/BMICalculator"))
 const BiologicalAgeCalculator = lazy(() => import("@/pages/tools/BiologicalAgeCalculator"))
+const HRVCalculator = lazy(() => import("@/pages/tools/HRVCalculator"))
 
 const queryClient = new QueryClient()
 
@@ -106,6 +107,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "hrv-calculator",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <HRVCalculator />
+          </Suspense>
+        ),
+      },
+      {
         path: ":toolSlug",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
@@ -115,7 +124,6 @@ const router = createBrowserRouter([
       }
     ],
   },
-  // Public game routes
   {
     path: "/breathing-pufferfish",
     element: (
@@ -148,7 +156,6 @@ const router = createBrowserRouter([
       </Suspense>
     ),
   },
-  // Protected app routes
   {
     path: "/app",
     element: (
