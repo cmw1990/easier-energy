@@ -2045,6 +2045,48 @@ export type Database = {
           },
         ]
       }
+      energy_plan_progress: {
+        Row: {
+          completed_at: string | null
+          component_id: string
+          created_at: string
+          id: string
+          plan_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          component_id: string
+          created_at?: string
+          id?: string
+          plan_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          component_id?: string
+          created_at?: string
+          id?: string
+          plan_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_component"
+            columns: ["component_id"]
+            isOneToOne: false
+            referencedRelation: "energy_plan_components"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_plan"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "energy_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       energy_plan_reviews: {
         Row: {
           created_at: string
