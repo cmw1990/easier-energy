@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -18,7 +19,9 @@ import {
   Star,
   Timer,
   Share2,
-  Plus 
+  Plus,
+  Target,
+  Dumbbell 
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -28,7 +31,17 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-// Define flat types without circular references
+type PlanType = 
+  | 'energizing_boost'
+  | 'sustained_focus' 
+  | 'mental_clarity'
+  | 'physical_vitality'
+  | 'deep_relaxation'
+  | 'stress_relief'
+  | 'evening_winddown'
+  | 'sleep_preparation'
+  | 'meditation'
+
 type PlanComponent = {
   id: string
   component_type: string
@@ -36,6 +49,8 @@ type PlanComponent = {
   duration_minutes: number | null
   step_number?: number
   completion_criteria?: any
+  settings?: any
+  notes?: string
 }
 
 type Plan = {
@@ -45,42 +60,31 @@ type Plan = {
   created_by: string
   title: string
   description: string | null
-  plan_type: 'quick_boost' | 'sustained_energy' | 'mental_clarity' | 'physical_energy' | 'morning_routine' | 'deep_relaxation' | 'stress_relief' | 'wind_down' | 'sleep_prep' | 'recovery' | 'meditation'
+  plan_type: PlanType
   category: 'charged' | 'recharged'
   visibility: 'private' | 'public' | 'shared'
   is_expert_plan: boolean
   tags: string[]
   likes_count: number
   saves_count: number
-  duration_estimate_minutes?: number
+  estimated_duration_minutes?: number
   energy_level_required?: number
   recommended_time_of_day?: string[]
   suitable_contexts?: string[]
   energy_plan_components: PlanComponent[]
 }
 
-type Progress = {
-  id: string
-  user_id: string
-  plan_id: string
-  component_id: string
-  completed_at: string | null
-  created_at: string
-}
-
-const PlanTypeIcons = {
-  quick_boost: Zap,
-  sustained_energy: Coffee,
+const PlanTypeIcons: Record<PlanType, any> = {
+  energizing_boost: Zap,
+  sustained_focus: Coffee,
   mental_clarity: Brain,
-  physical_energy: Star,
-  morning_routine: Sun,
+  physical_vitality: Dumbbell,
   deep_relaxation: Flower,
   stress_relief: Heart,
-  wind_down: Wind,
-  sleep_prep: Moon,
-  recovery: Timer,
-  meditation: Flower,
-} as const
+  evening_winddown: Wind,
+  sleep_preparation: Moon,
+  meditation: Sun,
+}
 
 const CategoryColors = {
   charged: "bg-orange-100 text-orange-800 dark:bg-orange-900/30",
@@ -93,12 +97,14 @@ const NewPlanDialog = ({ onPlanCreated }: { onPlanCreated: () => void }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    plan_type: "quick_boost" as Plan["plan_type"],
+    plan_type: "energizing_boost" as PlanType,
     category: "charged" as Plan["category"],
     tags: [] as string[],
     visibility: "private" as Plan["visibility"],
-    duration_estimate_minutes: 30,
+    estimated_duration_minutes: 30,
     energy_level_required: 5,
+    recommended_time_of_day: [] as string[],
+    suitable_contexts: [] as string[]
   })
 
   const createPlanMutation = useMutation({
@@ -130,6 +136,23 @@ const NewPlanDialog = ({ onPlanCreated }: { onPlanCreated: () => void }) => {
     }
   })
 
+  const timesOfDay = [
+    "Early Morning",
+    "Morning",
+    "Afternoon",
+    "Evening",
+    "Night"
+  ]
+
+  const contexts = [
+    "Work",
+    "Study",
+    "Exercise",
+    "Social",
+    "Home",
+    "Travel"
+  ]
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -138,7 +161,7 @@ const NewPlanDialog = ({ onPlanCreated }: { onPlanCreated: () => void }) => {
           Create New Plan
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Create New Energy Plan</DialogTitle>
           <DialogDescription>
@@ -180,23 +203,28 @@ const NewPlanDialog = ({ onPlanCreated }: { onPlanCreated: () => void }) => {
               <Label>Type</Label>
               <Select
                 value={formData.plan_type}
-                onValueChange={val => setFormData(d => ({ ...d, plan_type: val as Plan["plan_type"] }))}
+                onValueChange={val => setFormData(d => ({ ...d, plan_type: val as PlanType }))}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="quick_boost">Quick Boost</SelectItem>
-                  <SelectItem value="sustained_energy">Sustained Energy</SelectItem>
-                  <SelectItem value="mental_clarity">Mental Clarity</SelectItem>
-                  <SelectItem value="physical_energy">Physical Energy</SelectItem>
-                  <SelectItem value="morning_routine">Morning Routine</SelectItem>
-                  <SelectItem value="deep_relaxation">Deep Relaxation</SelectItem>
-                  <SelectItem value="stress_relief">Stress Relief</SelectItem>
-                  <SelectItem value="wind_down">Wind Down</SelectItem>
-                  <SelectItem value="sleep_prep">Sleep Prep</SelectItem>
-                  <SelectItem value="recovery">Recovery</SelectItem>
-                  <SelectItem value="meditation">Meditation</SelectItem>
+                  {formData.category === "charged" ? (
+                    <>
+                      <SelectItem value="energizing_boost">Quick Energy Boost</SelectItem>
+                      <SelectItem value="sustained_focus">Sustained Focus</SelectItem>
+                      <SelectItem value="mental_clarity">Mental Clarity</SelectItem>
+                      <SelectItem value="physical_vitality">Physical Vitality</SelectItem>
+                    </>
+                  ) : (
+                    <>
+                      <SelectItem value="deep_relaxation">Deep Relaxation</SelectItem>
+                      <SelectItem value="stress_relief">Stress Relief</SelectItem>
+                      <SelectItem value="evening_winddown">Evening Wind Down</SelectItem>
+                      <SelectItem value="sleep_preparation">Sleep Preparation</SelectItem>
+                      <SelectItem value="meditation">Meditation</SelectItem>
+                    </>
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -208,8 +236,8 @@ const NewPlanDialog = ({ onPlanCreated }: { onPlanCreated: () => void }) => {
                 type="number"
                 min={5}
                 max={180}
-                value={formData.duration_estimate_minutes}
-                onChange={e => setFormData(d => ({ ...d, duration_estimate_minutes: parseInt(e.target.value) }))}
+                value={formData.estimated_duration_minutes}
+                onChange={e => setFormData(d => ({ ...d, estimated_duration_minutes: parseInt(e.target.value) }))}
               />
             </div>
             <div>
@@ -221,6 +249,50 @@ const NewPlanDialog = ({ onPlanCreated }: { onPlanCreated: () => void }) => {
                 value={formData.energy_level_required}
                 onChange={e => setFormData(d => ({ ...d, energy_level_required: parseInt(e.target.value) }))}
               />
+            </div>
+          </div>
+          <div>
+            <Label>Recommended Times of Day</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {timesOfDay.map(time => (
+                <Badge
+                  key={time}
+                  variant={formData.recommended_time_of_day.includes(time) ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setFormData(d => ({
+                      ...d,
+                      recommended_time_of_day: d.recommended_time_of_day.includes(time)
+                        ? d.recommended_time_of_day.filter(t => t !== time)
+                        : [...d.recommended_time_of_day, time]
+                    }))
+                  }}
+                >
+                  {time}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <div>
+            <Label>Suitable Contexts</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {contexts.map(context => (
+                <Badge
+                  key={context}
+                  variant={formData.suitable_contexts.includes(context) ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setFormData(d => ({
+                      ...d,
+                      suitable_contexts: d.suitable_contexts.includes(context)
+                        ? d.suitable_contexts.filter(c => c !== context)
+                        : [...d.suitable_contexts, context]
+                    }))
+                  }}
+                >
+                  {context}
+                </Badge>
+              ))}
             </div>
           </div>
           <div>
@@ -269,7 +341,11 @@ const EnergyPlans = () => {
             id,
             component_type,
             order_number,
-            duration_minutes
+            duration_minutes,
+            step_number,
+            completion_criteria,
+            settings,
+            notes
           )
         `)
         .eq('visibility', 'public')
@@ -443,6 +519,40 @@ const EnergyPlans = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+            {/* Plan metadata */}
+            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Timer className="h-4 w-4" />
+                {plan.estimated_duration_minutes} minutes
+              </div>
+              <div className="flex items-center gap-1">
+                <Target className="h-4 w-4" />
+                Energy Level {plan.energy_level_required}/10
+              </div>
+            </div>
+
+            {/* Times & Contexts */}
+            {(plan.recommended_time_of_day?.length || plan.suitable_contexts?.length) && (
+              <div className="space-y-2">
+                {plan.recommended_time_of_day?.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {plan.recommended_time_of_day.map(time => (
+                      <Badge key={time} variant="outline">{time}</Badge>
+                    ))}
+                  </div>
+                ) : null}
+                
+                {plan.suitable_contexts?.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {plan.suitable_contexts.map(context => (
+                      <Badge key={context} variant="outline">{context}</Badge>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            )}
+            
+            {/* Tags */}
             <div className="flex gap-2">
               {plan.tags.map((tag) => (
                 <Badge key={tag} variant="outline">
