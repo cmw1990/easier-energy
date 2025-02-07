@@ -1,52 +1,82 @@
 
 import { useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
-import { Brain, Zap, Moon, Wind, Focus, Coffee } from "lucide-react"
+import { 
+  Zap, 
+  Moon, 
+  Wind, 
+  Brain, 
+  Coffee,
+  Sun,
+  Lotus,
+  Heart,
+  Star,
+  Timer,
+  Share2 
+} from "lucide-react"
+import { Database } from "@/types/supabase"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
 
-type EnergyPlan = {
-  id: string
-  title: string
-  description: string
-  plan_type: 'recharge' | 'energize' | 'recovery' | 'sleep' | 'focus' | 'destress'
-  visibility: 'private' | 'public' | 'shared'
-  is_expert_plan: boolean
-  tags: string[]
-  likes_count: number
-  saves_count: number
-  created_at: string
-}
+type EnergyPlan = Database['public']['Tables']['energy_plans']['Row']
+type PlanProgress = Database['public']['Tables']['energy_plan_progress']['Row']
 
 const PlanTypeIcons = {
-  recharge: Zap,
-  energize: Coffee,
-  recovery: Wind,
-  sleep: Moon,
-  focus: Brain,
-  destress: Wind,
+  quick_boost: Zap,
+  sustained_energy: Coffee,
+  mental_clarity: Brain,
+  physical_energy: Star,
+  morning_routine: Sun,
+  deep_relaxation: Lotus,
+  stress_relief: Heart,
+  wind_down: Wind,
+  sleep_prep: Moon,
+  recovery: Timer,
+  meditation: Lotus,
+}
+
+const CategoryColors = {
+  charged: "bg-orange-100 text-orange-800 dark:bg-orange-900/30",
+  recharged: "bg-blue-100 text-blue-800 dark:bg-blue-900/30"
 }
 
 const EnergyPlans = () => {
   const { session } = useAuth()
   const { toast } = useToast()
   const [selectedTab, setSelectedTab] = useState("discover")
+  const [selectedCategory, setSelectedCategory] = useState<'charged' | 'recharged' | null>(null)
+  const queryClient = useQueryClient()
 
   const { data: publicPlans, isLoading: isLoadingPublic } = useQuery({
-    queryKey: ['energy-plans', 'public'],
+    queryKey: ['energy-plans', 'public', selectedCategory],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('energy_plans')
-        .select('*')
+        .select(`
+          *,
+          energy_plan_components (
+            id,
+            component_type,
+            order_number,
+            duration_minutes
+          )
+        `)
         .eq('visibility', 'public')
         .order('likes_count', { ascending: false })
       
+      if (selectedCategory) {
+        query = query.eq('category', selectedCategory)
+      }
+      
+      const { data, error } = await query
       if (error) throw error
-      return data as EnergyPlan[]
+      return data as (EnergyPlan & { energy_plan_components: any[] })[]
     }
   })
 
@@ -57,12 +87,20 @@ const EnergyPlans = () => {
       
       const { data, error } = await supabase
         .from('energy_plans')
-        .select('*')
+        .select(`
+          *,
+          energy_plan_components (
+            id,
+            component_type,
+            order_number,
+            duration_minutes
+          )
+        `)
         .eq('created_by', session.user.id)
         .order('created_at', { ascending: false })
       
       if (error) throw error
-      return data as EnergyPlan[]
+      return data as (EnergyPlan & { energy_plan_components: any[] })[]
     },
     enabled: !!session?.user?.id
   })
@@ -76,27 +114,44 @@ const EnergyPlans = () => {
         .from('user_saved_plans')
         .select(`
           plan_id,
-          energy_plans (*)
+          energy_plans (
+            *,
+            energy_plan_components (
+              id,
+              component_type,
+              order_number,
+              duration_minutes
+            )
+          )
         `)
         .eq('user_id', session.user.id)
       
       if (error) throw error
-      return data.map(item => item.energy_plans) as EnergyPlan[]
+      return data.map(item => item.energy_plans) as (EnergyPlan & { energy_plan_components: any[] })[]
     },
     enabled: !!session?.user?.id
   })
 
-  const handleSavePlan = async (planId: string) => {
-    if (!session?.user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to save plans",
-        variant: "destructive"
-      })
-      return
-    }
+  const { data: planProgress } = useQuery({
+    queryKey: ['energy-plans', 'progress', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return []
+      
+      const { data, error } = await supabase
+        .from('energy_plan_progress')
+        .select('*')
+        .eq('user_id', session.user.id)
+      
+      if (error) throw error
+      return data as PlanProgress[]
+    },
+    enabled: !!session?.user?.id
+  })
 
-    try {
+  const savePlanMutation = useMutation({
+    mutationFn: async (planId: string) => {
+      if (!session?.user) throw new Error("Not authenticated")
+      
       const { error } = await supabase
         .from('user_saved_plans')
         .insert({
@@ -105,22 +160,58 @@ const EnergyPlans = () => {
         })
 
       if (error) throw error
-
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['energy-plans', 'saved'] })
       toast({
         title: "Plan Saved",
         description: "The energy plan has been saved to your collection"
       })
-    } catch (error) {
+    },
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to save the plan. Please try again.",
         variant: "destructive"
       })
     }
+  })
+
+  const sharePlanMutation = useMutation({
+    mutationFn: async (plan: EnergyPlan) => {
+      if (!session?.user) throw new Error("Not authenticated")
+      
+      const { error } = await supabase
+        .from('energy_plans')
+        .update({ visibility: 'public' })
+        .eq('id', plan.id)
+        .eq('created_by', session.user.id)
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['energy-plans'] })
+      toast({
+        title: "Plan Shared",
+        description: "Your plan is now visible to others"
+      })
+    }
+  })
+
+  const calculateProgress = (plan: EnergyPlan & { energy_plan_components: any[] }) => {
+    if (!planProgress || !plan.energy_plan_components.length) return 0
+    
+    const completedSteps = planProgress.filter(
+      p => p.plan_id === plan.id && p.completed_at
+    ).length
+    
+    return (completedSteps / plan.energy_plan_components.length) * 100
   }
 
-  const renderPlanCard = (plan: EnergyPlan) => {
+  const renderPlanCard = (plan: EnergyPlan & { energy_plan_components: any[] }) => {
     const Icon = PlanTypeIcons[plan.plan_type] || Brain
+    const progress = calculateProgress(plan)
+    const isSaved = savedPlans?.some(saved => saved.id === plan.id)
 
     return (
       <Card key={plan.id} className="hover:shadow-lg transition-shadow">
@@ -132,32 +223,66 @@ const EnergyPlans = () => {
               </div>
               <CardTitle className="text-xl">{plan.title}</CardTitle>
             </div>
-            {plan.is_expert_plan && (
-              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                Expert Plan
-              </span>
-            )}
+            <div className="flex gap-2">
+              <Badge variant="secondary" className={CategoryColors[plan.category]}>
+                {plan.category === 'charged' ? 'Energy Boost' : 'Recovery & Rest'}
+              </Badge>
+              {plan.is_expert_plan && (
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                  Expert Plan
+                </Badge>
+              )}
+            </div>
           </div>
           <CardDescription>{plan.description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
+          <div className="space-y-4">
             <div className="flex gap-2">
               {plan.tags.map((tag) => (
-                <span key={tag} className="px-2 py-1 text-xs bg-primary/10 rounded-full">
+                <Badge key={tag} variant="outline">
                   {tag}
-                </span>
+                </Badge>
               ))}
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleSavePlan(plan.id)}
-              >
-                Save Plan
-              </Button>
-              <Button size="sm">View Details</Button>
+            
+            {progress > 0 && (
+              <div className="space-y-1">
+                <div className="text-sm text-muted-foreground">Progress</div>
+                <Progress value={progress} className="h-2" />
+              </div>
+            )}
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Star className="h-4 w-4" />
+                {plan.likes_count} likes
+              </div>
+              
+              <div className="flex gap-2">
+                {!isSaved && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => savePlanMutation.mutate(plan.id)}
+                  >
+                    Save Plan
+                  </Button>
+                )}
+                
+                {session?.user?.id === plan.created_by && plan.visibility !== 'public' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => sharePlanMutation.mutate(plan)}
+                  >
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Share
+                  </Button>
+                )}
+                
+                <Button size="sm">View Details</Button>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -174,7 +299,29 @@ const EnergyPlans = () => {
             Discover and share energy optimization plans
           </p>
         </div>
-        <Button>Create New Plan</Button>
+        <div className="flex gap-4">
+          <div className="flex gap-2">
+            <Button
+              variant={selectedCategory === 'charged' ? 'default' : 'outline'}
+              onClick={() => setSelectedCategory(
+                selectedCategory === 'charged' ? null : 'charged'
+              )}
+            >
+              <Zap className="h-4 w-4 mr-2" />
+              Charged
+            </Button>
+            <Button
+              variant={selectedCategory === 'recharged' ? 'default' : 'outline'}
+              onClick={() => setSelectedCategory(
+                selectedCategory === 'recharged' ? null : 'recharged'
+              )}
+            >
+              <Moon className="h-4 w-4 mr-2" />
+              Recharged
+            </Button>
+          </div>
+          <Button>Create New Plan</Button>
+        </div>
       </div>
 
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
