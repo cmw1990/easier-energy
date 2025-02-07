@@ -5,6 +5,11 @@ import { useAuth } from "@/components/AuthProvider"
 import { supabase } from "@/integrations/supabase/client"
 import { BathingRoutineCard } from "@/components/bathing/BathingRoutineCard"
 import { ActiveSessionCard } from "@/components/bathing/ActiveSessionCard"
+import { BathingStats } from "@/components/bathing/BathingStats"
+import { BathingHistory } from "@/components/bathing/BathingHistory"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Search } from "lucide-react"
 
 interface BathingRoutine {
   id: string
@@ -30,6 +35,7 @@ export default function Bathing() {
   const { session } = useAuth()
   const { toast } = useToast()
   const [routines, setRoutines] = useState<BathingRoutine[]>([])
+  const [searchQuery, setSearchQuery] = useState("")
   const [logState, setLogState] = useState<RoutineLogState>({
     routineId: null,
     moodBefore: 5,
@@ -126,6 +132,12 @@ export default function Bathing() {
     }
   }
 
+  const filteredRoutines = routines.filter(routine => 
+    routine.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    routine.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    routine.mood_tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+  )
+
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="text-center space-y-2">
@@ -135,23 +147,41 @@ export default function Bathing() {
         </p>
       </div>
 
-      {logState.isTracking && (
+      {session && <BathingStats />}
+
+      {logState.isTracking ? (
         <ActiveSessionCard
           moodBefore={logState.moodBefore}
           energyBefore={logState.energyBefore}
           onEndSession={endRoutine}
         />
+      ) : (
+        <>
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search routines by name, description, or mood tags..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredRoutines.map((routine) => (
+              <BathingRoutineCard
+                key={routine.id}
+                routine={routine}
+                onStartRoutine={startRoutine}
+              />
+            ))}
+          </div>
+        </>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {routines.map((routine) => (
-          <BathingRoutineCard
-            key={routine.id}
-            routine={routine}
-            onStartRoutine={startRoutine}
-          />
-        ))}
-      </div>
+      {session && <BathingHistory />}
     </div>
   )
 }
