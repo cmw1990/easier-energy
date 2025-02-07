@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -24,21 +23,15 @@ import { Database } from "@/types/supabase"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 
-// Base types from database
-type BaseEnergyPlan = Database['public']['Tables']['energy_plans']['Row']
-type BaseEnergyPlanComponent = Database['public']['Tables']['energy_plan_components']['Row']
-type EnergyPlanProgress = Database['public']['Tables']['energy_plan_progress']['Row']
-
-// Simplified component type
-interface EnergyPlanComponent {
+// Define flat types without circular references
+type PlanComponent = {
   id: string
   component_type: string
   order_number: number
   duration_minutes: number | null
 }
 
-// Main plan type with components
-interface EnergyPlanWithComponents {
+type Plan = {
   id: string
   created_at: string
   updated_at: string
@@ -52,7 +45,7 @@ interface EnergyPlanWithComponents {
   tags: string[]
   likes_count: number
   saves_count: number
-  energy_plan_components: EnergyPlanComponent[]
+  energy_plan_components: PlanComponent[]
 }
 
 const PlanTypeIcons = {
@@ -81,8 +74,8 @@ const EnergyPlans = () => {
   const [selectedCategory, setSelectedCategory] = useState<'charged' | 'recharged' | null>(null)
   const queryClient = useQueryClient()
 
-  // Explicitly typed query
-  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery<EnergyPlanWithComponents[]>({
+  // Type the query explicitly with the flat type
+  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery({
     queryKey: ['energy-plans', 'public', selectedCategory],
     queryFn: async () => {
       let query = supabase
@@ -105,7 +98,7 @@ const EnergyPlans = () => {
       
       const { data, error } = await query
       if (error) throw error
-      return data as EnergyPlanWithComponents[]
+      return data as Plan[]
     }
   })
 
@@ -129,7 +122,7 @@ const EnergyPlans = () => {
         .order('created_at', { ascending: false })
       
       if (error) throw error
-      return data as EnergyPlanWithComponents[]
+      return data as Plan[]
     },
     enabled: !!session?.user?.id
   })
@@ -156,7 +149,7 @@ const EnergyPlans = () => {
         .eq('user_id', session.user.id)
       
       if (error) throw error
-      return data.map(item => item.energy_plans) as EnergyPlanWithComponents[]
+      return data.map(item => item.energy_plans) as Plan[]
     },
     enabled: !!session?.user?.id
   })
@@ -207,7 +200,7 @@ const EnergyPlans = () => {
   })
 
   const sharePlanMutation = useMutation({
-    mutationFn: async (plan: EnergyPlanWithComponents) => {
+    mutationFn: async (plan: Plan) => {
       if (!session?.user) throw new Error("Not authenticated")
       
       const { error } = await supabase
@@ -227,7 +220,7 @@ const EnergyPlans = () => {
     }
   })
 
-  const calculateProgress = (plan: EnergyPlanWithComponents) => {
+  const calculateProgress = (plan: Plan) => {
     if (!planProgress || !plan.energy_plan_components.length) return 0
     
     const completedSteps = planProgress.filter(
@@ -237,7 +230,7 @@ const EnergyPlans = () => {
     return (completedSteps / plan.energy_plan_components.length) * 100
   }
 
-  const renderPlanCard = (plan: EnergyPlanWithComponents) => {
+  const renderPlanCard = (plan: Plan) => {
     const Icon = PlanTypeIcons[plan.plan_type] || Brain
     const progress = calculateProgress(plan)
     const isSaved = savedPlans?.some(saved => saved.id === plan.id)
