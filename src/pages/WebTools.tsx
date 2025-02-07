@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
 import { Link, useParams } from "react-router-dom";
-import { Brain, Leaf, HeartPulse, Settings, ChartBar, Waves, Music2, Focus, Wind, Footprints, Moon, Coffee, Cigarette, Battery, Droplets, Bath } from "lucide-react";
+import { Brain, Leaf, HeartPulse, Settings, ChartBar, Waves, Music2, Focus, Wind, Footprints, Moon, Coffee, Cigarette, Battery, Droplets, Bath, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,7 +34,8 @@ const iconMap: Record<string, LucideIcon> = {
   'supplement-guide': Leaf,
   'caffeine-guide': Coffee,
   'energy-drinks-guide': Battery,
-  'hydration-guide': Droplets
+  'hydration-guide': Droplets,
+  'bmi-calculator': Calculator
 };
 
 const seedWebTools = async () => {
@@ -64,6 +65,16 @@ const seedWebTools = async () => {
       path: "/tools/nature-sounds",
       tags: ["relaxation", "sound", "focus"],
       category: "meditation",
+      published: true
+    },
+    {
+      title: "BMI Calculator",
+      description: "Calculate your Body Mass Index (BMI) to assess if your weight is in a healthy range. Get instant results and interpretations.",
+      slug: "bmi-calculator",
+      path: "/tools/bmi-calculator",
+      tags: ["health", "fitness", "calculator"],
+      category: "health",
+      isPremium: false,
       published: true
     }
   ];
@@ -157,7 +168,15 @@ const WebTools = () => {
       category: "meditation",
       isPremium: true
     },
-
+    {
+      title: "BMI Calculator",
+      description: "Calculate your Body Mass Index (BMI) to assess if your weight is in a healthy range. Get instant results and interpretations.",
+      icon: Calculator,
+      path: "/tools/bmi-calculator",
+      tags: ["health", "fitness", "calculator"],
+      category: "health",
+      isPremium: false
+    },
     // Health & Recovery Tools
     {
       title: "Bathing & Showering Guide",

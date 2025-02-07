@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
@@ -18,8 +17,8 @@ const BMICalculator = () => {
     const weightInKg = parseFloat(weight);
     
     if (heightInMeters > 0 && weightInKg > 0) {
-      const bmiValue = weightInKg / (heightInMeters * heightInMeters);
-      setBMI(parseFloat(bmiValue.toFixed(1)));
+      const bmiValue = parseFloat((weightInKg / (heightInMeters * heightInMeters)).toFixed(1));
+      setBMI(bmiValue);
       
       // Determine BMI category
       if (bmiValue < 18.5) setCategory('Underweight');
@@ -92,17 +91,6 @@ const BMICalculator = () => {
                   </CardContent>
                 </Card>
               )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>About BMI</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Body Mass Index (BMI) is a simple measure that uses your height and weight to work out if your weight is healthy. While BMI is a useful general guide, it doesn't account for factors like muscle mass, bone density, age, and sex. For a more accurate assessment of your health, consult with a healthcare professional.
-              </p>
             </CardContent>
           </Card>
         </div>
