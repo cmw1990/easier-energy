@@ -19,6 +19,16 @@ type SleepEntry = {
   updated_at: string
 }
 
+type Database = {
+  public: {
+    Tables: {
+      sleep_tracking: {
+        Row: SleepEntry
+      }
+    }
+  }
+}
+
 export default function SleepTracking() {
   const { data: sleepData, isLoading } = useQuery({
     queryKey: ['sleep_tracking'],

@@ -1,14 +1,13 @@
 
 import React from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
 import { ToolAnalyticsWrapper } from "@/components/tools/ToolAnalyticsWrapper"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
-import { Moon, Sun, Check } from "lucide-react"
+import { Check } from "lucide-react"
 
 interface SleepHygieneItem {
   id: string
@@ -25,8 +24,20 @@ interface SleepHygieneItem {
   updated_at: string
 }
 
+type Database = {
+  public: {
+    Tables: {
+      sleep_hygiene_checklist: {
+        Row: SleepHygieneItem
+      }
+    }
+  }
+}
+
 export default function SleepHygieneChecklist() {
   const { toast } = useToast()
+  const queryClient = useQueryClient()
+
   const { data: checklist, isLoading } = useQuery({
     queryKey: ['sleep_hygiene_checklist'],
     queryFn: async () => {
@@ -36,37 +47,47 @@ export default function SleepHygieneChecklist() {
         .select('*')
         .eq('date', today)
         .limit(1)
+        .single()
       
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Error fetching sleep hygiene checklist:', error)
         return null
       }
       
-      return data?.[0] as SleepHygieneItem | null
+      return data as SleepHygieneItem
     }
   })
 
-  const updateChecklist = async (key: keyof SleepHygieneItem, value: boolean) => {
-    if (!checklist) return
+  const updateMutation = useMutation({
+    mutationFn: async ({ key, value }: { key: keyof SleepHygieneItem, value: boolean }) => {
+      if (!checklist) return null
 
-    const { error } = await supabase
-      .from('sleep_hygiene_checklist')
-      .update({ [key]: value })
-      .eq('id', checklist.id)
+      const { error } = await supabase
+        .from('sleep_hygiene_checklist')
+        .update({ [key]: value })
+        .eq('id', checklist.id)
 
-    if (error) {
+      if (error) throw error
+      return null
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sleep_hygiene_checklist'] })
+      toast({
+        title: "Updated",
+        description: "Sleep hygiene checklist updated successfully."
+      })
+    },
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to update checklist. Please try again.",
         variant: "destructive"
       })
-      return
     }
+  })
 
-    toast({
-      title: "Updated",
-      description: "Sleep hygiene checklist updated successfully."
-    })
+  const updateChecklist = (key: keyof SleepHygieneItem, value: boolean) => {
+    updateMutation.mutate({ key, value })
   }
 
   if (isLoading) {
