@@ -5565,6 +5565,42 @@ export type Database = {
           },
         ]
       }
+      research_guides: {
+        Row: {
+          created_at: string | null
+          deliverables: string[] | null
+          description: string | null
+          expected_duration: string
+          id: string
+          order_number: number
+          phase: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          deliverables?: string[] | null
+          description?: string | null
+          expected_duration: string
+          id?: string
+          order_number: number
+          phase: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deliverables?: string[] | null
+          description?: string | null
+          expected_duration?: string
+          id?: string
+          order_number?: number
+          phase?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       research_interviews: {
         Row: {
           created_at: string | null

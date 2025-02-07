@@ -41,6 +41,7 @@ const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
 const BMICalculator = lazy(() => import("@/pages/tools/BMICalculator"))
 const BiologicalAgeCalculator = lazy(() => import("@/pages/tools/BiologicalAgeCalculator"))
 const HRVCalculator = lazy(() => import("@/pages/tools/HRVCalculator"))
+const BMRCalculator = lazy(() => import("@/pages/tools/BMRCalculator"))
 
 const queryClient = new QueryClient()
 
@@ -111,6 +112,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <HRVCalculator />
+          </Suspense>
+        ),
+      },
+      {
+        path: "bmr-calculator",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <BMRCalculator />
           </Suspense>
         ),
       },
