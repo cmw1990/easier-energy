@@ -8170,6 +8170,7 @@ export type Database = {
       }
       web_tools: {
         Row: {
+          ad_placement_zones: Json | null
           affiliate_links: Json | null
           avg_time_spent: number | null
           category: string | null
@@ -8177,10 +8178,13 @@ export type Database = {
           content: string
           created_at: string
           description: string
+          featured_product: string | null
           id: string
           meta_description: string | null
           meta_keywords: string[] | null
+          monetization_enabled: boolean | null
           published: boolean | null
+          related_products: string[] | null
           related_tools: string[] | null
           seo_description: string | null
           seo_title: string | null
@@ -8192,6 +8196,7 @@ export type Database = {
           view_count: number | null
         }
         Insert: {
+          ad_placement_zones?: Json | null
           affiliate_links?: Json | null
           avg_time_spent?: number | null
           category?: string | null
@@ -8199,10 +8204,13 @@ export type Database = {
           content: string
           created_at?: string
           description: string
+          featured_product?: string | null
           id?: string
           meta_description?: string | null
           meta_keywords?: string[] | null
+          monetization_enabled?: boolean | null
           published?: boolean | null
+          related_products?: string[] | null
           related_tools?: string[] | null
           seo_description?: string | null
           seo_title?: string | null
@@ -8214,6 +8222,7 @@ export type Database = {
           view_count?: number | null
         }
         Update: {
+          ad_placement_zones?: Json | null
           affiliate_links?: Json | null
           avg_time_spent?: number | null
           category?: string | null
@@ -8221,10 +8230,13 @@ export type Database = {
           content?: string
           created_at?: string
           description?: string
+          featured_product?: string | null
           id?: string
           meta_description?: string | null
           meta_keywords?: string[] | null
+          monetization_enabled?: boolean | null
           published?: boolean | null
+          related_products?: string[] | null
           related_tools?: string[] | null
           seo_description?: string | null
           seo_title?: string | null
