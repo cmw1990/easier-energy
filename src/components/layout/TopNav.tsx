@@ -35,6 +35,9 @@ export const TopNav = () => {
           <Link to="/tools">
             <Button variant="ghost">Tools</Button>
           </Link>
+          <Link to="/app">
+            <Button variant="outline">Web App</Button>
+          </Link>
           <Link to="/auth">
             <Button>
               <LogIn className="mr-2 h-4 w-4" />
