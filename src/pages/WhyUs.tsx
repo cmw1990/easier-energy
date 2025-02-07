@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
-import { HeartHandshake, Lightbulb, PiggyBank, Brain, Share2, Activity, ArrowLeft, ChevronDown, ChevronUp, Sparkles, BookOpen, Blocks, Target, LineChart, Focus, ListChecks, ClipboardCheck, Waves, Music2, Calculator, Share, Users } from "lucide-react"
+import { HeartHandshake, Lightbulb, PiggyBank, Brain, Share2, Activity, ArrowLeft, ChevronDown, ChevronUp, Sparkles, BookOpen, Blocks, Target, LineChart, Focus, ListChecks, ClipboardCheck, Waves, Music2, Calculator, Share, Users, Puzzle, Layout, TreePine, Droplets, Wind, Sun, Moon, CircleDot, Dna } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { useState } from "react"
@@ -90,9 +90,9 @@ const WhyUs = () => {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="w-full justify-start">
+          <TabsList className="w-full grid grid-cols-3">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="approach">Our Scientific Approach</TabsTrigger>
+            <TabsTrigger value="holistic">Our Holistic Approach</TabsTrigger>
             <TabsTrigger value="personas">Find Your Solution</TabsTrigger>
           </TabsList>
 
@@ -368,77 +368,247 @@ const WhyUs = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="approach" className="space-y-8">
+          <TabsContent value="holistic" className="space-y-8">
             <Card>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
-                  <Brain className="h-6 w-6 text-primary" />
-                  The Science of Energy Management
+                  <Puzzle className="h-6 w-6 text-primary" />
+                  The Well-Charged Holistic Framework
                 </CardTitle>
               </CardHeader>
-              <CardContent className="prose max-w-none dark:prose-invert">
-                <h3>Our Research-Based Foundation</h3>
-                <p>
-                  The Well-Charged's approach is built on a decade of research in chronobiology, 
-                  neuroscience, and behavioral psychology. Our platform integrates findings from:
-                </p>
-                <ul>
-                  <li>Circadian rhythm studies and their impact on cognitive performance</li>
-                  <li>Neural mechanisms of attention and focus</li>
-                  <li>Behavioral psychology and habit formation</li>
-                  <li>Environmental influences on energy levels</li>
-                </ul>
-
-                <h3>The Three Pillars of Energy Optimization</h3>
-                <div className="grid md:grid-cols-3 gap-6 my-8">
-                  <div className="border rounded-lg p-4">
-                    <h4 className="flex items-center gap-2 text-primary">
-                      <Brain className="h-4 w-4" />
-                      Cognitive Energy
-                    </h4>
-                    <p className="text-sm">
-                      Mental focus, attention span, and cognitive endurance optimization through 
-                      advanced tracking and personalized interventions.
-                    </p>
-                  </div>
-                  <div className="border rounded-lg p-4">
-                    <h4 className="flex items-center gap-2 text-primary">
-                      <Activity className="h-4 w-4" />
-                      Physical Energy
-                    </h4>
-                    <p className="text-sm">
-                      Cellular energy production, sleep quality, and physical recovery through 
-                      integrated biometric monitoring.
-                    </p>
-                  </div>
-                  <div className="border rounded-lg p-4">
-                    <h4 className="flex items-center gap-2 text-primary">
-                      <Sparkles className="h-4 w-4" />
-                      Emotional Energy
-                    </h4>
-                    <p className="text-sm">
-                      Stress resilience, emotional regulation, and motivation through 
-                      evidence-based psychological techniques.
-                    </p>
-                  </div>
+              <CardContent className="prose max-w-none dark:prose-invert space-y-8">
+                <div className="text-lg leading-relaxed">
+                  <p>
+                    At The Well-Charged, we've pioneered a revolutionary approach to energy management 
+                    that recognizes the intricate interconnections between various aspects of human wellness. 
+                    Our platform stands apart through its unique integration of multiple wellness dimensions, 
+                    creating a synergistic system that optimizes your energy at every level.
+                  </p>
                 </div>
 
-                <h3>Our Integrated Technology Stack</h3>
-                <p>
-                  We've developed proprietary algorithms that analyze multiple data streams to 
-                  create a comprehensive understanding of your energy patterns:
-                </p>
-                <ul>
-                  <li>AI-powered pattern recognition for personalized insights</li>
-                  <li>Real-time adaptation based on environmental and physiological factors</li>
-                  <li>Machine learning models trained on extensive wellness datasets</li>
-                  <li>Cross-referenced research validation for all recommendations</li>
-                </ul>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <Card className="bg-primary/5">
+                    <CardHeader>
+                      <div className="flex items-center gap-2">
+                        <CircleDot className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg">Integrated Systems Approach</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p>Our platform uniquely recognizes that energy optimization requires a coordinated approach across multiple body systems:</p>
+                      <ul className="mt-2 space-y-1">
+                        <li className="flex items-center gap-2">
+                          <Brain className="h-4 w-4 text-primary" />
+                          Cognitive Function
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Dna className="h-4 w-4 text-primary" />
+                          Cellular Energy
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Activity className="h-4 w-4 text-primary" />
+                          Physical Vitality
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-primary/5">
+                    <CardHeader>
+                      <div className="flex items-center gap-2">
+                        <Layout className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg">Environmental Harmony</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p>We synchronize your energy with natural environmental factors:</p>
+                      <ul className="mt-2 space-y-1">
+                        <li className="flex items-center gap-2">
+                          <Sun className="h-4 w-4 text-primary" />
+                          Light Exposure
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Wind className="h-4 w-4 text-primary" />
+                          Air Quality
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <TreePine className="h-4 w-4 text-primary" />
+                          Nature Connection
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-primary/5">
+                    <CardHeader>
+                      <div className="flex items-center gap-2">
+                        <Moon className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg">Circadian Optimization</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p>Align your activities with your natural biological rhythms:</p>
+                      <ul className="mt-2 space-y-1">
+                        <li className="flex items-center gap-2">
+                          <Waves className="h-4 w-4 text-primary" />
+                          Sleep Cycles
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Droplets className="h-4 w-4 text-primary" />
+                          Hormonal Balance
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Activity className="h-4 w-4 text-primary" />
+                          Energy Patterns
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <section className="mt-8">
+                  <h3 className="text-xl font-semibold mb-4">The Power of Integration</h3>
+                  <div className="space-y-4">
+                    <p>
+                      Our platform's true innovation lies in how we integrate these various aspects of wellness. 
+                      Unlike traditional approaches that treat each factor in isolation, we've developed sophisticated 
+                      algorithms that understand how different elements of your lifestyle interact and influence each other:
+                    </p>
+                    <ul className="space-y-4">
+                      <li className="flex items-start gap-3">
+                        <div className="mt-1">
+                          <Brain className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <strong>Cross-System Analysis:</strong> Our AI continuously analyzes how changes in one area 
+                          (like sleep) affect others (such as cognitive performance and physical energy), providing insights 
+                          that would be impossible to obtain from single-focus solutions.
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="mt-1">
+                          <Layout className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <strong>Adaptive Recommendations:</strong> Your personal energy plan evolves based on the 
+                          complex interplay between various factors, including sleep quality, physical activity, 
+                          environmental conditions, and cognitive load.
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="mt-1">
+                          <Target className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <strong>Precision Timing:</strong> By understanding your unique patterns and rhythms, 
+                          we help you optimize the timing of various activities - from exercise and meditation 
+                          to cognitive tasks and supplementation.
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </section>
+
+                <section className="mt-8">
+                  <h3 className="text-xl font-semibold mb-4">Personal Energy Plan: A Revolution in Wellness</h3>
+                  <div className="space-y-4">
+                    <p>
+                      The culmination of our holistic approach is your Personal Energy Plan - a dynamic, 
+                      AI-driven roadmap that orchestrates all aspects of your wellness journey:
+                    </p>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <Card className="bg-secondary/10">
+                        <CardHeader>
+                          <CardTitle className="text-lg flex items-center gap-2">
+                            <Activity className="h-5 w-5 text-primary" />
+                            Real-Time Adaptation
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p>
+                            Your plan continuously evolves based on:
+                          </p>
+                          <ul className="mt-2 space-y-2">
+                            <li className="flex items-center gap-2">
+                              <ClipboardCheck className="h-4 w-4 text-primary" />
+                              Biometric data
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <ClipboardCheck className="h-4 w-4 text-primary" />
+                              Environmental conditions
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <ClipboardCheck className="h-4 w-4 text-primary" />
+                              Activity patterns
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <ClipboardCheck className="h-4 w-4 text-primary" />
+                              Performance metrics
+                            </li>
+                          </ul>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="bg-secondary/10">
+                        <CardHeader>
+                          <CardTitle className="text-lg flex items-center gap-2">
+                            <Blocks className="h-5 w-5 text-primary" />
+                            Integrated Tools
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p>
+                            Access a comprehensive suite of tools:
+                          </p>
+                          <ul className="mt-2 space-y-2">
+                            <li className="flex items-center gap-2">
+                              <Music2 className="h-4 w-4 text-primary" />
+                              Sound therapy suite
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Brain className="h-4 w-4 text-primary" />
+                              Cognitive enhancement
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Focus className="h-4 w-4 text-primary" />
+                              Focus optimization
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <Activity className="h-4 w-4 text-primary" />
+                              Physical vitality
+                            </li>
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                </section>
+
+                <div className="mt-8 p-6 bg-primary/5 rounded-lg">
+                  <h3 className="text-xl font-semibold mb-4">The Science Behind Our Success</h3>
+                  <p className="mb-4">
+                    Our holistic approach is founded on extensive research in multiple scientific disciplines:
+                  </p>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="p-4 bg-background rounded-lg">
+                      <h4 className="font-semibold text-primary mb-2">Chronobiology</h4>
+                      <p className="text-sm">Understanding and optimizing biological rhythms for peak performance</p>
+                    </div>
+                    <div className="p-4 bg-background rounded-lg">
+                      <h4 className="font-semibold text-primary mb-2">Neuroscience</h4>
+                      <p className="text-sm">Leveraging brain plasticity and cognitive enhancement techniques</p>
+                    </div>
+                    <div className="p-4 bg-background rounded-lg">
+                      <h4 className="font-semibold text-primary mb-2">Environmental Medicine</h4>
+                      <p className="text-sm">Optimizing environmental factors for wellness</p>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="personas" className="space-y-8">
+          <TabsContent value="personas">
             <Card>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-2">
