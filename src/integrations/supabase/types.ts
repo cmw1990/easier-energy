@@ -6648,6 +6648,45 @@ export type Database = {
           },
         ]
       }
+      sleep_alarms: {
+        Row: {
+          created_at: string
+          days_active: string[] | null
+          id: string
+          is_active: boolean | null
+          smart_wake_window_minutes: number | null
+          sound_profile: string | null
+          updated_at: string
+          user_id: string | null
+          vibration_pattern: string | null
+          wake_time: string
+        }
+        Insert: {
+          created_at?: string
+          days_active?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          smart_wake_window_minutes?: number | null
+          sound_profile?: string | null
+          updated_at?: string
+          user_id?: string | null
+          vibration_pattern?: string | null
+          wake_time: string
+        }
+        Update: {
+          created_at?: string
+          days_active?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          smart_wake_window_minutes?: number | null
+          sound_profile?: string | null
+          updated_at?: string
+          user_id?: string | null
+          vibration_pattern?: string | null
+          wake_time?: string
+        }
+        Relationships: []
+      }
       sleep_analytics_summaries: {
         Row: {
           average_quality: number | null
@@ -6741,6 +6780,51 @@ export type Database = {
           user_id?: string | null
           ventilation_rating?: number | null
           wake_time?: string | null
+        }
+        Relationships: []
+      }
+      sleep_diary_entries: {
+        Row: {
+          bedtime: string
+          caffeine_consumed: boolean | null
+          created_at: string
+          date: string
+          exercise_done: boolean | null
+          id: string
+          mood_on_waking: number | null
+          notes: string | null
+          screen_time_before_bed: boolean | null
+          sleep_quality: number | null
+          user_id: string | null
+          wake_time: string
+        }
+        Insert: {
+          bedtime: string
+          caffeine_consumed?: boolean | null
+          created_at?: string
+          date?: string
+          exercise_done?: boolean | null
+          id?: string
+          mood_on_waking?: number | null
+          notes?: string | null
+          screen_time_before_bed?: boolean | null
+          sleep_quality?: number | null
+          user_id?: string | null
+          wake_time: string
+        }
+        Update: {
+          bedtime?: string
+          caffeine_consumed?: boolean | null
+          created_at?: string
+          date?: string
+          exercise_done?: boolean | null
+          id?: string
+          mood_on_waking?: number | null
+          notes?: string | null
+          screen_time_before_bed?: boolean | null
+          sleep_quality?: number | null
+          user_id?: string | null
+          wake_time?: string
         }
         Relationships: []
       }
@@ -6906,6 +6990,30 @@ export type Database = {
         }
         Relationships: []
       }
+      sleep_guides_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       sleep_hygiene_checklist: {
         Row: {
           bedroom_temperature_optimal: boolean | null
@@ -6948,6 +7056,39 @@ export type Database = {
           relaxation_routine_completed?: boolean | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      sleep_noise_profiles: {
+        Row: {
+          binaural_beats_enabled: boolean | null
+          binaural_frequency: number | null
+          created_at: string
+          id: string
+          name: string
+          nature_sounds_volume: number | null
+          user_id: string | null
+          white_noise_volume: number | null
+        }
+        Insert: {
+          binaural_beats_enabled?: boolean | null
+          binaural_frequency?: number | null
+          created_at?: string
+          id?: string
+          name: string
+          nature_sounds_volume?: number | null
+          user_id?: string | null
+          white_noise_volume?: number | null
+        }
+        Update: {
+          binaural_beats_enabled?: boolean | null
+          binaural_frequency?: number | null
+          created_at?: string
+          id?: string
+          name?: string
+          nature_sounds_volume?: number | null
+          user_id?: string | null
+          white_noise_volume?: number | null
         }
         Relationships: []
       }
@@ -7052,6 +7193,45 @@ export type Database = {
         }
         Relationships: []
       }
+      sleep_recommendation_settings: {
+        Row: {
+          bedtime_reminder_enabled: boolean | null
+          created_at: string
+          id: string
+          light_level_preference: string | null
+          noise_level_preference: string | null
+          smart_alarm_enabled: boolean | null
+          temperature_range_max: number | null
+          temperature_range_min: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          bedtime_reminder_enabled?: boolean | null
+          created_at?: string
+          id?: string
+          light_level_preference?: string | null
+          noise_level_preference?: string | null
+          smart_alarm_enabled?: boolean | null
+          temperature_range_max?: number | null
+          temperature_range_min?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          bedtime_reminder_enabled?: boolean | null
+          created_at?: string
+          id?: string
+          light_level_preference?: string | null
+          noise_level_preference?: string | null
+          smart_alarm_enabled?: boolean | null
+          temperature_range_max?: number | null
+          temperature_range_min?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       sleep_research: {
         Row: {
           created_at: string | null
@@ -7091,6 +7271,36 @@ export type Database = {
           summary?: string
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      sleep_sounds: {
+        Row: {
+          audio_url: string
+          category: string
+          created_at: string
+          duration_seconds: number
+          id: string
+          is_premium: boolean | null
+          name: string
+        }
+        Insert: {
+          audio_url: string
+          category: string
+          created_at?: string
+          duration_seconds: number
+          id?: string
+          is_premium?: boolean | null
+          name: string
+        }
+        Update: {
+          audio_url?: string
+          category?: string
+          created_at?: string
+          duration_seconds?: number
+          id?: string
+          is_premium?: boolean | null
+          name?: string
         }
         Relationships: []
       }
