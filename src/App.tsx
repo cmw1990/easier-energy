@@ -9,7 +9,6 @@ import Index from "@/pages/Index"
 import Auth from "@/pages/Auth"
 import LandingPage from "@/pages/LandingPage"
 
-// Lazy load all the other pages
 const BathingPage = lazy(() => import("@/pages/Bathing"))
 const CBTPage = lazy(() => import("@/pages/CBT"))
 const BreathingPage = lazy(() => import("@/pages/Breathing"))
@@ -38,10 +37,12 @@ const BreathingGame = lazy(() => import("@/components/games/BreathingGame"))
 const BalloonJourney = lazy(() => import("@/components/games/BalloonJourney"))
 const ZenGarden = lazy(() => import("@/components/games/ZenGarden"))
 const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
+
 const BMICalculator = lazy(() => import("@/pages/tools/BMICalculator"))
 const BiologicalAgeCalculator = lazy(() => import("@/pages/tools/BiologicalAgeCalculator"))
 const HRVCalculator = lazy(() => import("@/pages/tools/HRVCalculator"))
 const BMRCalculator = lazy(() => import("@/pages/tools/BMRCalculator"))
+const BodyFatCalculator = lazy(() => import("@/pages/tools/BodyFatCalculator"))
 
 const queryClient = new QueryClient()
 
@@ -120,6 +121,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <BMRCalculator />
+          </Suspense>
+        ),
+      },
+      {
+        path: "body-fat-calculator",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <BodyFatCalculator />
           </Suspense>
         ),
       },

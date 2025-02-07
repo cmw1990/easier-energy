@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
@@ -243,6 +242,15 @@ const WebTools = () => {
       path: "/tools/hydration-guide",
       tags: ["health", "energy", "wellness"],
       category: "optimization",
+      isPremium: false
+    },
+    {
+      title: "Body Fat Calculator",
+      description: "Calculate your body fat percentage using the U.S. Navy method. Get insights into your body composition and fitness level.",
+      icon: HeartPulse,
+      path: "/tools/body-fat-calculator",
+      tags: ["health", "fitness", "calculator"],
+      category: "health",
       isPremium: false
     }
   ];
