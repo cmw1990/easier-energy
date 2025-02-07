@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee } from "lucide-react"
+import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee, Smartphone, Tablet, Laptop, Desktop, Chrome } from "lucide-react"
 import { Link } from "react-router-dom"
 import { TopNav } from "@/components/layout/TopNav"
 
@@ -10,38 +11,79 @@ const LandingPage = () => {
       <TopNav />
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6">
-          Optimize Your Energy & Performance
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
-          Clear your phone. Cancel your subscriptions. The Well-Charged is the only wellness platform you'll ever need.
-        </p>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-          Access powerful tools and comprehensive guides to enhance your focus, energy, and overall well-being. 
-          Join thousands of high performers who trust The Well-Charged.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/auth">
-            <Button size="lg" className="group">
-              Get Started
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
-          <Link to="/tools">
-            <Button size="lg" variant="outline">
-              Explore Tools
-              <Wrench className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
-        <div className="mt-6">
-          <Link to="/why-us">
-            <Button variant="ghost" size="lg" className="group">
-              Why The Well-Charged?
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
+      <section className="container mx-auto px-4 py-20">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-primary">
+            Optimize Your Energy & Performance
+          </h1>
+          
+          <div className="space-y-6">
+            <p className="text-2xl font-semibold text-foreground">
+              Clear your phone. Cancel your subscriptions.
+            </p>
+            <p className="text-xl text-primary font-medium">
+              The Well-Charged is the only wellness platform you'll ever need - 
+              <br />free or premium, we've got you covered.
+            </p>
+            <p className="text-lg text-muted-foreground">
+              Access powerful tools and comprehensive guides to enhance your focus, energy, and overall well-being. 
+              Join thousands of high performers who trust The Well-Charged.
+            </p>
+          </div>
+
+          {/* Platform Availability */}
+          <div className="bg-primary/5 p-6 rounded-2xl">
+            <h3 className="text-lg font-semibold mb-4">Available Everywhere You Need It</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+              <Link to="/download/ios" className="flex items-center gap-2 p-3 rounded-lg hover:bg-primary/10 transition-colors">
+                <Smartphone className="h-5 w-5 text-primary" />
+                <span>iOS App</span>
+              </Link>
+              <Link to="/download/android" className="flex items-center gap-2 p-3 rounded-lg hover:bg-primary/10 transition-colors">
+                <Smartphone className="h-5 w-5 text-primary" />
+                <span>Android App</span>
+              </Link>
+              <Link to="/download/mac" className="flex items-center gap-2 p-3 rounded-lg hover:bg-primary/10 transition-colors">
+                <Laptop className="h-5 w-5 text-primary" />
+                <span>Mac App</span>
+              </Link>
+              <Link to="/download/windows" className="flex items-center gap-2 p-3 rounded-lg hover:bg-primary/10 transition-colors">
+                <Desktop className="h-5 w-5 text-primary" />
+                <span>Windows App</span>
+              </Link>
+              <Link to="/chrome-extension" className="flex items-center gap-2 p-3 rounded-lg hover:bg-primary/10 transition-colors">
+                <Chrome className="h-5 w-5 text-primary" />
+                <span>Chrome Extension</span>
+              </Link>
+              <Link to="/tools" className="flex items-center gap-2 p-3 rounded-lg hover:bg-primary/10 transition-colors">
+                <Globe className="h-5 w-5 text-primary" />
+                <span>Web Tools</span>
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <Link to="/auth">
+              <Button size="lg" className="group">
+                Get Started
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+            <Link to="/tools">
+              <Button size="lg" variant="outline">
+                Explore Tools
+                <Wrench className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+          <div>
+            <Link to="/why-us">
+              <Button variant="ghost" size="lg" className="group">
+                Why The Well-Charged?
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -155,3 +197,4 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+
