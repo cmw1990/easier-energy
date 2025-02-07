@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react"
 import WebTools from "@/pages/WebTools"
 
@@ -28,6 +27,14 @@ const StressCheck = lazy(() => import("@/pages/tools/StressCheck"))
 const SleepCalculator = lazy(() => import("@/pages/tools/SleepCalculator"))
 const CaffeineCalculator = lazy(() => import("@/pages/tools/CaffeineCalculator"))
 const WithdrawalTracker = lazy(() => import("@/pages/tools/WithdrawalTracker"))
+const BreathTraining = lazy(() => import("@/pages/tools/BreathTraining"))
+const MouthTaping = lazy(() => import("@/pages/tools/MouthTaping"))
+const RedLightTherapy = lazy(() => import("@/pages/tools/RedLightTherapy"))
+const NootropicsDatabase = lazy(() => import("@/pages/tools/NootropicsDatabase"))
+const ColdTherapy = lazy(() => import("@/pages/tools/ColdTherapy"))
+const EMFProtection = lazy(() => import("@/pages/tools/EMFProtection"))
+const BlueLightBlockers = lazy(() => import("@/pages/tools/BlueLightBlockers"))
+const Grounding = lazy(() => import("@/pages/tools/Grounding"))
 
 export const toolRoutes = {
   path: "/tools",
@@ -245,6 +252,70 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <WithdrawalTracker />
+        </Suspense>
+      ),
+    },
+    {
+      path: "breath-training-devices",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <BreathTraining />
+        </Suspense>
+      ),
+    },
+    {
+      path: "mouth-taping-guide",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <MouthTaping />
+        </Suspense>
+      ),
+    },
+    {
+      path: "red-light-therapy",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <RedLightTherapy />
+        </Suspense>
+      ),
+    },
+    {
+      path: "nootropics-database",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <NootropicsDatabase />
+        </Suspense>
+      ),
+    },
+    {
+      path: "cold-therapy-tools",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <ColdTherapy />
+        </Suspense>
+      ),
+    },
+    {
+      path: "emf-protection",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <EMFProtection />
+        </Suspense>
+      ),
+    },
+    {
+      path: "blue-light-blockers",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <BlueLightBlockers />
+        </Suspense>
+      ),
+    },
+    {
+      path: "grounding-earthing",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <Grounding />
         </Suspense>
       ),
     },
