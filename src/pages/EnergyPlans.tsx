@@ -29,19 +29,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Database } from "@/integrations/supabase/types"
 
-type PlanType = 
-  | 'energizing_boost'
-  | 'sustained_focus' 
-  | 'mental_clarity'
-  | 'physical_vitality'
-  | 'deep_relaxation'
-  | 'stress_relief'
-  | 'evening_winddown'
-  | 'sleep_preparation'
-  | 'meditation'
+type PlanType = Database["public"]["Enums"]["plan_type"]
 
-type PlanComponent = {
+interface PlanComponent {
   id: string
   component_type: string
   order_number: number
@@ -52,7 +44,7 @@ type PlanComponent = {
   notes?: string
 }
 
-type Plan = {
+interface Plan {
   id: string
   created_at: string
   updated_at: string
@@ -73,7 +65,7 @@ type Plan = {
   energy_plan_components: PlanComponent[]
 }
 
-type ProgressRecord = {
+interface ProgressRecord {
   id: string
   user_id: string 
   plan_id: string
@@ -364,7 +356,7 @@ const EnergyPlans = () => {
       
       const { data, error } = await query
       if (error) throw error
-      return data as unknown as Plan[]
+      return data as Plan[]
     }
   })
 
@@ -388,7 +380,7 @@ const EnergyPlans = () => {
         .order('created_at', { ascending: false })
       
       if (error) throw error
-      return data as unknown as Plan[]
+      return data as Plan[]
     },
     enabled: !!session?.user?.id
   })
@@ -415,7 +407,7 @@ const EnergyPlans = () => {
         .eq('user_id', session.user.id)
       
       if (error) throw error
-      return data.map(item => item.energy_plans) as unknown as Plan[]
+      return data.map(item => item.energy_plans) as Plan[]
     },
     enabled: !!session?.user?.id
   })
