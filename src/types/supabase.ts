@@ -1,4 +1,3 @@
-
 export type Json =
   | string
   | number
@@ -154,10 +153,12 @@ export interface Database {
           created_at?: string
         }
         Update: {
+          id?: string
           user_id?: string
           plan_id?: string
           component_id?: string
           completed_at?: string | null
+          created_at?: string
         }
       }
     }

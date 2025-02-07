@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -14,7 +13,7 @@ import {
   Brain, 
   Coffee,
   Sun,
-  Lotus,
+  Flower,
   Heart,
   Star,
   Timer,
@@ -33,12 +32,12 @@ const PlanTypeIcons = {
   mental_clarity: Brain,
   physical_energy: Star,
   morning_routine: Sun,
-  deep_relaxation: Lotus,
+  deep_relaxation: Flower,
   stress_relief: Heart,
   wind_down: Wind,
   sleep_prep: Moon,
   recovery: Timer,
-  meditation: Lotus,
+  meditation: Flower,
 }
 
 const CategoryColors = {
