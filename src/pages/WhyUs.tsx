@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
 import { HeartHandshake, Lightbulb, PiggyBank, Brain, Share2, Activity, ArrowLeft, ChevronDown, ChevronUp, Sparkles, BookOpen, Blocks, Target, LineChart, Focus, ListChecks, ClipboardCheck, Waves, Music2, Calculator, Share, Users, Puzzle, Layout, TreePine, Droplets, Wind, Sun, Moon, CircleDot, Dna } from "lucide-react"
@@ -626,11 +625,30 @@ const WhyUs = () => {
                 <p className="text-lg text-muted-foreground mb-6">
                   Select your profile to discover how The Well-Charged can specifically help you:
                 </p>
+                <div className="mb-8">
+                  <Select value={selectedPersona} onValueChange={setSelectedPersona}>
+                    <SelectTrigger className="w-full bg-background border-2">
+                      <SelectValue placeholder="Choose your focus area" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border-2">
+                      {personas?.map((persona) => (
+                        <SelectItem 
+                          key={persona.id} 
+                          value={persona.persona_type}
+                          className="focus:bg-primary/10 cursor-pointer"
+                        >
+                          {persona.headline}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {personas?.map((persona) => (
                     <Card key={persona.id} 
-                          className={`cursor-pointer transition-colors hover:border-primary
-                                    ${selectedPersona === persona.persona_type ? 'border-primary' : ''}`}
+                          className={`cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg
+                                    ${selectedPersona === persona.persona_type ? 'border-2 border-primary shadow-lg' : ''}`}
                           onClick={() => setSelectedPersona(persona.persona_type)}>
                       <CardHeader>
                         <CardTitle className="text-xl">{persona.headline}</CardTitle>
