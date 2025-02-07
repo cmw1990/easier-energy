@@ -38,6 +38,7 @@ const BreathingGame = lazy(() => import("@/components/games/BreathingGame"))
 const BalloonJourney = lazy(() => import("@/components/games/BalloonJourney"))
 const ZenGarden = lazy(() => import("@/components/games/ZenGarden"))
 const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
+const BMICalculator = lazy(() => import("@/pages/tools/BMICalculator"))
 
 const queryClient = new QueryClient()
 
@@ -88,10 +89,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "bathing",
+        path: "bmi-calculator",
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <BathingPage />
+            <BMICalculator />
           </Suspense>
         ),
       },
