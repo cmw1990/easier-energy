@@ -9541,6 +9541,7 @@ export type Database = {
           description: string
           featured_product: string | null
           id: string
+          is_premium: boolean | null
           ispremium: boolean | null
           meta_description: string | null
           meta_keywords: string[] | null
@@ -9569,6 +9570,7 @@ export type Database = {
           description: string
           featured_product?: string | null
           id?: string
+          is_premium?: boolean | null
           ispremium?: boolean | null
           meta_description?: string | null
           meta_keywords?: string[] | null
@@ -9597,6 +9599,7 @@ export type Database = {
           description?: string
           featured_product?: string | null
           id?: string
+          is_premium?: boolean | null
           ispremium?: boolean | null
           meta_description?: string | null
           meta_keywords?: string[] | null
