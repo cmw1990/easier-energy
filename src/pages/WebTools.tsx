@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
@@ -317,7 +318,7 @@ const WebTools = () => {
                 Sign Up Free
               </Button>
             </Link>
-            <Link to="/dashboard">
+            <Link to="/app">
               <Button variant="outline" size="lg">
                 Open Web App
               </Button>
@@ -394,7 +395,7 @@ const WebTools = () => {
                 <li>Session history</li>
                 <li>Goal setting and tracking</li>
               </ul>
-              <Link to="/dashboard">
+              <Link to="/app">
                 <Button size="lg">Launch Web App</Button>
               </Link>
             </CardContent>
