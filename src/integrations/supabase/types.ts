@@ -3767,6 +3767,89 @@ export type Database = {
         }
         Relationships: []
       }
+      participant_screening_criteria: {
+        Row: {
+          created_at: string | null
+          criteria_type: string
+          criteria_value: Json
+          id: string
+          is_required: boolean | null
+          project_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          criteria_type: string
+          criteria_value: Json
+          id?: string
+          is_required?: boolean | null
+          project_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          criteria_type?: string
+          criteria_value?: Json
+          id?: string
+          is_required?: boolean | null
+          project_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participant_screening_criteria_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "research_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      participant_screening_responses: {
+        Row: {
+          criteria_id: string | null
+          id: string
+          meets_criteria: boolean | null
+          notes: string | null
+          participant_id: string | null
+          response_value: Json
+          screened_at: string | null
+        }
+        Insert: {
+          criteria_id?: string | null
+          id?: string
+          meets_criteria?: boolean | null
+          notes?: string | null
+          participant_id?: string | null
+          response_value: Json
+          screened_at?: string | null
+        }
+        Update: {
+          criteria_id?: string | null
+          id?: string
+          meets_criteria?: boolean | null
+          notes?: string | null
+          participant_id?: string | null
+          response_value?: Json
+          screened_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participant_screening_responses_criteria_id_fkey"
+            columns: ["criteria_id"]
+            isOneToOne: false
+            referencedRelation: "participant_screening_criteria"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "participant_screening_responses_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "research_participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       participant_sessions: {
         Row: {
           created_at: string | null
