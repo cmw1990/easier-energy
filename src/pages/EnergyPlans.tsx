@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -24,11 +23,13 @@ import { Database } from "@/types/supabase"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 
-type EnergyPlan = Database['public']['Tables']['energy_plans']['Row'] & {
-  energy_plan_components: Database['public']['Tables']['energy_plan_components']['Row'][]
-}
+type EnergyPlan = Database['public']['Tables']['energy_plans']['Row']
+type EnergyPlanComponent = Database['public']['Tables']['energy_plan_components']['Row']
+type EnergyPlanProgress = Database['public']['Tables']['energy_plan_progress']['Row']
 
-type PlanProgress = Database['public']['Tables']['energy_plan_progress']['Row']
+type EnergyPlanWithComponents = EnergyPlan & {
+  energy_plan_components: EnergyPlanComponent[]
+}
 
 const PlanTypeIcons = {
   quick_boost: Zap,
@@ -42,12 +43,12 @@ const PlanTypeIcons = {
   sleep_prep: Moon,
   recovery: Timer,
   meditation: Flower,
-}
+} as const
 
 const CategoryColors = {
   charged: "bg-orange-100 text-orange-800 dark:bg-orange-900/30",
   recharged: "bg-blue-100 text-blue-800 dark:bg-blue-900/30"
-}
+} as const
 
 const EnergyPlans = () => {
   const { session } = useAuth()
@@ -79,7 +80,7 @@ const EnergyPlans = () => {
       
       const { data, error } = await query
       if (error) throw error
-      return data as (EnergyPlan & { energy_plan_components: any[] })[]
+      return data as EnergyPlanWithComponents[]
     }
   })
 
@@ -103,7 +104,7 @@ const EnergyPlans = () => {
         .order('created_at', { ascending: false })
       
       if (error) throw error
-      return data as (EnergyPlan & { energy_plan_components: any[] })[]
+      return data as EnergyPlanWithComponents[]
     },
     enabled: !!session?.user?.id
   })
@@ -130,7 +131,7 @@ const EnergyPlans = () => {
         .eq('user_id', session.user.id)
       
       if (error) throw error
-      return data.map(item => item.energy_plans) as (EnergyPlan & { energy_plan_components: any[] })[]
+      return data.map(item => item.energy_plans) as EnergyPlanWithComponents[]
     },
     enabled: !!session?.user?.id
   })
@@ -146,7 +147,7 @@ const EnergyPlans = () => {
         .eq('user_id', session.user.id)
       
       if (error) throw error
-      return data as PlanProgress[]
+      return data as EnergyPlanProgress[]
     },
     enabled: !!session?.user?.id
   })
@@ -181,7 +182,7 @@ const EnergyPlans = () => {
   })
 
   const sharePlanMutation = useMutation({
-    mutationFn: async (plan: EnergyPlan) => {
+    mutationFn: async (plan: EnergyPlanWithComponents) => {
       if (!session?.user) throw new Error("Not authenticated")
       
       const { error } = await supabase
@@ -201,7 +202,7 @@ const EnergyPlans = () => {
     }
   })
 
-  const calculateProgress = (plan: EnergyPlan & { energy_plan_components: any[] }) => {
+  const calculateProgress = (plan: EnergyPlanWithComponents) => {
     if (!planProgress || !plan.energy_plan_components.length) return 0
     
     const completedSteps = planProgress.filter(
@@ -211,7 +212,7 @@ const EnergyPlans = () => {
     return (completedSteps / plan.energy_plan_components.length) * 100
   }
 
-  const renderPlanCard = (plan: EnergyPlan & { energy_plan_components: any[] }) => {
+  const renderPlanCard = (plan: EnergyPlanWithComponents) => {
     const Icon = PlanTypeIcons[plan.plan_type] || Brain
     const progress = calculateProgress(plan)
     const isSaved = savedPlans?.some(saved => saved.id === plan.id)
