@@ -7170,6 +7170,39 @@ export type Database = {
         }
         Relationships: []
       }
+      tool_analytics: {
+        Row: {
+          completed_actions: number | null
+          created_at: string
+          feedback: string | null
+          id: string
+          rating: number | null
+          session_duration: number | null
+          tool_name: string
+          user_id: string | null
+        }
+        Insert: {
+          completed_actions?: number | null
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          rating?: number | null
+          session_duration?: number | null
+          tool_name: string
+          user_id?: string | null
+        }
+        Update: {
+          completed_actions?: number | null
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          rating?: number | null
+          session_duration?: number | null
+          tool_name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       tool_usage_logs: {
         Row: {
           audio_settings: Json | null
@@ -8171,6 +8204,15 @@ export type Database = {
           total_clicks: number | null
           total_commission: number | null
           unique_clicks: number | null
+        }
+        Relationships: []
+      }
+      tool_popularity: {
+        Row: {
+          avg_rating: number | null
+          avg_session_duration: number | null
+          tool_name: string | null
+          unique_users: number | null
         }
         Relationships: []
       }
