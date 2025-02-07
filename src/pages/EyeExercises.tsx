@@ -15,6 +15,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AnimatedExerciseDisplay } from "@/components/exercises/AnimatedExerciseDisplay";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ExerciseAssetsGenerator } from "@/components/exercises/ExerciseAssetsGenerator";
+import { Link } from "react-router-dom";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 
 type AnimationType = "svg" | "css";
 
@@ -278,7 +280,21 @@ const EyeExercises = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-bold">Eye Exercises & Relaxation</h1>
+        <div className="flex items-center justify-between">
+          <Link to="/tools">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Tools
+            </Button>
+          </Link>
+        </div>
+
+        <div className="space-y-4">
+          <h1 className="text-4xl font-bold">Eye Exercises & Digital Wellness</h1>
+          <p className="text-xl text-muted-foreground">
+            Science-backed exercises to reduce digital eye strain and improve visual comfort. Perfect for remote workers, students, and anyone spending long hours on screens.
+          </p>
+        </div>
         
         <Alert>
           <AlertCircle className="h-4 w-4" />
@@ -294,6 +310,17 @@ const EyeExercises = () => {
             <ExerciseAssetsGenerator />
           </div>
         )}
+      </div>
+      
+      <div className="prose dark:prose-invert max-w-none mb-8">
+        <h2 className="text-2xl font-semibold">Benefits of Regular Eye Exercises</h2>
+        <ul className="list-disc pl-6 space-y-2">
+          <li>Reduce digital eye strain and fatigue</li>
+          <li>Improve focus and concentration</li>
+          <li>Maintain healthy vision habits</li>
+          <li>Prevent Computer Vision Syndrome (CVS)</li>
+          <li>Enhance eye muscle flexibility</li>
+        </ul>
       </div>
       
       <EyeExerciseStats />
@@ -375,6 +402,38 @@ const EyeExercises = () => {
       </Dialog>
 
       <EyeRelaxationGuide />
+
+      <div className="mt-12 text-center">
+        <Card className="p-6">
+          <CardHeader>
+            <CardTitle>Want More Features?</CardTitle>
+            <CardDescription>
+              Try our full web app for advanced tracking and personalized recommendations
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ul className="list-disc text-left pl-6 mb-4 space-y-2">
+              <li>Personalized exercise routines</li>
+              <li>Progress tracking and analytics</li>
+              <li>Eye health insights and recommendations</li>
+              <li>Integration with other wellness tools</li>
+            </ul>
+            <Link to="/app">
+              <Button size="lg">Open Web App</Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+
+      <footer className="mt-12 text-center text-sm text-muted-foreground space-y-2">
+        <p>
+          These eye exercises are designed to help reduce digital eye strain and improve visual comfort. 
+          Always consult with an eye care professional for persistent vision concerns.
+        </p>
+        <p>
+          © {new Date().getFullYear()} The Well-Charged - Digital Wellness Tools
+        </p>
+      </footer>
     </div>
   );
 };
