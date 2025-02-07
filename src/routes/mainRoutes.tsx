@@ -29,6 +29,7 @@ const SubstanceLogPage = lazy(() => import("@/pages/SubstanceLog"))
 const SupplementsPage = lazy(() => import("@/pages/Supplements"))
 const SupportPage = lazy(() => import("@/pages/Support"))
 const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
+const Directory = lazy(() => import("@/pages/Directory"))
 
 export const mainRoutes = [
   {
@@ -255,6 +256,14 @@ export const mainRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <BathingPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/directory",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Directory />
           </Suspense>
         ),
       },
