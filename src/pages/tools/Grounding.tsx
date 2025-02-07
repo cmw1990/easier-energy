@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
 import { ToolAnalyticsWrapper } from "@/components/tools/ToolAnalyticsWrapper"
@@ -136,19 +135,24 @@ export default function Grounding() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <Link to="/tools/breathing-exercises" className="block">
+                  <Link to="/tools/breathing-exercises">
                     <Button variant="outline" className="w-full justify-start">
                       Breathing Exercises
                     </Button>
                   </Link>
-                  <Link to="/tools/meditation" className="block">
-                    <Button variant="outline" className="w-full justify-start">
-                      Meditation Guide
-                    </Button>
-                  </Link>
-                  <Link to="/tools/stress-check" className="block">
+                  <Link to="/tools/stress-check">
                     <Button variant="outline" className="w-full justify-start">
                       Stress Assessment
+                    </Button>
+                  </Link>
+                  <Link to="/dashboard/meditation">
+                    <Button variant="outline" className="w-full justify-start">
+                      Full Meditation Guide (Web App)
+                    </Button>
+                  </Link>
+                  <Link to="/dashboard/focus">
+                    <Button variant="outline" className="w-full justify-start">
+                      Focus Tools (Web App)
                     </Button>
                   </Link>
                 </div>

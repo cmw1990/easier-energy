@@ -308,8 +308,7 @@ const WebTools = () => {
             Free Wellness & Focus Tools
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Access our collection of free online tools and guides for focus, meditation, and wellness. 
-            No installation required - use directly in your browser.
+            Access our collection of free online tools and guides. For advanced features and tracking, try our full web app.
           </p>
           <div className="flex justify-center gap-4">
             <Link to="/auth">
@@ -317,11 +316,11 @@ const WebTools = () => {
                 Sign Up Free
               </Button>
             </Link>
-            <a href="https://apps.apple.com/your-app" target="_blank" rel="noopener noreferrer">
+            <Link to="/dashboard">
               <Button variant="outline" size="lg">
-                Download App
+                Open Web App
               </Button>
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -378,10 +377,32 @@ const WebTools = () => {
           </div>
         ))}
 
+        <div className="mt-12 text-center">
+          <Card className="p-6">
+            <CardHeader>
+              <CardTitle>Need More Features?</CardTitle>
+              <CardDescription>
+                Try our full web app for advanced features like:
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="list-disc text-left pl-6 mb-4 space-y-2">
+                <li>Personal progress tracking</li>
+                <li>Customizable dashboards</li>
+                <li>Advanced analytics</li>
+                <li>Session history</li>
+                <li>Goal setting and tracking</li>
+              </ul>
+              <Link to="/dashboard">
+                <Button size="lg">Launch Web App</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="mt-12 text-center text-sm text-muted-foreground">
           <p>
-            All tools are free to use and optimized for desktop and mobile browsers.
-            Sign in to save your preferences and track your progress.
+            Basic tools are free to use. Sign in to access the full web app with advanced features and progress tracking.
           </p>
         </div>
       </div>
