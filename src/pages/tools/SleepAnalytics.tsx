@@ -21,12 +21,28 @@ import { Brain, Moon, Sun, Activity, Percent, Clock } from "lucide-react"
 type SleepAnalyticsSummary = {
   id: string
   date: string
-  average_quality: number
-  total_sleep_hours: number
-  environment_score: number
-  sleep_debt_hours: number
-  sleep_efficiency: number
-  consistency_score: number
+  average_quality: number | null
+  total_sleep_hours: number | null
+  environment_score: number | null
+  sleep_debt_hours: number | null
+  sleep_efficiency: number | null
+  consistency_score: number | null
+}
+
+type SleepCombinedData = {
+  date: string
+  sleep_quality: number | null
+  bedtime: string | null
+  wake_time: string | null
+  temperature: number | null
+  humidity: number | null
+  noise_level: number | null
+  light_level: number | null
+  ventilation_rating: number | null
+  comfort_rating: number | null
+  target_sleep_duration: number | null
+  target_bedtime: string | null
+  target_wake_time: string | null
 }
 
 export default function SleepAnalytics() {
@@ -38,9 +54,10 @@ export default function SleepAnalytics() {
         .select("*")
         .order("date", { ascending: true })
         .limit(30)
+        .returns<SleepAnalyticsSummary[]>()
 
       if (error) throw error
-      return data as SleepAnalyticsSummary[]
+      return data
     },
   })
 
@@ -52,6 +69,7 @@ export default function SleepAnalytics() {
         .select("*")
         .order("date", { ascending: true })
         .limit(30)
+        .returns<SleepCombinedData[]>()
 
       if (error) throw error
       return data
@@ -66,9 +84,14 @@ export default function SleepAnalytics() {
     consistency: record.consistency_score,
   }))
 
-  const getLatestMetric = (metric: keyof SleepAnalyticsSummary) => {
+  const getLatestMetric = (metric: keyof SleepAnalyticsSummary): number | null => {
     if (!sleepAnalytics?.length) return null
-    return sleepAnalytics[sleepAnalytics.length - 1][metric]
+    const value = sleepAnalytics[sleepAnalytics.length - 1][metric]
+    return typeof value === 'number' ? value : null
+  }
+
+  const formatMetric = (value: number | null, decimals: number = 1): string => {
+    return value !== null ? value.toFixed(decimals) : 'N/A'
   }
 
   return (
@@ -90,7 +113,7 @@ export default function SleepAnalytics() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {getLatestMetric("average_quality")?.toFixed(1)}/10
+                  {formatMetric(getLatestMetric("average_quality"))}/10
                 </div>
               </CardContent>
             </Card>
@@ -104,7 +127,7 @@ export default function SleepAnalytics() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {getLatestMetric("total_sleep_hours")?.toFixed(1)}h
+                  {formatMetric(getLatestMetric("total_sleep_hours"))}h
                 </div>
               </CardContent>
             </Card>
@@ -118,7 +141,7 @@ export default function SleepAnalytics() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {getLatestMetric("sleep_debt_hours")?.toFixed(1)}h
+                  {formatMetric(getLatestMetric("sleep_debt_hours"))}h
                 </div>
               </CardContent>
             </Card>
@@ -175,7 +198,7 @@ export default function SleepAnalytics() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold mb-2">
-                  {getLatestMetric("sleep_efficiency")?.toFixed(1)}%
+                  {formatMetric(getLatestMetric("sleep_efficiency"))}%
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Percentage of time in bed spent sleeping
@@ -190,7 +213,7 @@ export default function SleepAnalytics() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold mb-2">
-                  {getLatestMetric("consistency_score")?.toFixed(1)}/10
+                  {formatMetric(getLatestMetric("consistency_score"))}/10
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Measure of sleep/wake time consistency
