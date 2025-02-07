@@ -57,7 +57,23 @@ export const ExerciseAssetsGenerator = () => {
     try {
       console.log(`Starting generation for ${batch} (${type})...`);
       
-      const { data, error } = await supabase.functions.invoke(
+      const { data: existingAsset } = await supabase
+        .from('exercise_assets')
+        .select('asset_url')
+        .eq('exercise_name', batch)
+        .eq('exercise_type', type)
+        .maybeSingle();
+
+      if (existingAsset?.asset_url) {
+        console.log(`Asset already exists for ${batch}`);
+        toast({
+          title: 'Asset Already Exists',
+          description: `Using existing asset for ${batch}`,
+        });
+        return;
+      }
+
+      const { data, error: functionError } = await supabase.functions.invoke(
         'generate-assets',
         {
           body: {
@@ -68,9 +84,9 @@ export const ExerciseAssetsGenerator = () => {
         }
       );
 
-      if (error) {
-        console.error(`Function error for ${batch}:`, error);
-        throw new Error(`Function error: ${error.message}`);
+      if (functionError) {
+        console.error(`Function error for ${batch}:`, functionError);
+        throw new Error(`Function error: ${functionError.message}`);
       }
 
       if (!data?.url) {
@@ -91,7 +107,7 @@ export const ExerciseAssetsGenerator = () => {
 
       if (dbError) {
         console.error('Error saving to database:', dbError);
-        throw new Error('Failed to save asset to database');
+        throw new Error(`Failed to save asset to database: ${dbError.message}`);
       }
 
       toast({

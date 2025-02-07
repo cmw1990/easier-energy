@@ -10,10 +10,7 @@ const corsHeaders = {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      status: 200,
-      headers: corsHeaders
-    });
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
@@ -36,8 +33,14 @@ serve(async (req) => {
     const { type, batch, exerciseType = 'eye_exercise' } = body;
     console.log('Processing request for:', { type, batch, exerciseType });
 
-    if (type !== 'exercise-assets' || !batch) {
-      throw new Error('Invalid request parameters');
+    if (!type || !batch || typeof batch !== 'string') {
+      throw new Error('Invalid request parameters: type and batch are required');
+    }
+
+    // Validate exercise type
+    const validExerciseTypes = ['eye_exercise', 'desk_yoga', 'walking', 'running', 'stretch'];
+    if (!validExerciseTypes.includes(exerciseType)) {
+      throw new Error(`Invalid exercise type. Must be one of: ${validExerciseTypes.join(', ')}`);
     }
 
     // Generate appropriate prompt based on exercise type
@@ -56,7 +59,7 @@ serve(async (req) => {
         prompt = `Clear, professional illustration showing proper ${batch.replace(/-/g, ' ')} for running technique, simple vector style with anatomical accuracy, demonstrating correct form and movement patterns, using dynamic colors, including instructional elements, on a clean white background`;
         break;
       case 'stretch':
-        prompt = `Professional illustration demonstrating proper ${batch.replace(/-/g, ' ')} technique, simple vector style showing clear body positioning and muscle engagement, using calming colors, including directional arrows and form indicators, on a clean white background`;
+        prompt = `Professional illustration demonstrating proper ${batch.replace(/-/g, ' ')} stretching technique, simple vector style showing clear body positioning and muscle engagement, using calming colors, including directional arrows and form indicators, on a clean white background`;
         break;
       default:
         prompt = `Professional fitness illustration demonstrating ${batch.replace(/-/g, ' ')} exercise, simple vector style with clear instructional elements, on a clean white background`;
@@ -64,42 +67,70 @@ serve(async (req) => {
 
     console.log('Generated prompt:', prompt);
 
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: "dall-e-3",
-        prompt: prompt,
-        n: 1,
-        size: "1024x1024",
-        quality: "standard",
-        response_format: "url"
-      })
-    });
+    // Call DALL-E API with retry logic
+    let attempts = 0;
+    const maxAttempts = 3;
+    let lastError = null;
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('DALL-E API error:', errorData);
-      throw new Error(errorData.error?.message || 'Failed to generate image');
-    }
+    while (attempts < maxAttempts) {
+      try {
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openAIKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024",
+            quality: "standard",
+            response_format: "url"
+          })
+        });
 
-    const data = await response.json();
-    console.log('DALL-E response:', data);
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error(`DALL-E API error (attempt ${attempts + 1}):`, errorData);
+          lastError = errorData;
+          attempts++;
+          if (attempts < maxAttempts) {
+            // Wait before retrying (exponential backoff)
+            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempts) * 1000));
+            continue;
+          }
+          throw new Error(errorData.error?.message || 'Failed to generate image');
+        }
 
-    if (!data.data?.[0]?.url) {
-      throw new Error('No image URL in response');
-    }
+        const data = await response.json();
+        console.log('DALL-E response:', data);
 
-    return new Response(
-      JSON.stringify({ url: data.data[0].url }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
+        if (!data.data?.[0]?.url) {
+          throw new Error('No image URL in response');
+        }
+
+        return new Response(
+          JSON.stringify({ url: data.data[0].url }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200 
+          }
+        );
+      } catch (error) {
+        console.error(`Attempt ${attempts + 1} failed:`, error);
+        lastError = error;
+        attempts++;
+        if (attempts < maxAttempts) {
+          // Wait before retrying
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempts) * 1000));
+          continue;
+        }
       }
-    );
+    }
+
+    // If we get here, all attempts failed
+    throw new Error(`Failed after ${maxAttempts} attempts. Last error: ${lastError?.message || 'Unknown error'}`);
 
   } catch (error) {
     console.error('Function error:', error);
