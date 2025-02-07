@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react"
 import Layout from "@/components/layout/Layout"
 import NotFound from "@/components/NotFound"
-import Index from "@/pages/Index"
+import Desktop from "@/pages/Desktop"
 import Auth from "@/pages/Auth"
 import LandingPage from "@/pages/LandingPage"
 import { AuthProvider } from "@/components/AuthProvider"
@@ -38,7 +38,7 @@ export const mainRoutes = [
   },
   {
     path: "/desktop",
-    element: <Index />,
+    element: <Desktop />,
   },
   {
     path: "/login",

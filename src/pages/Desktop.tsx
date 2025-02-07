@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
 import { Card } from "@/components/ui/card";
@@ -14,7 +13,7 @@ import { EisenhowerMatrix } from "@/components/focus/EisenhowerMatrix";
 import { FocusTimerTools } from "@/components/focus/FocusTimerTools";
 import { FocusEnvironment } from "@/components/focus/FocusEnvironment";
 
-export default function Index() {
+export default function Desktop() {
   const navigate = useNavigate();
   const { session } = useAuth();
 
