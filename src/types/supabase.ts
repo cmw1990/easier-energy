@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -12,7 +13,7 @@ export interface Database {
       expert_profiles: {
         Row: {
           id: string
-          created_at: string
+          created_at: string  
           updated_at: string
           credentials: string[]
           specialties: string[]
@@ -153,12 +154,10 @@ export interface Database {
           created_at?: string
         }
         Update: {
-          id?: string
           user_id?: string
           plan_id?: string
           component_id?: string
           completed_at?: string | null
-          created_at?: string
         }
       }
     }
