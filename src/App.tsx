@@ -1,4 +1,3 @@
-
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
@@ -11,6 +10,7 @@ import Auth from "@/pages/Auth"
 import LandingPage from "@/pages/LandingPage"
 
 // Lazy load all the other pages
+const BathingPage = lazy(() => import("@/pages/Bathing"))
 const CBTPage = lazy(() => import("@/pages/CBT"))
 const BreathingPage = lazy(() => import("@/pages/Breathing"))
 const CaffeinePage = lazy(() => import("@/pages/Caffeine"))
@@ -84,6 +84,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <WhiteNoise />
+          </Suspense>
+        ),
+      },
+      {
+        path: "bathing",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <BathingPage />
           </Suspense>
         ),
       },
@@ -321,6 +329,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <SupportPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "bathing",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <BathingPage />
           </Suspense>
         ),
       },

@@ -6787,6 +6787,42 @@ export type Database = {
         }
         Relationships: []
       }
+      transaction_fees: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          fee_fixed: number
+          fee_percentage: number
+          id: string
+          max_fee: number | null
+          min_fee: number | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          fee_fixed?: number
+          fee_percentage: number
+          id?: string
+          max_fee?: number | null
+          min_fee?: number | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          fee_fixed?: number
+          fee_percentage?: number
+          id?: string
+          max_fee?: number | null
+          min_fee?: number | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       tree_testing_responses: {
         Row: {
           completion_time: number | null

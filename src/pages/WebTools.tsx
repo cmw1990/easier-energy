@@ -1,8 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TopNav } from "@/components/layout/TopNav";
 import { Link, useParams } from "react-router-dom";
-import { Brain, Leaf, HeartPulse, Pill, Settings, ChartBar, Waves, Music2, Focus, Wind, Footprints, Moon, Coffee, Cigarette, Battery, Droplets } from "lucide-react";
+import { Brain, Leaf, HeartPulse, Pill, Settings, ChartBar, Waves, Music2, Focus, Wind, Footprints, Moon, Coffee, Cigarette, Battery, Droplets, Bath } from "lucide-react";
 
 const WebTools = () => {
   const { toolSlug } = useParams();
@@ -117,6 +116,16 @@ const WebTools = () => {
       tags: ["health", "energy", "wellness"],
       category: "guides"
     }
+    ,
+    // Wellness & Recovery Tools
+    {
+      title: "Bathing & Showering Guide",
+      description: "Science-based bathing routines for energy, relaxation, and recovery",
+      icon: Bath,
+      path: "/tools/bathing",
+      tags: ["wellness", "relaxation", "energy"],
+      category: "wellness"
+    },
   ];
 
   const categories = Array.from(new Set(tools.map(tool => tool.category)));

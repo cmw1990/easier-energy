@@ -23,6 +23,7 @@ import {
   Heart,
   Eye,
   Wrench,
+  Bath,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -30,39 +31,44 @@ const navigationGroups = [
     label: "Core Energy",
     links: [
       {
-        to: "/dashboard",
+        to: "/app/dashboard",
         icon: Activity,
         label: "Overview",
       },
       {
-        to: "/sleep",
+        to: "/app/sleep",
         icon: Moon,
         label: "Sleep",
       },
       {
-        to: "/relax",
+        to: "/app/relax",
         icon: Flower2,
         label: "Relax",
       },
       {
-        to: "/focus",
+        to: "/app/focus",
         icon: Focus,
         label: "Focus",
       },
       {
-        to: "/meditation",
+        to: "/app/meditation",
         icon: Sparkles,
         label: "Meditation",
       },
       {
-        to: "/exercise",
+        to: "/app/exercise",
         icon: Dumbbell,
         label: "Exercise",
       },
       {
-        to: "/eye-exercises",
+        to: "/app/eye-exercises",
         icon: Eye,
         label: "Eye Care",
+      },
+      {
+        to: "/app/bathing",
+        icon: Bath,
+        label: "Bathing",
       },
     ]
   },
