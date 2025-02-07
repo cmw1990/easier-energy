@@ -30,6 +30,7 @@ const SupplementsPage = lazy(() => import("@/pages/Supplements"))
 const SupportPage = lazy(() => import("@/pages/Support"))
 const DevelopmentTools = lazy(() => import("@/pages/DevelopmentTools"))
 const Directory = lazy(() => import("@/pages/Directory"))
+const NootropicsDatabase = lazy(() => import("@/pages/NootropicsDatabase"))
 
 export const mainRoutes = [
   {
@@ -264,6 +265,14 @@ export const mainRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <Directory />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/tools/nootropics",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <NootropicsDatabase />
           </Suspense>
         ),
       },

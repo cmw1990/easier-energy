@@ -1,67 +1,75 @@
+
 import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TopNav } from "@/components/layout/TopNav"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
-import { Brain, Heart, Zap, Sun, Moon, Leaf, Activity, Shield } from "lucide-react"
+import { Brain, Heart, Zap, Sun, Moon, Leaf, Activity, Shield, Coffee, TestTube, Flaskconical } from "lucide-react"
 
 export default function Directory() {
   const categories = [
     {
-      title: "Cognitive Enhancement",
-      description: "Tools and protocols for optimizing mental performance and neuroplasticity.",
+      title: "Nootropics & Cognitive Enhancement",
+      description: "Comprehensive database of cognitive enhancers, memory boosters, and brain optimization compounds.",
       icon: Brain,
-      link: "/tools/cognitive",
-      subcategories: ["Nootropics", "Brain Training", "Focus Enhancement"]
+      link: "/tools/nootropics",
+      subcategories: ["Racetams", "Adaptogens", "Cholinergics", "Natural Nootropics", "Peptides", "Smart Drugs"]
+    },
+    {
+      title: "Tea & Botanical Compounds",
+      description: "Extensive guide to teas, their compounds, benefits, and brewing methods.",
+      icon: Leaf,
+      link: "/tools/tea-database",
+      subcategories: ["Green Tea", "Black Tea", "Oolong", "Pu-erh", "White Tea", "Herbal Blends"]
+    },
+    {
+      title: "Energy Enhancement",
+      description: "Database of energy drinks, stimulants, and natural energy boosters with detailed analysis.",
+      icon: Zap,
+      link: "/tools/energy-enhancement",
+      subcategories: ["Energy Drinks", "Natural Stimulants", "Pre-Workouts", "Caffeine Sources"]
     },
     {
       title: "Sleep Optimization",
       description: "Evidence-based methods for improving sleep quality and recovery.",
       icon: Moon,
       link: "/tools/sleep",
-      subcategories: ["Sleep Tracking", "Circadian Optimization", "Sleep Environment"]
+      subcategories: ["Sleep Tracking", "Circadian Optimization", "Sleep Environment", "Natural Sleep Aids"]
     },
     {
-      title: "Energy Systems",
-      description: "Protocols for mitochondrial health and cellular energy production.",
-      icon: Zap,
-      link: "/tools/energy",
-      subcategories: ["Mitochondrial Function", "ATP Production", "Metabolic Health"]
+      title: "Cardiovascular Enhancement",
+      description: "Protocols for heart health, circulation, and vascular optimization.",
+      icon: Heart,
+      link: "/tools/cardiovascular",
+      subcategories: ["HRV Training", "Blood Flow Enhancement", "Endothelial Health"]
     },
     {
       title: "Light Optimization",
-      description: "Strategic light exposure for circadian entrainment and cellular health.",
+      description: "Strategic light exposure protocols for circadian health and cellular function.",
       icon: Sun,
       link: "/tools/light",
-      subcategories: ["Red Light Therapy", "Blue Light Management", "Circadian Biology"]
-    },
-    {
-      title: "Cardiovascular Optimization",
-      description: "Advanced protocols for heart rate variability and vascular health.",
-      icon: Heart,
-      link: "/tools/cardiovascular",
-      subcategories: ["HRV Training", "Blood Flow Optimization", "Vascular Health"]
-    },
-    {
-      title: "Environmental Optimization",
-      description: "Methods for creating optimal living and working environments.",
-      icon: Leaf,
-      link: "/tools/environment",
-      subcategories: ["EMF Mitigation", "Air Quality", "Environmental Toxins"]
+      subcategories: ["Red Light Therapy", "Blue Light Management", "Photobiomodulation"]
     },
     {
       title: "Physical Performance",
-      description: "Evidence-based protocols for strength, endurance, and recovery.",
+      description: "Evidence-based protocols for strength, endurance, and recovery optimization.",
       icon: Activity,
       link: "/tools/performance",
-      subcategories: ["Recovery Optimization", "Movement Patterns", "Training Protocols"]
+      subcategories: ["Recovery Methods", "Movement Enhancement", "Training Protocols"]
     },
     {
       title: "Immune Function",
-      description: "Strategies for optimizing immune system function and resilience.",
+      description: "Comprehensive guide to immune system optimization and resilience.",
       icon: Shield,
       link: "/tools/immune",
-      subcategories: ["Immune Modulation", "Stress Response", "Cellular Defense"]
+      subcategories: ["Immune Modulators", "Stress Response", "Cellular Defense"]
+    },
+    {
+      title: "Metabolic Enhancement",
+      description: "Protocols for optimizing metabolism and cellular energy production.",
+      icon: Flaskconical,
+      link: "/tools/metabolic",
+      subcategories: ["Glucose Optimization", "Mitochondrial Function", "Metabolic Flexibility"]
     }
   ]
 
@@ -72,8 +80,8 @@ export default function Directory() {
         <div className="max-w-3xl mx-auto mb-8">
           <h1 className="text-3xl font-bold mb-4">Biohacking Directory</h1>
           <p className="text-muted-foreground">
-            A comprehensive guide to evidence-based biological optimization protocols and technologies.
-            Each category represents a core domain of human performance and longevity.
+            A comprehensive repository of evidence-based biological optimization protocols, compounds, and technologies.
+            Each category contains detailed analysis, dosing protocols, and scientific research.
           </p>
         </div>
 
@@ -99,7 +107,7 @@ export default function Directory() {
                   </ul>
                   <Link to={category.link}>
                     <Button className="w-full mt-4">
-                      View Protocols
+                      View Database
                     </Button>
                   </Link>
                 </div>
@@ -110,30 +118,43 @@ export default function Directory() {
 
         <Card className="mt-12 p-6">
           <CardHeader>
-            <CardTitle>Implementation Guidelines</CardTitle>
+            <CardTitle>Research & Safety Guidelines</CardTitle>
             <CardDescription>
-              Systematic approach to biological optimization protocols
+              Essential principles for safe and effective protocol implementation
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold mb-2">Protocol Implementation</h3>
+                <h3 className="font-semibold mb-2">Implementation Protocol</h3>
                 <ul className="list-disc list-inside text-muted-foreground">
-                  <li>Begin with baseline measurements and documentation</li>
-                  <li>Implement interventions systematically and individually</li>
-                  <li>Maintain detailed logs of responses and adaptations</li>
-                  <li>Adjust protocols based on quantitative feedback</li>
+                  <li>Always begin with thorough baseline measurements</li>
+                  <li>Start with minimal effective doses</li>
+                  <li>Document all responses systematically</li>
+                  <li>Maintain detailed logs for longitudinal analysis</li>
+                  <li>Regular biomarker monitoring when applicable</li>
                 </ul>
               </div>
               
               <div>
                 <h3 className="font-semibold mb-2">Safety Considerations</h3>
                 <ul className="list-disc list-inside text-muted-foreground">
-                  <li>Consult healthcare professionals before implementing protocols</li>
-                  <li>Monitor biomarkers and subjective responses</li>
-                  <li>Document any adverse reactions or unexpected effects</li>
-                  <li>Maintain proper documentation for longitudinal analysis</li>
+                  <li>Consult healthcare professionals before starting any protocol</li>
+                  <li>Research potential interactions thoroughly</li>
+                  <li>Maintain comprehensive documentation</li>
+                  <li>Have clear protocols for adverse reactions</li>
+                  <li>Regular safety and efficacy assessments</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Quality Assurance</h3>
+                <ul className="list-disc list-inside text-muted-foreground">
+                  <li>Source compounds from reputable suppliers</li>
+                  <li>Verify third-party testing when available</li>
+                  <li>Store substances according to specifications</li>
+                  <li>Track batch numbers and expiration dates</li>
+                  <li>Regular quality assessment protocols</li>
                 </ul>
               </div>
             </div>
