@@ -2140,7 +2140,7 @@ export type Database = {
           id: string
           is_expert_plan: boolean | null
           likes_count: number | null
-          plan_type: Database["public"]["Enums"]["energy_plan_type"]
+          plan_type: Database["public"]["Enums"]["plan_type"]
           saves_count: number | null
           tags: string[] | null
           title: string
@@ -2154,7 +2154,7 @@ export type Database = {
           id?: string
           is_expert_plan?: boolean | null
           likes_count?: number | null
-          plan_type: Database["public"]["Enums"]["energy_plan_type"]
+          plan_type: Database["public"]["Enums"]["plan_type"]
           saves_count?: number | null
           tags?: string[] | null
           title: string
@@ -2168,7 +2168,7 @@ export type Database = {
           id?: string
           is_expert_plan?: boolean | null
           likes_count?: number | null
-          plan_type?: Database["public"]["Enums"]["energy_plan_type"]
+          plan_type?: Database["public"]["Enums"]["plan_type"]
           saves_count?: number | null
           tags?: string[] | null
           title?: string
@@ -10275,6 +10275,16 @@ export type Database = {
         | "long_term_memory"
         | "migraine"
       mood_category: "positive" | "negative" | "neutral"
+      plan_type:
+        | "energizing_boost"
+        | "sustained_focus"
+        | "mental_clarity"
+        | "physical_vitality"
+        | "deep_relaxation"
+        | "stress_relief"
+        | "evening_winddown"
+        | "sleep_preparation"
+        | "meditation"
       plan_visibility: "private" | "public" | "shared"
       quit_strategy_type:
         | "cold_turkey"
