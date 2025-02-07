@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react"
 import Layout from "@/components/layout/Layout"
 import NotFound from "@/components/NotFound"
