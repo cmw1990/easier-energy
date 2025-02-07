@@ -121,6 +121,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/eye-exercises",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <EyeExercisesPage />
+      </Suspense>
+    ),
+  },
+  {
     path: "/app",
     element: (
       <AuthProvider>
