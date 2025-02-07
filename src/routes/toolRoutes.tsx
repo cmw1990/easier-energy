@@ -37,6 +37,11 @@ const BlueLightBlockers = lazy(() => import("@/pages/tools/BlueLightBlockers"))
 const Grounding = lazy(() => import("@/pages/tools/Grounding"))
 const SleepGuide = lazy(() => import("@/pages/tools/SleepGuide"))
 const SleepGuideArticle = lazy(() => import("@/pages/tools/SleepGuideArticle"))
+const SleepTracking = lazy(() => import("@/pages/tools/SleepTracking"))
+const SleepHygieneChecklist = lazy(() => import("@/pages/tools/SleepHygieneChecklist"))
+const SleepEnvironment = lazy(() => import("@/pages/tools/SleepEnvironment"))
+const SleepAnalytics = lazy(() => import("@/pages/tools/SleepAnalytics"))
+const SleepGoals = lazy(() => import("@/pages/tools/SleepGoals"))
 
 export const toolRoutes = {
   path: "/tools",
@@ -334,6 +339,46 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <SleepGuideArticle />
+        </Suspense>
+      ),
+    },
+    {
+      path: "sleep-tracking",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <SleepTracking />
+        </Suspense>
+      ),
+    },
+    {
+      path: "sleep-hygiene",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <SleepHygieneChecklist />
+        </Suspense>
+      ),
+    },
+    {
+      path: "sleep-environment",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <SleepEnvironment />
+        </Suspense>
+      ),
+    },
+    {
+      path: "sleep-analytics",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <SleepAnalytics />
+        </Suspense>
+      ),
+    },
+    {
+      path: "sleep-goals",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <SleepGoals />
         </Suspense>
       ),
     },
