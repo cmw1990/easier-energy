@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react"
 import WebTools from "@/pages/WebTools"
 
@@ -9,6 +8,9 @@ const BMRCalculator = lazy(() => import("@/pages/tools/BMRCalculator"))
 const BiologicalAgeCalculator = lazy(() => import("@/pages/tools/BiologicalAgeCalculator"))
 const HRVCalculator = lazy(() => import("@/pages/tools/HRVCalculator"))
 const BreathingRateCalculator = lazy(() => import("@/pages/tools/BreathingRateCalculator"))
+const CalorieCalculator = lazy(() => import("@/pages/tools/CalorieCalculator"))
+const MacroCalculator = lazy(() => import("@/pages/tools/MacroCalculator"))
+const WaterIntakeCalculator = lazy(() => import("@/pages/tools/WaterIntakeCalculator"))
 
 export const toolRoutes = {
   path: "/tools",
@@ -74,6 +76,30 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <BreathingRateCalculator />
+        </Suspense>
+      ),
+    },
+    {
+      path: "calorie-calculator",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <CalorieCalculator />
+        </Suspense>
+      ),
+    },
+    {
+      path: "macro-calculator",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <MacroCalculator />
+        </Suspense>
+      ),
+    },
+    {
+      path: "water-intake-calculator",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <WaterIntakeCalculator />
         </Suspense>
       ),
     },
