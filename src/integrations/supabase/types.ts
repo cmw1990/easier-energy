@@ -6777,25 +6777,40 @@ export type Database = {
       survey_responses: {
         Row: {
           completed_at: string | null
+          completion_time: number | null
           created_at: string | null
+          device_info: Json | null
           id: string
+          page_sequence: Json | null
+          page_times: Json | null
           participant_id: string
+          response_metadata: Json | null
           responses: Json
           survey_id: string
         }
         Insert: {
           completed_at?: string | null
+          completion_time?: number | null
           created_at?: string | null
+          device_info?: Json | null
           id?: string
+          page_sequence?: Json | null
+          page_times?: Json | null
           participant_id: string
+          response_metadata?: Json | null
           responses: Json
           survey_id: string
         }
         Update: {
           completed_at?: string | null
+          completion_time?: number | null
           created_at?: string | null
+          device_info?: Json | null
           id?: string
+          page_sequence?: Json | null
+          page_times?: Json | null
           participant_id?: string
+          response_metadata?: Json | null
           responses?: Json
           survey_id?: string
         }
@@ -6841,46 +6856,82 @@ export type Database = {
       }
       surveys: {
         Row: {
+          allow_save_continue: boolean | null
+          branching_logic: Json | null
+          completion_message: string | null
           created_at: string | null
+          custom_styles: Json | null
           description: string | null
           end_date: string | null
           frequency: string | null
           id: string
           is_active: boolean | null
+          layout_theme: string | null
+          progress_bar: boolean | null
+          question_numbering: boolean | null
           questions: Json
+          randomize_questions: boolean | null
+          required_login: boolean | null
           schedule_type: string
           start_date: string | null
+          survey_logic: Json | null
+          survey_theme: Json | null
           title: string
           updated_at: string | null
           user_id: string
+          welcome_message: string | null
         }
         Insert: {
+          allow_save_continue?: boolean | null
+          branching_logic?: Json | null
+          completion_message?: string | null
           created_at?: string | null
+          custom_styles?: Json | null
           description?: string | null
           end_date?: string | null
           frequency?: string | null
           id?: string
           is_active?: boolean | null
+          layout_theme?: string | null
+          progress_bar?: boolean | null
+          question_numbering?: boolean | null
           questions?: Json
+          randomize_questions?: boolean | null
+          required_login?: boolean | null
           schedule_type?: string
           start_date?: string | null
+          survey_logic?: Json | null
+          survey_theme?: Json | null
           title: string
           updated_at?: string | null
           user_id: string
+          welcome_message?: string | null
         }
         Update: {
+          allow_save_continue?: boolean | null
+          branching_logic?: Json | null
+          completion_message?: string | null
           created_at?: string | null
+          custom_styles?: Json | null
           description?: string | null
           end_date?: string | null
           frequency?: string | null
           id?: string
           is_active?: boolean | null
+          layout_theme?: string | null
+          progress_bar?: boolean | null
+          question_numbering?: boolean | null
           questions?: Json
+          randomize_questions?: boolean | null
+          required_login?: boolean | null
           schedule_type?: string
           start_date?: string | null
+          survey_logic?: Json | null
+          survey_theme?: Json | null
           title?: string
           updated_at?: string | null
           user_id?: string
+          welcome_message?: string | null
         }
         Relationships: []
       }
@@ -7202,6 +7253,47 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      tool_reviews: {
+        Row: {
+          created_at: string | null
+          helpful_count: number | null
+          id: string
+          rating: number
+          review_text: string | null
+          tool_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string
+          rating: number
+          review_text?: string | null
+          tool_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string
+          rating?: number
+          review_text?: string | null
+          tool_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tool_reviews_tool_id_fkey"
+            columns: ["tool_id"]
+            isOneToOne: false
+            referencedRelation: "web_tools"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tool_usage_logs: {
         Row: {
@@ -8049,14 +8141,20 @@ export type Database = {
       web_tools: {
         Row: {
           affiliate_links: Json | null
+          avg_time_spent: number | null
           category: string | null
+          completion_rate: number | null
           content: string
           created_at: string
           description: string
           id: string
+          meta_description: string | null
+          meta_keywords: string[] | null
           published: boolean | null
+          related_tools: string[] | null
           seo_description: string | null
           seo_title: string | null
+          share_count: number | null
           slug: string
           tags: string[]
           title: string
@@ -8065,14 +8163,20 @@ export type Database = {
         }
         Insert: {
           affiliate_links?: Json | null
+          avg_time_spent?: number | null
           category?: string | null
+          completion_rate?: number | null
           content: string
           created_at?: string
           description: string
           id?: string
+          meta_description?: string | null
+          meta_keywords?: string[] | null
           published?: boolean | null
+          related_tools?: string[] | null
           seo_description?: string | null
           seo_title?: string | null
+          share_count?: number | null
           slug: string
           tags?: string[]
           title: string
@@ -8081,14 +8185,20 @@ export type Database = {
         }
         Update: {
           affiliate_links?: Json | null
+          avg_time_spent?: number | null
           category?: string | null
+          completion_rate?: number | null
           content?: string
           created_at?: string
           description?: string
           id?: string
+          meta_description?: string | null
+          meta_keywords?: string[] | null
           published?: boolean | null
+          related_tools?: string[] | null
           seo_description?: string | null
           seo_title?: string | null
+          share_count?: number | null
           slug?: string
           tags?: string[]
           title?: string
