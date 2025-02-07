@@ -633,6 +633,220 @@ export type Database = {
         }
         Relationships: []
       }
+      biohacking_devices: {
+        Row: {
+          brand: string | null
+          created_at: string | null
+          device_type: Database["public"]["Enums"]["biohacking_activity_type"]
+          effectiveness_rating: number | null
+          id: string
+          model: string | null
+          notes: string | null
+          price: number | null
+          purchase_date: string | null
+          user_id: string | null
+        }
+        Insert: {
+          brand?: string | null
+          created_at?: string | null
+          device_type: Database["public"]["Enums"]["biohacking_activity_type"]
+          effectiveness_rating?: number | null
+          id?: string
+          model?: string | null
+          notes?: string | null
+          price?: number | null
+          purchase_date?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          brand?: string | null
+          created_at?: string | null
+          device_type?: Database["public"]["Enums"]["biohacking_activity_type"]
+          effectiveness_rating?: number | null
+          id?: string
+          model?: string | null
+          notes?: string | null
+          price?: number | null
+          purchase_date?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      biohacking_discussions: {
+        Row: {
+          activity_type:
+            | Database["public"]["Enums"]["biohacking_activity_type"]
+            | null
+          content: string
+          created_at: string | null
+          id: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          upvotes: number | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_type?:
+            | Database["public"]["Enums"]["biohacking_activity_type"]
+            | null
+          content: string
+          created_at?: string | null
+          id?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_type?:
+            | Database["public"]["Enums"]["biohacking_activity_type"]
+            | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      biohacking_effects: {
+        Row: {
+          created_at: string | null
+          duration_hours: number | null
+          effect_type: string
+          id: string
+          intensity: number | null
+          notes: string | null
+          session_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration_hours?: number | null
+          effect_type: string
+          id?: string
+          intensity?: number | null
+          notes?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          duration_hours?: number | null
+          effect_type?: string
+          id?: string
+          intensity?: number | null
+          notes?: string | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "biohacking_effects_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "biohacking_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      biohacking_reviews: {
+        Row: {
+          cons: string[] | null
+          created_at: string | null
+          device_id: string | null
+          id: string
+          pros: string[] | null
+          rating: number | null
+          review_text: string | null
+          updated_at: string | null
+          upvotes: number | null
+          user_id: string | null
+        }
+        Insert: {
+          cons?: string[] | null
+          created_at?: string | null
+          device_id?: string | null
+          id?: string
+          pros?: string[] | null
+          rating?: number | null
+          review_text?: string | null
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          cons?: string[] | null
+          created_at?: string | null
+          device_id?: string | null
+          id?: string
+          pros?: string[] | null
+          rating?: number | null
+          review_text?: string | null
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "biohacking_reviews_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "biohacking_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      biohacking_sessions: {
+        Row: {
+          activity_type: Database["public"]["Enums"]["biohacking_activity_type"]
+          created_at: string | null
+          duration_minutes: number | null
+          energy_level: number | null
+          focus_level: number | null
+          id: string
+          mood_after: number | null
+          mood_before: number | null
+          notes: string | null
+          recovery_impact: number | null
+          settings: Json | null
+          sleep_impact: number | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_type: Database["public"]["Enums"]["biohacking_activity_type"]
+          created_at?: string | null
+          duration_minutes?: number | null
+          energy_level?: number | null
+          focus_level?: number | null
+          id?: string
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          recovery_impact?: number | null
+          settings?: Json | null
+          sleep_impact?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_type?: Database["public"]["Enums"]["biohacking_activity_type"]
+          created_at?: string | null
+          duration_minutes?: number | null
+          energy_level?: number | null
+          focus_level?: number | null
+          id?: string
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          recovery_impact?: number | null
+          settings?: Json | null
+          sleep_impact?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       board_games: {
         Row: {
           board_size: number | null
@@ -8435,6 +8649,15 @@ export type Database = {
         | "muscle_recovery"
         | "stress_relief"
         | "focus_enhancement"
+      biohacking_activity_type:
+        | "red_light_therapy"
+        | "cold_therapy"
+        | "grounding"
+        | "emf_protection"
+        | "blue_light_blocking"
+        | "mouth_taping"
+        | "breath_work"
+        | "nootropics"
       cbt_exercise_type:
         | "thought_record"
         | "behavioral_activation"
