@@ -53,13 +53,11 @@ const router = createBrowserRouter([
     path: "/auth",
     element: <Auth />,
   },
-  // Development route (outside of protected routes)
   {
     path: "/development",
     element: <DevelopmentTools />,
     errorElement: <NotFound />,
   },
-  // Public web tools routes
   {
     path: "/tools",
     children: [
@@ -77,7 +75,6 @@ const router = createBrowserRouter([
       }
     ],
   },
-  // Standalone breathing game routes outside the main layout
   {
     path: "/breathing-pufferfish",
     element: <BreathingGame />,
@@ -90,7 +87,6 @@ const router = createBrowserRouter([
     path: "/breathing-zen",
     element: <ZenGarden />,
   },
-  // Main app routes (protected)
   {
     path: "/app",
     element: (
