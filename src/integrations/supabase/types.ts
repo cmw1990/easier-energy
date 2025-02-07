@@ -6648,6 +6648,102 @@ export type Database = {
           },
         ]
       }
+      sleep_analytics_summaries: {
+        Row: {
+          average_quality: number | null
+          consistency_score: number | null
+          created_at: string
+          date: string
+          environment_score: number | null
+          id: string
+          sleep_debt_hours: number | null
+          sleep_efficiency: number | null
+          total_sleep_hours: number | null
+          user_id: string | null
+        }
+        Insert: {
+          average_quality?: number | null
+          consistency_score?: number | null
+          created_at?: string
+          date?: string
+          environment_score?: number | null
+          id?: string
+          sleep_debt_hours?: number | null
+          sleep_efficiency?: number | null
+          total_sleep_hours?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          average_quality?: number | null
+          consistency_score?: number | null
+          created_at?: string
+          date?: string
+          environment_score?: number | null
+          id?: string
+          sleep_debt_hours?: number | null
+          sleep_efficiency?: number | null
+          total_sleep_hours?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      sleep_combined_data: {
+        Row: {
+          bedtime: string | null
+          comfort_rating: number | null
+          created_at: string
+          date: string
+          humidity: number | null
+          id: string
+          light_level: number | null
+          noise_level: number | null
+          sleep_quality: number | null
+          target_bedtime: string | null
+          target_sleep_duration: number | null
+          target_wake_time: string | null
+          temperature: number | null
+          user_id: string | null
+          ventilation_rating: number | null
+          wake_time: string | null
+        }
+        Insert: {
+          bedtime?: string | null
+          comfort_rating?: number | null
+          created_at?: string
+          date?: string
+          humidity?: number | null
+          id?: string
+          light_level?: number | null
+          noise_level?: number | null
+          sleep_quality?: number | null
+          target_bedtime?: string | null
+          target_sleep_duration?: number | null
+          target_wake_time?: string | null
+          temperature?: number | null
+          user_id?: string | null
+          ventilation_rating?: number | null
+          wake_time?: string | null
+        }
+        Update: {
+          bedtime?: string | null
+          comfort_rating?: number | null
+          created_at?: string
+          date?: string
+          humidity?: number | null
+          id?: string
+          light_level?: number | null
+          noise_level?: number | null
+          sleep_quality?: number | null
+          target_bedtime?: string | null
+          target_sleep_duration?: number | null
+          target_wake_time?: string | null
+          temperature?: number | null
+          user_id?: string | null
+          ventilation_rating?: number | null
+          wake_time?: string | null
+        }
+        Relationships: []
+      }
       sleep_disorders: {
         Row: {
           causes: string[] | null
