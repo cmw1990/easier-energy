@@ -7,9 +7,14 @@ import { BathingRoutineCard } from "@/components/bathing/BathingRoutineCard"
 import { ActiveSessionCard } from "@/components/bathing/ActiveSessionCard"
 import { BathingStats } from "@/components/bathing/BathingStats"
 import { BathingHistory } from "@/components/bathing/BathingHistory"
+import { CustomRoutineForm } from "@/components/bathing/CustomRoutineForm"
+import { BathingReminders } from "@/components/bathing/BathingReminders"
+import { BathingAchievements } from "@/components/bathing/BathingAchievements"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Search, Plus } from "lucide-react"
 
 interface BathingRoutine {
   id: string
@@ -21,6 +26,8 @@ interface BathingRoutine {
   benefits: string[]
   mood_tags: string[]
   scientific_sources: string[] | null
+  is_public: boolean
+  creator_id: string | null
 }
 
 interface RoutineLogState {
@@ -53,6 +60,7 @@ export default function Bathing() {
       const { data, error } = await supabase
         .from("bathing_routines")
         .select("*")
+        .or(`is_public.eq.true,creator_id.eq.${session?.user?.id}`)
       
       if (error) throw error
       setRoutines(data || [])
@@ -147,41 +155,87 @@ export default function Bathing() {
         </p>
       </div>
 
-      {session && <BathingStats />}
+      {session && (
+        <Tabs defaultValue="routines" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="routines">Routines</TabsTrigger>
+            <TabsTrigger value="stats">Stats</TabsTrigger>
+            <TabsTrigger value="achievements">Achievements</TabsTrigger>
+            <TabsTrigger value="reminders">Reminders</TabsTrigger>
+          </TabsList>
 
-      {logState.isTracking ? (
-        <ActiveSessionCard
-          moodBefore={logState.moodBefore}
-          energyBefore={logState.energyBefore}
-          onEndSession={endRoutine}
-        />
-      ) : (
-        <>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search routines by name, description, or mood tags..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
+          <TabsContent value="routines" className="space-y-6">
+            {logState.isTracking ? (
+              <ActiveSessionCard
+                moodBefore={logState.moodBefore}
+                energyBefore={logState.energyBefore}
+                onEndSession={endRoutine}
               />
-            </div>
-          </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search routines by name, description, or mood tags..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9"
+                    />
+                  </div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create Routine
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <CustomRoutineForm onSuccess={loadRoutines} />
+                    </DialogContent>
+                  </Dialog>
+                </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredRoutines.map((routine) => (
-              <BathingRoutineCard
-                key={routine.id}
-                routine={routine}
-                onStartRoutine={startRoutine}
-              />
-            ))}
-          </div>
-        </>
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {filteredRoutines.map((routine) => (
+                    <BathingRoutineCard
+                      key={routine.id}
+                      routine={routine}
+                      onStartRoutine={startRoutine}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            <BathingHistory />
+          </TabsContent>
+
+          <TabsContent value="stats">
+            <BathingStats />
+          </TabsContent>
+
+          <TabsContent value="achievements">
+            <BathingAchievements />
+          </TabsContent>
+
+          <TabsContent value="reminders">
+            <BathingReminders />
+          </TabsContent>
+        </Tabs>
       )}
 
-      {session && <BathingHistory />}
+      {!session && (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredRoutines.map((routine) => (
+            <BathingRoutineCard
+              key={routine.id}
+              routine={routine}
+              onStartRoutine={startRoutine}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

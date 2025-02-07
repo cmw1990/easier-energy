@@ -520,13 +520,83 @@ export type Database = {
         }
         Relationships: []
       }
+      bathing_achievements: {
+        Row: {
+          achieved_at: string
+          achievement_type: string
+          id: string
+          streak_count: number | null
+          total_sessions: number | null
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string
+          achievement_type: string
+          id?: string
+          streak_count?: number | null
+          total_sessions?: number | null
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string
+          achievement_type?: string
+          id?: string
+          streak_count?: number | null
+          total_sessions?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      bathing_reminders: {
+        Row: {
+          created_at: string
+          days_of_week: string[]
+          id: string
+          is_active: boolean | null
+          reminder_time: string
+          routine_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days_of_week: string[]
+          id?: string
+          is_active?: boolean | null
+          reminder_time: string
+          routine_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days_of_week?: string[]
+          id?: string
+          is_active?: boolean | null
+          reminder_time?: string
+          routine_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bathing_reminders_routine_id_fkey"
+            columns: ["routine_id"]
+            isOneToOne: false
+            referencedRelation: "bathing_routines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bathing_routines: {
         Row: {
           benefits: string[]
           created_at: string
+          creator_id: string | null
           description: string | null
           duration_minutes: number
           id: string
+          is_public: boolean | null
           mood_tags: string[]
           name: string
           scientific_sources: string[] | null
@@ -536,9 +606,11 @@ export type Database = {
         Insert: {
           benefits: string[]
           created_at?: string
+          creator_id?: string | null
           description?: string | null
           duration_minutes: number
           id?: string
+          is_public?: boolean | null
           mood_tags: string[]
           name: string
           scientific_sources?: string[] | null
@@ -548,9 +620,11 @@ export type Database = {
         Update: {
           benefits?: string[]
           created_at?: string
+          creator_id?: string | null
           description?: string | null
           duration_minutes?: number
           id?: string
+          is_public?: boolean | null
           mood_tags?: string[]
           name?: string
           scientific_sources?: string[] | null
@@ -7156,6 +7230,35 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      user_favorite_routines: {
+        Row: {
+          created_at: string
+          id: string
+          routine_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          routine_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          routine_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_favorite_routines_routine_id_fkey"
+            columns: ["routine_id"]
+            isOneToOne: false
+            referencedRelation: "bathing_routines"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_follows: {
         Row: {
