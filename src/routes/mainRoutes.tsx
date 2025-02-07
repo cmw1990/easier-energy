@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react"
 import Layout from "@/components/layout/Layout"
 import NotFound from "@/components/NotFound"
@@ -37,6 +38,7 @@ const EnergyEnhancement = lazy(() => import("@/pages/tools/EnergyEnhancement"))
 const Sleep = lazy(() => import("@/pages/tools/Sleep"))
 const Light = lazy(() => import("@/pages/tools/Light"))
 const SleepAnalytics = lazy(() => import("@/pages/tools/SleepAnalytics"))
+const WhyUs = lazy(() => import("@/pages/WhyUs"))
 
 export const mainRoutes = [
   {
@@ -55,6 +57,14 @@ export const mainRoutes = [
   {
     path: "/auth",
     element: <Auth />,
+  },
+  {
+    path: "/why-us",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <WhyUs />
+      </Suspense>
+    ),
   },
   {
     path: "/development",
