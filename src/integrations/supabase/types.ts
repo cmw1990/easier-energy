@@ -4335,9 +4335,11 @@ export type Database = {
           alternative_names: string[] | null
           antioxidant_content: string | null
           aroma_notes: string[] | null
+          average_rating: number | null
           benefits: string[] | null
           botanical_family: string | null
           brewing_instructions: string
+          brewing_tips: string[] | null
           caffeine_content_mg: number | null
           category: string
           cautions: string[] | null
@@ -4357,6 +4359,7 @@ export type Database = {
           l_theanine_content_mg: number | null
           mineral_content: Json | null
           name: string
+          optimal_steep_time_range_seconds: number[] | null
           optimal_temp_celsius: number | null
           organic_certified: boolean | null
           origin_regions: string[] | null
@@ -4382,6 +4385,7 @@ export type Database = {
           traditional_use_regions: string[] | null
           traditional_uses: string[] | null
           updated_at: string | null
+          usage_count: number | null
           vitamin_content: Json | null
           warnings_and_interactions: string[] | null
           water_quality_notes: string | null
@@ -4391,9 +4395,11 @@ export type Database = {
           alternative_names?: string[] | null
           antioxidant_content?: string | null
           aroma_notes?: string[] | null
+          average_rating?: number | null
           benefits?: string[] | null
           botanical_family?: string | null
           brewing_instructions: string
+          brewing_tips?: string[] | null
           caffeine_content_mg?: number | null
           category: string
           cautions?: string[] | null
@@ -4413,6 +4419,7 @@ export type Database = {
           l_theanine_content_mg?: number | null
           mineral_content?: Json | null
           name: string
+          optimal_steep_time_range_seconds?: number[] | null
           optimal_temp_celsius?: number | null
           organic_certified?: boolean | null
           origin_regions?: string[] | null
@@ -4438,6 +4445,7 @@ export type Database = {
           traditional_use_regions?: string[] | null
           traditional_uses?: string[] | null
           updated_at?: string | null
+          usage_count?: number | null
           vitamin_content?: Json | null
           warnings_and_interactions?: string[] | null
           water_quality_notes?: string | null
@@ -4447,9 +4455,11 @@ export type Database = {
           alternative_names?: string[] | null
           antioxidant_content?: string | null
           aroma_notes?: string[] | null
+          average_rating?: number | null
           benefits?: string[] | null
           botanical_family?: string | null
           brewing_instructions?: string
+          brewing_tips?: string[] | null
           caffeine_content_mg?: number | null
           category?: string
           cautions?: string[] | null
@@ -4469,6 +4479,7 @@ export type Database = {
           l_theanine_content_mg?: number | null
           mineral_content?: Json | null
           name?: string
+          optimal_steep_time_range_seconds?: number[] | null
           optimal_temp_celsius?: number | null
           organic_certified?: boolean | null
           origin_regions?: string[] | null
@@ -4494,6 +4505,7 @@ export type Database = {
           traditional_use_regions?: string[] | null
           traditional_uses?: string[] | null
           updated_at?: string | null
+          usage_count?: number | null
           vitamin_content?: Json | null
           warnings_and_interactions?: string[] | null
           water_quality_notes?: string | null
