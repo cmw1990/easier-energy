@@ -7,6 +7,7 @@ import { CalendarClock, Sun, Moon, Heart, Brain } from "lucide-react";
 import { format } from "date-fns";
 import { CycleImpactForm } from "./CycleImpactForm";
 import { CycleRecommendations } from "./CycleRecommendations";
+import { CycleLifestyleRecommendations } from "./CycleLifestyleRecommendations";
 
 export const CyclePhasePrediction = () => {
   const { session } = useAuth();
@@ -99,6 +100,8 @@ export const CyclePhasePrediction = () => {
         </CardContent>
       </Card>
 
+      <CycleLifestyleRecommendations phaseType={predictions.phase_type} />
+      
       <CycleImpactForm />
       
       <CycleRecommendations phaseType={predictions.phase_type} />
