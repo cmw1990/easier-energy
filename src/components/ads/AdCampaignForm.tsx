@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "@/components/AuthProvider"
+import { AdTierSelector } from './AdTierSelector'
+import { AdPreview } from './AdPreview'
 
 const campaignFormSchema = z.object({
   productId: z.string().uuid(),
@@ -19,13 +21,18 @@ const campaignFormSchema = z.object({
   budget: z.coerce.number().positive(),
   cpc: z.coerce.number().positive(),
   durationDays: z.coerce.number().positive(),
+  tier: z.enum(['basic', 'pro', 'premium']),
+  targetDemographics: z.object({
+    ageRanges: z.array(z.string()).optional(),
+    interests: z.array(z.string()).optional(),
+    locations: z.array(z.string()).optional()
+  }).optional()
 })
 
 export function AdCampaignForm() {
   const { session } = useAuth()
   const { toast } = useToast()
 
-  // Query user's products
   const { data: products } = useQuery({
     queryKey: ['user-products', session?.user?.id],
     queryFn: async () => {
@@ -40,6 +47,19 @@ export function AdCampaignForm() {
     enabled: !!session?.user?.id,
   })
 
+  const { data: displayZones } = useQuery({
+    queryKey: ['ad-display-zones'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ad_display_zones')
+        .select('*')
+        .order('price_multiplier', { ascending: true })
+
+      if (error) throw error
+      return data
+    }
+  })
+
   const form = useForm<z.infer<typeof campaignFormSchema>>({
     resolver: zodResolver(campaignFormSchema),
     defaultValues: {
@@ -47,8 +67,16 @@ export function AdCampaignForm() {
       budget: 50,
       cpc: 0.10,
       durationDays: 7,
+      tier: 'basic',
+      targetDemographics: {
+        ageRanges: [],
+        interests: [],
+        locations: []
+      }
     },
   })
+
+  const selectedProduct = products?.find(p => p.id === form.watch('productId'))
 
   async function onSubmit(values: z.infer<typeof campaignFormSchema>) {
     try {
@@ -58,13 +86,20 @@ export function AdCampaignForm() {
 
       const endsAt = new Date(Date.now() + values.durationDays * 24 * 60 * 60 * 1000).toISOString()
       
+      // Get price multiplier based on tier and placement
+      const zone = displayZones?.find(z => z.zone_type === values.placementType)
+      const tierMultiplier = values.tier === 'premium' ? 2 : values.tier === 'pro' ? 1.5 : 1
+      const adjustedCpc = values.cpc * (zone?.price_multiplier || 1) * tierMultiplier
+
       const { error } = await supabase.from('sponsored_products').insert({
         product_id: values.productId,
         placement_type: values.placementType,
         budget: values.budget,
-        cpc: values.cpc,
+        cpc: adjustedCpc,
         ends_at: endsAt,
-        sponsor_id: session.user.id
+        sponsor_id: session.user.id,
+        tier: values.tier,
+        target_demographics: values.targetDemographics
       })
 
       if (error) throw error
@@ -95,6 +130,23 @@ export function AdCampaignForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="tier"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Campaign Tier</FormLabel>
+                  <FormControl>
+                    <AdTierSelector 
+                      value={field.value} 
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="productId"
@@ -147,6 +199,11 @@ export function AdCampaignForm() {
               )}
             />
 
+            <AdPreview 
+              placementType={form.watch('placementType')}
+              productName={selectedProduct?.name}
+            />
+
             <FormField
               control={form.control}
               name="budget"
@@ -169,12 +226,12 @@ export function AdCampaignForm() {
               name="cpc"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cost per Click ($)</FormLabel>
+                  <FormLabel>Base Cost per Click ($)</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" {...field} />
                   </FormControl>
                   <FormDescription>
-                    How much you're willing to pay per click
+                    Base cost per click - will be adjusted based on placement and tier
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
