@@ -11,56 +11,30 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      expert_profiles: {
+      user_life_situations: {
         Row: {
           id: string
-          created_at: string  
+          user_id: string 
+          situation: LifeSituation
+          started_at: string
           updated_at: string
-          credentials: string[]
-          specialties: string[]
-          verification_status: 'pending' | 'approved' | 'rejected'
-          verified_at: string | null
+          notes: string | null
         }
         Insert: {
-          id: string
-          created_at?: string
+          id?: string
+          user_id: string
+          situation: LifeSituation
+          started_at?: string
           updated_at?: string
-          credentials: string[]
-          specialties: string[]
-          verification_status?: 'pending' | 'approved' | 'rejected'
-          verified_at?: string | null
+          notes?: string | null
         }
         Update: {
           id?: string
-          created_at?: string
+          user_id?: string
+          situation?: LifeSituation
+          started_at?: string
           updated_at?: string
-          credentials?: string[]
-          specialties?: string[]
-          verification_status?: 'pending' | 'approved' | 'rejected'
-          verified_at?: string | null
-        }
-      }
-      profiles: {
-        Row: {
-          id: string
-          updated_at: string | null
-          created_at: string | null
-          avatar_url: string | null
-          full_name: string | null
-        }
-        Insert: {
-          id: string
-          updated_at?: string | null
-          created_at?: string | null
-          avatar_url?: string | null
-          full_name?: string | null
-        }
-        Update: {
-          id?: string
-          updated_at?: string | null
-          created_at?: string | null
-          avatar_url?: string | null
-          full_name?: string | null
+          notes?: string | null
         }
       }
       energy_plans: {
@@ -176,6 +150,58 @@ export interface Database {
           completed_at?: string | null
         }
       }
+      profiles: {
+        Row: {
+          id: string
+          updated_at: string | null
+          created_at: string | null
+          avatar_url: string | null
+          full_name: string | null
+        }
+        Insert: {
+          id: string
+          updated_at?: string | null
+          created_at?: string | null
+          avatar_url?: string | null
+          full_name?: string | null
+        }
+        Update: {
+          id?: string
+          updated_at?: string | null
+          created_at?: string | null
+          avatar_url?: string | null
+          full_name?: string | null
+        }
+      }
+      expert_profiles: {
+        Row: {
+          id: string
+          created_at: string  
+          updated_at: string
+          credentials: string[]
+          specialties: string[]
+          verification_status: 'pending' | 'approved' | 'rejected'
+          verified_at: string | null
+        }
+        Insert: {
+          id: string
+          created_at?: string
+          updated_at?: string
+          credentials: string[]
+          specialties: string[]
+          verification_status?: 'pending' | 'approved' | 'rejected'
+          verified_at?: string | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          credentials?: string[]
+          specialties?: string[]
+          verification_status?: 'pending' | 'approved' | 'rejected'
+          verified_at?: string | null
+        }
+      }
       user_saved_plans: {
         Row: {
           id: string
@@ -192,32 +218,6 @@ export interface Database {
         Update: {
           user_id?: string
           plan_id?: string
-        }
-      }
-      user_life_situations: {
-        Row: {
-          id: string
-          user_id: string 
-          situation: LifeSituation
-          started_at: string
-          updated_at: string
-          notes: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          situation: LifeSituation
-          started_at?: string
-          updated_at?: string
-          notes?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          situation?: LifeSituation
-          started_at?: string
-          updated_at?: string
-          notes?: string | null
         }
       }
     }
