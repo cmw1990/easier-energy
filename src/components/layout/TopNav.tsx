@@ -1,5 +1,5 @@
 
-import { Battery, LogIn, TrendingUp } from "lucide-react"
+import { Battery, LogIn, TrendingUp, Tools, Laptop } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -13,7 +13,8 @@ export const TopNav = () => {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto p-4 flex justify-between items-center">
+      {/* First Row */}
+      <div className="container mx-auto p-4 flex justify-between items-center border-b">
         <Link to="/" className="flex items-center gap-2">
           <Battery className="h-6 w-6 text-primary" />
           <span className="text-xl font-semibold">The Well-Charged</span>
@@ -32,18 +33,6 @@ export const TopNav = () => {
               />
             </div>
           )}
-          <Link to="/vendor/ads">
-            <Button variant="outline" className="bg-green-500/10 hover:bg-green-500/20 text-green-600">
-              <TrendingUp className="mr-2 h-4 w-4" />
-              Advertise
-            </Button>
-          </Link>
-          <Link to="/tools">
-            <Button variant="ghost">Tools</Button>
-          </Link>
-          <Link to="/app">
-            <Button variant="outline">Web App</Button>
-          </Link>
           <Link to="/auth">
             <Button>
               <LogIn className="mr-2 h-4 w-4" />
@@ -51,6 +40,34 @@ export const TopNav = () => {
             </Button>
           </Link>
         </div>
+      </div>
+
+      {/* Second Row */}
+      <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+        <div className="flex items-center gap-4">
+          <Link to="/tools">
+            <Button variant="ghost" size="sm" className="text-sm">
+              <Tools className="mr-2 h-4 w-4" />
+              Tools
+            </Button>
+          </Link>
+          <Link to="/app">
+            <Button variant="ghost" size="sm" className="text-sm">
+              <Laptop className="mr-2 h-4 w-4" />
+              Web App
+            </Button>
+          </Link>
+        </div>
+        <Link to="/vendor/ads">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="bg-orange-500 hover:bg-orange-600 text-white border-none shadow-sm"
+          >
+            <TrendingUp className="mr-2 h-4 w-4" />
+            Advertise
+          </Button>
+        </Link>
       </div>
     </nav>
   )
