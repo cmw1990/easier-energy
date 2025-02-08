@@ -4838,6 +4838,48 @@ export type Database = {
           },
         ]
       }
+      inventory_logs: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          quantity_change: number
+          reason: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          quantity_change: number
+          reason?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          quantity_change?: number
+          reason?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_logs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "inventory_logs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_tracking: {
         Row: {
           created_at: string | null
@@ -12880,6 +12922,85 @@ export type Database = {
           },
           {
             foreignKeyName: "vendor_categories_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_customer_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_from_vendor: boolean | null
+          message: string
+          read_at: string | null
+          user_id: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_from_vendor?: boolean | null
+          message: string
+          read_at?: string | null
+          user_id: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_from_vendor?: boolean | null
+          message?: string
+          read_at?: string | null
+          user_id?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_customer_messages_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_daily_metrics: {
+        Row: {
+          average_order_value: number | null
+          created_at: string | null
+          date: string
+          id: string
+          total_customers: number | null
+          total_orders: number | null
+          total_revenue: number | null
+          vendor_id: string
+        }
+        Insert: {
+          average_order_value?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          total_customers?: number | null
+          total_orders?: number | null
+          total_revenue?: number | null
+          vendor_id: string
+        }
+        Update: {
+          average_order_value?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          total_customers?: number | null
+          total_orders?: number | null
+          total_revenue?: number | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_daily_metrics_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "vendors"
