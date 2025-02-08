@@ -13,6 +13,23 @@ export type PlanType =
 export type PlanVisibility = 'private' | 'public' | 'shared'
 export type PlanCategory = 'charged' | 'recharged'
 
+export interface CycleAdjustment {
+  energyLevelModifier: number
+  durationModifier: number
+  intensityModifier: number
+  recommendedTimeOfDay?: string[]
+  cyclePhaseTips?: string[]
+}
+
+export interface BiometricData {
+  cyclePhase?: string
+  energyLevel?: number
+  stressLevel?: number
+  sleepQuality?: number
+  symptoms?: string[]
+  mood?: string
+}
+
 export interface PlanComponent {
   id: string
   component_type: string
@@ -22,6 +39,8 @@ export interface PlanComponent {
   completion_criteria?: any
   settings?: any
   notes?: string
+  cycleAdjustments?: Record<string, CycleAdjustment>
+  requiredBiometrics?: BiometricData
 }
 
 export interface Plan {
@@ -46,6 +65,9 @@ export interface Plan {
   celebrity_name?: string
   celebrity_profession?: string
   celebrity_source?: string
+  cyclePhaseRecommendations?: Record<string, string[]>
+  hormonalPhaseAdjustments?: Record<string, CycleAdjustment>
+  biometricRequirements?: BiometricData
 }
 
 export interface PlanReview {
