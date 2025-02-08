@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
+import { useNavigate } from "react-router-dom"
 
 type PregnancyData = {
   id: string
@@ -15,10 +16,13 @@ type PregnancyData = {
   last_period_date: string | null
   is_high_risk: boolean
   healthcare_provider: string | null
+  energy_support_needed: boolean
+  focus_support_needed: boolean
 }
 
 const PregnancyPage = () => {
   const { toast } = useToast()
+  const navigate = useNavigate()
   
   const { data: pregnancyData, isLoading } = useQuery({
     queryKey: ['pregnancy-tracking'],
@@ -55,6 +59,10 @@ const PregnancyPage = () => {
     }
   })
 
+  const handleEnergyPlanClick = () => {
+    navigate('/energy-plans')
+  }
+
   return (
     <div className="space-y-4 container mx-auto p-4">
       <Card>
@@ -76,9 +84,18 @@ const PregnancyPage = () => {
                     <Calendar className="h-4 w-4 text-muted-foreground" />
                     Due Date: {format(new Date(pregnancyData.due_date), 'MMMM d, yyyy')}
                   </p>
-                  <p>Current Stage: {pregnancyData.current_stage.replace('_', ' ')}</p>
+                  <p className="capitalize">Current Stage: {pregnancyData.current_stage.replace(/_/g, ' ')}</p>
                   {pregnancyData.healthcare_provider && (
                     <p>Healthcare Provider: {pregnancyData.healthcare_provider}</p>
+                  )}
+                  {pregnancyData.energy_support_needed && (
+                    <Button 
+                      variant="outline" 
+                      className="mt-2"
+                      onClick={handleEnergyPlanClick}
+                    >
+                      View Energy Support Plans
+                    </Button>
                   )}
                 </div>
               </div>

@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Baby, Brain } from "lucide-react"
 import type { Plan, PlanCategory, ProgressRecord } from "@/types/energyPlans"
 import type { Database } from "@/types/supabase"
 
@@ -187,7 +188,10 @@ const EnergyPlans = () => {
         <div className="flex gap-4">
           <Dialog open={showLifeSituationDialog} onOpenChange={setShowLifeSituationDialog}>
             <DialogTrigger asChild>
-              <Button variant="outline">Update Life Situation</Button>
+              <Button variant="outline" className="flex items-center gap-2">
+                {lifeSituation?.situation === 'pregnancy' ? <Baby className="h-4 w-4" /> : <Brain className="h-4 w-4" />}
+                Update Life Situation
+              </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
