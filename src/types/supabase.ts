@@ -322,6 +322,50 @@ export interface Database {
           plan_id?: string
         }
       }
+      pregnancy_milestones: {
+        Row: {
+          id: string
+          user_id: string
+          milestone_type: string
+          description: string | null
+          achieved_at: string
+          created_at: string
+          celebration_shared: boolean
+          week_number: number | null
+          custom_title: string | null
+          media_url: string | null
+          notes: string | null
+          metadata: Json | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          milestone_type: string
+          description?: string | null
+          achieved_at?: string
+          created_at?: string
+          celebration_shared?: boolean
+          week_number?: number | null
+          custom_title?: string | null
+          media_url?: string | null
+          notes?: string | null
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          milestone_type?: string
+          description?: string | null
+          achieved_at?: string
+          created_at?: string
+          celebration_shared?: boolean
+          week_number?: number | null
+          custom_title?: string | null
+          media_url?: string | null
+          notes?: string | null
+          metadata?: Json | null
+        }
+      }
     }
   }
 }
