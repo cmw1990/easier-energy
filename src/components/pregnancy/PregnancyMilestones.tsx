@@ -1,18 +1,23 @@
 
+import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
-import { Baby, Calendar, Heart, Plus } from "lucide-react"
+import { Baby, Calendar, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
+import { PregnancyMilestoneForm } from "./PregnancyMilestoneForm"
 import type { PregnancyMilestoneRow } from "@/types/supabase"
+import { AchievementCelebration } from "@/components/achievements/AchievementCelebration"
 
 export const PregnancyMilestones = () => {
   const { session } = useAuth()
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const [formOpen, setFormOpen] = useState(false)
+  const [celebratingMilestone, setCelebratingMilestone] = useState<PregnancyMilestoneRow | null>(null)
 
   const { data: milestones, isLoading } = useQuery({
     queryKey: ['pregnancy-milestones'],
@@ -34,6 +39,36 @@ export const PregnancyMilestones = () => {
       return data
     },
     enabled: !!session?.user?.id
+  })
+
+  const addMilestoneMutation = useMutation({
+    mutationFn: async (milestone: Partial<PregnancyMilestoneRow>) => {
+      if (!session?.user?.id) throw new Error("Not authenticated")
+      
+      const { data, error } = await supabase
+        .from('pregnancy_milestones')
+        .insert([{ ...milestone, user_id: session.user.id }])
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['pregnancy-milestones'] })
+      toast({
+        title: "Success",
+        description: "Milestone added successfully!"
+      })
+      setCelebratingMilestone(data)
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to add milestone",
+        variant: "destructive"
+      })
+    }
   })
 
   const shareMilestoneMutation = useMutation({
@@ -64,6 +99,10 @@ export const PregnancyMilestones = () => {
     }
   })
 
+  const handleAddMilestone = (values: any) => {
+    addMilestoneMutation.mutate(values)
+  }
+
   const handleShareMilestone = (id: string) => {
     shareMilestoneMutation.mutate(id)
   }
@@ -75,10 +114,11 @@ export const PregnancyMilestones = () => {
           <Baby className="h-5 w-5 text-pink-500" />
           Pregnancy Milestones
         </CardTitle>
-        <Button variant="outline" size="sm">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Milestone
-        </Button>
+        <PregnancyMilestoneForm 
+          open={formOpen}
+          onOpenChange={setFormOpen}
+          onSubmit={handleAddMilestone}
+        />
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -88,7 +128,7 @@ export const PregnancyMilestones = () => {
             {milestones.map((milestone) => (
               <div 
                 key={milestone.id} 
-                className="flex items-start justify-between p-4 rounded-lg border bg-card"
+                className="flex items-start justify-between p-4 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
               >
                 <div className="space-y-1">
                   <h4 className="font-medium">{milestone.custom_title || milestone.milestone_type}</h4>
@@ -120,6 +160,16 @@ export const PregnancyMilestones = () => {
           </p>
         )}
       </CardContent>
+
+      {celebratingMilestone && (
+        <AchievementCelebration
+          title="New Milestone!"
+          description={`Congratulations on reaching: ${celebratingMilestone.custom_title || celebratingMilestone.milestone_type}`}
+          points={50}
+          icon="baby"
+          onComplete={() => setCelebratingMilestone(null)}
+        />
+      )}
     </Card>
   )
 }
