@@ -42,7 +42,7 @@ export const PregnancyMilestones = () => {
         return null
       }
 
-      return data
+      return data as PregnancyMilestone[]
     },
     enabled: !!session?.user?.id
   })

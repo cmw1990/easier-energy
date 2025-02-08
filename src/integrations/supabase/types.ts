@@ -5301,6 +5301,51 @@ export type Database = {
         }
         Relationships: []
       }
+      pregnancy_milestones: {
+        Row: {
+          achieved_at: string | null
+          celebration_shared: boolean | null
+          created_at: string | null
+          custom_title: string | null
+          description: string | null
+          id: string
+          media_url: string | null
+          metadata: Json | null
+          milestone_type: string
+          notes: string | null
+          user_id: string
+          week_number: number | null
+        }
+        Insert: {
+          achieved_at?: string | null
+          celebration_shared?: boolean | null
+          created_at?: string | null
+          custom_title?: string | null
+          description?: string | null
+          id?: string
+          media_url?: string | null
+          metadata?: Json | null
+          milestone_type: string
+          notes?: string | null
+          user_id: string
+          week_number?: number | null
+        }
+        Update: {
+          achieved_at?: string | null
+          celebration_shared?: boolean | null
+          created_at?: string | null
+          custom_title?: string | null
+          description?: string | null
+          id?: string
+          media_url?: string | null
+          metadata?: Json | null
+          milestone_type?: string
+          notes?: string | null
+          user_id?: string
+          week_number?: number | null
+        }
+        Relationships: []
+      }
       pregnancy_tracking: {
         Row: {
           conception_date: string | null

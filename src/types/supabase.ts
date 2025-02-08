@@ -327,12 +327,12 @@ export interface Database {
           id: string
           user_id: string
           milestone_type: string
+          custom_title: string | null
           description: string | null
           achieved_at: string
           created_at: string
           celebration_shared: boolean
           week_number: number | null
-          custom_title: string | null
           media_url: string | null
           notes: string | null
           metadata: Json | null
@@ -341,12 +341,12 @@ export interface Database {
           id?: string
           user_id: string
           milestone_type: string
+          custom_title?: string | null
           description?: string | null
           achieved_at?: string
           created_at?: string
           celebration_shared?: boolean
           week_number?: number | null
-          custom_title?: string | null
           media_url?: string | null
           notes?: string | null
           metadata?: Json | null
@@ -355,12 +355,12 @@ export interface Database {
           id?: string
           user_id?: string
           milestone_type?: string
+          custom_title?: string | null
           description?: string | null
           achieved_at?: string
           created_at?: string
           celebration_shared?: boolean
           week_number?: number | null
-          custom_title?: string | null
           media_url?: string | null
           notes?: string | null
           metadata?: Json | null
