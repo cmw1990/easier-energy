@@ -59,17 +59,16 @@ export const CycleWeatherImpact = () => {
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    const symptomType = formData.get('symptom_type');
-    const phaseType = formData.get('phase_type');
+    // Type check and cast form data values
+    const symptomTypeValue = formData.get('symptom_type');
+    const phaseTypeValue = formData.get('phase_type');
     const notesValue = formData.get('notes');
     const conditionValue = formData.get('condition');
 
-    // Ensure these fields are strings
+    // Ensure all required values are strings
     if (
-      typeof symptomType !== 'string' ||
-      typeof phaseType !== 'string' ||
-      (notesValue !== null && typeof notesValue !== 'string') ||
-      (conditionValue !== null && typeof conditionValue !== 'string')
+      typeof symptomTypeValue !== 'string' ||
+      typeof phaseTypeValue !== 'string'
     ) {
       toast({
         title: "Error",
@@ -79,11 +78,15 @@ export const CycleWeatherImpact = () => {
       return;
     }
 
+    // Handle optional string values
+    const notes = notesValue ? String(notesValue) : undefined;
+    const condition = conditionValue ? String(conditionValue) : null;
+
     // Parse numeric values
-    const temperature = parseFloat(formData.get('temperature') as string);
-    const humidity = parseFloat(formData.get('humidity') as string);
-    const pressure = parseFloat(formData.get('pressure') as string);
-    const symptomIntensity = parseInt(formData.get('symptom_intensity') as string);
+    const temperature = parseFloat(String(formData.get('temperature')));
+    const humidity = parseFloat(String(formData.get('humidity')));
+    const pressure = parseFloat(String(formData.get('pressure')));
+    const symptomIntensity = parseInt(String(formData.get('symptom_intensity')));
 
     // Validate numeric values
     if (isNaN(temperature) || isNaN(humidity) || isNaN(pressure) || isNaN(symptomIntensity)) {
@@ -98,16 +101,16 @@ export const CycleWeatherImpact = () => {
     addWeatherImpact.mutate({
       user_id: session.user.id,
       date: new Date().toISOString().split('T')[0],
-      symptom_type: symptomType,
+      symptom_type: symptomTypeValue,
       symptom_intensity: symptomIntensity,
-      phase_type: phaseType,
+      phase_type: phaseTypeValue,
       weather_data: {
         temperature,
         humidity,
         pressure,
-        condition: conditionValue || null
+        condition
       },
-      notes: notesValue || undefined
+      notes
     });
 
     form.reset();
