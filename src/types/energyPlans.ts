@@ -1,4 +1,3 @@
-
 export type PlanType = 
   | 'energizing_boost' 
   | 'sustained_focus'
@@ -22,12 +21,12 @@ export interface CycleAdjustment {
 }
 
 export interface BiometricData {
-  cyclePhase?: string
-  energyLevel?: number
-  stressLevel?: number
-  sleepQuality?: number
-  symptoms?: string[]
-  mood?: string
+  cyclePhase?: string;
+  energyLevel?: number;
+  stressLevel?: number;
+  sleepQuality?: number;
+  symptoms?: string[];
+  mood?: string;
 }
 
 export interface PlanComponent {
