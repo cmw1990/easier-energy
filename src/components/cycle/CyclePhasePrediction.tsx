@@ -5,6 +5,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarClock, Sun, Moon, Heart, Brain } from "lucide-react";
 import { format } from "date-fns";
+import { CycleImpactForm } from "./CycleImpactForm";
+import { CycleRecommendations } from "./CycleRecommendations";
 
 export const CyclePhasePrediction = () => {
   const { session } = useAuth();
@@ -62,38 +64,44 @@ export const CyclePhasePrediction = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          {getPhaseIcon()}
-          Cycle Phase Insights
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="font-medium">Current Phase:</span>
-            <span className="capitalize">{predictions.phase_type}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-medium">Start Date:</span>
-            <span>{format(new Date(predictions.predicted_start_date), 'MMM d, yyyy')}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-medium">End Date:</span>
-            <span>{format(new Date(predictions.predicted_end_date), 'MMM d, yyyy')}</span>
-          </div>
-          {predictions.confidence_score && (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            {getPhaseIcon()}
+            Cycle Phase Insights
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="font-medium">Prediction Confidence:</span>
-              <span>{Math.round(predictions.confidence_score * 100)}%</span>
+              <span className="font-medium">Current Phase:</span>
+              <span className="capitalize">{predictions.phase_type}</span>
             </div>
-          )}
-          <div className="mt-4 p-4 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground">{getPhaseDescription()}</p>
+            <div className="flex items-center justify-between">
+              <span className="font-medium">Start Date:</span>
+              <span>{format(new Date(predictions.predicted_start_date), 'MMM d, yyyy')}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-medium">End Date:</span>
+              <span>{format(new Date(predictions.predicted_end_date), 'MMM d, yyyy')}</span>
+            </div>
+            {predictions.confidence_score && (
+              <div className="flex items-center justify-between">
+                <span className="font-medium">Prediction Confidence:</span>
+                <span>{Math.round(predictions.confidence_score * 100)}%</span>
+              </div>
+            )}
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">{getPhaseDescription()}</p>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <CycleImpactForm />
+      
+      <CycleRecommendations phaseType={predictions.phase_type} />
+    </div>
   );
 };

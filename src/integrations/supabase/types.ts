@@ -1629,6 +1629,48 @@ export type Database = {
         }
         Relationships: []
       }
+      cycle_phase_impacts: {
+        Row: {
+          created_at: string | null
+          date: string
+          energy_impact: number | null
+          focus_impact: number | null
+          id: string
+          mood_impact: number | null
+          phase_type: string
+          sleep_impact: number | null
+          stress_impact: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string
+          energy_impact?: number | null
+          focus_impact?: number | null
+          id?: string
+          mood_impact?: number | null
+          phase_type: string
+          sleep_impact?: number | null
+          stress_impact?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          energy_impact?: number | null
+          focus_impact?: number | null
+          id?: string
+          mood_impact?: number | null
+          phase_type?: string
+          sleep_impact?: number | null
+          stress_impact?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       cycle_phase_predictions: {
         Row: {
           confidence_score: number | null
@@ -1659,6 +1701,69 @@ export type Database = {
           predicted_start_date?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      cycle_phase_recommendations: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string
+          id: string
+          phase_type: string
+          priority: number | null
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description: string
+          id?: string
+          phase_type: string
+          priority?: number | null
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string
+          id?: string
+          phase_type?: string
+          priority?: number | null
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
+      cycle_symptom_templates: {
+        Row: {
+          category: string
+          created_at: string | null
+          id: string
+          name: string
+          phase_type: string
+          severity_scale: string[] | null
+          suggested_remedies: string[] | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          id?: string
+          name: string
+          phase_type: string
+          severity_scale?: string[] | null
+          suggested_remedies?: string[] | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          phase_type?: string
+          severity_scale?: string[] | null
+          suggested_remedies?: string[] | null
         }
         Relationships: []
       }
