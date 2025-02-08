@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
@@ -16,6 +16,14 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import type { Plan, PlanCategory } from "@/types/energyPlans"
 
+interface ProgressRecord {
+  id: string
+  user_id: string
+  plan_id: string
+  component_id: string
+  completed_at: string | null
+}
+
 const EnergyPlans = () => {
   const { session } = useAuth()
   const { toast } = useToast()
@@ -24,7 +32,6 @@ const EnergyPlans = () => {
   const [showLifeSituationDialog, setShowLifeSituationDialog] = useState(false)
   const queryClient = useQueryClient()
 
-  // Fetch progress records
   const { data: planProgress } = useQuery<ProgressRecord[]>({
     queryKey: ['energy-plans', 'progress', session?.user?.id],
     queryFn: async () => {
@@ -41,7 +48,6 @@ const EnergyPlans = () => {
     enabled: !!session?.user?.id
   })
 
-  // Fetch celebrity plans
   const { data: celebrityPlans, isLoading: isLoadingCelebrity } = useQuery<Plan[]>({
     queryKey: ['energy-plans', 'celebrity'],
     queryFn: async () => {
@@ -59,7 +65,6 @@ const EnergyPlans = () => {
     }
   })
 
-  // Fetch saved plans for gallery
   const { data: savedPlans } = useQuery<Plan[]>({
     queryKey: ['energy-plans', 'saved', session?.user?.id],
     queryFn: async () => {
@@ -82,7 +87,6 @@ const EnergyPlans = () => {
     enabled: !!session?.user?.id
   })
 
-  // Save plan mutation
   const savePlanMutation = useMutation({
     mutationFn: async (planId: string) => {
       if (!session?.user) throw new Error("Not authenticated")
@@ -112,7 +116,6 @@ const EnergyPlans = () => {
     }
   })
 
-  // Share plan mutation
   const sharePlanMutation = useMutation({
     mutationFn: async (plan: Plan) => {
       if (!session?.user) throw new Error("Not authenticated")
@@ -134,7 +137,6 @@ const EnergyPlans = () => {
     }
   })
 
-  // Update life situation mutation
   const updateLifeSituationMutation = useMutation({
     mutationFn: async (situation: string) => {
       if (!session?.user) throw new Error("Not authenticated")
