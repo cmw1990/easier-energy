@@ -9934,6 +9934,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_life_situations: {
+        Row: {
+          id: string
+          notes: string | null
+          situation: Database["public"]["Enums"]["life_situation"]
+          started_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          notes?: string | null
+          situation?: Database["public"]["Enums"]["life_situation"]
+          started_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          notes?: string | null
+          situation?: Database["public"]["Enums"]["life_situation"]
+          started_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_nrt_progress: {
         Row: {
           completed_at: string | null
