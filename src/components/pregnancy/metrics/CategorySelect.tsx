@@ -1,6 +1,6 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { MetricCategory } from "../types"
+import type { MetricCategory } from "./types"
 
 const METRIC_CATEGORIES: { value: MetricCategory; label: string }[] = [
   { value: 'weight', label: 'Weight' },

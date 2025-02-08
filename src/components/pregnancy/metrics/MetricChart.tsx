@@ -1,7 +1,7 @@
 
 import { format } from "date-fns"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
-import type { PregnancyMetric, MetricCategory } from "../types"
+import type { PregnancyMetric, MetricCategory } from "./types"
 
 interface MetricChartProps {
   data: PregnancyMetric[]
