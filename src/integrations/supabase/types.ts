@@ -4292,44 +4292,83 @@ export type Database = {
       }
       herbal_teas: {
         Row: {
+          active_compounds: string[] | null
+          aroma_notes: string[] | null
           benefits: string[] | null
           brewing_instructions: string
           category: string
           cautions: string[] | null
+          contraindications: string[] | null
           created_at: string | null
           description: string
+          energy_effects: string[] | null
+          flavor_profile: string[] | null
+          focus_effects: string[] | null
           id: string
           name: string
           optimal_temp_celsius: number | null
+          origin_regions: string[] | null
+          preparation_methods: string[] | null
+          research_references: string[] | null
+          safety_notes: string | null
+          scientific_name: string | null
+          seasonal_availability: string[] | null
           steep_time_range_seconds: number[] | null
+          sustainability_info: string | null
           traditional_uses: string[] | null
           updated_at: string | null
         }
         Insert: {
+          active_compounds?: string[] | null
+          aroma_notes?: string[] | null
           benefits?: string[] | null
           brewing_instructions: string
           category: string
           cautions?: string[] | null
+          contraindications?: string[] | null
           created_at?: string | null
           description: string
+          energy_effects?: string[] | null
+          flavor_profile?: string[] | null
+          focus_effects?: string[] | null
           id?: string
           name: string
           optimal_temp_celsius?: number | null
+          origin_regions?: string[] | null
+          preparation_methods?: string[] | null
+          research_references?: string[] | null
+          safety_notes?: string | null
+          scientific_name?: string | null
+          seasonal_availability?: string[] | null
           steep_time_range_seconds?: number[] | null
+          sustainability_info?: string | null
           traditional_uses?: string[] | null
           updated_at?: string | null
         }
         Update: {
+          active_compounds?: string[] | null
+          aroma_notes?: string[] | null
           benefits?: string[] | null
           brewing_instructions?: string
           category?: string
           cautions?: string[] | null
+          contraindications?: string[] | null
           created_at?: string | null
           description?: string
+          energy_effects?: string[] | null
+          flavor_profile?: string[] | null
+          focus_effects?: string[] | null
           id?: string
           name?: string
           optimal_temp_celsius?: number | null
+          origin_regions?: string[] | null
+          preparation_methods?: string[] | null
+          research_references?: string[] | null
+          safety_notes?: string | null
+          scientific_name?: string | null
+          seasonal_availability?: string[] | null
           steep_time_range_seconds?: number[] | null
+          sustainability_info?: string | null
           traditional_uses?: string[] | null
           updated_at?: string | null
         }
@@ -9759,6 +9798,138 @@ export type Database = {
           title?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      tea_brewing_guides: {
+        Row: {
+          common_mistakes: string[] | null
+          created_at: string | null
+          equipment_recommendations: string[] | null
+          id: string
+          leaf_to_water_ratio: string | null
+          multiple_infusions_guide: Json | null
+          steep_time_range_seconds: number[] | null
+          tea_type: string
+          tips_and_tricks: string[] | null
+          updated_at: string | null
+          water_quality_notes: string | null
+          water_temperature_celsius: number | null
+        }
+        Insert: {
+          common_mistakes?: string[] | null
+          created_at?: string | null
+          equipment_recommendations?: string[] | null
+          id?: string
+          leaf_to_water_ratio?: string | null
+          multiple_infusions_guide?: Json | null
+          steep_time_range_seconds?: number[] | null
+          tea_type: string
+          tips_and_tricks?: string[] | null
+          updated_at?: string | null
+          water_quality_notes?: string | null
+          water_temperature_celsius?: number | null
+        }
+        Update: {
+          common_mistakes?: string[] | null
+          created_at?: string | null
+          equipment_recommendations?: string[] | null
+          id?: string
+          leaf_to_water_ratio?: string | null
+          multiple_infusions_guide?: Json | null
+          steep_time_range_seconds?: number[] | null
+          tea_type?: string
+          tips_and_tricks?: string[] | null
+          updated_at?: string | null
+          water_quality_notes?: string | null
+          water_temperature_celsius?: number | null
+        }
+        Relationships: []
+      }
+      tea_compounds: {
+        Row: {
+          benefits: string[] | null
+          created_at: string | null
+          description: string
+          id: string
+          name: string
+          research_links: string[] | null
+          scientific_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          benefits?: string[] | null
+          created_at?: string | null
+          description: string
+          id?: string
+          name: string
+          research_links?: string[] | null
+          scientific_name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          benefits?: string[] | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          name?: string
+          research_links?: string[] | null
+          scientific_name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      tea_equipment: {
+        Row: {
+          best_for: string[] | null
+          capacity: string | null
+          care_instructions: string[] | null
+          category: string
+          cons: string[] | null
+          created_at: string | null
+          description: string
+          id: string
+          image_url: string | null
+          material: string | null
+          name: string
+          price_range: string | null
+          pros: string[] | null
+          specifications: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          best_for?: string[] | null
+          capacity?: string | null
+          care_instructions?: string[] | null
+          category: string
+          cons?: string[] | null
+          created_at?: string | null
+          description: string
+          id?: string
+          image_url?: string | null
+          material?: string | null
+          name: string
+          price_range?: string | null
+          pros?: string[] | null
+          specifications?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          best_for?: string[] | null
+          capacity?: string | null
+          care_instructions?: string[] | null
+          category?: string
+          cons?: string[] | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          image_url?: string | null
+          material?: string | null
+          name?: string
+          price_range?: string | null
+          pros?: string[] | null
+          specifications?: Json | null
+          updated_at?: string | null
         }
         Relationships: []
       }
