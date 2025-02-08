@@ -1,4 +1,3 @@
-
 export type Json =
   | string
   | number
@@ -176,6 +175,32 @@ export interface Database {
         Update: {
           user_id?: string
           plan_id?: string
+        }
+      }
+      user_life_situations: {
+        Row: {
+          id: string
+          user_id: string
+          situation: LifeSituation
+          started_at: string
+          updated_at: string
+          notes: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          situation: LifeSituation
+          started_at?: string
+          updated_at?: string
+          notes?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          situation?: LifeSituation
+          started_at?: string
+          updated_at?: string
+          notes?: string | null
         }
       }
     }

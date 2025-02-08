@@ -1,5 +1,5 @@
 
-import { Plan, PlanCategory, ProgressRecord } from "@/types/energyPlans";
+import { Plan, PlanCategory, ProgressRecord, LifeSituation } from "@/types/energyPlans";
 import { PlanList } from "./PlanList";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,7 @@ interface PlanDiscoveryProps {
   progress?: ProgressRecord[];
   onSavePlan: (id: string) => void;
   savedPlans?: Plan[];
+  currentLifeSituation?: LifeSituation;
   currentCyclePhase?: string;
   biometricData?: {
     energyLevel?: number;
@@ -24,6 +25,7 @@ export const PlanDiscovery = ({
   progress,
   onSavePlan,
   savedPlans,
+  currentLifeSituation,
   currentCyclePhase,
   biometricData
 }: PlanDiscoveryProps) => {

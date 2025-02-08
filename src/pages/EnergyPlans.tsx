@@ -15,15 +15,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import type { Plan, PlanCategory, ProgressRecord, LifeSituation } from "@/types/energyPlans"
+import type { Database } from "@/types/supabase"
 
-interface UserLifeSituation {
-  id: string
-  user_id: string
-  situation: LifeSituation
-  started_at: string
-  updated_at: string
-  notes: string | null
-}
+type UserLifeSituation = Database['public']['Tables']['user_life_situations']['Row']
 
 const EnergyPlans = () => {
   const { session } = useAuth()
@@ -33,7 +27,7 @@ const EnergyPlans = () => {
   const [showLifeSituationDialog, setShowLifeSituationDialog] = useState(false)
   const queryClient = useQueryClient()
 
-  const { data: lifeSituation } = useQuery<UserLifeSituation>({
+  const { data: lifeSituation } = useQuery({
     queryKey: ['user-life-situation', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null
@@ -45,7 +39,7 @@ const EnergyPlans = () => {
         .maybeSingle()
       
       if (error) throw error
-      return data
+      return data as UserLifeSituation | null
     },
     enabled: !!session?.user?.id
   })
