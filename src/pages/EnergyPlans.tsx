@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -29,9 +30,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Database } from "@/integrations/supabase/types"
 
-type PlanType = Database["public"]["Enums"]["plan_type"]
+type PlanType = 
+  | 'energizing_boost' 
+  | 'sustained_focus'
+  | 'mental_clarity'
+  | 'physical_vitality'
+  | 'deep_relaxation'
+  | 'stress_relief'
+  | 'evening_winddown'
+  | 'sleep_preparation'
+  | 'meditation'
 
 interface PlanComponent {
   id: string

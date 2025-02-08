@@ -2006,6 +2006,7 @@ export type Database = {
       }
       energy_plan_components: {
         Row: {
+          completion_criteria: Json | null
           component_type: string
           created_at: string
           duration_minutes: number | null
@@ -2014,8 +2015,10 @@ export type Database = {
           order_number: number
           plan_id: string
           settings: Json
+          step_number: number | null
         }
         Insert: {
+          completion_criteria?: Json | null
           component_type: string
           created_at?: string
           duration_minutes?: number | null
@@ -2024,8 +2027,10 @@ export type Database = {
           order_number: number
           plan_id: string
           settings?: Json
+          step_number?: number | null
         }
         Update: {
+          completion_criteria?: Json | null
           component_type?: string
           created_at?: string
           duration_minutes?: number | null
@@ -2034,6 +2039,7 @@ export type Database = {
           order_number?: number
           plan_id?: string
           settings?: Json
+          step_number?: number | null
         }
         Relationships: [
           {
@@ -2134,42 +2140,57 @@ export type Database = {
       }
       energy_plans: {
         Row: {
+          category: string | null
           created_at: string
           created_by: string
           description: string | null
+          energy_level_required: number | null
+          estimated_duration_minutes: number | null
           id: string
           is_expert_plan: boolean | null
           likes_count: number | null
           plan_type: Database["public"]["Enums"]["plan_type"]
+          recommended_time_of_day: string[] | null
           saves_count: number | null
+          suitable_contexts: string[] | null
           tags: string[] | null
           title: string
           updated_at: string
           visibility: Database["public"]["Enums"]["plan_visibility"] | null
         }
         Insert: {
+          category?: string | null
           created_at?: string
           created_by: string
           description?: string | null
+          energy_level_required?: number | null
+          estimated_duration_minutes?: number | null
           id?: string
           is_expert_plan?: boolean | null
           likes_count?: number | null
           plan_type: Database["public"]["Enums"]["plan_type"]
+          recommended_time_of_day?: string[] | null
           saves_count?: number | null
+          suitable_contexts?: string[] | null
           tags?: string[] | null
           title: string
           updated_at?: string
           visibility?: Database["public"]["Enums"]["plan_visibility"] | null
         }
         Update: {
+          category?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
+          energy_level_required?: number | null
+          estimated_duration_minutes?: number | null
           id?: string
           is_expert_plan?: boolean | null
           likes_count?: number | null
           plan_type?: Database["public"]["Enums"]["plan_type"]
+          recommended_time_of_day?: string[] | null
           saves_count?: number | null
+          suitable_contexts?: string[] | null
           tags?: string[] | null
           title?: string
           updated_at?: string
