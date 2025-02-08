@@ -5234,49 +5234,61 @@ export type Database = {
       }
       pregnancy_logs: {
         Row: {
+          activity_type: string[] | null
           blood_pressure_diastolic: number | null
           blood_pressure_systolic: number | null
           created_at: string
           date: string
           energy_level: number | null
           exercise_minutes: number | null
+          focus_level: number | null
           id: string
           mood_rating: number | null
           sleep_quality: number | null
+          stress_level: number | null
           symptoms: string[] | null
           user_id: string
           water_intake_ml: number | null
           weight_kg: number | null
+          wellness_notes: string | null
         }
         Insert: {
+          activity_type?: string[] | null
           blood_pressure_diastolic?: number | null
           blood_pressure_systolic?: number | null
           created_at?: string
           date?: string
           energy_level?: number | null
           exercise_minutes?: number | null
+          focus_level?: number | null
           id?: string
           mood_rating?: number | null
           sleep_quality?: number | null
+          stress_level?: number | null
           symptoms?: string[] | null
           user_id: string
           water_intake_ml?: number | null
           weight_kg?: number | null
+          wellness_notes?: string | null
         }
         Update: {
+          activity_type?: string[] | null
           blood_pressure_diastolic?: number | null
           blood_pressure_systolic?: number | null
           created_at?: string
           date?: string
           energy_level?: number | null
           exercise_minutes?: number | null
+          focus_level?: number | null
           id?: string
           mood_rating?: number | null
           sleep_quality?: number | null
+          stress_level?: number | null
           symptoms?: string[] | null
           user_id?: string
           water_intake_ml?: number | null
           weight_kg?: number | null
+          wellness_notes?: string | null
         }
         Relationships: []
       }
@@ -5286,6 +5298,9 @@ export type Database = {
           created_at: string
           current_stage: Database["public"]["Enums"]["pregnancy_stage"]
           due_date: string
+          energy_preferences: Json | null
+          energy_support_needed: boolean | null
+          focus_support_needed: boolean | null
           healthcare_provider: string | null
           id: string
           is_high_risk: boolean | null
@@ -5293,12 +5308,16 @@ export type Database = {
           notes: string | null
           updated_at: string
           user_id: string
+          wellness_goals: string[] | null
         }
         Insert: {
           conception_date?: string | null
           created_at?: string
           current_stage: Database["public"]["Enums"]["pregnancy_stage"]
           due_date: string
+          energy_preferences?: Json | null
+          energy_support_needed?: boolean | null
+          focus_support_needed?: boolean | null
           healthcare_provider?: string | null
           id?: string
           is_high_risk?: boolean | null
@@ -5306,18 +5325,62 @@ export type Database = {
           notes?: string | null
           updated_at?: string
           user_id: string
+          wellness_goals?: string[] | null
         }
         Update: {
           conception_date?: string | null
           created_at?: string
           current_stage?: Database["public"]["Enums"]["pregnancy_stage"]
           due_date?: string
+          energy_preferences?: Json | null
+          energy_support_needed?: boolean | null
+          focus_support_needed?: boolean | null
           healthcare_provider?: string | null
           id?: string
           is_high_risk?: boolean | null
           last_period_date?: string | null
           notes?: string | null
           updated_at?: string
+          user_id?: string
+          wellness_goals?: string[] | null
+        }
+        Relationships: []
+      }
+      pregnancy_wellness_correlations: {
+        Row: {
+          activity_impact: Json | null
+          created_at: string | null
+          date: string | null
+          energy_pattern: Json | null
+          focus_pattern: Json | null
+          id: string
+          nutrition_impact: Json | null
+          sleep_pattern: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_impact?: Json | null
+          created_at?: string | null
+          date?: string | null
+          energy_pattern?: Json | null
+          focus_pattern?: Json | null
+          id?: string
+          nutrition_impact?: Json | null
+          sleep_pattern?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_impact?: Json | null
+          created_at?: string | null
+          date?: string | null
+          energy_pattern?: Json | null
+          focus_pattern?: Json | null
+          id?: string
+          nutrition_impact?: Json | null
+          sleep_pattern?: Json | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -10871,6 +10934,7 @@ export type Database = {
         | "second_trimester"
         | "third_trimester"
         | "postpartum"
+        | "preconception_planning"
       quit_strategy_type:
         | "cold_turkey"
         | "taper_down"
