@@ -12,6 +12,7 @@ interface CartItem {
     name: string
     price: number
     image_url?: string
+    vendor_id: string
   }
 }
 
@@ -46,7 +47,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           product:products (
             name,
             price,
-            image_url
+            image_url,
+            vendor_id
           )
         `)
         .eq('user_id', session.user.id)
