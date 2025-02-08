@@ -3,6 +3,9 @@ import { CyclePhasePrediction } from "@/components/cycle/CyclePhasePrediction"
 import { CycleTracking } from "@/components/cycle/CycleTracking"
 import { CycleLifestyleRecommendations } from "@/components/cycle/CycleLifestyleRecommendations"
 import { CycleRecommendations } from "@/components/cycle/CycleRecommendations"
+import { CycleWeatherImpact } from "@/components/cycle/CycleWeatherImpact"
+import { CycleSleepCorrelation } from "@/components/cycle/CycleSleepCorrelation"
+import { WearableDeviceIntegration } from "@/components/cycle/WearableDeviceIntegration"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 
@@ -30,6 +33,11 @@ const CyclePage = () => {
       <div className="grid gap-6">
         <CyclePhasePrediction />
         <CycleTracking />
+        <div className="grid md:grid-cols-2 gap-6">
+          <CycleWeatherImpact />
+          <CycleSleepCorrelation />
+        </div>
+        <WearableDeviceIntegration />
         {currentPhase && (
           <>
             <CycleLifestyleRecommendations phaseType={currentPhase} />

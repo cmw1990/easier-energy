@@ -1,4 +1,3 @@
-
 export interface CyclePhaseImpact {
   id: string;
   user_id: string;
@@ -89,4 +88,52 @@ export interface CycleProductivityInsight {
   task_completion_rate: number;
   optimal_work_hours: Record<string, any>;
   created_at: string;
+}
+
+export interface CycleWeatherImpact {
+  id: string;
+  user_id: string;
+  date: string;
+  weather_data: {
+    temperature?: number;
+    humidity?: number;
+    pressure?: number;
+    condition?: string;
+  };
+  symptom_intensity: number;
+  symptom_type: string;
+  phase_type: string;
+  notes?: string;
+  created_at: string;
+}
+
+export interface CycleSleepCorrelation {
+  id: string;
+  user_id: string;
+  date: string;
+  phase_type: string;
+  sleep_quality: number;
+  sleep_duration: number;
+  temperature_celsius: number;
+  heart_rate_variability: number;
+  resting_heart_rate: number;
+  created_at: string;
+}
+
+export interface UserWearableDevice {
+  id: string;
+  user_id: string;
+  device_type: string;
+  device_id: string;
+  auth_token?: string;
+  last_synced_at?: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface CycleNotificationPreferences {
+  phase_changes: boolean;
+  medication_reminders: boolean;
+  lifestyle_reminders: boolean;
+  exercise_suggestions: boolean;
 }

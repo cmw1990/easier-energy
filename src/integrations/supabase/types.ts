@@ -1800,6 +1800,53 @@ export type Database = {
         }
         Relationships: []
       }
+      cycle_sleep_correlations: {
+        Row: {
+          created_at: string
+          date: string
+          heart_rate_variability: number | null
+          id: string
+          phase_type: string
+          resting_heart_rate: number | null
+          sleep_duration: number | null
+          sleep_quality: number | null
+          temperature_celsius: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          heart_rate_variability?: number | null
+          id?: string
+          phase_type: string
+          resting_heart_rate?: number | null
+          sleep_duration?: number | null
+          sleep_quality?: number | null
+          temperature_celsius?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          heart_rate_variability?: number | null
+          id?: string
+          phase_type?: string
+          resting_heart_rate?: number | null
+          sleep_duration?: number | null
+          sleep_quality?: number | null
+          temperature_celsius?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cycle_symptom_templates: {
         Row: {
           category: string
@@ -1871,6 +1918,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      cycle_weather_impacts: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          notes: string | null
+          phase_type: string
+          symptom_intensity: number | null
+          symptom_type: string
+          user_id: string
+          weather_data: Json
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          notes?: string | null
+          phase_type: string
+          symptom_intensity?: number | null
+          symptom_type: string
+          user_id: string
+          weather_data?: Json
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          notes?: string | null
+          phase_type?: string
+          symptom_intensity?: number | null
+          symptom_type?: string
+          user_id?: string
+          weather_data?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       daily_checkins: {
         Row: {
@@ -4644,6 +4735,7 @@ export type Database = {
           break_reminder_style: Json | null
           context_aware_settings: Json | null
           created_at: string | null
+          cycle_notifications: Json | null
           exercise_reminders: Json | null
           focus_check_frequency: unknown | null
           id: string
@@ -4656,6 +4748,7 @@ export type Database = {
           break_reminder_style?: Json | null
           context_aware_settings?: Json | null
           created_at?: string | null
+          cycle_notifications?: Json | null
           exercise_reminders?: Json | null
           focus_check_frequency?: unknown | null
           id?: string
@@ -4668,6 +4761,7 @@ export type Database = {
           break_reminder_style?: Json | null
           context_aware_settings?: Json | null
           created_at?: string | null
+          cycle_notifications?: Json | null
           exercise_reminders?: Json | null
           focus_check_frequency?: unknown | null
           id?: string
@@ -9863,6 +9957,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_wearable_devices: {
+        Row: {
+          auth_token: string | null
+          created_at: string
+          device_id: string
+          device_type: string
+          id: string
+          is_active: boolean | null
+          last_synced_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auth_token?: string | null
+          created_at?: string
+          device_id: string
+          device_type: string
+          id?: string
+          is_active?: boolean | null
+          last_synced_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auth_token?: string | null
+          created_at?: string
+          device_id?: string
+          device_type?: string
+          id?: string
+          is_active?: boolean | null
+          last_synced_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       vendor_ratings: {
         Row: {
