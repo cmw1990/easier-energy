@@ -1,3 +1,4 @@
+
 import { useAuth } from "@/components/AuthProvider"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -208,12 +209,12 @@ export function TeaTracker() {
           {/* Traditional Use & Science */}
           <Card>
             <CardHeader>
-              <CardTitle>Traditional Use & Research</CardTitle>
+              <CardTitle>Traditional Use & Science</CardTitle>
               <CardDescription>Historical context and scientific research</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4">
-                {teas?.filter(tea => tea.traditional_uses || tea.research_links).map((tea) => (
+                {teas?.filter(tea => tea.traditional_uses).map((tea) => (
                   <Card key={tea.id}>
                     <CardHeader>
                       <CardTitle className="text-lg">{tea.name}</CardTitle>
