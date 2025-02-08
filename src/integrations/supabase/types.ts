@@ -4797,6 +4797,47 @@ export type Database = {
           },
         ]
       }
+      integration_sync_logs: {
+        Row: {
+          completed_at: string | null
+          details: Json | null
+          error_message: string | null
+          id: string
+          integration_id: string | null
+          started_at: string | null
+          status: string
+          sync_type: string
+        }
+        Insert: {
+          completed_at?: string | null
+          details?: Json | null
+          error_message?: string | null
+          id?: string
+          integration_id?: string | null
+          started_at?: string | null
+          status: string
+          sync_type: string
+        }
+        Update: {
+          completed_at?: string | null
+          details?: Json | null
+          error_message?: string | null
+          id?: string
+          integration_id?: string | null
+          started_at?: string | null
+          status?: string
+          sync_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_sync_logs_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "platform_integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_tracking: {
         Row: {
           created_at: string | null
@@ -6057,14 +6098,20 @@ export type Database = {
           bot_token: string | null
           chat_id: string | null
           created_at: string | null
+          error_logs: Json | null
           guild_id: string | null
           id: string
           is_active: boolean | null
+          last_sync_at: string | null
           platform_type: string
           refresh_token: string | null
           settings: Json | null
+          sync_status: string | null
           updated_at: string | null
           vendor_id: string | null
+          verification_status:
+            | Database["public"]["Enums"]["integration_status"]
+            | null
           webhook_url: string | null
         }
         Insert: {
@@ -6072,14 +6119,20 @@ export type Database = {
           bot_token?: string | null
           chat_id?: string | null
           created_at?: string | null
+          error_logs?: Json | null
           guild_id?: string | null
           id?: string
           is_active?: boolean | null
+          last_sync_at?: string | null
           platform_type: string
           refresh_token?: string | null
           settings?: Json | null
+          sync_status?: string | null
           updated_at?: string | null
           vendor_id?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["integration_status"]
+            | null
           webhook_url?: string | null
         }
         Update: {
@@ -6087,19 +6140,79 @@ export type Database = {
           bot_token?: string | null
           chat_id?: string | null
           created_at?: string | null
+          error_logs?: Json | null
           guild_id?: string | null
           id?: string
           is_active?: boolean | null
+          last_sync_at?: string | null
           platform_type?: string
           refresh_token?: string | null
           settings?: Json | null
+          sync_status?: string | null
           updated_at?: string | null
           vendor_id?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["integration_status"]
+            | null
           webhook_url?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "platform_integrations_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      platform_notification_settings: {
+        Row: {
+          created_at: string | null
+          custom_settings: Json | null
+          id: string
+          notify_on_message: boolean | null
+          notify_on_purchase: boolean | null
+          notify_on_refund: boolean | null
+          notify_on_review: boolean | null
+          platform_integration_id: string | null
+          updated_at: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          custom_settings?: Json | null
+          id?: string
+          notify_on_message?: boolean | null
+          notify_on_purchase?: boolean | null
+          notify_on_refund?: boolean | null
+          notify_on_review?: boolean | null
+          platform_integration_id?: string | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          custom_settings?: Json | null
+          id?: string
+          notify_on_message?: boolean | null
+          notify_on_purchase?: boolean | null
+          notify_on_refund?: boolean | null
+          notify_on_review?: boolean | null
+          platform_integration_id?: string | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_notification_settings_platform_integration_id_fkey"
+            columns: ["platform_integration_id"]
+            isOneToOne: false
+            referencedRelation: "platform_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_notification_settings_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "seller_profiles"
@@ -13244,6 +13357,47 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_delivery_logs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          payload: Json
+          response_body: string | null
+          response_status: number | null
+          subscription_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          payload: Json
+          response_body?: string | null
+          response_status?: number | null
+          subscription_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          response_body?: string | null
+          response_status?: number | null
+          subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_delivery_logs_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "webhook_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       webhook_events: {
         Row: {
           created_at: string | null
@@ -13281,6 +13435,57 @@ export type Database = {
             columns: ["integration_id"]
             isOneToOne: false
             referencedRelation: "platform_integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhook_subscriptions: {
+        Row: {
+          created_at: string | null
+          events: string[]
+          id: string
+          last_triggered_at: string | null
+          platform_integration_id: string | null
+          secret_key: string | null
+          updated_at: string | null
+          vendor_id: string | null
+          webhook_url: string
+        }
+        Insert: {
+          created_at?: string | null
+          events?: string[]
+          id?: string
+          last_triggered_at?: string | null
+          platform_integration_id?: string | null
+          secret_key?: string | null
+          updated_at?: string | null
+          vendor_id?: string | null
+          webhook_url: string
+        }
+        Update: {
+          created_at?: string | null
+          events?: string[]
+          id?: string
+          last_triggered_at?: string | null
+          platform_integration_id?: string | null
+          secret_key?: string | null
+          updated_at?: string | null
+          vendor_id?: string | null
+          webhook_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_subscriptions_platform_integration_id_fkey"
+            columns: ["platform_integration_id"]
+            isOneToOne: false
+            referencedRelation: "platform_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "webhook_subscriptions_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -13631,6 +13836,7 @@ export type Database = {
         | "short_term_memory"
         | "long_term_memory"
         | "migraine"
+      integration_status: "pending" | "active" | "failed" | "revoked"
       life_situation: "regular" | "pregnancy" | "postpartum" | "breastfeeding"
       mood_category: "positive" | "negative" | "neutral"
       order_status:
