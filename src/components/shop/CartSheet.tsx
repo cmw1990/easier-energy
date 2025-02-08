@@ -1,4 +1,3 @@
-
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -32,13 +31,26 @@ export function CartSheet() {
 
     setIsProcessing(true)
     try {
+      // Get first product's vendor_id (assuming all items are from same vendor)
+      const firstProduct = items[0]
+      const { data: productData, error: productError } = await supabase
+        .from('products')
+        .select('vendor_id')
+        .eq('id', firstProduct.product_id)
+        .single()
+
+      if (productError) throw productError
+
       // Create the order
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
           user_id: session.user.id,
           total_amount: total,
-          status: 'pending'
+          status: 'pending',
+          vendor_id: productData.vendor_id,
+          billing_address: {}, // Empty object for now
+          shipping_address: {}  // Empty object for now
         })
         .select()
         .single()

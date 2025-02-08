@@ -26,14 +26,15 @@ export function MessagingCenter() {
 
       if (!vendorData) return [];
 
-      const { data, error } = await supabase
+      // Get unique user_ids from messages for this vendor
+      const { data: messages } = await supabase
         .from('vendor_messages')
         .select('user_id')
-        .eq('vendor_id', vendorData.id)
-        .distinct();
+        .eq('vendor_id', vendorData.id);
 
-      if (error) throw error;
-      return data;
+      // Get unique user_ids
+      const uniqueUserIds = [...new Set(messages?.map(m => m.user_id) || [])];
+      return uniqueUserIds.map(id => ({ user_id: id }));
     },
     enabled: !!session?.user?.id
   });
