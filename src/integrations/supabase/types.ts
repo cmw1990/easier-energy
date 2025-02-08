@@ -553,6 +553,48 @@ export type Database = {
         }
         Relationships: []
       }
+      baby_tracking: {
+        Row: {
+          baby_name: string | null
+          birth_date: string | null
+          created_at: string
+          feeding_method: Database["public"]["Enums"]["feeding_method"] | null
+          head_circumference_cm: number | null
+          height_cm: number | null
+          id: string
+          milestones: Json | null
+          updated_at: string
+          user_id: string
+          weight_kg: number | null
+        }
+        Insert: {
+          baby_name?: string | null
+          birth_date?: string | null
+          created_at?: string
+          feeding_method?: Database["public"]["Enums"]["feeding_method"] | null
+          head_circumference_cm?: number | null
+          height_cm?: number | null
+          id?: string
+          milestones?: Json | null
+          updated_at?: string
+          user_id: string
+          weight_kg?: number | null
+        }
+        Update: {
+          baby_name?: string | null
+          birth_date?: string | null
+          created_at?: string
+          feeding_method?: Database["public"]["Enums"]["feeding_method"] | null
+          head_circumference_cm?: number | null
+          height_cm?: number | null
+          id?: string
+          milestones?: Json | null
+          updated_at?: string
+          user_id?: string
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
       bathing_achievements: {
         Row: {
           achieved_at: string
@@ -2917,6 +2959,53 @@ export type Database = {
           },
         ]
       }
+      feeding_logs: {
+        Row: {
+          amount_ml: number | null
+          baby_id: string | null
+          created_at: string
+          duration_minutes: number | null
+          feeding_type: Database["public"]["Enums"]["feeding_method"] | null
+          id: string
+          notes: string | null
+          side: string | null
+          start_time: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_ml?: number | null
+          baby_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          feeding_type?: Database["public"]["Enums"]["feeding_method"] | null
+          id?: string
+          notes?: string | null
+          side?: string | null
+          start_time?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_ml?: number | null
+          baby_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          feeding_type?: Database["public"]["Enums"]["feeding_method"] | null
+          id?: string
+          notes?: string | null
+          side?: string | null
+          start_time?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feeding_logs_baby_id_fkey"
+            columns: ["baby_id"]
+            isOneToOne: false
+            referencedRelation: "baby_tracking"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financial_tracking: {
         Row: {
           amount: number
@@ -5140,6 +5229,96 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           variants?: Json | null
+        }
+        Relationships: []
+      }
+      pregnancy_logs: {
+        Row: {
+          blood_pressure_diastolic: number | null
+          blood_pressure_systolic: number | null
+          created_at: string
+          date: string
+          energy_level: number | null
+          exercise_minutes: number | null
+          id: string
+          mood_rating: number | null
+          sleep_quality: number | null
+          symptoms: string[] | null
+          user_id: string
+          water_intake_ml: number | null
+          weight_kg: number | null
+        }
+        Insert: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          created_at?: string
+          date?: string
+          energy_level?: number | null
+          exercise_minutes?: number | null
+          id?: string
+          mood_rating?: number | null
+          sleep_quality?: number | null
+          symptoms?: string[] | null
+          user_id: string
+          water_intake_ml?: number | null
+          weight_kg?: number | null
+        }
+        Update: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          created_at?: string
+          date?: string
+          energy_level?: number | null
+          exercise_minutes?: number | null
+          id?: string
+          mood_rating?: number | null
+          sleep_quality?: number | null
+          symptoms?: string[] | null
+          user_id?: string
+          water_intake_ml?: number | null
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      pregnancy_tracking: {
+        Row: {
+          conception_date: string | null
+          created_at: string
+          current_stage: Database["public"]["Enums"]["pregnancy_stage"]
+          due_date: string
+          healthcare_provider: string | null
+          id: string
+          is_high_risk: boolean | null
+          last_period_date: string | null
+          notes: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          conception_date?: string | null
+          created_at?: string
+          current_stage: Database["public"]["Enums"]["pregnancy_stage"]
+          due_date: string
+          healthcare_provider?: string | null
+          id?: string
+          is_high_risk?: boolean | null
+          last_period_date?: string | null
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          conception_date?: string | null
+          created_at?: string
+          current_stage?: Database["public"]["Enums"]["pregnancy_stage"]
+          due_date?: string
+          healthcare_provider?: string | null
+          id?: string
+          is_high_risk?: boolean | null
+          last_period_date?: string | null
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -10638,6 +10817,7 @@ export type Database = {
         | "stretching"
         | "desk_exercise"
         | "eye_exercise"
+      feeding_method: "breastfeeding" | "formula" | "mixed" | "solid_transition"
       game_type:
         | "chess"
         | "go"
@@ -10685,6 +10865,12 @@ export type Database = {
         | "sleep_preparation"
         | "meditation"
       plan_visibility: "private" | "public" | "shared"
+      pregnancy_stage:
+        | "preconception"
+        | "first_trimester"
+        | "second_trimester"
+        | "third_trimester"
+        | "postpartum"
       quit_strategy_type:
         | "cold_turkey"
         | "taper_down"
