@@ -11,10 +11,12 @@ export function CreatineTracker() {
   const { data: logs, isLoading } = useQuery({
     queryKey: ['creatine-logs'],
     queryFn: async () => {
+      if (!session?.user?.id) throw new Error("User not authenticated")
+
       const { data, error } = await supabase
         .from('creatine_logs')
         .select('*')
-        .eq('user_id', session?.user?.id)
+        .eq('user_id', session.user.id)
         .order('consumed_at', { ascending: false })
         .limit(10)
 
