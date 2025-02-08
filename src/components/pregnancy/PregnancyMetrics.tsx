@@ -9,8 +9,7 @@ import { useAuth } from "@/components/AuthProvider"
 import { MetricForm } from "./metrics/MetricForm"
 import { MetricChart } from "./metrics/MetricChart"
 import { CategorySelect } from "./metrics/CategorySelect"
-import type { PregnancyMetric } from "@/types/supabase"
-import type { MetricCategory } from "./metrics/types"
+import type { PregnancyMetric, MetricCategory } from "./metrics/types"
 
 export function PregnancyMetrics() {
   const { session } = useAuth()
@@ -48,7 +47,7 @@ export function PregnancyMetrics() {
         notes: metric.notes || '',
         category: metric.category,
         metric_category: metric.metric_category,
-        photo_url: metric.photo_url,
+        metric_type: metric.metric_category, // Map metric_category to metric_type for consistency
         created_at: metric.created_at
       })) as PregnancyMetric[]
     },
@@ -68,7 +67,7 @@ export function PregnancyMetrics() {
           value: metricData.value,
           notes: metricData.notes,
           metric_category: selectedCategory,
-          metric_type: selectedCategory,
+          metric_type: selectedCategory, // Use selectedCategory as metric_type
           category: selectedCategory,
           created_at: new Date().toISOString()
         }])
