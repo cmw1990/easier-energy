@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -11,14 +10,18 @@ import { CelebrityPlanGallery } from "@/components/energy-plans/CelebrityPlanGal
 import { PlanDiscovery } from "@/components/energy-plans/PlanDiscovery"
 import { PersonalPlans } from "@/components/energy-plans/PersonalPlans"
 import { SavedPlans } from "@/components/energy-plans/SavedPlans"
-import type { Plan, PlanCategory, ProgressRecord } from "@/types/energyPlans"
-import { useQuery } from "@tanstack/react-query"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import type { Plan, PlanCategory } from "@/types/energyPlans"
 
 const EnergyPlans = () => {
   const { session } = useAuth()
   const { toast } = useToast()
   const [selectedTab, setSelectedTab] = useState("discover")
   const [selectedCategory, setSelectedCategory] = useState<PlanCategory | null>(null)
+  const [showLifeSituationDialog, setShowLifeSituationDialog] = useState(false)
   const queryClient = useQueryClient()
 
   // Fetch progress records
@@ -131,6 +134,30 @@ const EnergyPlans = () => {
     }
   })
 
+  // Update life situation mutation
+  const updateLifeSituationMutation = useMutation({
+    mutationFn: async (situation: string) => {
+      if (!session?.user) throw new Error("Not authenticated")
+      
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: session.user.id,
+          life_situation: situation
+        })
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['energy-plans'] })
+      toast({
+        title: "Preferences Updated",
+        description: "Your energy plans will be tailored to your current situation"
+      })
+      setShowLifeSituationDialog(false)
+    }
+  })
+
   return (
     <div className="container max-w-6xl mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
@@ -141,6 +168,39 @@ const EnergyPlans = () => {
           </p>
         </div>
         <div className="flex gap-4">
+          <Dialog open={showLifeSituationDialog} onOpenChange={setShowLifeSituationDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline">Update Life Situation</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Your Current Life Situation</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <RadioGroup 
+                  onValueChange={(value) => updateLifeSituationMutation.mutate(value)}
+                  defaultValue="regular"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="regular" id="regular" />
+                    <Label htmlFor="regular">Regular Energy Management</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="pregnancy" id="pregnancy" />
+                    <Label htmlFor="pregnancy">Pregnancy</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="postpartum" id="postpartum" />
+                    <Label htmlFor="postpartum">Postpartum Recovery</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="breastfeeding" id="breastfeeding" />
+                    <Label htmlFor="breastfeeding">Breastfeeding</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </DialogContent>
+          </Dialog>
           <PlanFilters 
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
