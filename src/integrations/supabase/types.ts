@@ -2270,7 +2270,7 @@ export type Database = {
           estimated_delivery: string | null
           id: string
           order_id: string | null
-          status: string | null
+          status: Database["public"]["Enums"]["delivery_status"] | null
           tracking_number: string | null
         }
         Insert: {
@@ -2278,7 +2278,7 @@ export type Database = {
           estimated_delivery?: string | null
           id?: string
           order_id?: string | null
-          status?: string | null
+          status?: Database["public"]["Enums"]["delivery_status"] | null
           tracking_number?: string | null
         }
         Update: {
@@ -2286,7 +2286,7 @@ export type Database = {
           estimated_delivery?: string | null
           id?: string
           order_id?: string | null
-          status?: string | null
+          status?: Database["public"]["Enums"]["delivery_status"] | null
           tracking_number?: string | null
         }
         Relationships: [
@@ -13950,6 +13950,7 @@ export type Database = {
         | "cognitive_restructuring"
         | "problem_solving"
         | "relaxation"
+      delivery_status: "pending" | "in_transit" | "delivered" | "failed"
       digital_product_category:
         | "discord_servers"
         | "tools_software"
