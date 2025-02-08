@@ -14,6 +14,13 @@ import { useAuth } from "@/components/AuthProvider"
 import { AdTierSelector } from './AdTierSelector'
 import { AdPreview } from './AdPreview'
 
+type DisplayZone = {
+  id: string
+  zone_type: string
+  price_multiplier: number
+  created_at: string
+}
+
 const campaignFormSchema = z.object({
   productId: z.string().uuid(),
   placementType: z.enum(['feed', 'banner', 'sidebar', 'openApp']),
@@ -46,7 +53,7 @@ export function AdCampaignForm() {
     enabled: !!session?.user?.id
   })
 
-  const { data: displayZones } = useQuery({
+  const { data: displayZones } = useQuery<DisplayZone[]>({
     queryKey: ['ad-display-zones'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -55,7 +62,7 @@ export function AdCampaignForm() {
         .order('price_multiplier', { ascending: true })
 
       if (error) throw error
-      return data
+      return data || []
     }
   })
 

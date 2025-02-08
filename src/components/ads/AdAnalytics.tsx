@@ -1,3 +1,4 @@
+
 import React from 'react'
 import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,6 +8,13 @@ import { useAuth } from "@/components/AuthProvider"
 import { ChartBar, Users, Clock, Eye } from 'lucide-react'
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
+
+type DemographicData = {
+  id: string
+  impression_id: string
+  age_range: string
+  created_at: string
+}
 
 export function AdAnalytics() {
   const { session } = useAuth()
@@ -54,7 +62,7 @@ export function AdAnalytics() {
     enabled: !!campaigns?.length
   })
 
-  const { data: demographics } = useQuery({
+  const { data: demographics } = useQuery<DemographicData[]>({
     queryKey: ['ad-demographics', analytics?.map(a => a.id)],
     queryFn: async () => {
       if (!analytics?.length) return []
@@ -65,7 +73,7 @@ export function AdAnalytics() {
         .in('impression_id', analytics.map(a => a.id))
       
       if (error) throw error
-      return data
+      return data || []
     },
     enabled: !!analytics?.length
   })
