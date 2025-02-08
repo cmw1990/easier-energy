@@ -130,14 +130,18 @@ export function TeaIntakeForm() {
       if (logError) throw logError
 
       // Then, if there are multiple steeps, create the brewing sessions
-      if (steepSessions.length > 0) {
+      if (steepSessions.length > 0 && logData) {
         const { error: sessionsError } = await supabase
-          .from('tea_brewing_sessions')
+          .from('herbal_tea_logs_sessions')
           .insert(
             steepSessions.map(session => ({
-              user_id: session.user.id,
+              user_id: session?.user?.id,
               tea_log_id: logData.id,
-              ...session
+              steep_number: session.steepNumber,
+              steep_time_seconds: session.steepTimeSeconds,
+              water_temperature: session.waterTemperature,
+              rating: session.rating,
+              notes: session.notes
             }))
           )
 
