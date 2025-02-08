@@ -378,3 +378,15 @@ export type PregnancyMilestone = Database['public']['Tables']['pregnancy_milesto
   category?: string | null;
   photo_urls?: string[] | null;
 }
+
+export interface PregnancyMetric {
+  id: string;
+  user_id: string;
+  date: string;
+  value: number;
+  notes?: string;
+  category: string;
+  metric_category: 'weight' | 'blood_pressure' | 'nutrition' | 'exercise' | 'sleep' | 'mood' | 'general';
+  photo_url?: string;
+  created_at: string;
+}

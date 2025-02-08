@@ -5345,11 +5345,16 @@ export type Database = {
       }
       pregnancy_metrics: {
         Row: {
+          category: string
           created_at: string | null
           id: string
           metadata: Json | null
+          metric_category:
+            | Database["public"]["Enums"]["pregnancy_metric_category"]
+            | null
           metric_type: string
           notes: string | null
+          photo_url: string | null
           recorded_at: string | null
           updated_at: string | null
           user_id: string | null
@@ -5357,11 +5362,16 @@ export type Database = {
           week_number: number | null
         }
         Insert: {
+          category?: string
           created_at?: string | null
           id?: string
           metadata?: Json | null
+          metric_category?:
+            | Database["public"]["Enums"]["pregnancy_metric_category"]
+            | null
           metric_type: string
           notes?: string | null
+          photo_url?: string | null
           recorded_at?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -5369,11 +5379,16 @@ export type Database = {
           week_number?: number | null
         }
         Update: {
+          category?: string
           created_at?: string | null
           id?: string
           metadata?: Json | null
+          metric_category?:
+            | Database["public"]["Enums"]["pregnancy_metric_category"]
+            | null
           metric_type?: string
           notes?: string | null
+          photo_url?: string | null
           recorded_at?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -11217,6 +11232,14 @@ export type Database = {
         | "sleep_preparation"
         | "meditation"
       plan_visibility: "private" | "public" | "shared"
+      pregnancy_metric_category:
+        | "weight"
+        | "blood_pressure"
+        | "nutrition"
+        | "exercise"
+        | "sleep"
+        | "mood"
+        | "general"
       pregnancy_stage:
         | "preconception"
         | "first_trimester"
