@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -21,7 +20,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Plus, Camera } from "lucide-react"
+import { Plus, Camera, Loader2 } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
@@ -43,9 +42,10 @@ const milestoneFormSchema = z.object({
 type MilestoneFormValues = z.infer<typeof milestoneFormSchema>
 
 interface PregnancyMilestoneFormProps {
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-  onSubmit: (values: MilestoneFormValues) => void
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSubmit: (values: MilestoneFormValues) => void;
+  isPending?: boolean; // Changed from isLoading to match React Query v5
 }
 
 const CATEGORIES = [
@@ -57,7 +57,12 @@ const CATEGORIES = [
   "Other"
 ]
 
-export function PregnancyMilestoneForm({ open, onOpenChange, onSubmit }: PregnancyMilestoneFormProps) {
+export function PregnancyMilestoneForm({ 
+  open, 
+  onOpenChange, 
+  onSubmit,
+  isPending = false 
+}: PregnancyMilestoneFormProps) {
   const [uploading, setUploading] = useState(false)
   const form = useForm<MilestoneFormValues>({
     resolver: zodResolver(milestoneFormSchema),
@@ -312,7 +317,20 @@ export function PregnancyMilestoneForm({ open, onOpenChange, onSubmit }: Pregnan
               )}
             />
 
-            <Button type="submit" className="w-full">Save Milestone</Button>
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Save Milestone'
+              )}
+            </Button>
           </form>
         </Form>
       </DialogContent>

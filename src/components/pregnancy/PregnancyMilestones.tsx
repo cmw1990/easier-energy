@@ -174,7 +174,7 @@ export const PregnancyMilestones = () => {
             open={formOpen}
             onOpenChange={setFormOpen}
             onSubmit={handleAddMilestone}
-            isLoading={addMilestoneMutation.isPending}
+            isPending={addMilestoneMutation.isPending}
           />
         </div>
       </CardHeader>
@@ -252,5 +252,5 @@ export const PregnancyMilestones = () => {
         />
       )}
     </Card>
-  )
-}
+  );
+};
