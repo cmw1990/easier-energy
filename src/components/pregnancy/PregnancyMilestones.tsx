@@ -1,5 +1,5 @@
 
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { Baby, Calendar, Heart, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -7,10 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
+import type { PregnancyMilestoneRow } from "@/types/supabase"
 
 export const PregnancyMilestones = () => {
   const { session } = useAuth()
   const { toast } = useToast()
+  const queryClient = useQueryClient()
 
   const { data: milestones, isLoading } = useQuery({
     queryKey: ['pregnancy-milestones'],
@@ -22,6 +24,7 @@ export const PregnancyMilestones = () => {
         .select('*')
         .eq('user_id', session.user.id)
         .order('achieved_at', { ascending: false })
+        .returns<PregnancyMilestoneRow[]>()
 
       if (error) {
         console.error('Error fetching milestones:', error)
@@ -33,28 +36,36 @@ export const PregnancyMilestones = () => {
     enabled: !!session?.user?.id
   })
 
-  const handleShareMilestone = async (id: string) => {
-    if (!session?.user?.id) return
+  const shareMilestoneMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (!session?.user?.id) return null
+      
+      const { error } = await supabase
+        .from('pregnancy_milestones')
+        .update({ celebration_shared: true })
+        .eq('id', id)
+        .eq('user_id', session.user.id)
 
-    const { error } = await supabase
-      .from('pregnancy_milestones')
-      .update({ celebration_shared: true })
-      .eq('id', id)
-      .eq('user_id', session.user.id)
-
-    if (error) {
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pregnancy-milestones'] })
+      toast({
+        title: "Success",
+        description: "Milestone shared successfully!"
+      })
+    },
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to share milestone",
         variant: "destructive"
       })
-      return
     }
+  })
 
-    toast({
-      title: "Success",
-      description: "Milestone shared successfully!"
-    })
+  const handleShareMilestone = (id: string) => {
+    shareMilestoneMutation.mutate(id)
   }
 
   return (
