@@ -3,7 +3,7 @@ import React from 'react'
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
-import { DemographicData } from '@/types/supabase'
+import { DemographicData, CampaignStat, AdImpression } from '@/types/supabase'
 import { CampaignMetrics } from './CampaignMetrics'
 import { CampaignPerformanceChart } from './CampaignPerformanceChart'
 import { DemographicsChart } from './DemographicsChart'
@@ -15,18 +15,18 @@ export function AdAnalytics() {
   const { data: campaigns } = useQuery({
     queryKey: ['campaigns', session?.user?.id],
     queryFn: async () => {
-      const { data: campaigns, error: campaignsError } = await supabase
+      const { data, error } = await supabase
         .from('sponsored_products')
         .select('*')
         .eq('sponsor_id', session?.user?.id)
         
-      if (campaignsError) throw campaignsError
-      return campaigns
+      if (error) throw error
+      return data
     },
     enabled: !!session?.user?.id
   })
 
-  const { data: analytics, isLoading } = useQuery({
+  const { data: analytics, isLoading } = useQuery<AdImpression[]>({
     queryKey: ['ad-analytics', campaigns?.map(c => c.id)],
     queryFn: async () => {
       if (!campaigns?.length) return []
@@ -55,7 +55,7 @@ export function AdAnalytics() {
     enabled: !!campaigns?.length
   })
 
-  const { data: campaignStats } = useQuery({
+  const { data: campaignStats } = useQuery<CampaignStat[]>({
     queryKey: ['campaign-stats', campaigns?.map(c => c.id)],
     queryFn: async () => {
       if (!campaigns?.length) return []
@@ -82,7 +82,7 @@ export function AdAnalytics() {
         .in('impression_id', analytics.map(a => a.id))
       
       if (error) throw error
-      return data as DemographicData[]
+      return data || []
     },
     enabled: !!analytics?.length
   })

@@ -404,3 +404,28 @@ export interface DemographicData {
   age_range: string;
   created_at: string;
 }
+
+export interface CampaignStat {
+  id: string;
+  campaign_id: string;
+  date: string;
+  impressions: number;
+  clicks: number;
+  conversion_count: number;
+  spend: number;
+  created_at: string;
+}
+
+export interface AdImpression {
+  id: string;
+  sponsored_product_id: string;
+  impressed_at: string;
+  clicked_at: string | null;
+  cost: number;
+  sponsored_products: {
+    placement_type: string;
+    budget: number;
+    spent: number;
+    tier: string;
+  };
+}
