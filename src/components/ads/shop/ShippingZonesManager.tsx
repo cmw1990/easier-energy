@@ -55,7 +55,16 @@ export function ShippingZonesManager() {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      return data as ShippingZone[];
+      
+      // Properly cast the rates from Json to our expected type
+      return (data as any[]).map(zone => ({
+        ...zone,
+        rates: zone.rates as Array<{
+          min_amount: number;
+          max_amount?: number;
+          rate: number;
+        }>
+      })) as ShippingZone[];
     },
     enabled: !!session?.user?.id
   });
