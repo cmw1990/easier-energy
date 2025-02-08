@@ -4273,6 +4273,42 @@ export type Database = {
         }
         Relationships: []
       }
+      life_situations: {
+        Row: {
+          created_at: string | null
+          ended_at: string | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          situation: string
+          started_at: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          ended_at?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          situation: string
+          started_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          ended_at?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          situation?: string
+          started_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       list_products: {
         Row: {
           added_at: string | null
@@ -5304,6 +5340,45 @@ export type Database = {
           water_intake_ml?: number | null
           weight_kg?: number | null
           wellness_notes?: string | null
+        }
+        Relationships: []
+      }
+      pregnancy_metrics: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          metric_type: string
+          notes: string | null
+          recorded_at: string | null
+          updated_at: string | null
+          user_id: string | null
+          value: number
+          week_number: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_type: string
+          notes?: string | null
+          recorded_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          value: number
+          week_number?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_type?: string
+          notes?: string | null
+          recorded_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          value?: number
+          week_number?: number | null
         }
         Relationships: []
       }
