@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -10,6 +9,7 @@ import { NewPlanDialog } from "@/components/energy-plans/NewPlanDialog"
 import { PlanList } from "@/components/energy-plans/PlanList"
 import { PlanFilters } from "@/components/energy-plans/PlanFilters"
 import type { Plan, PlanCategory, ProgressRecord } from "@/types/energyPlans"
+import { CelebrityPlanGallery } from "@/components/energy-plans/CelebrityPlanGallery"
 
 const EnergyPlans = () => {
   const { session } = useAuth()
@@ -102,6 +102,24 @@ const EnergyPlans = () => {
     enabled: !!session?.user?.id
   })
 
+  // Fetch celebrity plans
+  const { data: celebrityPlans, isLoading: isLoadingCelebrity } = useQuery<Plan[]>({
+    queryKey: ['energy-plans', 'celebrity'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('energy_plans')
+        .select(`
+          *,
+          energy_plan_components (*)
+        `)
+        .not('celebrity_name', 'is', null)
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      return data as Plan[]
+    }
+  })
+
   // Save plan mutation
   const savePlanMutation = useMutation({
     mutationFn: async (planId: string) => {
@@ -173,6 +191,12 @@ const EnergyPlans = () => {
           }} />
         </div>
       </div>
+
+      <CelebrityPlanGallery
+        plans={celebrityPlans}
+        onSavePlan={(id) => savePlanMutation.mutate(id)}
+        savedPlans={savedPlans}
+      />
 
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
         <TabsList className="grid w-full grid-cols-1 md:grid-cols-3">

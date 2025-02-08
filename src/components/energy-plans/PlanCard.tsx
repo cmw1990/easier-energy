@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -8,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Plan, ProgressRecord } from "@/types/energyPlans"
-import { Brain, Coffee, Flower, Heart, Moon, Share2, Star, Sun, Timer, Target, Wind, Zap } from "lucide-react"
+import { Brain, Coffee, Flower, Heart, Moon, Share2, Star, Sun, Timer, Target, Wind, Zap, CircleUser } from "lucide-react"
 
 const PlanTypeIcons: Record<string, any> = {
   energizing_boost: Zap,
@@ -66,6 +65,12 @@ export const PlanCard = ({ plan, progress, onSave, onShare, isSaved, showActions
             {plan.is_expert_plan && (
               <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                 Expert Plan
+              </Badge>
+            )}
+            {plan.celebrity_name && (
+              <Badge variant="outline" className="gap-1 py-1 bg-primary/5">
+                <CircleUser className="h-3 w-3" />
+                {plan.celebrity_name}
               </Badge>
             )}
           </div>

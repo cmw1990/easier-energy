@@ -1,4 +1,3 @@
-
 export type PlanType = 
   | 'energizing_boost' 
   | 'sustained_focus'
@@ -43,6 +42,9 @@ export interface Plan {
   recommended_time_of_day?: string[]
   suitable_contexts?: string[]
   energy_plan_components: PlanComponent[]
+  celebrity_name?: string
+  celebrity_profession?: string
+  celebrity_source?: string
 }
 
 export interface PlanReview {
