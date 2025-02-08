@@ -5253,9 +5253,11 @@ export type Database = {
           focus_level: number | null
           id: string
           mood_rating: number | null
+          photo_url: string | null
           sleep_quality: number | null
           stress_level: number | null
           symptoms: string[] | null
+          time_of_day: string | null
           user_id: string
           water_intake_ml: number | null
           weight_kg: number | null
@@ -5272,9 +5274,11 @@ export type Database = {
           focus_level?: number | null
           id?: string
           mood_rating?: number | null
+          photo_url?: string | null
           sleep_quality?: number | null
           stress_level?: number | null
           symptoms?: string[] | null
+          time_of_day?: string | null
           user_id: string
           water_intake_ml?: number | null
           weight_kg?: number | null
@@ -5291,9 +5295,11 @@ export type Database = {
           focus_level?: number | null
           id?: string
           mood_rating?: number | null
+          photo_url?: string | null
           sleep_quality?: number | null
           stress_level?: number | null
           symptoms?: string[] | null
+          time_of_day?: string | null
           user_id?: string
           water_intake_ml?: number | null
           weight_kg?: number | null
@@ -5304,6 +5310,7 @@ export type Database = {
       pregnancy_milestones: {
         Row: {
           achieved_at: string | null
+          category: string | null
           celebration_shared: boolean | null
           created_at: string | null
           custom_title: string | null
@@ -5313,11 +5320,14 @@ export type Database = {
           metadata: Json | null
           milestone_type: string
           notes: string | null
+          photo_urls: string[] | null
+          suggested_week: number | null
           user_id: string
           week_number: number | null
         }
         Insert: {
           achieved_at?: string | null
+          category?: string | null
           celebration_shared?: boolean | null
           created_at?: string | null
           custom_title?: string | null
@@ -5327,11 +5337,14 @@ export type Database = {
           metadata?: Json | null
           milestone_type: string
           notes?: string | null
+          photo_urls?: string[] | null
+          suggested_week?: number | null
           user_id: string
           week_number?: number | null
         }
         Update: {
           achieved_at?: string | null
+          category?: string | null
           celebration_shared?: boolean | null
           created_at?: string | null
           custom_title?: string | null
@@ -5341,8 +5354,76 @@ export type Database = {
           metadata?: Json | null
           milestone_type?: string
           notes?: string | null
+          photo_urls?: string[] | null
+          suggested_week?: number | null
           user_id?: string
           week_number?: number | null
+        }
+        Relationships: []
+      }
+      pregnancy_recommendations: {
+        Row: {
+          acted_on: boolean | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          priority: number | null
+          title: string
+          user_id: string
+          week_number: number | null
+        }
+        Insert: {
+          acted_on?: boolean | null
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          priority?: number | null
+          title: string
+          user_id: string
+          week_number?: number | null
+        }
+        Update: {
+          acted_on?: boolean | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          priority?: number | null
+          title?: string
+          user_id?: string
+          week_number?: number | null
+        }
+        Relationships: []
+      }
+      pregnancy_reminders: {
+        Row: {
+          created_at: string
+          days_of_week: string[] | null
+          id: string
+          is_active: boolean | null
+          time_of_day: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days_of_week?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          time_of_day?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days_of_week?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          time_of_day?: string | null
+          type?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -5397,6 +5478,39 @@ export type Database = {
           updated_at?: string
           user_id?: string
           wellness_goals?: string[] | null
+        }
+        Relationships: []
+      }
+      pregnancy_weekly_info: {
+        Row: {
+          baby_size_comparison: string | null
+          common_symptoms: string[] | null
+          created_at: string
+          development_highlights: string[] | null
+          id: string
+          nutrition_tips: string[] | null
+          todo_checklist: string[] | null
+          week_number: number
+        }
+        Insert: {
+          baby_size_comparison?: string | null
+          common_symptoms?: string[] | null
+          created_at?: string
+          development_highlights?: string[] | null
+          id?: string
+          nutrition_tips?: string[] | null
+          todo_checklist?: string[] | null
+          week_number: number
+        }
+        Update: {
+          baby_size_comparison?: string | null
+          common_symptoms?: string[] | null
+          created_at?: string
+          development_highlights?: string[] | null
+          id?: string
+          nutrition_tips?: string[] | null
+          todo_checklist?: string[] | null
+          week_number?: number
         }
         Relationships: []
       }

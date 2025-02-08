@@ -21,11 +21,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Plus } from "lucide-react"
+import { Plus, Camera } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
+import { supabase } from "@/integrations/supabase/client"
 
 const milestoneFormSchema = z.object({
   milestone_type: z.string().min(2, { message: "Milestone type is required" }),
@@ -34,6 +36,8 @@ const milestoneFormSchema = z.object({
   achieved_at: z.date(),
   week_number: z.number().min(1).max(42).optional(),
   notes: z.string().optional(),
+  category: z.string().optional(),
+  photo_urls: z.array(z.string()).optional(),
 })
 
 type MilestoneFormValues = z.infer<typeof milestoneFormSchema>
@@ -44,14 +48,54 @@ interface PregnancyMilestoneFormProps {
   onSubmit: (values: MilestoneFormValues) => void
 }
 
+const CATEGORIES = [
+  "Medical",
+  "Development",
+  "Personal",
+  "Family",
+  "Shopping",
+  "Other"
+]
+
 export function PregnancyMilestoneForm({ open, onOpenChange, onSubmit }: PregnancyMilestoneFormProps) {
+  const [uploading, setUploading] = useState(false)
   const form = useForm<MilestoneFormValues>({
     resolver: zodResolver(milestoneFormSchema),
     defaultValues: {
       milestone_type: "",
       achieved_at: new Date(),
+      photo_urls: [],
     },
   })
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    try {
+      setUploading(true)
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Math.random()}.${fileExt}`
+      const filePath = `${fileName}`
+
+      const { error: uploadError, data } = await supabase.storage
+        .from('pregnancy-milestones')
+        .upload(filePath, file)
+
+      if (uploadError) {
+        throw uploadError
+      }
+
+      const photoUrl = data.path
+      const currentUrls = form.getValues('photo_urls') || []
+      form.setValue('photo_urls', [...currentUrls, photoUrl])
+
+    } catch (error) {
+      console.error('Error uploading photo:', error)
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleSubmit = (values: MilestoneFormValues) => {
     onSubmit(values)
@@ -80,6 +124,28 @@ export function PregnancyMilestoneForm({ open, onOpenChange, onSubmit }: Pregnan
                   <FormLabel>Milestone Type</FormLabel>
                   <FormControl>
                     <Input placeholder="First kick, ultrasound, etc." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <select 
+                      className="w-full border rounded px-3 py-2"
+                      {...field}
+                    >
+                      <option value="">Select Category</option>
+                      {CATEGORIES.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -193,6 +259,53 @@ export function PregnancyMilestoneForm({ open, onOpenChange, onSubmit }: Pregnan
                       className="resize-none"
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="photo_urls"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Photos</FormLabel>
+                  <FormControl>
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        className="hidden"
+                        id="photo-upload"
+                        disabled={uploading}
+                      />
+                      <label htmlFor="photo-upload">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="cursor-pointer"
+                          disabled={uploading}
+                        >
+                          <Camera className="h-4 w-4 mr-2" />
+                          {uploading ? "Uploading..." : "Add Photo"}
+                        </Button>
+                      </label>
+                      {field.value && field.value.length > 0 && (
+                        <div className="mt-2 flex gap-2">
+                          {field.value.map((url, index) => (
+                            <div key={index} className="relative">
+                              <img
+                                src={url}
+                                alt={`Uploaded ${index + 1}`}
+                                className="w-16 h-16 object-cover rounded"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

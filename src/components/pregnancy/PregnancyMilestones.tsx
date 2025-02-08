@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
-import { Baby, Calendar, Heart } from "lucide-react"
+import { Baby, Calendar, Heart, Camera } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/integrations/supabase/client"
@@ -20,6 +20,7 @@ export const PregnancyMilestones = () => {
   const queryClient = useQueryClient()
   const [formOpen, setFormOpen] = useState(false)
   const [celebratingMilestone, setCelebratingMilestone] = useState<PregnancyMilestone | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
   const { data: milestones, isLoading } = useQuery({
     queryKey: ['pregnancy-milestones'],
@@ -118,6 +119,14 @@ export const PregnancyMilestones = () => {
     shareMilestoneMutation.mutate(id)
   }
 
+  const categories = milestones 
+    ? [...new Set(milestones.map(m => m.category).filter(Boolean))]
+    : []
+
+  const filteredMilestones = selectedCategory
+    ? milestones?.filter(m => m.category === selectedCategory)
+    : milestones
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -125,18 +134,32 @@ export const PregnancyMilestones = () => {
           <Baby className="h-5 w-5 text-pink-500" />
           Pregnancy Milestones
         </CardTitle>
-        <PregnancyMilestoneForm 
-          open={formOpen}
-          onOpenChange={setFormOpen}
-          onSubmit={handleAddMilestone}
-        />
+        <div className="flex gap-2">
+          {categories.length > 0 && (
+            <select 
+              className="border rounded px-2 py-1"
+              value={selectedCategory || ''}
+              onChange={(e) => setSelectedCategory(e.target.value || null)}
+            >
+              <option value="">All Categories</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          )}
+          <PregnancyMilestoneForm 
+            open={formOpen}
+            onOpenChange={setFormOpen}
+            onSubmit={handleAddMilestone}
+          />
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <p>Loading milestones...</p>
-        ) : milestones && milestones.length > 0 ? (
+        ) : filteredMilestones && filteredMilestones.length > 0 ? (
           <div className="space-y-4">
-            {milestones.map((milestone) => (
+            {filteredMilestones.map((milestone) => (
               <div 
                 key={milestone.id} 
                 className="flex items-start justify-between p-4 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
@@ -151,6 +174,23 @@ export const PregnancyMilestones = () => {
                       <span className="ml-2">Week {milestone.week_number}</span>
                     )}
                   </div>
+                  {milestone.category && (
+                    <span className="inline-block px-2 py-1 text-xs rounded-full bg-pink-100 text-pink-800">
+                      {milestone.category}
+                    </span>
+                  )}
+                  {milestone.photo_urls && milestone.photo_urls.length > 0 && (
+                    <div className="flex gap-2 mt-2">
+                      {milestone.photo_urls.map((url, index) => (
+                        <img 
+                          key={index}
+                          src={url} 
+                          alt={`Milestone photo ${index + 1}`}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
                 {!milestone.celebration_shared && (
                   <Button 
