@@ -11093,6 +11093,11 @@ export type Database = {
         confidence: number | null
         last_updated: string | null
       }
+      patternsummary: {
+        summary: string | null
+        confidence: number | null
+        last_updated: string | null
+      }
     }
   }
 }
