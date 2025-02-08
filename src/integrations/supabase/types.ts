@@ -7054,6 +7054,123 @@ export type Database = {
           },
         ]
       }
+      product_sales: {
+        Row: {
+          amount: number
+          buyer_id: string | null
+          created_at: string | null
+          id: string
+          payment_status: string | null
+          platform_fee: number
+          product_id: string | null
+          refund_status: string | null
+          sale_type: string
+          seller_id: string | null
+          seller_payout: number
+        }
+        Insert: {
+          amount: number
+          buyer_id?: string | null
+          created_at?: string | null
+          id?: string
+          payment_status?: string | null
+          platform_fee: number
+          product_id?: string | null
+          refund_status?: string | null
+          sale_type: string
+          seller_id?: string | null
+          seller_payout: number
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string | null
+          created_at?: string | null
+          id?: string
+          payment_status?: string | null
+          platform_fee?: number
+          product_id?: string | null
+          refund_status?: string | null
+          sale_type?: string
+          seller_id?: string | null
+          seller_payout?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_subscriptions: {
+        Row: {
+          created_at: string | null
+          ends_at: string | null
+          id: string
+          last_billing_date: string | null
+          next_billing_date: string | null
+          payment_method: Json | null
+          product_id: string | null
+          renewal_price: number
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          last_billing_date?: string | null
+          next_billing_date?: string | null
+          payment_method?: Json | null
+          product_id?: string | null
+          renewal_price: number
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          last_billing_date?: string | null
+          next_billing_date?: string | null
+          payment_method?: Json | null
+          product_id?: string | null
+          renewal_price?: number
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_subscriptions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_subscriptions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_topics: {
         Row: {
           product_id: string
@@ -7222,6 +7339,7 @@ export type Database = {
       }
       products: {
         Row: {
+          access_instructions: string | null
           amazon_link: string | null
           amazon_price: number | null
           assembly_required: boolean | null
@@ -7236,11 +7354,16 @@ export type Database = {
           condition: string | null
           country_of_origin: string | null
           created_at: string | null
+          demo_url: string | null
           description: string | null
+          digital_category:
+            | Database["public"]["Enums"]["digital_product_category"]
+            | null
           dimensions: Json | null
           eco_friendly_packaging: boolean | null
           featured_date: string | null
           featured_score: number | null
+          features: Json | null
           flavor: string
           id: string
           image_url: string | null
@@ -7250,23 +7373,37 @@ export type Database = {
           maker_id: string | null
           materials: string[] | null
           media_gallery: Json[] | null
+          min_subscription_period: string | null
           name: string
+          one_time_price: number | null
           package_dimensions: Json | null
           product_type: string
+          recurring_revenue: number | null
+          refund_policy: string | null
+          release_date: string | null
           retail_availability: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
+          sales_count: number | null
           searchable_text: unknown | null
           shipping_restrictions: string[] | null
           shipping_weight_grams: number | null
           size_reference: Json | null
           strength: Database["public"]["Enums"]["strength_level"]
+          subscription_price: number | null
+          support_email: string | null
           tags: string[] | null
+          technical_requirements: Json | null
           updated_at: string | null
           upvotes_count: number | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          version: string | null
           warranty_info: Json | null
           weight_grams: number | null
         }
         Insert: {
+          access_instructions?: string | null
           amazon_link?: string | null
           amazon_price?: number | null
           assembly_required?: boolean | null
@@ -7281,11 +7418,16 @@ export type Database = {
           condition?: string | null
           country_of_origin?: string | null
           created_at?: string | null
+          demo_url?: string | null
           description?: string | null
+          digital_category?:
+            | Database["public"]["Enums"]["digital_product_category"]
+            | null
           dimensions?: Json | null
           eco_friendly_packaging?: boolean | null
           featured_date?: string | null
           featured_score?: number | null
+          features?: Json | null
           flavor: string
           id?: string
           image_url?: string | null
@@ -7295,23 +7437,37 @@ export type Database = {
           maker_id?: string | null
           materials?: string[] | null
           media_gallery?: Json[] | null
+          min_subscription_period?: string | null
           name: string
+          one_time_price?: number | null
           package_dimensions?: Json | null
           product_type?: string
+          recurring_revenue?: number | null
+          refund_policy?: string | null
+          release_date?: string | null
           retail_availability?: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
+          sales_count?: number | null
           searchable_text?: unknown | null
           shipping_restrictions?: string[] | null
           shipping_weight_grams?: number | null
           size_reference?: Json | null
           strength: Database["public"]["Enums"]["strength_level"]
+          subscription_price?: number | null
+          support_email?: string | null
           tags?: string[] | null
+          technical_requirements?: Json | null
           updated_at?: string | null
           upvotes_count?: number | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          version?: string | null
           warranty_info?: Json | null
           weight_grams?: number | null
         }
         Update: {
+          access_instructions?: string | null
           amazon_link?: string | null
           amazon_price?: number | null
           assembly_required?: boolean | null
@@ -7326,11 +7482,16 @@ export type Database = {
           condition?: string | null
           country_of_origin?: string | null
           created_at?: string | null
+          demo_url?: string | null
           description?: string | null
+          digital_category?:
+            | Database["public"]["Enums"]["digital_product_category"]
+            | null
           dimensions?: Json | null
           eco_friendly_packaging?: boolean | null
           featured_date?: string | null
           featured_score?: number | null
+          features?: Json | null
           flavor?: string
           id?: string
           image_url?: string | null
@@ -7340,19 +7501,32 @@ export type Database = {
           maker_id?: string | null
           materials?: string[] | null
           media_gallery?: Json[] | null
+          min_subscription_period?: string | null
           name?: string
+          one_time_price?: number | null
           package_dimensions?: Json | null
           product_type?: string
+          recurring_revenue?: number | null
+          refund_policy?: string | null
+          release_date?: string | null
           retail_availability?: Json | null
           risk_level?: Database["public"]["Enums"]["risk_level"]
+          sales_count?: number | null
           searchable_text?: unknown | null
           shipping_restrictions?: string[] | null
           shipping_weight_grams?: number | null
           size_reference?: Json | null
           strength?: Database["public"]["Enums"]["strength_level"]
+          subscription_price?: number | null
+          support_email?: string | null
           tags?: string[] | null
+          technical_requirements?: Json | null
           updated_at?: string | null
           upvotes_count?: number | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          version?: string | null
           warranty_info?: Json | null
           weight_grams?: number | null
         }
@@ -8327,6 +8501,150 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      seller_analytics: {
+        Row: {
+          churned_subscribers: number | null
+          date: string | null
+          id: string
+          new_subscribers: number | null
+          one_time_revenue: number | null
+          refund_amount: number | null
+          refund_count: number | null
+          revenue: number | null
+          sales_count: number | null
+          seller_id: string | null
+          subscription_revenue: number | null
+          views_count: number | null
+        }
+        Insert: {
+          churned_subscribers?: number | null
+          date?: string | null
+          id?: string
+          new_subscribers?: number | null
+          one_time_revenue?: number | null
+          refund_amount?: number | null
+          refund_count?: number | null
+          revenue?: number | null
+          sales_count?: number | null
+          seller_id?: string | null
+          subscription_revenue?: number | null
+          views_count?: number | null
+        }
+        Update: {
+          churned_subscribers?: number | null
+          date?: string | null
+          id?: string
+          new_subscribers?: number | null
+          one_time_revenue?: number | null
+          refund_amount?: number | null
+          refund_count?: number | null
+          revenue?: number | null
+          sales_count?: number | null
+          seller_id?: string | null
+          subscription_revenue?: number | null
+          views_count?: number | null
+        }
+        Relationships: []
+      }
+      seller_profiles: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          logo_url: string | null
+          payment_details: Json | null
+          rating: number | null
+          review_count: number | null
+          social_links: Json | null
+          store_name: string
+          total_revenue: number | null
+          total_sales: number | null
+          updated_at: string | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id: string
+          logo_url?: string | null
+          payment_details?: Json | null
+          rating?: number | null
+          review_count?: number | null
+          social_links?: Json | null
+          store_name: string
+          total_revenue?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          payment_details?: Json | null
+          rating?: number | null
+          review_count?: number | null
+          social_links?: Json | null
+          store_name?: string
+          total_revenue?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      seller_verification_requests: {
+        Row: {
+          admin_notes: string | null
+          business_name: string | null
+          business_type: string | null
+          documents_url: string[] | null
+          id: string
+          reviewed_at: string | null
+          reviewer_id: string | null
+          seller_id: string | null
+          status: Database["public"]["Enums"]["verification_status"] | null
+          submitted_at: string | null
+          tax_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          documents_url?: string[] | null
+          id?: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          seller_id?: string | null
+          status?: Database["public"]["Enums"]["verification_status"] | null
+          submitted_at?: string | null
+          tax_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          documents_url?: string[] | null
+          id?: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          seller_id?: string | null
+          status?: Database["public"]["Enums"]["verification_status"] | null
+          submitted_at?: string | null
+          tax_id?: string | null
+        }
+        Relationships: []
       }
       session_participants: {
         Row: {
@@ -12377,6 +12695,16 @@ export type Database = {
         | "cognitive_restructuring"
         | "problem_solving"
         | "relaxation"
+      digital_product_category:
+        | "discord_servers"
+        | "tools_software"
+        | "courses_education"
+        | "content_media"
+        | "trading_investing"
+        | "memberships"
+        | "ai_machine_learning"
+        | "alpha_groups"
+        | "developer_resources"
       discussion_status: "open" | "closed" | "archived"
       distraction_type: "app" | "website" | "notification" | "social_media"
       ease_rating_type: "agree" | "disagree" | "not_sure"
