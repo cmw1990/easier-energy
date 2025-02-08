@@ -47,6 +47,7 @@ export function InventoryManager() {
 
   const updateStock = async (productId: string, quantity: number) => {
     try {
+      // First update the product stock
       const { error: updateError } = await supabase
         .from('products')
         .update({ stock: quantity })
@@ -54,6 +55,7 @@ export function InventoryManager() {
 
       if (updateError) throw updateError;
 
+      // Then create an inventory log entry
       const { error: logError } = await supabase
         .from('inventory_logs')
         .insert({
