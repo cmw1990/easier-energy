@@ -7352,6 +7352,7 @@ export type Database = {
           chemicals: string[] | null
           comments_count: number | null
           condition: string | null
+          contraindications: string[] | null
           country_of_origin: string | null
           created_at: string | null
           demo_url: string | null
@@ -7365,9 +7366,11 @@ export type Database = {
           featured_score: number | null
           features: Json | null
           flavor: string
+          health_warnings: string[] | null
           id: string
           image_url: string | null
           is_launched: boolean | null
+          is_nicotine_product: boolean | null
           is_nrt_certified: boolean
           launch_date: string | null
           maker_id: string | null
@@ -7375,12 +7378,14 @@ export type Database = {
           media_gallery: Json[] | null
           min_subscription_period: string | null
           name: string
+          nicotine_content: number | null
           one_time_price: number | null
           package_dimensions: Json | null
           product_type: string
           recurring_revenue: number | null
           refund_policy: string | null
           release_date: string | null
+          requires_age_verification: boolean | null
           retail_availability: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
           sales_count: number | null
@@ -7416,6 +7421,7 @@ export type Database = {
           chemicals?: string[] | null
           comments_count?: number | null
           condition?: string | null
+          contraindications?: string[] | null
           country_of_origin?: string | null
           created_at?: string | null
           demo_url?: string | null
@@ -7429,9 +7435,11 @@ export type Database = {
           featured_score?: number | null
           features?: Json | null
           flavor: string
+          health_warnings?: string[] | null
           id?: string
           image_url?: string | null
           is_launched?: boolean | null
+          is_nicotine_product?: boolean | null
           is_nrt_certified?: boolean
           launch_date?: string | null
           maker_id?: string | null
@@ -7439,12 +7447,14 @@ export type Database = {
           media_gallery?: Json[] | null
           min_subscription_period?: string | null
           name: string
+          nicotine_content?: number | null
           one_time_price?: number | null
           package_dimensions?: Json | null
           product_type?: string
           recurring_revenue?: number | null
           refund_policy?: string | null
           release_date?: string | null
+          requires_age_verification?: boolean | null
           retail_availability?: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
           sales_count?: number | null
@@ -7480,6 +7490,7 @@ export type Database = {
           chemicals?: string[] | null
           comments_count?: number | null
           condition?: string | null
+          contraindications?: string[] | null
           country_of_origin?: string | null
           created_at?: string | null
           demo_url?: string | null
@@ -7493,9 +7504,11 @@ export type Database = {
           featured_score?: number | null
           features?: Json | null
           flavor?: string
+          health_warnings?: string[] | null
           id?: string
           image_url?: string | null
           is_launched?: boolean | null
+          is_nicotine_product?: boolean | null
           is_nrt_certified?: boolean
           launch_date?: string | null
           maker_id?: string | null
@@ -7503,12 +7516,14 @@ export type Database = {
           media_gallery?: Json[] | null
           min_subscription_period?: string | null
           name?: string
+          nicotine_content?: number | null
           one_time_price?: number | null
           package_dimensions?: Json | null
           product_type?: string
           recurring_revenue?: number | null
           refund_policy?: string | null
           release_date?: string | null
+          requires_age_verification?: boolean | null
           retail_availability?: Json | null
           risk_level?: Database["public"]["Enums"]["risk_level"]
           sales_count?: number | null
@@ -11605,6 +11620,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_content_preferences: {
+        Row: {
+          age_verified: boolean | null
+          age_verified_at: string | null
+          created_at: string | null
+          hide_nicotine_warnings: boolean | null
+          id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          age_verified?: boolean | null
+          age_verified_at?: string | null
+          created_at?: string | null
+          hide_nicotine_warnings?: boolean | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          age_verified?: boolean | null
+          age_verified_at?: string | null
+          created_at?: string | null
+          hide_nicotine_warnings?: boolean | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       user_devices: {
         Row: {
