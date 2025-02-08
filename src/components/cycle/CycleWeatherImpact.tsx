@@ -9,7 +9,7 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Cloud, ThermometerSun } from "lucide-react";
-import type { CycleWeatherImpact } from "@/types/cycle";
+import type { CycleWeatherImpact as CycleWeatherImpactType } from "@/types/cycle";
 
 export const CycleWeatherImpact = () => {
   const { session } = useAuth();
@@ -26,13 +26,13 @@ export const CycleWeatherImpact = () => {
         .limit(7);
 
       if (error) throw error;
-      return data as CycleWeatherImpact[];
+      return data as CycleWeatherImpactType[];
     },
     enabled: !!session?.user?.id,
   });
 
   const addWeatherImpact = useMutation({
-    mutationFn: async (impact: Omit<CycleWeatherImpact, 'id' | 'created_at'>) => {
+    mutationFn: async (impact: Omit<CycleWeatherImpactType, 'id' | 'created_at'>) => {
       const { data, error } = await supabase
         .from('cycle_weather_impacts')
         .insert(impact)

@@ -4,7 +4,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Moon, TrendingUp } from "lucide-react";
-import type { CycleSleepCorrelation } from "@/types/cycle";
+import type { CycleSleepCorrelation as CycleSleepCorrelationType } from "@/types/cycle";
 import {
   LineChart,
   Line,
@@ -29,7 +29,7 @@ export const CycleSleepCorrelation = () => {
         .limit(30);
 
       if (error) throw error;
-      return data as CycleSleepCorrelation[];
+      return data as CycleSleepCorrelationType[];
     },
     enabled: !!session?.user?.id,
   });
