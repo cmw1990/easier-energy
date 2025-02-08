@@ -2529,6 +2529,9 @@ export type Database = {
           recommended_time_of_day: string[] | null
           saves_count: number | null
           suitable_contexts: string[] | null
+          suitable_life_situations:
+            | Database["public"]["Enums"]["life_situation"][]
+            | null
           tags: string[] | null
           title: string
           updated_at: string
@@ -2548,6 +2551,9 @@ export type Database = {
           recommended_time_of_day?: string[] | null
           saves_count?: number | null
           suitable_contexts?: string[] | null
+          suitable_life_situations?:
+            | Database["public"]["Enums"]["life_situation"][]
+            | null
           tags?: string[] | null
           title: string
           updated_at?: string
@@ -2567,6 +2573,9 @@ export type Database = {
           recommended_time_of_day?: string[] | null
           saves_count?: number | null
           suitable_contexts?: string[] | null
+          suitable_life_situations?:
+            | Database["public"]["Enums"]["life_situation"][]
+            | null
           tags?: string[] | null
           title?: string
           updated_at?: string
@@ -10916,6 +10925,7 @@ export type Database = {
         | "short_term_memory"
         | "long_term_memory"
         | "migraine"
+      life_situation: "regular" | "pregnancy" | "postpartum" | "breastfeeding"
       mood_category: "positive" | "negative" | "neutral"
       plan_type:
         | "energizing_boost"

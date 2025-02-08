@@ -37,6 +37,99 @@ export interface Database {
           notes?: string | null
         }
       }
+      pregnancy_wellness_correlations: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          created_at: string
+          updated_at: string
+          energy_pattern: Json | null
+          focus_pattern: Json | null
+          sleep_pattern: Json | null
+          activity_impact: Json | null
+          nutrition_impact: Json | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date?: string
+          created_at?: string
+          updated_at?: string
+          energy_pattern?: Json | null
+          focus_pattern?: Json | null
+          sleep_pattern?: Json | null
+          activity_impact?: Json | null
+          nutrition_impact?: Json | null
+        }
+        Update: {
+          user_id?: string
+          date?: string
+          updated_at?: string
+          energy_pattern?: Json | null
+          focus_pattern?: Json | null
+          sleep_pattern?: Json | null
+          activity_impact?: Json | null
+          nutrition_impact?: Json | null
+        }
+      }
+      pregnancy_logs: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          created_at: string
+          energy_level: number | null
+          focus_level: number | null
+          stress_level: number | null
+          mood_rating: number | null
+          sleep_quality: number | null
+          exercise_minutes: number | null
+          water_intake_ml: number | null
+          blood_pressure_systolic: number | null
+          blood_pressure_diastolic: number | null
+          weight_kg: number | null
+          activity_type: string[] | null
+          symptoms: string[] | null
+          wellness_notes: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date?: string
+          created_at?: string
+          energy_level?: number | null
+          focus_level?: number | null
+          stress_level?: number | null
+          mood_rating?: number | null
+          sleep_quality?: number | null
+          exercise_minutes?: number | null
+          water_intake_ml?: number | null
+          blood_pressure_systolic?: number | null
+          blood_pressure_diastolic?: number | null
+          weight_kg?: number | null
+          activity_type?: string[] | null
+          symptoms?: string[] | null
+          wellness_notes?: string | null
+        }
+        Update: {
+          user_id?: string
+          date?: string
+          energy_level?: number | null
+          focus_level?: number | null
+          stress_level?: number | null
+          mood_rating?: number | null
+          sleep_quality?: number | null
+          exercise_minutes?: number | null
+          water_intake_ml?: number | null
+          blood_pressure_systolic?: number | null
+          blood_pressure_diastolic?: number | null
+          weight_kg?: number | null
+          activity_type?: string[] | null
+          symptoms?: string[] | null
+          wellness_notes?: string | null
+        }
+      }
       energy_plans: {
         Row: {
           id: string
@@ -57,6 +150,7 @@ export interface Database {
           suitable_contexts?: string[]
           estimated_duration_minutes?: number
           celebrity_name?: string
+          suitable_life_situations: LifeSituation[]
         }
         Insert: {
           id?: string
@@ -77,6 +171,7 @@ export interface Database {
           suitable_contexts?: string[]
           estimated_duration_minutes?: number
           celebrity_name?: string
+          suitable_life_situations?: LifeSituation[]
         }
         Update: {
           created_by?: string
@@ -94,6 +189,7 @@ export interface Database {
           suitable_contexts?: string[]
           estimated_duration_minutes?: number
           celebrity_name?: string
+          suitable_life_situations?: LifeSituation[]
         }
       }
       energy_plan_components: {
