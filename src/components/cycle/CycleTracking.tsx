@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import { Moon, Sun, Brain, Heart } from "lucide-react";
+import { Moon, Sun, Brain, Heart, Battery } from "lucide-react";
 
 export const CycleTracking = () => {
   const { session } = useAuth();
