@@ -11,11 +11,24 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 
+type BrewingMethod = "hot_steep" | "cold_brew" | "gongfu" | "western"
+
+type Form = {
+  teaName: string;
+  brewingMethod: BrewingMethod;
+  steepTime: string;
+  waterTemperature: string;
+  amount: string;
+  rating: string;
+  effects: string;
+  notes: string;
+}
+
 export function TeaIntakeForm() {
   const { session } = useAuth()
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<Form>({
     teaName: "",
     brewingMethod: "hot_steep",
     steepTime: "",
@@ -27,7 +40,7 @@ export function TeaIntakeForm() {
   })
 
   const logTeaMutation = useMutation({
-    mutationFn: async (values: typeof form) => {
+    mutationFn: async (values: Form) => {
       const { error } = await supabase
         .from('herbal_tea_logs')
         .insert({
@@ -106,7 +119,7 @@ export function TeaIntakeForm() {
               <Label htmlFor="brewingMethod">Brewing Method</Label>
               <Select 
                 value={form.brewingMethod}
-                onValueChange={value => setForm(prev => ({ ...prev, brewingMethod: value }))}
+                onValueChange={value => setForm(prev => ({ ...prev, brewingMethod: value as BrewingMethod }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select method" />

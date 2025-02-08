@@ -11,11 +11,22 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 
+type Form = {
+  brand: string;
+  dosage: string;
+  form: "powder" | "capsule" | "liquid" | "tablet";
+  timing: string;
+  mixedWith: string;
+  sideEffects: string;
+  effectivenessRating: string;
+  notes: string;
+}
+
 export function CreatineIntakeForm() {
   const { session } = useAuth()
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<Form>({
     brand: "",
     dosage: "",
     form: "powder",
@@ -27,7 +38,7 @@ export function CreatineIntakeForm() {
   })
 
   const logCreatineMutation = useMutation({
-    mutationFn: async (values: typeof form) => {
+    mutationFn: async (values: Form) => {
       const { error } = await supabase
         .from('creatine_logs')
         .insert({
@@ -118,7 +129,7 @@ export function CreatineIntakeForm() {
               <Label htmlFor="form">Form</Label>
               <Select 
                 value={form.form}
-                onValueChange={value => setForm(prev => ({ ...prev, form: value }))}
+                onValueChange={value => setForm(prev => ({ ...prev, form: value as Form["form"] }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select form" />
