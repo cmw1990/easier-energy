@@ -54,7 +54,7 @@ export const PregnancyMilestones = () => {
       const { data, error } = await supabase
         .from('pregnancy_milestones')
         .insert([{ 
-          ...milestone, 
+          ...milestone,
           user_id: session.user.id,
           celebration_shared: false
         }])
@@ -62,7 +62,7 @@ export const PregnancyMilestones = () => {
         .single()
 
       if (error) throw error
-      return data
+      return data as PregnancyMilestone
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['pregnancy-milestones'] })
