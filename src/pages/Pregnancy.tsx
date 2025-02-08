@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
@@ -9,6 +10,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useAuth } from "@/components/AuthProvider"
 import type { PregnancyWellnessCorrelationsRow } from "@/types/supabase"
 
 type PregnancyData = {
@@ -27,13 +29,17 @@ const PregnancyPage = () => {
   const { toast } = useToast()
   const navigate = useNavigate()
   const [selectedTab, setSelectedTab] = useState("overview")
-  
+  const { session } = useAuth()
+
   const { data: pregnancyData, isLoading } = useQuery({
     queryKey: ['pregnancy-tracking'],
     queryFn: async () => {
+      if (!session?.user?.id) return null
+      
       const { data, error } = await supabase
         .from('pregnancy_tracking')
         .select('*')
+        .eq('user_id', session.user.id)
         .single()
 
       if (error) {
@@ -42,15 +48,19 @@ const PregnancyPage = () => {
       }
 
       return data as PregnancyData
-    }
+    },
+    enabled: !!session?.user?.id
   })
 
   const { data: recentLogs } = useQuery({
     queryKey: ['pregnancy-logs'],
     queryFn: async () => {
+      if (!session?.user?.id) return []
+      
       const { data, error } = await supabase
         .from('pregnancy_logs')
         .select('*')
+        .eq('user_id', session.user.id)
         .order('date', { ascending: false })
         .limit(7)
 
@@ -60,7 +70,8 @@ const PregnancyPage = () => {
       }
 
       return data
-    }
+    },
+    enabled: !!session?.user?.id
   })
 
   const { data: wellnessCorrelations } = useQuery<PregnancyWellnessCorrelationsRow>({
