@@ -3,7 +3,7 @@ import { Plan, ProgressRecord } from "@/types/energyPlans"
 import { PlanCard } from "./PlanCard"
 import { Skeleton } from "@/components/ui/skeleton"
 
-interface PlanListProps {
+export interface PlanListProps {
   plans?: Plan[]
   progress?: ProgressRecord[]
   isLoading?: boolean

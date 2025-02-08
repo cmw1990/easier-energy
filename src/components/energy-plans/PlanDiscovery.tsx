@@ -56,9 +56,9 @@ export const PlanDiscovery = ({
 
       // Client-side filtering based on biometric requirements
       return (data as Plan[]).filter(plan => {
-        if (!plan.biometric_requirements || !biometricData) return true;
+        if (!plan.biometricRequirements || !biometricData) return true;
 
-        const requirements = plan.biometric_requirements;
+        const requirements = plan.biometricRequirements;
         return (
           (!requirements.energyLevel || biometricData.energyLevel >= requirements.energyLevel) &&
           (!requirements.stressLevel || biometricData.stressLevel <= requirements.stressLevel) &&
@@ -76,8 +76,6 @@ export const PlanDiscovery = ({
       isLoading={isLoadingPublic}
       onSavePlan={onSavePlan}
       savedPlans={savedPlans}
-      currentCyclePhase={currentCyclePhase}
-      biometricData={biometricData}
     />
   );
 };
