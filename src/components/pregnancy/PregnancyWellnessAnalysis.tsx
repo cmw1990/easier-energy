@@ -1,14 +1,30 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Activity, Brain, Heart, Moon, Sun, Loader2 } from "lucide-react"
+import { Activity, Brain, Heart, Moon, Sun } from "lucide-react"
 import type { PregnancyWellnessCorrelationsRow } from "@/types/supabase"
 
 interface PregnancyWellnessAnalysisProps {
   correlations?: PregnancyWellnessCorrelationsRow | null
+  isLoading?: boolean
 }
 
-export const PregnancyWellnessAnalysis = ({ correlations }: PregnancyWellnessAnalysisProps) => {
+export const PregnancyWellnessAnalysis = ({ correlations, isLoading }: PregnancyWellnessAnalysisProps) => {
+  if (isLoading) {
+    return (
+      <Card className="min-h-[300px]">
+        <CardHeader>
+          <CardTitle>Wellness Analysis</CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center h-full">
+          <div className="animate-spin">
+            <Activity className="h-8 w-8 text-muted-foreground" />
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   if (!correlations) {
     return (
       <Card>
@@ -21,6 +37,11 @@ export const PregnancyWellnessAnalysis = ({ correlations }: PregnancyWellnessAna
         </CardContent>
       </Card>
     )
+  }
+
+  const getProgressValue = (pattern: any) => {
+    if (!pattern || !pattern.confidence) return 0
+    return Math.min(100, Math.max(0, pattern.confidence * 100))
   }
 
   return (
@@ -41,7 +62,7 @@ export const PregnancyWellnessAnalysis = ({ correlations }: PregnancyWellnessAna
                 <p className="text-sm text-muted-foreground">{correlations.energy_pattern.summary}</p>
               </div>
             </div>
-            <Progress value={70} className="h-2" />
+            <Progress value={getProgressValue(correlations.energy_pattern)} className="h-2" />
           </div>
         )}
 
@@ -54,7 +75,7 @@ export const PregnancyWellnessAnalysis = ({ correlations }: PregnancyWellnessAna
                 <p className="text-sm text-muted-foreground">{correlations.focus_pattern.summary}</p>
               </div>
             </div>
-            <Progress value={85} className="h-2" />
+            <Progress value={getProgressValue(correlations.focus_pattern)} className="h-2" />
           </div>
         )}
 
@@ -105,7 +126,7 @@ export const PregnancyWellnessAnalysis = ({ correlations }: PregnancyWellnessAna
                 </p>
               </div>
             </div>
-            <Progress value={80} className="h-2" />
+            <Progress value={getProgressValue(correlations.sleep_pattern)} className="h-2" />
           </div>
         )}
       </CardContent>
