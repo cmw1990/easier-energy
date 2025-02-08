@@ -44,6 +44,9 @@ const SleepAnalytics = lazy(() => import("@/pages/tools/SleepAnalytics"))
 const SleepGoals = lazy(() => import("@/pages/tools/SleepGoals"))
 const SmartAlarm = lazy(() => import("@/pages/tools/SmartAlarm"))
 
+const CreatineGuide = lazy(() => import("@/pages/tools/CreatineGuide"))
+const HerbalTeaGuide = lazy(() => import("@/pages/tools/HerbalTeaGuide"))
+
 export const toolRoutes = {
   path: "/tools",
   children: [
@@ -388,6 +391,22 @@ export const toolRoutes = {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <SmartAlarm />
+        </Suspense>
+      ),
+    },
+    {
+      path: "creatine-guide",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <CreatineGuide />
+        </Suspense>
+      ),
+    },
+    {
+      path: "herbal-tea-guide",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <HerbalTeaGuide />
         </Suspense>
       ),
     },

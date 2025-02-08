@@ -1671,6 +1671,102 @@ export type Database = {
         }
         Relationships: []
       }
+      creatine_logs: {
+        Row: {
+          brand: string
+          consumed_at: string | null
+          created_at: string | null
+          dosage_grams: number
+          effectiveness_rating: number | null
+          form: Database["public"]["Enums"]["supplement_form"]
+          id: string
+          mixed_with: string | null
+          notes: string | null
+          side_effects: string[] | null
+          timing: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          brand: string
+          consumed_at?: string | null
+          created_at?: string | null
+          dosage_grams: number
+          effectiveness_rating?: number | null
+          form: Database["public"]["Enums"]["supplement_form"]
+          id?: string
+          mixed_with?: string | null
+          notes?: string | null
+          side_effects?: string[] | null
+          timing: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          brand?: string
+          consumed_at?: string | null
+          created_at?: string | null
+          dosage_grams?: number
+          effectiveness_rating?: number | null
+          form?: Database["public"]["Enums"]["supplement_form"]
+          id?: string
+          mixed_with?: string | null
+          notes?: string | null
+          side_effects?: string[] | null
+          timing?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      creatine_products: {
+        Row: {
+          brand: string
+          certifications: string[] | null
+          created_at: string | null
+          description: string
+          form: Database["public"]["Enums"]["supplement_form"]
+          id: string
+          ingredients: string[] | null
+          name: string
+          price: number | null
+          serving_size_grams: number
+          servings_per_container: number | null
+          third_party_tested: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          brand: string
+          certifications?: string[] | null
+          created_at?: string | null
+          description: string
+          form: Database["public"]["Enums"]["supplement_form"]
+          id?: string
+          ingredients?: string[] | null
+          name: string
+          price?: number | null
+          serving_size_grams: number
+          servings_per_container?: number | null
+          third_party_tested?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          brand?: string
+          certifications?: string[] | null
+          created_at?: string | null
+          description?: string
+          form?: Database["public"]["Enums"]["supplement_form"]
+          id?: string
+          ingredients?: string[] | null
+          name?: string
+          price?: number | null
+          serving_size_grams?: number
+          servings_per_container?: number | null
+          third_party_tested?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       cycle_exercise_recommendations: {
         Row: {
           benefits: string[]
@@ -4143,6 +4239,99 @@ export type Database = {
           sync_date?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      herbal_tea_logs: {
+        Row: {
+          amount_grams: number | null
+          brewing_method: Database["public"]["Enums"]["brewing_method"]
+          consumed_at: string | null
+          created_at: string | null
+          effects: string[] | null
+          id: string
+          notes: string | null
+          rating: number | null
+          steep_time_seconds: number | null
+          tea_name: string
+          updated_at: string | null
+          user_id: string
+          water_temperature: number | null
+        }
+        Insert: {
+          amount_grams?: number | null
+          brewing_method: Database["public"]["Enums"]["brewing_method"]
+          consumed_at?: string | null
+          created_at?: string | null
+          effects?: string[] | null
+          id?: string
+          notes?: string | null
+          rating?: number | null
+          steep_time_seconds?: number | null
+          tea_name: string
+          updated_at?: string | null
+          user_id: string
+          water_temperature?: number | null
+        }
+        Update: {
+          amount_grams?: number | null
+          brewing_method?: Database["public"]["Enums"]["brewing_method"]
+          consumed_at?: string | null
+          created_at?: string | null
+          effects?: string[] | null
+          id?: string
+          notes?: string | null
+          rating?: number | null
+          steep_time_seconds?: number | null
+          tea_name?: string
+          updated_at?: string | null
+          user_id?: string
+          water_temperature?: number | null
+        }
+        Relationships: []
+      }
+      herbal_teas: {
+        Row: {
+          benefits: string[] | null
+          brewing_instructions: string
+          category: string
+          cautions: string[] | null
+          created_at: string | null
+          description: string
+          id: string
+          name: string
+          optimal_temp_celsius: number | null
+          steep_time_range_seconds: number[] | null
+          traditional_uses: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          benefits?: string[] | null
+          brewing_instructions: string
+          category: string
+          cautions?: string[] | null
+          created_at?: string | null
+          description: string
+          id?: string
+          name: string
+          optimal_temp_celsius?: number | null
+          steep_time_range_seconds?: number[] | null
+          traditional_uses?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          benefits?: string[] | null
+          brewing_instructions?: string
+          category?: string
+          cautions?: string[] | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          name?: string
+          optimal_temp_celsius?: number | null
+          steep_time_range_seconds?: number[] | null
+          traditional_uses?: string[] | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -11158,6 +11347,7 @@ export type Database = {
         | "cellular_voltage"
         | "quantum_health"
         | "longevity_markers"
+      brewing_method: "hot_steep" | "cold_brew" | "gongfu" | "western"
       cbt_exercise_type:
         | "thought_record"
         | "behavioral_activation"
@@ -11296,6 +11486,13 @@ export type Database = {
       strength_level: "light" | "medium" | "strong" | "extra_strong"
       subscription_tier: "free" | "premium"
       substance_type: "alcohol" | "tobacco" | "other"
+      supplement_form:
+        | "powder"
+        | "capsule"
+        | "liquid"
+        | "tablet"
+        | "tea_bag"
+        | "loose_leaf"
       tool_category: "health" | "focus" | "relaxation" | "games" | "meditation"
       verification_status: "pending" | "approved" | "rejected"
     }
