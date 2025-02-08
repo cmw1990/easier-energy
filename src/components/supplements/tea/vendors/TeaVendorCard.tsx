@@ -2,7 +2,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Globe, MapPin, Star, Store } from "lucide-react"
+import { Globe, MapPin, Star, Store, Shield, ExternalLink } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface TeaVendorCardProps {
   vendor: {
@@ -29,11 +30,27 @@ export function TeaVendorCard({ vendor }: TeaVendorCardProps) {
             </CardTitle>
             <CardDescription>{vendor.description}</CardDescription>
           </div>
-          {vendor.verification_status === 'verified' && (
-            <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
-              Verified Vendor
-            </Badge>
-          )}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                {vendor.verification_status === 'verified' ? (
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200 flex items-center gap-1">
+                    <Shield className="h-3 w-3" />
+                    Verified
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-muted-foreground">
+                    Pending Verification
+                  </Badge>
+                )}
+              </TooltipTrigger>
+              <TooltipContent>
+                {vendor.verification_status === 'verified' 
+                  ? "This vendor has been verified for authenticity and quality"
+                  : "This vendor's verification is pending review"}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </CardHeader>
       <CardContent>
@@ -59,17 +76,27 @@ export function TeaVendorCard({ vendor }: TeaVendorCardProps) {
             </div>
           </div>
 
-          <Button variant="outline" className="w-full" asChild>
-            <a 
-              href={vendor.website} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-2"
-            >
-              <Globe className="h-4 w-4" />
-              Visit Website
-            </a>
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1" asChild>
+              <a 
+                href={vendor.website} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <Globe className="h-4 w-4" />
+                Visit Website
+              </a>
+            </Button>
+            <Button variant="outline" size="icon" asChild>
+              <a 
+                href={`/vendors/${vendor.id}`}
+                className="flex items-center justify-center"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

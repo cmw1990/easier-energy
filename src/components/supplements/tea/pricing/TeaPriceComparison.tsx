@@ -3,8 +3,15 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ArrowUpDown, ExternalLink, Store } from "lucide-react"
+import { ArrowUpDown, ExternalLink, Store, Shield } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Badge } from "@/components/ui/badge"
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface TeaVendor {
   name: string
@@ -57,7 +64,7 @@ export function TeaPriceComparison({ teaId }: TeaPriceComparisonProps) {
         <CardContent>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between border-b pb-2">
+              <div key={i} className="flex items-center justify-between border-b pb-4">
                 <div className="space-y-2">
                   <Skeleton className="h-4 w-[150px]" />
                   <Skeleton className="h-3 w-[100px]" />
@@ -84,7 +91,7 @@ export function TeaPriceComparison({ teaId }: TeaPriceComparisonProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-center py-4">
+          <p className="text-muted-foreground text-center py-6">
             No vendor prices available yet
           </p>
         </CardContent>
@@ -102,23 +109,44 @@ export function TeaPriceComparison({ teaId }: TeaPriceComparisonProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {prices.map((price) => (
-            <div key={price.id} className="flex items-center justify-between border-b pb-2">
+          {prices.map((price, index) => (
+            <div 
+              key={price.id} 
+              className={`flex items-center justify-between pb-4 ${
+                index !== prices.length - 1 ? 'border-b' : ''
+              }`}
+            >
               <div>
                 <div className="font-medium flex items-center gap-2">
                   {price.vendor.name}
-                  {price.vendor.verification_status === 'verified' && (
-                    <span className="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded">
-                      Verified
-                    </span>
-                  )}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        {price.vendor.verification_status === 'verified' && (
+                          <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
+                            <Shield className="h-3 w-3" />
+                          </Badge>
+                        )}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Verified Vendor
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <div className="text-sm text-muted-foreground">
                   Rating: {price.vendor.rating.toFixed(1)}
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="text-lg font-bold">${price.price.toFixed(2)}</div>
+                <div className="text-lg font-bold">
+                  ${price.price.toFixed(2)}
+                  {index === 0 && (
+                    <Badge variant="secondary" className="ml-2 text-xs">
+                      Best Price
+                    </Badge>
+                  )}
+                </div>
                 <Button variant="outline" size="sm" asChild>
                   <a 
                     href={price.url} 
@@ -126,7 +154,7 @@ export function TeaPriceComparison({ teaId }: TeaPriceComparisonProps) {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1"
                   >
-                    <span className="sr-only">Visit vendor</span>
+                    <span className="sr-only">Buy from {price.vendor.name}</span>
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </Button>
