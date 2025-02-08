@@ -1,5 +1,5 @@
 
-import { Battery, LogIn } from "lucide-react"
+import { Battery, LogIn, TrendingUp } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -32,6 +32,12 @@ export const TopNav = () => {
               />
             </div>
           )}
+          <Link to="/vendor/ads">
+            <Button variant="outline" className="bg-green-500/10 hover:bg-green-500/20 text-green-600">
+              <TrendingUp className="mr-2 h-4 w-4" />
+              Advertise
+            </Button>
+          </Link>
           <Link to="/tools">
             <Button variant="ghost">Tools</Button>
           </Link>

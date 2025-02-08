@@ -5,6 +5,7 @@ import Desktop from "@/pages/Desktop"
 import Auth from "@/pages/Auth"
 import LandingPage from "@/pages/LandingPage"
 import { AuthProvider } from "@/components/AuthProvider"
+import { VendorAdDashboard } from "@/components/ads/VendorAdDashboard"
 
 const BathingPage = lazy(() => import("@/pages/Bathing"))
 const CBTPage = lazy(() => import("@/pages/CBT"))
@@ -48,6 +49,16 @@ export const mainRoutes = [
     path: "/",
     element: <LandingPage />,
     errorElement: <NotFound />,
+  },
+  {
+    path: "/vendor/ads",
+    element: (
+      <AuthProvider>
+        <Layout>
+          <VendorAdDashboard />
+        </Layout>
+      </AuthProvider>
+    ),
   },
   {
     path: "/desktop",
