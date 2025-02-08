@@ -7222,6 +7222,8 @@ export type Database = {
       }
       products: {
         Row: {
+          amazon_link: string | null
+          amazon_price: number | null
           assembly_required: boolean | null
           assembly_time_minutes: number | null
           authenticity_verified: boolean | null
@@ -7265,6 +7267,8 @@ export type Database = {
           weight_grams: number | null
         }
         Insert: {
+          amazon_link?: string | null
+          amazon_price?: number | null
           assembly_required?: boolean | null
           assembly_time_minutes?: number | null
           authenticity_verified?: boolean | null
@@ -7308,6 +7312,8 @@ export type Database = {
           weight_grams?: number | null
         }
         Update: {
+          amazon_link?: string | null
+          amazon_price?: number | null
           assembly_required?: boolean | null
           assembly_time_minutes?: number | null
           authenticity_verified?: boolean | null
