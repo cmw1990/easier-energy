@@ -5854,6 +5854,8 @@ export type Database = {
           estimated_delivery: string | null
           id: string
           payment_intent_id: string | null
+          payment_status: string | null
+          refund_status: string | null
           shipping_address: Json
           status: string
           total_amount: number
@@ -5869,6 +5871,8 @@ export type Database = {
           estimated_delivery?: string | null
           id?: string
           payment_intent_id?: string | null
+          payment_status?: string | null
+          refund_status?: string | null
           shipping_address: Json
           status?: string
           total_amount: number
@@ -5884,6 +5888,8 @@ export type Database = {
           estimated_delivery?: string | null
           id?: string
           payment_intent_id?: string | null
+          payment_status?: string | null
+          refund_status?: string | null
           shipping_address?: Json
           status?: string
           total_amount?: number
