@@ -16,7 +16,7 @@ export type PlanCategory = 'charged' | 'recharged'
 export interface PlanComponent {
   id: string
   component_type: string
-  order_number: number
+  order_number: number 
   duration_minutes: number | null
   step_number?: number
   completion_criteria?: any
