@@ -42,7 +42,7 @@ const EnergyPlans = () => {
     }
   })
 
-  // Fetch celebrity plans
+  // Fetch celebrity plans - Fix the query to use is_expert_plan
   const { data: celebrityPlans, isLoading: isLoadingCelebrity } = useQuery<Plan[]>({
     queryKey: ['energy-plans', 'celebrity'],
     queryFn: async () => {
@@ -52,7 +52,7 @@ const EnergyPlans = () => {
           *,
           energy_plan_components (*)
         `)
-        .not('celebrity_name', 'is', null)
+        .eq('is_expert_plan', true)
         .order('created_at', { ascending: false })
       
       if (error) throw error
