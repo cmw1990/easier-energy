@@ -423,6 +423,7 @@ export interface AdImpression {
   clicked_at: string | null;
   cost: number;
   sponsored_products: {
+    id: string;
     placement_type: string;
     budget: number;
     spent: number;

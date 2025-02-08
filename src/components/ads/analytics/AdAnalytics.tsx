@@ -39,7 +39,8 @@ export function AdAnalytics() {
           impressed_at,
           clicked_at,
           cost,
-          sponsored_products!inner (
+          sponsored_products!inner(
+            id,
             placement_type,
             budget,
             spent,
@@ -50,7 +51,7 @@ export function AdAnalytics() {
         .order('impressed_at', { ascending: true })
       
       if (error) throw error
-      return (data || []) as AdImpression[]
+      return data as AdImpression[]
     },
     enabled: !!campaigns?.length
   })
@@ -66,7 +67,7 @@ export function AdAnalytics() {
         .in('campaign_id', campaigns.map(c => c.id))
       
       if (error) throw error
-      return (data || []) as CampaignStat[]
+      return data || []
     },
     enabled: !!campaigns?.length
   })

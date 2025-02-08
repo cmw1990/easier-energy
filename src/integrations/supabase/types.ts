@@ -261,6 +261,47 @@ export type Database = {
         }
         Relationships: []
       }
+      ad_campaign_stats: {
+        Row: {
+          campaign_id: string | null
+          clicks: number | null
+          conversion_count: number | null
+          created_at: string | null
+          date: string | null
+          id: string
+          impressions: number | null
+          spend: number | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          clicks?: number | null
+          conversion_count?: number | null
+          created_at?: string | null
+          date?: string | null
+          id?: string
+          impressions?: number | null
+          spend?: number | null
+        }
+        Update: {
+          campaign_id?: string | null
+          clicks?: number | null
+          conversion_count?: number | null
+          created_at?: string | null
+          date?: string | null
+          id?: string
+          impressions?: number | null
+          spend?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_campaign_stats_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ad_display_zones: {
         Row: {
           created_at: string | null
@@ -8974,6 +9015,7 @@ export type Database = {
           sponsor_id: string
           starts_at: string
           status: string | null
+          tier: string | null
         }
         Insert: {
           budget: number
@@ -8987,6 +9029,7 @@ export type Database = {
           sponsor_id: string
           starts_at?: string
           status?: string | null
+          tier?: string | null
         }
         Update: {
           budget?: number
@@ -9000,6 +9043,7 @@ export type Database = {
           sponsor_id?: string
           starts_at?: string
           status?: string | null
+          tier?: string | null
         }
         Relationships: [
           {
