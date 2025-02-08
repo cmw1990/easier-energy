@@ -1629,6 +1629,69 @@ export type Database = {
         }
         Relationships: []
       }
+      cycle_exercise_recommendations: {
+        Row: {
+          benefits: string[]
+          created_at: string
+          description: string
+          exercise_type: string
+          id: string
+          intensity_level: string
+          phase_type: string
+          precautions: string[]
+        }
+        Insert: {
+          benefits?: string[]
+          created_at?: string
+          description: string
+          exercise_type: string
+          id?: string
+          intensity_level: string
+          phase_type: string
+          precautions?: string[]
+        }
+        Update: {
+          benefits?: string[]
+          created_at?: string
+          description?: string
+          exercise_type?: string
+          id?: string
+          intensity_level?: string
+          phase_type?: string
+          precautions?: string[]
+        }
+        Relationships: []
+      }
+      cycle_nutrition_recommendations: {
+        Row: {
+          benefits: string
+          created_at: string
+          food_category: string
+          food_items: string[]
+          id: string
+          nutrients: string[]
+          phase_type: string
+        }
+        Insert: {
+          benefits: string
+          created_at?: string
+          food_category: string
+          food_items?: string[]
+          id?: string
+          nutrients?: string[]
+          phase_type: string
+        }
+        Update: {
+          benefits?: string
+          created_at?: string
+          food_category?: string
+          food_items?: string[]
+          id?: string
+          nutrients?: string[]
+          phase_type?: string
+        }
+        Relationships: []
+      }
       cycle_phase_impacts: {
         Row: {
           created_at: string | null
