@@ -1,5 +1,7 @@
 
-import { useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -20,13 +22,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Plus } from "lucide-react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { CalendarIcon } from "lucide-react"
 
 const milestoneFormSchema = z.object({
   milestone_type: z.string().min(2, { message: "Milestone type is required" }),
@@ -57,7 +56,6 @@ export function PregnancyMilestoneForm({ open, onOpenChange, onSubmit }: Pregnan
   const handleSubmit = (values: MilestoneFormValues) => {
     onSubmit(values)
     form.reset()
-    onOpenChange?.(false)
   }
 
   return (

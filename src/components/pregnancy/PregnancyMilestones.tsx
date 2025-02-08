@@ -9,15 +9,17 @@ import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 import { PregnancyMilestoneForm } from "./PregnancyMilestoneForm"
-import type { PregnancyMilestoneRow } from "@/types/supabase"
 import { AchievementCelebration } from "@/components/achievements/AchievementCelebration"
+import type { Database } from "@/types/supabase"
+
+type PregnancyMilestone = Database['public']['Tables']['pregnancy_milestones']['Row']
 
 export const PregnancyMilestones = () => {
   const { session } = useAuth()
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [formOpen, setFormOpen] = useState(false)
-  const [celebratingMilestone, setCelebratingMilestone] = useState<PregnancyMilestoneRow | null>(null)
+  const [celebratingMilestone, setCelebratingMilestone] = useState<PregnancyMilestone | null>(null)
 
   const { data: milestones, isLoading } = useQuery({
     queryKey: ['pregnancy-milestones'],
@@ -29,10 +31,14 @@ export const PregnancyMilestones = () => {
         .select('*')
         .eq('user_id', session.user.id)
         .order('achieved_at', { ascending: false })
-        .returns<PregnancyMilestoneRow[]>()
 
       if (error) {
         console.error('Error fetching milestones:', error)
+        toast({
+          title: "Error",
+          description: "Failed to load milestones",
+          variant: "destructive"
+        })
         return null
       }
 
@@ -42,12 +48,16 @@ export const PregnancyMilestones = () => {
   })
 
   const addMilestoneMutation = useMutation({
-    mutationFn: async (milestone: Partial<PregnancyMilestoneRow>) => {
+    mutationFn: async (milestone: Omit<PregnancyMilestone, 'id' | 'user_id' | 'created_at' | 'celebration_shared'>) => {
       if (!session?.user?.id) throw new Error("Not authenticated")
       
       const { data, error } = await supabase
         .from('pregnancy_milestones')
-        .insert([{ ...milestone, user_id: session.user.id }])
+        .insert([{ 
+          ...milestone, 
+          user_id: session.user.id,
+          celebration_shared: false
+        }])
         .select()
         .single()
 
@@ -60,6 +70,7 @@ export const PregnancyMilestones = () => {
         title: "Success",
         description: "Milestone added successfully!"
       })
+      setFormOpen(false)
       setCelebratingMilestone(data)
     },
     onError: () => {
