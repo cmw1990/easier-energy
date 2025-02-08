@@ -1629,6 +1629,81 @@ export type Database = {
         }
         Relationships: []
       }
+      cycle_phase_predictions: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          id: string
+          phase_type: string
+          predicted_end_date: string
+          predicted_start_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          phase_type: string
+          predicted_end_date: string
+          predicted_start_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          phase_type?: string
+          predicted_end_date?: string
+          predicted_start_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cycle_tracking: {
+        Row: {
+          created_at: string
+          cycle_phase: string | null
+          date: string
+          energy_level: number | null
+          id: string
+          mood: string | null
+          sleep_quality: number | null
+          stress_level: number | null
+          symptoms: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          cycle_phase?: string | null
+          date?: string
+          energy_level?: number | null
+          id?: string
+          mood?: string | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          symptoms?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          cycle_phase?: string | null
+          date?: string
+          energy_level?: number | null
+          id?: string
+          mood?: string | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          symptoms?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_checkins: {
         Row: {
           created_at: string | null
