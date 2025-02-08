@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Plus } from "lucide-react"
-import type { PlanType } from "@/types/energyPlans"
+import type { Plan, PlanType } from "@/types/energyPlans"
 import type { Database } from "@/types/supabase"
 
 type EnergyPlan = Database['public']['Tables']['energy_plans']['Insert']
@@ -25,10 +25,11 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
   const { session } = useAuth()
   const { toast } = useToast()
 
-  const [formData, setFormData] = useState<Omit<EnergyPlan, 'created_by'>>({
+  const [formData, setFormData] = useState<Omit<Plan, 'id' | 'created_at' | 'updated_at'>>({
+    created_by: session?.user?.id || '',
     title: "",
     description: "",
-    plan_type: "quick_boost",
+    plan_type: "mental_clarity",
     category: "charged",
     tags: [],
     visibility: "private",

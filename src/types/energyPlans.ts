@@ -1,15 +1,14 @@
+
 export type PlanType = 
-  | 'quick_boost' 
-  | 'sustained_energy'
   | 'mental_clarity'
-  | 'physical_energy'
-  | 'morning_routine'
   | 'deep_relaxation'
   | 'stress_relief'
-  | 'wind_down'
-  | 'sleep_prep'
-  | 'recovery'
   | 'meditation'
+  | 'energizing_boost'
+  | 'sustained_focus'
+  | 'physical_vitality'
+  | 'evening_winddown'
+  | 'sleep_preparation'
 
 export type PlanVisibility = 'private' | 'public' | 'shared'
 export type PlanCategory = 'charged' | 'recharged'
@@ -72,22 +71,4 @@ export interface Plan {
     contraindications?: string[]
     specialInstructions?: string
   }>
-}
-
-export interface PlanReview {
-  id: string
-  created_at: string
-  updated_at: string
-  user_id: string
-  plan_id: string
-  rating: number
-  review_text?: string
-}
-
-export interface ProgressRecord {
-  id: string
-  user_id: string
-  plan_id: string
-  component_id: string
-  completed_at: string | null
 }
