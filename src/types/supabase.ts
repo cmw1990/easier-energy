@@ -480,6 +480,16 @@ export interface Database {
           order_id?: string | null
         }
       }
+      delivery_tracking: {
+        Row: DeliveryTracking;
+        Insert: Omit<DeliveryTracking, 'id' | 'created_at'>;
+        Update: Partial<Omit<DeliveryTracking, 'id' | 'created_at'>>;
+      };
+      vendor_messages: {
+        Row: VendorMessage;
+        Insert: Omit<VendorMessage, 'id' | 'created_at'>;
+        Update: Partial<Omit<VendorMessage, 'id' | 'created_at'>>;
+      };
     }
     Functions: {
       calculate_available_discount: {
@@ -556,4 +566,22 @@ export interface AdImpression {
     spent: number;
     tier: string;
   };
+}
+
+export interface DeliveryTracking {
+  id: string;
+  order_id: string;
+  tracking_number: string | null;
+  status: string;
+  estimated_delivery: string | null;
+  created_at: string;
+}
+
+export interface VendorMessage {
+  id: string;
+  vendor_id: string;
+  user_id: string;
+  message: string;
+  is_from_vendor: boolean;
+  created_at: string;
 }

@@ -2264,6 +2264,41 @@ export type Database = {
         }
         Relationships: []
       }
+      delivery_tracking: {
+        Row: {
+          created_at: string | null
+          estimated_delivery: string | null
+          id: string
+          order_id: string | null
+          status: string | null
+          tracking_number: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          estimated_delivery?: string | null
+          id?: string
+          order_id?: string | null
+          status?: string | null
+          tracking_number?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          estimated_delivery?: string | null
+          id?: string
+          order_id?: string | null
+          status?: string | null
+          tracking_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_tracking_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       design_surveys: {
         Row: {
           created_at: string | null
@@ -2296,6 +2331,52 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      discord_role_mappings: {
+        Row: {
+          created_at: string | null
+          discord_role_id: string
+          id: string
+          integration_id: string | null
+          product_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          discord_role_id: string
+          id?: string
+          integration_id?: string | null
+          product_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          discord_role_id?: string
+          id?: string
+          integration_id?: string | null
+          product_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discord_role_mappings_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "platform_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discord_role_mappings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "discord_role_mappings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       discussion_responses: {
         Row: {
@@ -5128,6 +5209,57 @@ export type Database = {
         }
         Relationships: []
       }
+      member_access: {
+        Row: {
+          access_expires_at: string | null
+          access_granted_at: string | null
+          discord_member_id: string | null
+          id: string
+          platform_type: string
+          product_id: string | null
+          status: string | null
+          telegram_user_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          access_expires_at?: string | null
+          access_granted_at?: string | null
+          discord_member_id?: string | null
+          id?: string
+          platform_type: string
+          product_id?: string | null
+          status?: string | null
+          telegram_user_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          access_expires_at?: string | null
+          access_granted_at?: string | null
+          discord_member_id?: string | null
+          id?: string
+          platform_type?: string
+          product_id?: string | null
+          status?: string | null
+          telegram_user_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_access_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "member_access_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mood_logs: {
         Row: {
           activities: string[] | null
@@ -5906,6 +6038,62 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      platform_integrations: {
+        Row: {
+          access_token: string | null
+          bot_token: string | null
+          chat_id: string | null
+          created_at: string | null
+          guild_id: string | null
+          id: string
+          is_active: boolean | null
+          platform_type: string
+          refresh_token: string | null
+          settings: Json | null
+          updated_at: string | null
+          vendor_id: string | null
+          webhook_url: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          bot_token?: string | null
+          chat_id?: string | null
+          created_at?: string | null
+          guild_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          platform_type: string
+          refresh_token?: string | null
+          settings?: Json | null
+          updated_at?: string | null
+          vendor_id?: string | null
+          webhook_url?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          bot_token?: string | null
+          chat_id?: string | null
+          created_at?: string | null
+          guild_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          platform_type?: string
+          refresh_token?: string | null
+          settings?: Json | null
+          updated_at?: string | null
+          vendor_id?: string | null
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_integrations_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -7554,6 +7742,7 @@ export type Database = {
           nicotine_content: number | null
           one_time_price: number | null
           package_dimensions: Json | null
+          price: number | null
           product_type: string
           recurring_revenue: number | null
           refund_policy: string | null
@@ -7623,6 +7812,7 @@ export type Database = {
           nicotine_content?: number | null
           one_time_price?: number | null
           package_dimensions?: Json | null
+          price?: number | null
           product_type?: string
           recurring_revenue?: number | null
           refund_policy?: string | null
@@ -7692,6 +7882,7 @@ export type Database = {
           nicotine_content?: number | null
           one_time_price?: number | null
           package_dimensions?: Json | null
+          price?: number | null
           product_type?: string
           recurring_revenue?: number | null
           refund_policy?: string | null
@@ -8737,15 +8928,24 @@ export type Database = {
       }
       seller_profiles: {
         Row: {
+          business_documents: Json | null
+          business_type: string | null
+          commission_rate: number | null
           created_at: string | null
           description: string | null
           id: string
           logo_url: string | null
+          minimum_payout: number | null
           payment_details: Json | null
+          payout_schedule: string | null
           rating: number | null
           review_count: number | null
           social_links: Json | null
           store_name: string
+          stripe_connected_account_id: string | null
+          support_email: string | null
+          support_response_time: number | null
+          tax_id: string | null
           total_revenue: number | null
           total_sales: number | null
           updated_at: string | null
@@ -8755,15 +8955,24 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          business_documents?: Json | null
+          business_type?: string | null
+          commission_rate?: number | null
           created_at?: string | null
           description?: string | null
           id: string
           logo_url?: string | null
+          minimum_payout?: number | null
           payment_details?: Json | null
+          payout_schedule?: string | null
           rating?: number | null
           review_count?: number | null
           social_links?: Json | null
           store_name: string
+          stripe_connected_account_id?: string | null
+          support_email?: string | null
+          support_response_time?: number | null
+          tax_id?: string | null
           total_revenue?: number | null
           total_sales?: number | null
           updated_at?: string | null
@@ -8773,15 +8982,24 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          business_documents?: Json | null
+          business_type?: string | null
+          commission_rate?: number | null
           created_at?: string | null
           description?: string | null
           id?: string
           logo_url?: string | null
+          minimum_payout?: number | null
           payment_details?: Json | null
+          payout_schedule?: string | null
           rating?: number | null
           review_count?: number | null
           social_links?: Json | null
           store_name?: string
+          stripe_connected_account_id?: string | null
+          support_email?: string | null
+          support_response_time?: number | null
+          tax_id?: string | null
           total_revenue?: number | null
           total_sales?: number | null
           updated_at?: string | null
@@ -12370,6 +12588,141 @@ export type Database = {
           },
         ]
       }
+      vendor_analytics: {
+        Row: {
+          created_at: string | null
+          customer_satisfaction: number | null
+          date: string
+          id: string
+          new_customers: number | null
+          payout_amount: number | null
+          platform_fees: number | null
+          recurring_revenue: number | null
+          refund_rate: number | null
+          total_revenue: number | null
+          total_sales: number | null
+          vendor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_satisfaction?: number | null
+          date: string
+          id?: string
+          new_customers?: number | null
+          payout_amount?: number | null
+          platform_fees?: number | null
+          recurring_revenue?: number | null
+          refund_rate?: number | null
+          total_revenue?: number | null
+          total_sales?: number | null
+          vendor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_satisfaction?: number | null
+          date?: string
+          id?: string
+          new_customers?: number | null
+          payout_amount?: number | null
+          platform_fees?: number | null
+          recurring_revenue?: number | null
+          refund_rate?: number | null
+          total_revenue?: number | null
+          total_sales?: number | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_analytics_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_from_vendor: boolean | null
+          message: string
+          user_id: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_from_vendor?: boolean | null
+          message: string
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_from_vendor?: boolean | null
+          message?: string
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_messages_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_payouts: {
+        Row: {
+          amount: number
+          id: string
+          note: string | null
+          payout_details: Json | null
+          payout_method: string
+          processed_at: string | null
+          reference_id: string | null
+          requested_at: string | null
+          status: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          amount: number
+          id?: string
+          note?: string | null
+          payout_details?: Json | null
+          payout_method: string
+          processed_at?: string | null
+          reference_id?: string | null
+          requested_at?: string | null
+          status?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          amount?: number
+          id?: string
+          note?: string | null
+          payout_details?: Json | null
+          payout_method?: string
+          processed_at?: string | null
+          reference_id?: string | null
+          requested_at?: string | null
+          status?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_payouts_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_ratings: {
         Row: {
           comment: string | null
@@ -12413,17 +12766,25 @@ export type Database = {
           ai_analysis: string | null
           ai_analysis_updated_at: string | null
           brand_description: string | null
+          business_registration: string | null
           claimed_by: string | null
           contact_email: string | null
           created_at: string | null
+          customer_service_email: string | null
+          customer_service_phone: string | null
           id: string
           location: string | null
           name: string
           phone: string | null
           product_varieties: string[] | null
+          return_policy: string | null
+          rules_accepted: boolean | null
+          rules_accepted_at: string | null
+          shipping_policy: string | null
           ships_from: string[] | null
           ships_to: string[] | null
           store_type: string
+          tax_id: string | null
           verified: boolean | null
           website: string | null
         }
@@ -12431,17 +12792,25 @@ export type Database = {
           ai_analysis?: string | null
           ai_analysis_updated_at?: string | null
           brand_description?: string | null
+          business_registration?: string | null
           claimed_by?: string | null
           contact_email?: string | null
           created_at?: string | null
+          customer_service_email?: string | null
+          customer_service_phone?: string | null
           id?: string
           location?: string | null
           name: string
           phone?: string | null
           product_varieties?: string[] | null
+          return_policy?: string | null
+          rules_accepted?: boolean | null
+          rules_accepted_at?: string | null
+          shipping_policy?: string | null
           ships_from?: string[] | null
           ships_to?: string[] | null
           store_type?: string
+          tax_id?: string | null
           verified?: boolean | null
           website?: string | null
         }
@@ -12449,17 +12818,25 @@ export type Database = {
           ai_analysis?: string | null
           ai_analysis_updated_at?: string | null
           brand_description?: string | null
+          business_registration?: string | null
           claimed_by?: string | null
           contact_email?: string | null
           created_at?: string | null
+          customer_service_email?: string | null
+          customer_service_phone?: string | null
           id?: string
           location?: string | null
           name?: string
           phone?: string | null
           product_varieties?: string[] | null
+          return_policy?: string | null
+          rules_accepted?: boolean | null
+          rules_accepted_at?: string | null
+          shipping_policy?: string | null
           ships_from?: string[] | null
           ships_to?: string[] | null
           store_type?: string
+          tax_id?: string | null
           verified?: boolean | null
           website?: string | null
         }
@@ -12721,6 +13098,47 @@ export type Database = {
           view_count?: number | null
         }
         Relationships: []
+      }
+      webhook_events: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          integration_id: string | null
+          payload: Json
+          processed_at: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          integration_id?: string | null
+          payload: Json
+          processed_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          integration_id?: string | null
+          payload?: Json
+          processed_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_events_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "platform_integrations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wishlists: {
         Row: {

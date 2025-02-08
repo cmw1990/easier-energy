@@ -9,6 +9,7 @@ import { useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/AuthProvider"
 import { useNavigate } from "react-router-dom"
+import { supabase } from "@/integrations/supabase/client"
 
 export function CartSheet() {
   const [open, setOpen] = useState(false)
@@ -66,11 +67,6 @@ export function CartSheet() {
         title: "Order placed successfully!",
         description: "Thank you for your purchase"
       })
-
-      // Navigate to order confirmation or orders page
-      // For now, we'll just close the sheet
-      // You can add a dedicated order confirmation page later
-      
     } catch (error) {
       console.error('Error creating order:', error)
       toast({
