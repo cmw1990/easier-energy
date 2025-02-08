@@ -1,5 +1,4 @@
-
-import { useState } from "react"
+import React, { useState } from "react"
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { useAuth } from "@/components/AuthProvider"
 import { supabase } from "@/integrations/supabase/client"
@@ -24,7 +23,7 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    plan_type: "energizing_boost" as PlanType,
+    plan_type: "quick_boost" as PlanType,
     category: "charged" as 'charged' | 'recharged',
     tags: [] as string[],
     visibility: "private" as 'private' | 'public' | 'shared',
@@ -41,8 +40,17 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
       const { error } = await supabase
         .from('energy_plans')
         .insert({
-          ...data,
           created_by: session.user.id,
+          title: data.title,
+          description: data.description,
+          plan_type: data.plan_type,
+          category: data.category,
+          tags: data.tags,
+          visibility: data.visibility,
+          estimated_duration_minutes: data.estimated_duration_minutes,
+          energy_level_required: data.energy_level_required,
+          recommended_time_of_day: data.recommended_time_of_day,
+          suitable_contexts: data.suitable_contexts
         })
 
       if (error) throw error

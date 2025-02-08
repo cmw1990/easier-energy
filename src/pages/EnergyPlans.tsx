@@ -17,7 +17,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import type { Plan, PlanCategory, ProgressRecord, LifeSituation } from "@/types/energyPlans"
 import type { Database } from "@/types/supabase"
 
-type UserLifeSituation = Database['public']['Tables']['user_life_situations']['Row']
+interface UserLifeSituation {
+  id: string
+  user_id: string
+  situation: LifeSituation
+  updated_at: string
+}
 
 const EnergyPlans = () => {
   const { session } = useAuth()
@@ -27,7 +32,7 @@ const EnergyPlans = () => {
   const [showLifeSituationDialog, setShowLifeSituationDialog] = useState(false)
   const queryClient = useQueryClient()
 
-  const { data: lifeSituation } = useQuery<UserLifeSituation | null, Error>({
+  const { data: lifeSituation } = useQuery<UserLifeSituation | null>({
     queryKey: ['user-life-situation', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null
@@ -39,7 +44,7 @@ const EnergyPlans = () => {
         .maybeSingle()
       
       if (error) throw error
-      return data as UserLifeSituation | null
+      return data
     },
     enabled: !!session?.user?.id
   })

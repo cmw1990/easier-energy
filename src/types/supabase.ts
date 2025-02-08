@@ -1,3 +1,5 @@
+import { LifeSituation } from './energyPlans';
+
 export type Json =
   | string
   | number
