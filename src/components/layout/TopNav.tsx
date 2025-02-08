@@ -1,5 +1,5 @@
 
-import { Battery, LogIn, TrendingUp, Tools, Laptop } from "lucide-react"
+import { Battery, LogIn, TrendingUp, Wrench, Laptop } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -47,7 +47,7 @@ export const TopNav = () => {
         <div className="flex items-center gap-4">
           <Link to="/tools">
             <Button variant="ghost" size="sm" className="text-sm">
-              <Tools className="mr-2 h-4 w-4" />
+              <Wrench className="mr-2 h-4 w-4" />
               Tools
             </Button>
           </Link>

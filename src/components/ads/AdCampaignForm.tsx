@@ -14,9 +14,9 @@ import { supabase } from "@/integrations/supabase/client"
 const campaignFormSchema = z.object({
   productId: z.string().uuid(),
   placementType: z.enum(['feed', 'banner', 'sidebar', 'openApp']),
-  budget: z.string().transform((val) => parseFloat(val)),
-  cpc: z.string().transform((val) => parseFloat(val)),
-  durationDays: z.string().transform((val) => parseInt(val)),
+  budget: z.string().transform((val) => Number(val)),
+  cpc: z.string().transform((val) => Number(val)),
+  durationDays: z.string().transform((val) => Number(val)),
 })
 
 export function AdCampaignForm() {
@@ -33,12 +33,14 @@ export function AdCampaignForm() {
 
   async function onSubmit(values: z.infer<typeof campaignFormSchema>) {
     try {
+      const endsAt = new Date(Date.now() + values.durationDays * 24 * 60 * 60 * 1000).toISOString()
+      
       const { error } = await supabase.from('sponsored_products').insert({
         product_id: values.productId,
         placement_type: values.placementType,
         budget: values.budget,
         cpc: values.cpc,
-        ends_at: new Date(Date.now() + values.durationDays * 24 * 60 * 60 * 1000),
+        ends_at: endsAt,
       })
 
       if (error) throw error
