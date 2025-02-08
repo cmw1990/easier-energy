@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/components/AuthProvider"
+import { PregnancyMilestones } from "@/components/pregnancy/PregnancyMilestones"
 import type { PregnancyWellnessCorrelationsRow } from "@/types/supabase"
 
 type PregnancyData = {
