@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Cloud, ThermometerSun } from "lucide-react";
+import { Cloud, ThermometerSun, Loader2 } from "lucide-react";
 import type { CycleWeatherImpact as CycleWeatherImpactType } from "@/types/cycle";
 import { format } from "date-fns";
 
@@ -17,7 +17,7 @@ export const CycleWeatherImpact = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: weatherImpacts } = useQuery({
+  const { data: weatherImpacts, isLoading: isLoadingHistory } = useQuery({
     queryKey: ['cycle_weather_impacts'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -61,15 +61,15 @@ export const CycleWeatherImpact = () => {
 
     const symptomType = formData.get('symptom_type');
     const phaseType = formData.get('phase_type');
-    const notes = formData.get('notes');
-    const condition = formData.get('condition');
+    const notesValue = formData.get('notes');
+    const conditionValue = formData.get('condition');
 
     // Ensure these fields are strings
     if (
       typeof symptomType !== 'string' ||
       typeof phaseType !== 'string' ||
-      (notes !== null && typeof notes !== 'string') ||
-      (condition !== null && typeof condition !== 'string')
+      (notesValue !== null && typeof notesValue !== 'string') ||
+      (conditionValue !== null && typeof conditionValue !== 'string')
     ) {
       toast({
         title: "Error",
@@ -105,9 +105,9 @@ export const CycleWeatherImpact = () => {
         temperature,
         humidity,
         pressure,
-        condition
+        condition: conditionValue || null
       },
-      notes: notes
+      notes: notesValue || undefined
     });
 
     form.reset();
@@ -122,36 +122,38 @@ export const CycleWeatherImpact = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label>Symptom Type</Label>
-            <Select name="symptom_type" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select symptom type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="headache">Headache</SelectItem>
-                <SelectItem value="fatigue">Fatigue</SelectItem>
-                <SelectItem value="mood">Mood Changes</SelectItem>
-                <SelectItem value="pain">Pain</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label>Symptom Type</Label>
+              <Select name="symptom_type" required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select symptom type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="headache">Headache</SelectItem>
+                  <SelectItem value="fatigue">Fatigue</SelectItem>
+                  <SelectItem value="mood">Mood Changes</SelectItem>
+                  <SelectItem value="pain">Pain</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-2">
-            <Label>Phase Type</Label>
-            <Select name="phase_type" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select cycle phase" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="menstrual">Menstrual</SelectItem>
-                <SelectItem value="follicular">Follicular</SelectItem>
-                <SelectItem value="ovulatory">Ovulatory</SelectItem>
-                <SelectItem value="luteal">Luteal</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <Label>Cycle Phase</Label>
+              <Select name="phase_type" required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select cycle phase" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="menstrual">Menstrual</SelectItem>
+                  <SelectItem value="follicular">Follicular</SelectItem>
+                  <SelectItem value="ovulatory">Ovulatory</SelectItem>
+                  <SelectItem value="luteal">Luteal</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -166,7 +168,7 @@ export const CycleWeatherImpact = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label>Temperature (°C)</Label>
               <input 
@@ -174,6 +176,8 @@ export const CycleWeatherImpact = () => {
                 name="temperature"
                 className="w-full p-2 border rounded"
                 step="0.1"
+                required
+                placeholder="Enter temperature"
               />
             </div>
             <div className="space-y-2">
@@ -184,65 +188,109 @@ export const CycleWeatherImpact = () => {
                 className="w-full p-2 border rounded"
                 min="0"
                 max="100"
+                required
+                placeholder="Enter humidity"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Weather Condition</Label>
-            <Select name="condition">
-              <SelectTrigger>
-                <SelectValue placeholder="Select weather condition" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="sunny">Sunny</SelectItem>
-                <SelectItem value="cloudy">Cloudy</SelectItem>
-                <SelectItem value="rainy">Rainy</SelectItem>
-                <SelectItem value="stormy">Stormy</SelectItem>
-                <SelectItem value="windy">Windy</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label>Air Pressure (hPa)</Label>
+              <input 
+                type="number" 
+                name="pressure"
+                className="w-full p-2 border rounded"
+                required
+                placeholder="Enter air pressure"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Weather Condition</Label>
+              <Select name="condition">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select weather condition" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sunny">Sunny</SelectItem>
+                  <SelectItem value="cloudy">Cloudy</SelectItem>
+                  <SelectItem value="rainy">Rainy</SelectItem>
+                  <SelectItem value="stormy">Stormy</SelectItem>
+                  <SelectItem value="windy">Windy</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Notes</Label>
+            <Label>Additional Notes</Label>
             <textarea 
               name="notes"
               className="w-full p-2 border rounded"
               rows={3}
-              placeholder="Any additional observations..."
+              placeholder="Enter any additional observations..."
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            Log Weather Impact
+          <Button 
+            type="submit" 
+            className="w-full"
+            disabled={addWeatherImpact.isPending}
+          >
+            {addWeatherImpact.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              'Log Weather Impact'
+            )}
           </Button>
         </form>
 
-        {weatherImpacts?.length > 0 && (
+        {isLoadingHistory ? (
+          <div className="mt-6 text-center">
+            <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+            <p className="text-sm text-muted-foreground mt-2">Loading history...</p>
+          </div>
+        ) : weatherImpacts?.length > 0 ? (
           <div className="mt-6">
             <h3 className="font-medium mb-4">Recent Weather Impacts</h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {weatherImpacts.map((impact) => (
                 <div 
                   key={impact.id} 
-                  className="p-3 bg-muted rounded-lg flex justify-between items-center"
+                  className="p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
                 >
-                  <div>
-                    <p className="font-medium capitalize">{impact.symptom_type}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(new Date(impact.date), 'MMM d, yyyy')}
-                    </p>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-medium capitalize">{impact.symptom_type}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(impact.date), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center gap-2">
+                        <ThermometerSun className="h-4 w-4 text-orange-500" />
+                        <span>{impact.weather_data.temperature}°C</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Intensity: {impact.symptom_intensity}/10
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">Intensity: {impact.symptom_intensity}/10</p>
-                    <p className="text-sm text-muted-foreground capitalize">
-                      {impact.weather_data.condition}
+                  {impact.notes && (
+                    <p className="text-sm text-muted-foreground mt-2 border-t pt-2">
+                      {impact.notes}
                     </p>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>
+          </div>
+        ) : (
+          <div className="text-center text-muted-foreground py-8">
+            No weather impact data available
           </div>
         )}
       </CardContent>
