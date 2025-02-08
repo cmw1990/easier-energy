@@ -62,12 +62,14 @@ export const CycleWeatherImpact = () => {
     const symptomType = formData.get('symptom_type');
     const phaseType = formData.get('phase_type');
     const notes = formData.get('notes');
+    const condition = formData.get('condition');
 
     // Ensure these fields are strings
     if (
       typeof symptomType !== 'string' ||
       typeof phaseType !== 'string' ||
-      (notes !== null && typeof notes !== 'string')
+      (notes !== null && typeof notes !== 'string') ||
+      (condition !== null && typeof condition !== 'string')
     ) {
       toast({
         title: "Error",
@@ -77,17 +79,33 @@ export const CycleWeatherImpact = () => {
       return;
     }
 
+    // Parse numeric values
+    const temperature = parseFloat(formData.get('temperature') as string);
+    const humidity = parseFloat(formData.get('humidity') as string);
+    const pressure = parseFloat(formData.get('pressure') as string);
+    const symptomIntensity = parseInt(formData.get('symptom_intensity') as string);
+
+    // Validate numeric values
+    if (isNaN(temperature) || isNaN(humidity) || isNaN(pressure) || isNaN(symptomIntensity)) {
+      toast({
+        title: "Error",
+        description: "Invalid numeric values in form data",
+        variant: "destructive",
+      });
+      return;
+    }
+
     addWeatherImpact.mutate({
       user_id: session.user.id,
       date: new Date().toISOString().split('T')[0],
       symptom_type: symptomType,
-      symptom_intensity: parseInt(formData.get('symptom_intensity') as string),
+      symptom_intensity: symptomIntensity,
       phase_type: phaseType,
       weather_data: {
-        temperature: parseFloat(formData.get('temperature') as string),
-        humidity: parseFloat(formData.get('humidity') as string),
-        pressure: parseFloat(formData.get('pressure') as string),
-        condition: formData.get('condition') as string
+        temperature,
+        humidity,
+        pressure,
+        condition
       },
       notes: notes
     });
