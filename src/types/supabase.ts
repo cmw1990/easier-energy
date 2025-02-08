@@ -1,5 +1,4 @@
-
-import { LifeSituation } from './energyPlans';
+import { LifeSituation, PlanType } from './energyPlans';
 
 export type Json =
   | string
