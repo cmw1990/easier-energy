@@ -40,6 +40,7 @@ const SleepAnalytics = lazy(() => import("@/pages/tools/SleepAnalytics"))
 const WhyUs = lazy(() => import("@/pages/WhyUs"))
 const EnergyPlansPage = lazy(() => import("@/pages/EnergyPlans"))
 const ExpertConsultancyPage = lazy(() => import("@/pages/ExpertConsultancy"))
+const CyclePage = lazy(() => import("@/pages/Cycle"))
 
 export const mainRoutes = [
   {
@@ -354,6 +355,14 @@ export const mainRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ExpertConsultancyPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "cycle",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <CyclePage />
           </Suspense>
         ),
       },
