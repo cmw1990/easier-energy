@@ -48,25 +48,14 @@ export const PlanDiscovery = ({
         query = query.eq('category', selectedCategory);
       }
 
-      // Filter plans based on biometric requirements if available
-      if (currentCyclePhase) {
-        query = query.contains('cycle_phase_recommendations', [currentCyclePhase]);
+      // Filter by life situation if specified
+      if (currentLifeSituation) {
+        query = query.contains('suitable_life_situations', [currentLifeSituation]);
       }
-      
+
       const { data, error } = await query;
       if (error) throw error;
-
-      // Client-side filtering based on biometric requirements
-      return (data as Plan[]).filter(plan => {
-        if (!plan.biometricRequirements || !biometricData) return true;
-
-        const requirements = plan.biometricRequirements;
-        return (
-          (!requirements.energyLevel || biometricData.energyLevel >= requirements.energyLevel) &&
-          (!requirements.stressLevel || biometricData.stressLevel <= requirements.stressLevel) &&
-          (!requirements.sleepQuality || biometricData.sleepQuality >= requirements.sleepQuality)
-        );
-      });
+      return data as Plan[];
     },
     enabled: !!session?.user?.id
   });
