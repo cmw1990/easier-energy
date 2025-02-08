@@ -5766,36 +5766,45 @@ export type Database = {
       orders: {
         Row: {
           billing_address: Json
+          carrier: string | null
           created_at: string
+          estimated_delivery: string | null
           id: string
           payment_intent_id: string | null
           shipping_address: Json
           status: string
           total_amount: number
+          tracking_number: string | null
           updated_at: string
           user_id: string
           vendor_id: string
         }
         Insert: {
           billing_address: Json
+          carrier?: string | null
           created_at?: string
+          estimated_delivery?: string | null
           id?: string
           payment_intent_id?: string | null
           shipping_address: Json
           status?: string
           total_amount: number
+          tracking_number?: string | null
           updated_at?: string
           user_id: string
           vendor_id: string
         }
         Update: {
           billing_address?: Json
+          carrier?: string | null
           created_at?: string
+          estimated_delivery?: string | null
           id?: string
           payment_intent_id?: string | null
           shipping_address?: Json
           status?: string
           total_amount?: number
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string
           vendor_id?: string
@@ -7043,6 +7052,43 @@ export type Database = {
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_categories_mapping: {
+        Row: {
+          category_id: string
+          product_id: string
+        }
+        Insert: {
+          category_id: string
+          product_id: string
+        }
+        Update: {
+          category_id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_categories_mapping_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_categories_mapping_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_categories_mapping_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -9173,6 +9219,41 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      shipping_zones: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          rates: Json
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          rates?: Json
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          rates?: Json
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_zones_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shopping_cart_items: {
         Row: {
@@ -12651,6 +12732,48 @@ export type Database = {
           },
         ]
       }
+      vendor_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_categories_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_messages: {
         Row: {
           created_at: string | null
@@ -12784,6 +12907,7 @@ export type Database = {
           customer_service_phone: string | null
           id: string
           location: string | null
+          minimum_order_amount: number | null
           name: string
           phone: string | null
           product_varieties: string[] | null
@@ -12793,6 +12917,9 @@ export type Database = {
           shipping_policy: string | null
           ships_from: string[] | null
           ships_to: string[] | null
+          shop_announcement: string | null
+          shop_enabled: boolean | null
+          shop_featured_products: string[] | null
           store_type: string
           tax_id: string | null
           verified: boolean | null
@@ -12810,6 +12937,7 @@ export type Database = {
           customer_service_phone?: string | null
           id?: string
           location?: string | null
+          minimum_order_amount?: number | null
           name: string
           phone?: string | null
           product_varieties?: string[] | null
@@ -12819,6 +12947,9 @@ export type Database = {
           shipping_policy?: string | null
           ships_from?: string[] | null
           ships_to?: string[] | null
+          shop_announcement?: string | null
+          shop_enabled?: boolean | null
+          shop_featured_products?: string[] | null
           store_type?: string
           tax_id?: string | null
           verified?: boolean | null
@@ -12836,6 +12967,7 @@ export type Database = {
           customer_service_phone?: string | null
           id?: string
           location?: string | null
+          minimum_order_amount?: number | null
           name?: string
           phone?: string | null
           product_varieties?: string[] | null
@@ -12845,6 +12977,9 @@ export type Database = {
           shipping_policy?: string | null
           ships_from?: string[] | null
           ships_to?: string[] | null
+          shop_announcement?: string | null
+          shop_enabled?: boolean | null
+          shop_featured_products?: string[] | null
           store_type?: string
           tax_id?: string | null
           verified?: boolean | null

@@ -51,7 +51,11 @@ export function VendorSettings() {
     shipping_policy: '',
     customer_service_email: '',
     customer_service_phone: '',
-    rules_accepted: false
+    rules_accepted: false,
+    // Shop settings
+    shop_enabled: false,
+    shop_announcement: '',
+    minimum_order_amount: 0
   });
 
   const { data: vendor, isLoading } = useQuery({
@@ -78,7 +82,10 @@ export function VendorSettings() {
         shipping_policy: vendor.shipping_policy || '',
         customer_service_email: vendor.customer_service_email || '',
         customer_service_phone: vendor.customer_service_phone || '',
-        rules_accepted: vendor.rules_accepted || false
+        rules_accepted: vendor.rules_accepted || false,
+        shop_enabled: vendor.shop_enabled || false,
+        shop_announcement: vendor.shop_announcement || '',
+        minimum_order_amount: vendor.minimum_order_amount || 0
       });
     }
   }, [vendor]);
@@ -114,6 +121,7 @@ export function VendorSettings() {
 
   return (
     <div className="space-y-6">
+      {/* Business Information */}
       <Card>
         <CardHeader>
           <CardTitle>Business Information</CardTitle>
@@ -142,6 +150,47 @@ export function VendorSettings() {
         </CardContent>
       </Card>
 
+      {/* Shop Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Shop Settings</CardTitle>
+          <CardDescription>
+            Configure your shop's settings and policies
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="shop_enabled"
+              checked={settings.shop_enabled}
+              onCheckedChange={(checked) => setSettings(s => ({ ...s, shop_enabled: checked }))}
+            />
+            <Label htmlFor="shop_enabled">Enable Shop</Label>
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="shop_announcement">Shop Announcement</Label>
+            <Textarea
+              id="shop_announcement"
+              value={settings.shop_announcement}
+              onChange={(e) => setSettings(s => ({ ...s, shop_announcement: e.target.value }))}
+              placeholder="Announce special offers or important information"
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="minimum_order_amount">Minimum Order Amount ($)</Label>
+            <Input
+              id="minimum_order_amount"
+              type="number"
+              value={settings.minimum_order_amount}
+              onChange={(e) => setSettings(s => ({ ...s, minimum_order_amount: Number(e.target.value) }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Policies */}
       <Card>
         <CardHeader>
           <CardTitle>Policies</CardTitle>
@@ -172,6 +221,7 @@ export function VendorSettings() {
         </CardContent>
       </Card>
 
+      {/* Customer Service */}
       <Card>
         <CardHeader>
           <CardTitle>Customer Service</CardTitle>
@@ -202,6 +252,7 @@ export function VendorSettings() {
         </CardContent>
       </Card>
 
+      {/* Vendor Rules */}
       <Card>
         <CardHeader>
           <CardTitle>Vendor Rules and Terms</CardTitle>

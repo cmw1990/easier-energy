@@ -13,6 +13,8 @@ import { DeliveryManager } from './shop/DeliveryManager'
 import { ProductManager } from './shop/ProductManager'
 import { MessagingCenter } from './shop/MessagingCenter'
 import { VendorSettings } from './shop/VendorSettings'
+import { ShippingZonesManager } from './shop/ShippingZonesManager'
+import { CategoriesManager } from './shop/CategoriesManager'
 import { useVendorSetup } from '@/hooks/useVendorSetup'
 
 export function VendorAdDashboard() {
@@ -35,6 +37,8 @@ export function VendorAdDashboard() {
               <TabsTrigger value="guide">Guide</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="products">Products</TabsTrigger>
+              <TabsTrigger value="categories">Categories</TabsTrigger>
+              <TabsTrigger value="shipping">Shipping</TabsTrigger>
               <TabsTrigger value="delivery">Delivery</TabsTrigger>
               <TabsTrigger value="messages">Messages</TabsTrigger>
               <TabsTrigger value="campaigns">Ads</TabsTrigger>
@@ -55,6 +59,14 @@ export function VendorAdDashboard() {
 
             <TabsContent value="products">
               <ProductManager />
+            </TabsContent>
+
+            <TabsContent value="categories">
+              <CategoriesManager />
+            </TabsContent>
+
+            <TabsContent value="shipping">
+              <ShippingZonesManager />
             </TabsContent>
 
             <TabsContent value="delivery">
@@ -92,5 +104,5 @@ export function VendorAdDashboard() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
