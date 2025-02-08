@@ -1,8 +1,7 @@
-
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
-import { Baby, Calendar, Activity, Brain, Heart, Moon, Sun, Droplet, Nutrition } from "lucide-react"
+import { Baby, Calendar, Activity, Brain, Heart, Moon, Sun, Droplet, Leaf } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -10,6 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { PregnancyWellnessCorrelationsRow } from "@/types/supabase"
 
 type PregnancyData = {
   id: string
@@ -63,23 +63,23 @@ const PregnancyPage = () => {
     }
   })
 
-  const { data: wellnessCorrelations } = useQuery({
+  const { data: wellnessCorrelations } = useQuery<PregnancyWellnessCorrelationsRow>({
     queryKey: ['pregnancy-wellness-correlations'],
     queryFn: async () => {
+      if (!session?.user?.id) return null
+      
       const { data, error } = await supabase
         .from('pregnancy_wellness_correlations')
         .select('*')
+        .eq('user_id', session.user.id)
         .order('date', { ascending: false })
         .limit(1)
         .maybeSingle()
-
-      if (error) {
-        console.error('Error fetching wellness correlations:', error)
-        return null
-      }
-
+      
+      if (error) throw error
       return data
-    }
+    },
+    enabled: !!session?.user?.id
   })
 
   const handleEnergyPlanClick = () => {
@@ -185,7 +185,7 @@ const PregnancyPage = () => {
                       className="w-full"
                       onClick={handleNutritionClick}
                     >
-                      <Nutrition className="mr-2 h-4 w-4" />
+                      <Leaf className="mr-2 h-4 w-4" />
                       Nutrition
                     </Button>
                   </div>

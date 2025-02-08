@@ -1,3 +1,4 @@
+
 import { LifeSituation, PlanType } from './energyPlans';
 
 export type Json =
@@ -7,6 +8,12 @@ export type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
+
+export type PatternSummary = {
+  summary: string;
+  confidence: number;
+  last_updated: string;
+}
 
 export interface Database {
   public: {
@@ -44,9 +51,9 @@ export interface Database {
           date: string
           created_at: string
           updated_at: string
-          energy_pattern: Json | null
-          focus_pattern: Json | null
-          sleep_pattern: Json | null
+          energy_pattern: PatternSummary
+          focus_pattern: PatternSummary
+          sleep_pattern: PatternSummary
           activity_impact: Json | null
           nutrition_impact: Json | null
         }
@@ -56,9 +63,9 @@ export interface Database {
           date?: string
           created_at?: string
           updated_at?: string
-          energy_pattern?: Json | null
-          focus_pattern?: Json | null
-          sleep_pattern?: Json | null
+          energy_pattern?: PatternSummary
+          focus_pattern?: PatternSummary
+          sleep_pattern?: PatternSummary
           activity_impact?: Json | null
           nutrition_impact?: Json | null
         }
@@ -66,9 +73,9 @@ export interface Database {
           user_id?: string
           date?: string
           updated_at?: string
-          energy_pattern?: Json | null
-          focus_pattern?: Json | null
-          sleep_pattern?: Json | null
+          energy_pattern?: PatternSummary
+          focus_pattern?: PatternSummary
+          sleep_pattern?: PatternSummary
           activity_impact?: Json | null
           nutrition_impact?: Json | null
         }
@@ -319,3 +326,6 @@ export interface Database {
     }
   }
 }
+
+export type UserLifeSituationRow = Database['public']['Tables']['user_life_situations']['Row']
+export type PregnancyWellnessCorrelationsRow = Database['public']['Tables']['pregnancy_wellness_correlations']['Row']

@@ -5360,11 +5360,17 @@ export type Database = {
           activity_impact: Json | null
           created_at: string | null
           date: string | null
-          energy_pattern: Json | null
-          focus_pattern: Json | null
+          energy_pattern:
+            | Database["public"]["CompositeTypes"]["pattern_summary"]
+            | null
+          focus_pattern:
+            | Database["public"]["CompositeTypes"]["pattern_summary"]
+            | null
           id: string
           nutrition_impact: Json | null
-          sleep_pattern: Json | null
+          sleep_pattern:
+            | Database["public"]["CompositeTypes"]["pattern_summary"]
+            | null
           updated_at: string | null
           user_id: string
         }
@@ -5372,11 +5378,17 @@ export type Database = {
           activity_impact?: Json | null
           created_at?: string | null
           date?: string | null
-          energy_pattern?: Json | null
-          focus_pattern?: Json | null
+          energy_pattern?:
+            | Database["public"]["CompositeTypes"]["pattern_summary"]
+            | null
+          focus_pattern?:
+            | Database["public"]["CompositeTypes"]["pattern_summary"]
+            | null
           id?: string
           nutrition_impact?: Json | null
-          sleep_pattern?: Json | null
+          sleep_pattern?:
+            | Database["public"]["CompositeTypes"]["pattern_summary"]
+            | null
           updated_at?: string | null
           user_id: string
         }
@@ -5384,11 +5396,17 @@ export type Database = {
           activity_impact?: Json | null
           created_at?: string | null
           date?: string | null
-          energy_pattern?: Json | null
-          focus_pattern?: Json | null
+          energy_pattern?:
+            | Database["public"]["CompositeTypes"]["pattern_summary"]
+            | null
+          focus_pattern?:
+            | Database["public"]["CompositeTypes"]["pattern_summary"]
+            | null
           id?: string
           nutrition_impact?: Json | null
-          sleep_pattern?: Json | null
+          sleep_pattern?:
+            | Database["public"]["CompositeTypes"]["pattern_summary"]
+            | null
           updated_at?: string | null
           user_id?: string
         }
@@ -11025,7 +11043,11 @@ export type Database = {
       verification_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
-      [_ in never]: never
+      pattern_summary: {
+        summary: string | null
+        confidence: number | null
+        last_updated: string | null
+      }
     }
   }
 }
