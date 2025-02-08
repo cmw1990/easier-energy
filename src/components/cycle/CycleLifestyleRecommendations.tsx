@@ -22,10 +22,11 @@ export const CycleLifestyleRecommendations = ({ phaseType }: Props) => {
         .from('cycle_exercise_recommendations')
         .select('*')
         .eq('phase_type', phaseType)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .returns<CycleExerciseRecommendation[]>();
 
       if (error) throw error;
-      return data;
+      return data ?? [];
     },
     enabled: !!phaseType,
   });
@@ -37,10 +38,11 @@ export const CycleLifestyleRecommendations = ({ phaseType }: Props) => {
         .from('cycle_nutrition_recommendations')
         .select('*')
         .eq('phase_type', phaseType)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .returns<CycleNutritionRecommendation[]>();
 
       if (error) throw error;
-      return data;
+      return data ?? [];
     },
     enabled: !!phaseType,
   });
@@ -77,7 +79,7 @@ export const CycleLifestyleRecommendations = ({ phaseType }: Props) => {
                       </ul>
                     </div>
                     
-                    {rec.precautions.length > 0 && (
+                    {rec.precautions?.length > 0 && (
                       <div className="pt-2">
                         <h4 className="text-sm font-medium mb-1 flex items-center gap-1">
                           <AlertCircle className="h-4 w-4 text-yellow-500" />
