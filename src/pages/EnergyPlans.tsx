@@ -1,16 +1,18 @@
 
 import { useState } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent } from "@/components/ui/card"
-import { NewPlanDialog } from "@/components/energy-plans/NewPlanDialog"
-import { PlanList } from "@/components/energy-plans/PlanList"
 import { PlanFilters } from "@/components/energy-plans/PlanFilters"
-import type { Plan, PlanCategory, ProgressRecord } from "@/types/energyPlans"
+import { NewPlanDialog } from "@/components/energy-plans/NewPlanDialog"
 import { CelebrityPlanGallery } from "@/components/energy-plans/CelebrityPlanGallery"
+import { PlanDiscovery } from "@/components/energy-plans/PlanDiscovery"
+import { PersonalPlans } from "@/components/energy-plans/PersonalPlans"
+import { SavedPlans } from "@/components/energy-plans/SavedPlans"
+import type { Plan, PlanCategory, ProgressRecord } from "@/types/energyPlans"
+import { useQuery } from "@tanstack/react-query"
 
 const EnergyPlans = () => {
   const { session } = useAuth()
@@ -19,30 +21,24 @@ const EnergyPlans = () => {
   const [selectedCategory, setSelectedCategory] = useState<PlanCategory | null>(null)
   const queryClient = useQueryClient()
 
-  // Fetch public plans
-  const { data: publicPlans, isLoading: isLoadingPublic } = useQuery<Plan[]>({
-    queryKey: ['energy-plans', 'public', selectedCategory],
+  // Fetch progress records
+  const { data: planProgress } = useQuery<ProgressRecord[]>({
+    queryKey: ['energy-plans', 'progress', session?.user?.id],
     queryFn: async () => {
-      let query = supabase
-        .from('energy_plans')
-        .select(`
-          *,
-          energy_plan_components (*)
-        `)
-        .eq('visibility', 'public')
-        .order('likes_count', { ascending: false })
+      if (!session?.user?.id) return []
       
-      if (selectedCategory) {
-        query = query.eq('category', selectedCategory)
-      }
+      const { data, error } = await supabase
+        .from('energy_plan_progress')
+        .select('*')
+        .eq('user_id', session.user.id)
       
-      const { data, error } = await query
       if (error) throw error
-      return data as Plan[]
-    }
+      return data as ProgressRecord[]
+    },
+    enabled: !!session?.user?.id
   })
 
-  // Fetch celebrity plans - Fix the query to use is_expert_plan
+  // Fetch celebrity plans
   const { data: celebrityPlans, isLoading: isLoadingCelebrity } = useQuery<Plan[]>({
     queryKey: ['energy-plans', 'celebrity'],
     queryFn: async () => {
@@ -60,29 +56,8 @@ const EnergyPlans = () => {
     }
   })
 
-  // Fetch user's plans
-  const { data: myPlans, isLoading: isLoadingMyPlans } = useQuery<Plan[]>({
-    queryKey: ['energy-plans', 'my-plans', session?.user?.id],
-    queryFn: async () => {
-      if (!session?.user?.id) return []
-      
-      const { data, error } = await supabase
-        .from('energy_plans')
-        .select(`
-          *,
-          energy_plan_components (*)
-        `)
-        .eq('created_by', session.user.id)
-        .order('created_at', { ascending: false })
-      
-      if (error) throw error
-      return data as Plan[]
-    },
-    enabled: !!session?.user?.id
-  })
-
-  // Fetch saved plans
-  const { data: savedPlans, isLoading: isLoadingSaved } = useQuery<Plan[]>({
+  // Fetch saved plans for gallery
+  const { data: savedPlans } = useQuery<Plan[]>({
     queryKey: ['energy-plans', 'saved', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return []
@@ -100,23 +75,6 @@ const EnergyPlans = () => {
       
       if (error) throw error
       return data.map(item => item.energy_plans) as Plan[]
-    },
-    enabled: !!session?.user?.id
-  })
-
-  // Fetch progress records
-  const { data: planProgress } = useQuery<ProgressRecord[]>({
-    queryKey: ['energy-plans', 'progress', session?.user?.id],
-    queryFn: async () => {
-      if (!session?.user?.id) return []
-      
-      const { data, error } = await supabase
-        .from('energy_plan_progress')
-        .select('*')
-        .eq('user_id', session.user.id)
-      
-      if (error) throw error
-      return data as ProgressRecord[]
     },
     enabled: !!session?.user?.id
   })
@@ -207,46 +165,23 @@ const EnergyPlans = () => {
         </TabsList>
 
         <TabsContent value="discover">
-          <PlanList
-            plans={publicPlans}
+          <PlanDiscovery
+            selectedCategory={selectedCategory}
             progress={planProgress}
-            isLoading={isLoadingPublic}
             onSavePlan={(id) => savePlanMutation.mutate(id)}
             savedPlans={savedPlans}
           />
         </TabsContent>
 
         <TabsContent value="my-plans">
-          {!session?.user ? (
-            <Card>
-              <CardContent className="pt-6">
-                <p>Please sign in to view your plans</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <PlanList
-              plans={myPlans}
-              progress={planProgress}
-              isLoading={isLoadingMyPlans}
-              onSharePlan={(plan) => sharePlanMutation.mutate(plan)}
-            />
-          )}
+          <PersonalPlans
+            progress={planProgress}
+            onSharePlan={(plan) => sharePlanMutation.mutate(plan)}
+          />
         </TabsContent>
 
         <TabsContent value="saved">
-          {!session?.user ? (
-            <Card>
-              <CardContent className="pt-6">
-                <p>Please sign in to view saved plans</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <PlanList
-              plans={savedPlans}
-              progress={planProgress}
-              isLoading={isLoadingSaved}
-            />
-          )}
+          <SavedPlans progress={planProgress} />
         </TabsContent>
       </Tabs>
     </div>
