@@ -59,19 +59,37 @@ export const CycleWeatherImpact = () => {
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
+    const symptomType = formData.get('symptom_type');
+    const phaseType = formData.get('phase_type');
+    const notes = formData.get('notes');
+
+    // Ensure these fields are strings
+    if (
+      typeof symptomType !== 'string' ||
+      typeof phaseType !== 'string' ||
+      (notes !== null && typeof notes !== 'string')
+    ) {
+      toast({
+        title: "Error",
+        description: "Invalid form data",
+        variant: "destructive",
+      });
+      return;
+    }
+
     addWeatherImpact.mutate({
       user_id: session.user.id,
       date: new Date().toISOString().split('T')[0],
-      symptom_type: formData.get('symptom_type') as string,
+      symptom_type: symptomType,
       symptom_intensity: parseInt(formData.get('symptom_intensity') as string),
-      phase_type: formData.get('phase_type') as string,
+      phase_type: phaseType,
       weather_data: {
         temperature: parseFloat(formData.get('temperature') as string),
         humidity: parseFloat(formData.get('humidity') as string),
         pressure: parseFloat(formData.get('pressure') as string),
-        condition: formData.get('condition')
+        condition: formData.get('condition') as string
       },
-      notes: formData.get('notes') as string
+      notes: notes
     });
 
     form.reset();
