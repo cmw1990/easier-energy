@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Globe, Star } from "lucide-react"
+import { Globe, MapPin, Star, Store } from "lucide-react"
 
 interface TeaVendorCardProps {
   vendor: {
@@ -19,17 +19,20 @@ interface TeaVendorCardProps {
 
 export function TeaVendorCard({ vendor }: TeaVendorCardProps) {
   return (
-    <Card>
+    <Card className="hover:shadow-md transition-shadow">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>{vendor.name}</CardTitle>
-            <CardDescription className="mt-1.5">
-              {vendor.description}
-            </CardDescription>
+        <div className="flex items-start justify-between">
+          <div className="space-y-1.5">
+            <CardTitle className="flex items-center gap-2">
+              <Store className="h-5 w-5 text-muted-foreground" />
+              {vendor.name}
+            </CardTitle>
+            <CardDescription>{vendor.description}</CardDescription>
           </div>
           {vendor.verification_status === 'verified' && (
-            <Badge variant="secondary">Verified Vendor</Badge>
+            <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
+              Verified Vendor
+            </Badge>
           )}
         </div>
       </CardHeader>
@@ -37,20 +40,33 @@ export function TeaVendorCard({ vendor }: TeaVendorCardProps) {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Star className="h-4 w-4 text-yellow-400" />
-            <span>{vendor.rating.toFixed(1)} ({vendor.review_count} reviews)</span>
+            <span className="font-medium">{vendor.rating.toFixed(1)}</span>
+            <span className="text-sm text-muted-foreground">
+              ({vendor.review_count} reviews)
+            </span>
           </div>
           
-          <div className="flex flex-wrap gap-2">
-            {vendor.shipping_regions.map((region) => (
-              <Badge key={region} variant="outline">
-                Ships to {region}
-              </Badge>
-            ))}
+          <div className="space-y-2">
+            <div className="flex items-start gap-2">
+              <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
+              <div className="flex flex-wrap gap-1">
+                {vendor.shipping_regions.map((region) => (
+                  <Badge key={region} variant="outline">
+                    Ships to {region}
+                  </Badge>
+                ))}
+              </div>
+            </div>
           </div>
 
           <Button variant="outline" className="w-full" asChild>
-            <a href={vendor.website} target="_blank" rel="noopener noreferrer">
-              <Globe className="mr-2 h-4 w-4" />
+            <a 
+              href={vendor.website} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <Globe className="h-4 w-4" />
               Visit Website
             </a>
           </Button>
