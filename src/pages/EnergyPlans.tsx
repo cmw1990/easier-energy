@@ -27,7 +27,7 @@ const EnergyPlans = () => {
   const [showLifeSituationDialog, setShowLifeSituationDialog] = useState(false)
   const queryClient = useQueryClient()
 
-  const { data: lifeSituation } = useQuery({
+  const { data: lifeSituation } = useQuery<UserLifeSituation | null, Error>({
     queryKey: ['user-life-situation', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null
@@ -157,7 +157,8 @@ const EnergyPlans = () => {
         .from('user_life_situations')
         .upsert({
           user_id: session.user.id,
-          situation: situation
+          situation: situation,
+          updated_at: new Date().toISOString()
         })
 
       if (error) throw error

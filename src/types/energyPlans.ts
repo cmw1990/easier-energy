@@ -1,13 +1,14 @@
-
 export type PlanType = 
-  | 'energizing_boost' 
-  | 'sustained_focus'
+  | 'quick_boost' 
+  | 'sustained_energy'
   | 'mental_clarity'
-  | 'physical_vitality'
+  | 'physical_energy'
+  | 'morning_routine'
   | 'deep_relaxation'
   | 'stress_relief'
-  | 'evening_winddown'
-  | 'sleep_preparation'
+  | 'wind_down'
+  | 'sleep_prep'
+  | 'recovery'
   | 'meditation'
 
 export type PlanVisibility = 'private' | 'public' | 'shared'
@@ -96,4 +97,3 @@ export interface ProgressRecord {
   component_id: string
   completed_at: string | null
 }
-
