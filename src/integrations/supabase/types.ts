@@ -9927,6 +9927,62 @@ export type Database = {
         }
         Relationships: []
       }
+      tea_articles: {
+        Row: {
+          author_id: string | null
+          content: string
+          created_at: string | null
+          featured_image: string | null
+          id: string
+          meta_description: string | null
+          meta_keywords: string[] | null
+          published: boolean | null
+          published_at: string | null
+          slug: string
+          tea_id: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          content: string
+          created_at?: string | null
+          featured_image?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          published?: boolean | null
+          published_at?: string | null
+          slug: string
+          tea_id?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          created_at?: string | null
+          featured_image?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          published?: boolean | null
+          published_at?: string | null
+          slug?: string
+          tea_id?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tea_articles_tea_id_fkey"
+            columns: ["tea_id"]
+            isOneToOne: false
+            referencedRelation: "herbal_teas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tea_brewing_guides: {
         Row: {
           common_mistakes: string[] | null
@@ -10056,6 +10112,330 @@ export type Database = {
           pros?: string[] | null
           specifications?: Json | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      tea_metrics: {
+        Row: {
+          consumed_at: string | null
+          created_at: string | null
+          dosage_grams: number | null
+          effects: string[] | null
+          energy_after: number | null
+          energy_before: number | null
+          focus_after: number | null
+          focus_before: number | null
+          id: string
+          mood_after: number | null
+          mood_before: number | null
+          notes: string | null
+          side_effects: string[] | null
+          steep_time_seconds: number | null
+          tea_id: string | null
+          updated_at: string | null
+          user_id: string | null
+          water_temperature_celsius: number | null
+        }
+        Insert: {
+          consumed_at?: string | null
+          created_at?: string | null
+          dosage_grams?: number | null
+          effects?: string[] | null
+          energy_after?: number | null
+          energy_before?: number | null
+          focus_after?: number | null
+          focus_before?: number | null
+          id?: string
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          side_effects?: string[] | null
+          steep_time_seconds?: number | null
+          tea_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          water_temperature_celsius?: number | null
+        }
+        Update: {
+          consumed_at?: string | null
+          created_at?: string | null
+          dosage_grams?: number | null
+          effects?: string[] | null
+          energy_after?: number | null
+          energy_before?: number | null
+          focus_after?: number | null
+          focus_before?: number | null
+          id?: string
+          mood_after?: number | null
+          mood_before?: number | null
+          notes?: string | null
+          side_effects?: string[] | null
+          steep_time_seconds?: number | null
+          tea_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          water_temperature_celsius?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tea_metrics_tea_id_fkey"
+            columns: ["tea_id"]
+            isOneToOne: false
+            referencedRelation: "herbal_teas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tea_nutrition_facts: {
+        Row: {
+          amino_acids: Json | null
+          antioxidant_content_mg: number | null
+          caffeine_content_mg: number | null
+          calories: number | null
+          created_at: string | null
+          id: string
+          minerals: Json | null
+          serving_size_grams: number
+          tea_id: string | null
+          total_polyphenols_mg: number | null
+          updated_at: string | null
+          vitamins: Json | null
+        }
+        Insert: {
+          amino_acids?: Json | null
+          antioxidant_content_mg?: number | null
+          caffeine_content_mg?: number | null
+          calories?: number | null
+          created_at?: string | null
+          id?: string
+          minerals?: Json | null
+          serving_size_grams: number
+          tea_id?: string | null
+          total_polyphenols_mg?: number | null
+          updated_at?: string | null
+          vitamins?: Json | null
+        }
+        Update: {
+          amino_acids?: Json | null
+          antioxidant_content_mg?: number | null
+          caffeine_content_mg?: number | null
+          calories?: number | null
+          created_at?: string | null
+          id?: string
+          minerals?: Json | null
+          serving_size_grams?: number
+          tea_id?: string | null
+          total_polyphenols_mg?: number | null
+          updated_at?: string | null
+          vitamins?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tea_nutrition_facts_tea_id_fkey"
+            columns: ["tea_id"]
+            isOneToOne: false
+            referencedRelation: "herbal_teas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tea_price_alerts: {
+        Row: {
+          alert_active: boolean | null
+          alert_triggered: boolean | null
+          created_at: string | null
+          current_price: number | null
+          id: string
+          target_price: number
+          tea_id: string | null
+          updated_at: string | null
+          user_id: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          alert_active?: boolean | null
+          alert_triggered?: boolean | null
+          created_at?: string | null
+          current_price?: number | null
+          id?: string
+          target_price: number
+          tea_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          alert_active?: boolean | null
+          alert_triggered?: boolean | null
+          created_at?: string | null
+          current_price?: number | null
+          id?: string
+          target_price?: number
+          tea_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tea_price_alerts_tea_id_fkey"
+            columns: ["tea_id"]
+            isOneToOne: false
+            referencedRelation: "herbal_teas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tea_price_alerts_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "tea_vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tea_recommendations: {
+        Row: {
+          contraindications: string[] | null
+          created_at: string | null
+          effectiveness_score: number | null
+          goal_type: string
+          id: string
+          optimal_time_of_day: string[] | null
+          scientific_evidence: string[] | null
+          tea_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          contraindications?: string[] | null
+          created_at?: string | null
+          effectiveness_score?: number | null
+          goal_type: string
+          id?: string
+          optimal_time_of_day?: string[] | null
+          scientific_evidence?: string[] | null
+          tea_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          contraindications?: string[] | null
+          created_at?: string | null
+          effectiveness_score?: number | null
+          goal_type?: string
+          id?: string
+          optimal_time_of_day?: string[] | null
+          scientific_evidence?: string[] | null
+          tea_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tea_recommendations_tea_id_fkey"
+            columns: ["tea_id"]
+            isOneToOne: false
+            referencedRelation: "herbal_teas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tea_reviews: {
+        Row: {
+          aroma_rating: number | null
+          created_at: string | null
+          effects_rating: number | null
+          id: string
+          rating: number | null
+          review_text: string | null
+          taste_rating: number | null
+          tea_id: string | null
+          updated_at: string | null
+          user_id: string | null
+          value_rating: number | null
+          vendor_id: string | null
+          verified_purchase: boolean | null
+        }
+        Insert: {
+          aroma_rating?: number | null
+          created_at?: string | null
+          effects_rating?: number | null
+          id?: string
+          rating?: number | null
+          review_text?: string | null
+          taste_rating?: number | null
+          tea_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          value_rating?: number | null
+          vendor_id?: string | null
+          verified_purchase?: boolean | null
+        }
+        Update: {
+          aroma_rating?: number | null
+          created_at?: string | null
+          effects_rating?: number | null
+          id?: string
+          rating?: number | null
+          review_text?: string | null
+          taste_rating?: number | null
+          tea_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          value_rating?: number | null
+          vendor_id?: string | null
+          verified_purchase?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tea_reviews_tea_id_fkey"
+            columns: ["tea_id"]
+            isOneToOne: false
+            referencedRelation: "herbal_teas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tea_reviews_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "tea_vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tea_vendors: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          rating: number | null
+          review_count: number | null
+          shipping_regions: string[] | null
+          updated_at: string | null
+          verification_status: string | null
+          website: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          rating?: number | null
+          review_count?: number | null
+          shipping_regions?: string[] | null
+          updated_at?: string | null
+          verification_status?: string | null
+          website?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          rating?: number | null
+          review_count?: number | null
+          shipping_regions?: string[] | null
+          updated_at?: string | null
+          verification_status?: string | null
+          website?: string | null
         }
         Relationships: []
       }
