@@ -8,7 +8,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import { Moon, Sun, Brain, Heart, Battery } from "lucide-react";
+import { Moon, Sun, Brain, Heart, Battery, CloudMoon } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+
+const SYMPTOMS = [
+  "Cramps",
+  "Headache",
+  "Fatigue",
+  "Bloating",
+  "Mood Swings",
+  "Insomnia",
+  "Back Pain",
+  "Breast Tenderness"
+];
+
+const MOODS = [
+  "Happy",
+  "Calm",
+  "Anxious",
+  "Irritable",
+  "Energetic",
+  "Tired",
+  "Neutral"
+];
 
 export const CycleTracking = () => {
   const { session } = useAuth();
@@ -18,7 +41,8 @@ export const CycleTracking = () => {
     energy_level: 5,
     stress_level: 5,
     mood: "neutral",
-    symptoms: [],
+    symptoms: [] as string[],
+    sleep_quality: 5,
     cycle_phase: null as string | null
   });
 
@@ -55,6 +79,7 @@ export const CycleTracking = () => {
           stress_level: entryData.stress_level,
           mood: entryData.mood,
           symptoms: entryData.symptoms,
+          sleep_quality: entryData.sleep_quality,
           cycle_phase: entryData.cycle_phase
         })
         .select()
@@ -80,8 +105,13 @@ export const CycleTracking = () => {
     }
   });
 
-  const handleSubmit = () => {
-    mutation.mutate(entry);
+  const toggleSymptom = (symptom: string) => {
+    setEntry(prev => ({
+      ...prev,
+      symptoms: prev.symptoms.includes(symptom) 
+        ? prev.symptoms.filter(s => s !== symptom)
+        : [...prev.symptoms, symptom]
+    }));
   };
 
   return (
@@ -127,10 +157,80 @@ export const CycleTracking = () => {
               step={1}
             />
           </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label>Sleep Quality</Label>
+              <div className="flex items-center gap-2">
+                <CloudMoon className="h-4 w-4 text-primary" />
+                <span>{entry.sleep_quality}/10</span>
+              </div>
+            </div>
+            <Slider
+              value={[entry.sleep_quality]}
+              onValueChange={(value) => setEntry({ ...entry, sleep_quality: value[0] })}
+              min={1}
+              max={10}
+              step={1}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Mood</Label>
+            <Select 
+              value={entry.mood} 
+              onValueChange={(value) => setEntry({ ...entry, mood: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select your mood" />
+              </SelectTrigger>
+              <SelectContent>
+                {MOODS.map(mood => (
+                  <SelectItem key={mood.toLowerCase()} value={mood.toLowerCase()}>
+                    {mood}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Symptoms</Label>
+            <div className="flex flex-wrap gap-2">
+              {SYMPTOMS.map(symptom => (
+                <Badge
+                  key={symptom}
+                  variant={entry.symptoms.includes(symptom) ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => toggleSymptom(symptom)}
+                >
+                  {symptom}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Cycle Phase</Label>
+            <Select 
+              value={entry.cycle_phase || ''} 
+              onValueChange={(value) => setEntry({ ...entry, cycle_phase: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select cycle phase" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="menstrual">Menstrual</SelectItem>
+                <SelectItem value="follicular">Follicular</SelectItem>
+                <SelectItem value="ovulatory">Ovulatory</SelectItem>
+                <SelectItem value="luteal">Luteal</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <Button 
-          onClick={handleSubmit} 
+          onClick={() => mutation.mutate(entry)} 
           className="w-full"
           disabled={mutation.isPending}
         >
