@@ -13,13 +13,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "@/components/AuthProvider"
 import { AdTierSelector } from './AdTierSelector'
 import { AdPreview } from './AdPreview'
-
-type DisplayZone = {
-  id: string
-  zone_type: string
-  price_multiplier: number
-  created_at: string
-}
+import { DisplayZone } from '@/types/supabase'
 
 const campaignFormSchema = z.object({
   productId: z.string().uuid(),
@@ -62,7 +56,7 @@ export function AdCampaignForm() {
         .order('price_multiplier', { ascending: true })
 
       if (error) throw error
-      return data || []
+      return data as DisplayZone[]
     }
   })
 

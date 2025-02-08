@@ -390,3 +390,17 @@ export interface PregnancyMetric {
   photo_url?: string;
   created_at: string;
 }
+
+export interface DisplayZone {
+  id: string;
+  zone_type: string;
+  price_multiplier: number;
+  created_at: string;
+}
+
+export interface DemographicData {
+  id: string;
+  impression_id: string;
+  age_range: string;
+  created_at: string;
+}

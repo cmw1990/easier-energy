@@ -261,6 +261,27 @@ export type Database = {
         }
         Relationships: []
       }
+      ad_display_zones: {
+        Row: {
+          created_at: string | null
+          id: string
+          price_multiplier: number
+          zone_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          price_multiplier?: number
+          zone_type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          price_multiplier?: number
+          zone_type?: string
+        }
+        Relationships: []
+      }
       ad_impressions: {
         Row: {
           clicked_at: string | null
@@ -292,6 +313,35 @@ export type Database = {
             columns: ["sponsored_product_id"]
             isOneToOne: false
             referencedRelation: "sponsored_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_viewer_demographics: {
+        Row: {
+          age_range: string
+          created_at: string | null
+          id: string
+          impression_id: string
+        }
+        Insert: {
+          age_range: string
+          created_at?: string | null
+          id?: string
+          impression_id: string
+        }
+        Update: {
+          age_range?: string
+          created_at?: string | null
+          id?: string
+          impression_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_viewer_demographics_impression_id_fkey"
+            columns: ["impression_id"]
+            isOneToOne: false
+            referencedRelation: "ad_impressions"
             referencedColumns: ["id"]
           },
         ]

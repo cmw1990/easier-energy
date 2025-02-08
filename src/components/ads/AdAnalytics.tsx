@@ -1,20 +1,13 @@
-
 import React from 'react'
 import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
 import { ChartBar, Users, Clock, Eye } from 'lucide-react'
+import { DemographicData } from '@/types/supabase'
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
-
-type DemographicData = {
-  id: string
-  impression_id: string
-  age_range: string
-  created_at: string
-}
 
 export function AdAnalytics() {
   const { session } = useAuth()
@@ -57,7 +50,7 @@ export function AdAnalytics() {
         .order('impressed_at', { ascending: true })
       
       if (error) throw error
-      return data
+      return data || []
     },
     enabled: !!campaigns?.length
   })
@@ -73,7 +66,7 @@ export function AdAnalytics() {
         .in('impression_id', analytics.map(a => a.id))
       
       if (error) throw error
-      return data || []
+      return data as DemographicData[]
     },
     enabled: !!analytics?.length
   })
@@ -86,9 +79,9 @@ export function AdAnalytics() {
   const ageDistribution = demographics?.reduce((acc, curr) => {
     acc[curr.age_range] = (acc[curr.age_range] || 0) + 1
     return acc
-  }, {} as Record<string, number>)
+  }, {} as Record<string, number>) || {}
 
-  const ageData = Object.entries(ageDistribution || {}).map(([range, count]) => ({
+  const ageData = Object.entries(ageDistribution).map(([range, count]) => ({
     name: range,
     value: count
   }))
