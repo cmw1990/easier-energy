@@ -7248,6 +7248,43 @@ export type Database = {
           },
         ]
       }
+      product_category_mappings: {
+        Row: {
+          category_id: string
+          product_id: string
+        }
+        Insert: {
+          category_id: string
+          product_id: string
+        }
+        Update: {
+          category_id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_category_mappings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_category_mappings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_category_mappings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_comparisons: {
         Row: {
           compared_with_id: string | null
@@ -7931,9 +7968,12 @@ export type Database = {
           health_warnings: string[] | null
           id: string
           image_url: string | null
+          images: string[] | null
+          is_featured: boolean | null
           is_launched: boolean | null
           is_nicotine_product: boolean | null
           is_nrt_certified: boolean
+          is_published: boolean | null
           launch_date: string | null
           maker_id: string | null
           materials: string[] | null
@@ -7952,6 +7992,7 @@ export type Database = {
           retail_availability: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
           sales_count: number | null
+          search_vector: unknown | null
           searchable_text: unknown | null
           shipping_restrictions: string[] | null
           shipping_weight_grams: number | null
@@ -8003,9 +8044,12 @@ export type Database = {
           health_warnings?: string[] | null
           id?: string
           image_url?: string | null
+          images?: string[] | null
+          is_featured?: boolean | null
           is_launched?: boolean | null
           is_nicotine_product?: boolean | null
           is_nrt_certified?: boolean
+          is_published?: boolean | null
           launch_date?: string | null
           maker_id?: string | null
           materials?: string[] | null
@@ -8024,6 +8068,7 @@ export type Database = {
           retail_availability?: Json | null
           risk_level: Database["public"]["Enums"]["risk_level"]
           sales_count?: number | null
+          search_vector?: unknown | null
           searchable_text?: unknown | null
           shipping_restrictions?: string[] | null
           shipping_weight_grams?: number | null
@@ -8075,9 +8120,12 @@ export type Database = {
           health_warnings?: string[] | null
           id?: string
           image_url?: string | null
+          images?: string[] | null
+          is_featured?: boolean | null
           is_launched?: boolean | null
           is_nicotine_product?: boolean | null
           is_nrt_certified?: boolean
+          is_published?: boolean | null
           launch_date?: string | null
           maker_id?: string | null
           materials?: string[] | null
@@ -8096,6 +8144,7 @@ export type Database = {
           retail_availability?: Json | null
           risk_level?: Database["public"]["Enums"]["risk_level"]
           sales_count?: number | null
+          search_vector?: unknown | null
           searchable_text?: unknown | null
           shipping_restrictions?: string[] | null
           shipping_weight_grams?: number | null
