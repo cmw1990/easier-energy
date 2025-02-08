@@ -11,11 +11,9 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 
-type BrewingMethod = "hot_steep" | "cold_brew" | "gongfu" | "western"
-
 type Form = {
   teaName: string;
-  brewingMethod: BrewingMethod;
+  brewingMethod: "hot_steep" | "cold_brew" | "gongfu" | "western";
   steepTime: string;
   waterTemperature: string;
   amount: string;
@@ -121,7 +119,7 @@ export function TeaIntakeForm() {
               <Label htmlFor="brewingMethod">Brewing Method</Label>
               <Select 
                 value={form.brewingMethod}
-                onValueChange={value => setForm(prev => ({ ...prev, brewingMethod: value as BrewingMethod }))}
+                onValueChange={value => setForm(prev => ({ ...prev, brewingMethod: value as Form["brewingMethod"] }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select method" />
