@@ -43,6 +43,7 @@ const EnergyPlansPage = lazy(() => import("@/pages/EnergyPlans"))
 const ExpertConsultancyPage = lazy(() => import("@/pages/ExpertConsultancy"))
 const CyclePage = lazy(() => import("@/pages/Cycle"))
 const PregnancyPage = lazy(() => import("@/pages/Pregnancy"))
+const ShopPage = lazy(() => import("@/pages/Shop"))
 
 export const mainRoutes = [
   {
@@ -393,6 +394,14 @@ export const mainRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <PregnancyPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "shop",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ShopPage />
           </Suspense>
         ),
       },
