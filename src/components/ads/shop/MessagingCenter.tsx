@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -15,7 +15,7 @@ export function MessagingCenter() {
   const [newMessage, setNewMessage] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
-  const { data: chats } = useQuery({
+  const { data: chats, refetch: refetchChats } = useQuery({
     queryKey: ['vendor-chats', session?.user?.id],
     queryFn: async () => {
       const { data: vendorData } = await supabase
@@ -26,9 +26,8 @@ export function MessagingCenter() {
 
       if (!vendorData) return [];
 
-      // Get unique user_ids from messages for this vendor
       const { data: messages } = await supabase
-        .from('vendor_messages')
+        .from('vendor_customer_messages')
         .select('user_id')
         .eq('vendor_id', vendorData.id);
 
@@ -39,7 +38,7 @@ export function MessagingCenter() {
     enabled: !!session?.user?.id
   });
 
-  const { data: messages } = useQuery({
+  const { data: messages, refetch: refetchMessages } = useQuery({
     queryKey: ['vendor-messages', session?.user?.id, selectedUserId],
     queryFn: async () => {
       const { data: vendorData } = await supabase
@@ -51,7 +50,7 @@ export function MessagingCenter() {
       if (!vendorData || !selectedUserId) return [];
 
       const { data, error } = await supabase
-        .from('vendor_messages')
+        .from('vendor_customer_messages')
         .select('*')
         .eq('vendor_id', vendorData.id)
         .eq('user_id', selectedUserId)
@@ -76,7 +75,7 @@ export function MessagingCenter() {
       if (!vendorData) throw new Error("Vendor not found");
 
       const { error } = await supabase
-        .from('vendor_messages')
+        .from('vendor_customer_messages')
         .insert({
           vendor_id: vendorData.id,
           user_id: selectedUserId,
@@ -87,6 +86,8 @@ export function MessagingCenter() {
       if (error) throw error;
 
       setNewMessage("");
+      refetchMessages();
+      refetchChats();
       toast({
         title: "Success",
         description: "Message sent successfully"

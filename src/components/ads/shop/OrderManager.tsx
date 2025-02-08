@@ -13,7 +13,7 @@ export function OrderManager() {
   const { session } = useAuth();
   const { toast } = useToast();
 
-  const { data: orders, isLoading } = useQuery({
+  const { data: orders, isLoading, refetch } = useQuery({
     queryKey: ['vendor-orders', session?.user?.id],
     queryFn: async () => {
       const { data: vendorData } = await supabase
@@ -55,6 +55,8 @@ export function OrderManager() {
         title: "Success",
         description: "Order status updated successfully"
       });
+
+      refetch();
     } catch (error) {
       toast({
         title: "Error",

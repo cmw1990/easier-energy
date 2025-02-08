@@ -15,6 +15,8 @@ import { MessagingCenter } from './shop/MessagingCenter'
 import { VendorSettings } from './shop/VendorSettings'
 import { ShippingZonesManager } from './shop/ShippingZonesManager'
 import { CategoriesManager } from './shop/CategoriesManager'
+import { InventoryManager } from './shop/InventoryManager'
+import { VendorAnalytics } from './shop/VendorAnalytics'
 import { useVendorSetup } from '@/hooks/useVendorSetup'
 
 export function VendorAdDashboard() {
@@ -37,6 +39,7 @@ export function VendorAdDashboard() {
               <TabsTrigger value="guide">Guide</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="products">Products</TabsTrigger>
+              <TabsTrigger value="inventory">Inventory</TabsTrigger>
               <TabsTrigger value="categories">Categories</TabsTrigger>
               <TabsTrigger value="shipping">Shipping</TabsTrigger>
               <TabsTrigger value="delivery">Delivery</TabsTrigger>
@@ -44,7 +47,6 @@ export function VendorAdDashboard() {
               <TabsTrigger value="campaigns">Ads</TabsTrigger>
               <TabsTrigger value="coupons">Coupons</TabsTrigger>
               <TabsTrigger value="samples">Samples</TabsTrigger>
-              <TabsTrigger value="rewards">Rewards</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
@@ -59,6 +61,10 @@ export function VendorAdDashboard() {
 
             <TabsContent value="products">
               <ProductManager />
+            </TabsContent>
+
+            <TabsContent value="inventory">
+              <InventoryManager />
             </TabsContent>
 
             <TabsContent value="categories">
@@ -89,12 +95,8 @@ export function VendorAdDashboard() {
               <SampleManager />
             </TabsContent>
 
-            <TabsContent value="rewards">
-              <RewardThresholdsManager />
-            </TabsContent>
-
             <TabsContent value="analytics">
-              <AdAnalytics />
+              <VendorAnalytics />
             </TabsContent>
 
             <TabsContent value="settings">
