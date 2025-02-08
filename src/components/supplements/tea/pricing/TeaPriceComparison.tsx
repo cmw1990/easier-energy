@@ -5,6 +5,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, ExternalLink } from "lucide-react"
 
+interface TeaVendor {
+  name: string
+  website: string
+  rating: number
+}
+
+interface TeaVendorProduct {
+  id: string
+  price: number
+  url: string
+  vendor: TeaVendor
+}
+
 interface TeaPriceComparisonProps {
   teaId: string
 }
@@ -16,11 +29,14 @@ export function TeaPriceComparison({ teaId }: TeaPriceComparisonProps) {
       const { data, error } = await supabase
         .from('tea_vendor_products')
         .select(`
-          *,
+          id,
+          price,
+          url,
           vendor:tea_vendors(name, website, rating)
         `)
         .eq('tea_id', teaId)
         .order('price', { ascending: true })
+        .returns<TeaVendorProduct[]>()
       
       if (error) throw error
       return data
