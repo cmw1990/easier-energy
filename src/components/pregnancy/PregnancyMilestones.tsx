@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
-import { Baby, Calendar, Heart, Camera } from "lucide-react"
+import { Baby, Calendar, Heart, Camera, Filter, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/integrations/supabase/client"
@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast"
 import { PregnancyMilestoneForm } from "./PregnancyMilestoneForm"
 import { AchievementCelebration } from "@/components/achievements/AchievementCelebration"
 import type { PregnancyMilestone } from "@/types/supabase"
+import { Badge } from "@/components/ui/badge"
 
 export const PregnancyMilestones = () => {
   const { session } = useAuth()
@@ -19,8 +20,9 @@ export const PregnancyMilestones = () => {
   const [formOpen, setFormOpen] = useState(false)
   const [celebratingMilestone, setCelebratingMilestone] = useState<PregnancyMilestone | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
 
-  const { data: milestones, isLoading } = useQuery({
+  const { data: milestones, isLoading, isError } = useQuery({
     queryKey: ['pregnancy-milestones'],
     queryFn: async () => {
       if (!session?.user?.id) return null
@@ -73,7 +75,8 @@ export const PregnancyMilestones = () => {
       queryClient.invalidateQueries({ queryKey: ['pregnancy-milestones'] })
       toast({
         title: "Success",
-        description: "Milestone added successfully!"
+        description: "Milestone added successfully!",
+        variant: "default"
       })
       setFormOpen(false)
       setCelebratingMilestone(data)
@@ -103,7 +106,8 @@ export const PregnancyMilestones = () => {
       queryClient.invalidateQueries({ queryKey: ['pregnancy-milestones'] })
       toast({
         title: "Success",
-        description: "Milestone shared successfully!"
+        description: "Milestone shared successfully!",
+        variant: "default"
       })
     },
     onError: () => {
@@ -131,6 +135,18 @@ export const PregnancyMilestones = () => {
     ? milestones?.filter(m => m.category === selectedCategory)
     : milestones
 
+  if (isError) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="text-center text-red-500">
+            Failed to load milestones. Please try again later.
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -140,27 +156,33 @@ export const PregnancyMilestones = () => {
         </CardTitle>
         <div className="flex gap-2">
           {categories.length > 0 && (
-            <select 
-              className="border rounded px-2 py-1"
-              value={selectedCategory || ''}
-              onChange={(e) => setSelectedCategory(e.target.value || null)}
-            >
-              <option value="">All Categories</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <select 
+                className="border rounded px-2 py-1 bg-background"
+                value={selectedCategory || ''}
+                onChange={(e) => setSelectedCategory(e.target.value || null)}
+              >
+                <option value="">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
           )}
           <PregnancyMilestoneForm 
             open={formOpen}
             onOpenChange={setFormOpen}
             onSubmit={handleAddMilestone}
+            isLoading={addMilestoneMutation.isPending}
           />
         </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p>Loading milestones...</p>
+          <div className="flex items-center justify-center p-8">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
         ) : filteredMilestones && filteredMilestones.length > 0 ? (
           <div className="space-y-4">
             {filteredMilestones.map((milestone) => (
@@ -179,9 +201,9 @@ export const PregnancyMilestones = () => {
                     )}
                   </div>
                   {milestone.category && (
-                    <span className="inline-block px-2 py-1 text-xs rounded-full bg-pink-100 text-pink-800">
+                    <Badge variant="secondary" className="mt-2">
                       {milestone.category}
-                    </span>
+                    </Badge>
                   )}
                   {milestone.photo_urls && milestone.photo_urls.length > 0 && (
                     <div className="flex gap-2 mt-2">
@@ -190,7 +212,7 @@ export const PregnancyMilestones = () => {
                           key={index}
                           src={url} 
                           alt={`Milestone photo ${index + 1}`}
-                          className="w-16 h-16 object-cover rounded"
+                          className="w-16 h-16 object-cover rounded-md hover:opacity-90 transition-opacity cursor-pointer"
                         />
                       ))}
                     </div>
@@ -201,6 +223,7 @@ export const PregnancyMilestones = () => {
                     variant="ghost" 
                     size="sm"
                     onClick={() => handleShareMilestone(milestone.id)}
+                    disabled={shareMilestoneMutation.isPending}
                   >
                     <Heart className="h-4 w-4 mr-2" />
                     Share
@@ -210,9 +233,12 @@ export const PregnancyMilestones = () => {
             ))}
           </div>
         ) : (
-          <p className="text-center text-muted-foreground">
-            No milestones recorded yet. Add your first milestone to start tracking your pregnancy journey!
-          </p>
+          <div className="text-center p-8 text-muted-foreground">
+            <Baby className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+            <p>
+              No milestones recorded yet. Add your first milestone to start tracking your pregnancy journey!
+            </p>
+          </div>
         )}
       </CardContent>
 
