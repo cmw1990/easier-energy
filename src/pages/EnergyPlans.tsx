@@ -14,10 +14,10 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import type { Plan, PlanCategory, ProgressRecord, LifeSituation } from "@/types/energyPlans"
+import type { Plan, PlanCategory, ProgressRecord } from "@/types/energyPlans"
 import type { Database } from "@/types/supabase"
 
-type UserLifeSituation = Database['public']['Tables']['user_life_situations']['Row']
+type UserLifeSituationRow = Database['public']['Tables']['user_life_situations']['Row']
 
 const EnergyPlans = () => {
   const { session } = useAuth()
@@ -27,7 +27,7 @@ const EnergyPlans = () => {
   const [showLifeSituationDialog, setShowLifeSituationDialog] = useState(false)
   const queryClient = useQueryClient()
 
-  const { data: lifeSituation } = useQuery<UserLifeSituation | null>({
+  const { data: lifeSituation } = useQuery<UserLifeSituationRow | null>({
     queryKey: ['user-life-situation', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null
@@ -150,7 +150,7 @@ const EnergyPlans = () => {
   })
 
   const updateLifeSituationMutation = useMutation({
-    mutationFn: async (situation: LifeSituation) => {
+    mutationFn: async (situation: UserLifeSituationRow['situation']) => {
       if (!session?.user) throw new Error("Not authenticated")
       
       const { error } = await supabase
@@ -194,7 +194,7 @@ const EnergyPlans = () => {
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <RadioGroup 
-                  onValueChange={(value) => updateLifeSituationMutation.mutate(value as LifeSituation)}
+                  onValueChange={(value) => updateLifeSituationMutation.mutate(value as UserLifeSituationRow['situation'])}
                   defaultValue={lifeSituation?.situation || "regular"}
                 >
                   <div className="flex items-center space-x-2">
