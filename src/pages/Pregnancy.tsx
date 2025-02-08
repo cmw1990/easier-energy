@@ -63,6 +63,19 @@ const PregnancyPage = () => {
     navigate('/energy-plans')
   }
 
+  const handleFocusToolsClick = () => {
+    navigate('/focus')
+  }
+
+  const handleLogDaily = () => {
+    // This would open a modal or navigate to logging page
+    toast({ 
+      title: "Coming Soon!", 
+      description: "Daily logging functionality will be available soon.",
+      variant: "default"
+    })
+  }
+
   return (
     <div className="space-y-4 container mx-auto p-4">
       <Card>
@@ -88,21 +101,35 @@ const PregnancyPage = () => {
                   {pregnancyData.healthcare_provider && (
                     <p>Healthcare Provider: {pregnancyData.healthcare_provider}</p>
                   )}
-                  {pregnancyData.energy_support_needed && (
-                    <Button 
-                      variant="outline" 
-                      className="mt-2"
-                      onClick={handleEnergyPlanClick}
-                    >
-                      View Energy Support Plans
-                    </Button>
-                  )}
+                  <div className="flex flex-col gap-2 mt-4">
+                    {pregnancyData.energy_support_needed && (
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={handleEnergyPlanClick}
+                      >
+                        View Energy Support Plans
+                      </Button>
+                    )}
+                    {pregnancyData.focus_support_needed && (
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={handleFocusToolsClick}
+                      >
+                        Access Focus Tools
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Quick Actions</h3>
                 <div className="space-y-2">
-                  <Button onClick={() => toast({ title: "Feature coming soon!", description: "Log symptoms and measurements" })}>
+                  <Button 
+                    onClick={handleLogDaily}
+                    className="w-full"
+                  >
                     Log Daily Entry
                   </Button>
                 </div>
@@ -111,7 +138,10 @@ const PregnancyPage = () => {
           ) : (
             <div className="text-center">
               <p className="mb-4">No pregnancy tracking data found. Would you like to start tracking?</p>
-              <Button onClick={() => toast({ title: "Feature coming soon!", description: "Set up pregnancy tracking" })}>
+              <Button onClick={() => toast({ 
+                title: "Coming Soon!", 
+                description: "Pregnancy tracking setup will be available soon."
+              })}>
                 Set Up Tracking
               </Button>
             </div>

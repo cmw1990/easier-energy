@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -193,7 +192,7 @@ const EnergyPlans = () => {
                 Update Life Situation
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Your Current Life Situation</DialogTitle>
               </DialogHeader>
@@ -201,22 +200,38 @@ const EnergyPlans = () => {
                 <RadioGroup 
                   onValueChange={(value) => updateLifeSituationMutation.mutate(value as UserLifeSituationRow['situation'])}
                   defaultValue={lifeSituation?.situation || "regular"}
+                  className="gap-4"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
                     <RadioGroupItem value="regular" id="regular" />
-                    <Label htmlFor="regular">Regular Energy Management</Label>
+                    <Label htmlFor="regular" className="flex-1 cursor-pointer">
+                      <div className="font-semibold">Regular Energy Management</div>
+                      <div className="text-sm text-muted-foreground">Standard energy and focus optimization</div>
+                    </Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
                     <RadioGroupItem value="pregnancy" id="pregnancy" />
-                    <Label htmlFor="pregnancy">Pregnancy</Label>
+                    <Label htmlFor="pregnancy" className="flex-1 cursor-pointer">
+                      <div className="font-semibold flex items-center gap-2">
+                        <Baby className="h-4 w-4" />
+                        Pregnancy
+                      </div>
+                      <div className="text-sm text-muted-foreground">Tailored energy plans for pregnancy</div>
+                    </Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
                     <RadioGroupItem value="postpartum" id="postpartum" />
-                    <Label htmlFor="postpartum">Postpartum Recovery</Label>
+                    <Label htmlFor="postpartum" className="flex-1 cursor-pointer">
+                      <div className="font-semibold">Postpartum Recovery</div>
+                      <div className="text-sm text-muted-foreground">Support for the postpartum period</div>
+                    </Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-accent">
                     <RadioGroupItem value="breastfeeding" id="breastfeeding" />
-                    <Label htmlFor="breastfeeding">Breastfeeding</Label>
+                    <Label htmlFor="breastfeeding" className="flex-1 cursor-pointer">
+                      <div className="font-semibold">Breastfeeding</div>
+                      <div className="text-sm text-muted-foreground">Energy support during breastfeeding</div>
+                    </Label>
                   </div>
                 </RadioGroup>
               </div>
