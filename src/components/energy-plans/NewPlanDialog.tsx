@@ -24,6 +24,7 @@ interface NewPlanDialogProps {
 export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
   const { session } = useAuth()
   const { toast } = useToast()
+
   const [formData, setFormData] = useState<Omit<EnergyPlan, 'created_by'>>({
     title: "",
     description: "",
@@ -31,9 +32,12 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
     category: "charged",
     tags: [],
     visibility: "private",
-    energy_level_required: 5,
     recommended_time_of_day: [],
-    suitable_contexts: []
+    suitable_contexts: [],
+    energy_level_required: 5,
+    is_expert_plan: false,
+    likes_count: 0,
+    saves_count: 0
   })
 
   const createPlanMutation = useMutation({
@@ -112,6 +116,7 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
               onChange={e => setFormData(d => ({ ...d, description: e.target.value }))}
             />
           </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Category</Label>
@@ -158,6 +163,7 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
               </Select>
             </div>
           </div>
+
           <div>
             <Label>Energy Level Required (1-10)</Label>
             <Input
@@ -168,6 +174,7 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
               onChange={e => setFormData(d => ({ ...d, energy_level_required: parseInt(e.target.value) }))}
             />
           </div>
+
           <div>
             <Label>Recommended Times of Day</Label>
             <div className="flex flex-wrap gap-2 mt-2">
@@ -190,6 +197,7 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
               ))}
             </div>
           </div>
+
           <div>
             <Label>Suitable Contexts</Label>
             <div className="flex flex-wrap gap-2 mt-2">
@@ -212,6 +220,7 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
               ))}
             </div>
           </div>
+
           <div>
             <Label>Visibility</Label>
             <Select
@@ -228,6 +237,7 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
               </SelectContent>
             </Select>
           </div>
+
           <Button 
             className="w-full"
             onClick={() => createPlanMutation.mutate(formData)}

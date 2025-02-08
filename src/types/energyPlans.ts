@@ -59,17 +59,11 @@ export interface Plan {
   tags: string[]
   likes_count: number
   saves_count: number
-  estimated_duration_minutes?: number
   energy_level_required?: number
   recommended_time_of_day?: string[]
   suitable_contexts?: string[]
-  energy_plan_components: PlanComponent[]
-  celebrity_name?: string
-  celebrity_profession?: string
-  celebrity_source?: string
-  cyclePhaseRecommendations?: Record<string, string[]>
+  estimated_duration_minutes?: number
   hormonalPhaseAdjustments?: Record<string, CycleAdjustment>
-  biometricRequirements?: BiometricData
   lifeSituationAdjustments?: Record<LifeSituation, {
     energyLevelModifier: number
     durationModifier: number
