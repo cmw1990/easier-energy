@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Cloud, ThermometerSun, Loader2 } from "lucide-react";
+import { Cloud, ThermometerSun, Loader2, Wind, Droplets, Gauge } from "lucide-react";
 import type { CycleWeatherImpact as CycleWeatherImpactType } from "@/types/cycle";
 import { format } from "date-fns";
 
@@ -49,6 +50,13 @@ export const CycleWeatherImpact = () => {
         description: "Your weather impact data has been saved",
       });
     },
+    onError: (error) => {
+      toast({
+        title: "Error saving weather impact",
+        description: "Please try again later",
+        variant: "destructive"
+      });
+    }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -58,42 +66,37 @@ export const CycleWeatherImpact = () => {
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    // Type check and cast form data values
+    // Get and validate string values
     const symptomTypeValue = formData.get('symptom_type');
     const phaseTypeValue = formData.get('phase_type');
     const notesValue = formData.get('notes');
     const conditionValue = formData.get('condition');
 
-    // Ensure all required values are present and are strings
-    if (
-      !symptomTypeValue || 
-      !phaseTypeValue ||
-      typeof symptomTypeValue !== 'string' ||
-      typeof phaseTypeValue !== 'string'
-    ) {
+    if (!symptomTypeValue || !phaseTypeValue || 
+        typeof symptomTypeValue !== 'string' || 
+        typeof phaseTypeValue !== 'string') {
       toast({
-        title: "Error",
-        description: "Invalid form data",
+        title: "Missing required fields",
+        description: "Please fill in all required fields",
         variant: "destructive",
       });
       return;
     }
 
-    // Safely convert optional values to the correct types
+    // Handle optional string values
     const notes = notesValue ? String(notesValue) : undefined;
     const condition = conditionValue ? String(conditionValue) : null;
 
-    // Parse and validate numeric values
+    // Get and validate numeric values
     const temperatureValue = formData.get('temperature');
     const humidityValue = formData.get('humidity');
     const pressureValue = formData.get('pressure');
     const symptomIntensityValue = formData.get('symptom_intensity');
 
-    // Ensure numeric values exist and can be parsed
     if (!temperatureValue || !humidityValue || !pressureValue || !symptomIntensityValue) {
       toast({
-        title: "Error",
-        description: "Missing required numeric values",
+        title: "Missing measurements",
+        description: "Please provide all weather measurements",
         variant: "destructive",
       });
       return;
@@ -104,11 +107,10 @@ export const CycleWeatherImpact = () => {
     const pressure = parseFloat(String(pressureValue));
     const symptomIntensity = parseInt(String(symptomIntensityValue));
 
-    // Validate numeric values
     if (isNaN(temperature) || isNaN(humidity) || isNaN(pressure) || isNaN(symptomIntensity)) {
       toast({
-        title: "Error",
-        description: "Invalid numeric values in form data",
+        title: "Invalid measurements",
+        description: "Please enter valid numbers for all measurements",
         variant: "destructive",
       });
       return;
@@ -144,7 +146,7 @@ export const CycleWeatherImpact = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label>Symptom Type</Label>
+              <Label htmlFor="symptom_type">Symptom Type*</Label>
               <Select name="symptom_type" required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select symptom type" />
@@ -160,7 +162,7 @@ export const CycleWeatherImpact = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Cycle Phase</Label>
+              <Label htmlFor="phase_type">Cycle Phase*</Label>
               <Select name="phase_type" required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select cycle phase" />
@@ -176,7 +178,7 @@ export const CycleWeatherImpact = () => {
           </div>
 
           <div className="space-y-2">
-            <Label>Symptom Intensity (1-10)</Label>
+            <Label>Symptom Intensity (1-10)*</Label>
             <Slider 
               name="symptom_intensity"
               defaultValue={[5]}
@@ -189,9 +191,13 @@ export const CycleWeatherImpact = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label>Temperature (°C)</Label>
+              <Label htmlFor="temperature" className="flex items-center gap-2">
+                <ThermometerSun className="h-4 w-4" />
+                Temperature (°C)*
+              </Label>
               <input 
                 type="number" 
+                id="temperature"
                 name="temperature"
                 className="w-full p-2 border rounded"
                 step="0.1"
@@ -200,9 +206,13 @@ export const CycleWeatherImpact = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label>Humidity (%)</Label>
+              <Label htmlFor="humidity" className="flex items-center gap-2">
+                <Droplets className="h-4 w-4" />
+                Humidity (%)*
+              </Label>
               <input 
                 type="number" 
+                id="humidity"
                 name="humidity"
                 className="w-full p-2 border rounded"
                 min="0"
@@ -215,9 +225,13 @@ export const CycleWeatherImpact = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label>Air Pressure (hPa)</Label>
+              <Label htmlFor="pressure" className="flex items-center gap-2">
+                <Gauge className="h-4 w-4" />
+                Air Pressure (hPa)*
+              </Label>
               <input 
                 type="number" 
+                id="pressure"
                 name="pressure"
                 className="w-full p-2 border rounded"
                 required
@@ -225,7 +239,10 @@ export const CycleWeatherImpact = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label>Weather Condition</Label>
+              <Label htmlFor="condition" className="flex items-center gap-2">
+                <Wind className="h-4 w-4" />
+                Weather Condition
+              </Label>
               <Select name="condition">
                 <SelectTrigger>
                   <SelectValue placeholder="Select weather condition" />
@@ -242,8 +259,9 @@ export const CycleWeatherImpact = () => {
           </div>
 
           <div className="space-y-2">
-            <Label>Additional Notes</Label>
+            <Label htmlFor="notes">Additional Notes</Label>
             <textarea 
+              id="notes"
               name="notes"
               className="w-full p-2 border rounded"
               rows={3}
