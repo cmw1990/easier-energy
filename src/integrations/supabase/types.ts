@@ -7956,6 +7956,7 @@ export type Database = {
           shipping_restrictions: string[] | null
           shipping_weight_grams: number | null
           size_reference: Json | null
+          stock: number | null
           strength: Database["public"]["Enums"]["strength_level"]
           subscription_price: number | null
           support_email: string | null
@@ -8027,6 +8028,7 @@ export type Database = {
           shipping_restrictions?: string[] | null
           shipping_weight_grams?: number | null
           size_reference?: Json | null
+          stock?: number | null
           strength: Database["public"]["Enums"]["strength_level"]
           subscription_price?: number | null
           support_email?: string | null
@@ -8098,6 +8100,7 @@ export type Database = {
           shipping_restrictions?: string[] | null
           shipping_weight_grams?: number | null
           size_reference?: Json | null
+          stock?: number | null
           strength?: Database["public"]["Enums"]["strength_level"]
           subscription_price?: number | null
           support_email?: string | null

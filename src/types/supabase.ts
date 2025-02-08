@@ -490,6 +490,29 @@ export interface Database {
         Insert: Omit<VendorMessage, 'id' | 'created_at'>;
         Update: Partial<Omit<VendorMessage, 'id' | 'created_at'>>;
       };
+      products: {
+        Row: {
+          id: string
+          name: string
+          description: string
+          price: number
+          stock: number | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string
+          price: number
+          stock?: number | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string
+          price?: number
+          stock?: number | null
+        }
+      }
     }
     Functions: {
       calculate_available_discount: {
