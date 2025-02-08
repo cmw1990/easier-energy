@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { useAuth } from "@/components/AuthProvider"
@@ -30,7 +31,6 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
     category: "charged",
     tags: [],
     visibility: "private",
-    estimated_duration_minutes: 30,
     energy_level_required: 5,
     recommended_time_of_day: [],
     suitable_contexts: []
@@ -67,7 +67,7 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
 
   const timesOfDay = [
     "Early Morning",
-    "Morning",
+    "Morning", 
     "Afternoon",
     "Evening",
     "Night"
@@ -76,7 +76,7 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
   const contexts = [
     "Work",
     "Study",
-    "Exercise",
+    "Exercise", 
     "Social",
     "Home",
     "Travel"
@@ -140,17 +140,17 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
                 <SelectContent>
                   {formData.category === "charged" ? (
                     <>
-                      <SelectItem value="energizing_boost">Quick Energy Boost</SelectItem>
-                      <SelectItem value="sustained_focus">Sustained Focus</SelectItem>
+                      <SelectItem value="quick_boost">Quick Energy Boost</SelectItem>
+                      <SelectItem value="sustained_energy">Sustained Focus</SelectItem>
                       <SelectItem value="mental_clarity">Mental Clarity</SelectItem>
-                      <SelectItem value="physical_vitality">Physical Vitality</SelectItem>
+                      <SelectItem value="physical_energy">Physical Energy</SelectItem>
                     </>
                   ) : (
                     <>
                       <SelectItem value="deep_relaxation">Deep Relaxation</SelectItem>
                       <SelectItem value="stress_relief">Stress Relief</SelectItem>
-                      <SelectItem value="evening_winddown">Evening Wind Down</SelectItem>
-                      <SelectItem value="sleep_preparation">Sleep Preparation</SelectItem>
+                      <SelectItem value="wind_down">Evening Wind Down</SelectItem>
+                      <SelectItem value="sleep_prep">Sleep Preparation</SelectItem>
                       <SelectItem value="meditation">Meditation</SelectItem>
                     </>
                   )}
@@ -158,27 +158,15 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Duration (minutes)</Label>
-              <Input 
-                type="number"
-                min={5}
-                max={180}
-                value={formData.estimated_duration_minutes}
-                onChange={e => setFormData(d => ({ ...d, estimated_duration_minutes: parseInt(e.target.value) }))}
-              />
-            </div>
-            <div>
-              <Label>Energy Level Required (1-10)</Label>
-              <Input
-                type="number"
-                min={1}
-                max={10} 
-                value={formData.energy_level_required}
-                onChange={e => setFormData(d => ({ ...d, energy_level_required: parseInt(e.target.value) }))}
-              />
-            </div>
+          <div>
+            <Label>Energy Level Required (1-10)</Label>
+            <Input
+              type="number"
+              min={1}
+              max={10} 
+              value={formData.energy_level_required}
+              onChange={e => setFormData(d => ({ ...d, energy_level_required: parseInt(e.target.value) }))}
+            />
           </div>
           <div>
             <Label>Recommended Times of Day</Label>
