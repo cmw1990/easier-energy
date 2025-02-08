@@ -182,7 +182,7 @@ export interface Database {
       user_life_situations: {
         Row: {
           id: string
-          user_id: string
+          user_id: string 
           situation: LifeSituation
           started_at: string
           updated_at: string

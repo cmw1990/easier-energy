@@ -12,6 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Plus } from "lucide-react"
 import type { PlanType } from "@/types/energyPlans"
+import type { Database } from "@/types/supabase"
+
+type EnergyPlan = Database['public']['Tables']['energy_plans']['Insert']
 
 interface NewPlanDialogProps {
   onPlanCreated: () => void
@@ -20,17 +23,17 @@ interface NewPlanDialogProps {
 export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
   const { session } = useAuth()
   const { toast } = useToast()
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<EnergyPlan, 'created_by'>>({
     title: "",
     description: "",
-    plan_type: "quick_boost" as PlanType,
-    category: "charged" as 'charged' | 'recharged',
-    tags: [] as string[],
-    visibility: "private" as 'private' | 'public' | 'shared',
+    plan_type: "quick_boost",
+    category: "charged",
+    tags: [],
+    visibility: "private",
     estimated_duration_minutes: 30,
     energy_level_required: 5,
-    recommended_time_of_day: [] as string[],
-    suitable_contexts: [] as string[]
+    recommended_time_of_day: [],
+    suitable_contexts: []
   })
 
   const createPlanMutation = useMutation({
@@ -40,17 +43,8 @@ export const NewPlanDialog = ({ onPlanCreated }: NewPlanDialogProps) => {
       const { error } = await supabase
         .from('energy_plans')
         .insert({
+          ...data,
           created_by: session.user.id,
-          title: data.title,
-          description: data.description,
-          plan_type: data.plan_type,
-          category: data.category,
-          tags: data.tags,
-          visibility: data.visibility,
-          estimated_duration_minutes: data.estimated_duration_minutes,
-          energy_level_required: data.energy_level_required,
-          recommended_time_of_day: data.recommended_time_of_day,
-          suitable_contexts: data.suitable_contexts
         })
 
       if (error) throw error

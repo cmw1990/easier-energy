@@ -17,12 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import type { Plan, PlanCategory, ProgressRecord, LifeSituation } from "@/types/energyPlans"
 import type { Database } from "@/types/supabase"
 
-interface UserLifeSituation {
-  id: string
-  user_id: string
-  situation: LifeSituation
-  updated_at: string
-}
+type UserLifeSituation = Database['public']['Tables']['user_life_situations']['Row']
 
 const EnergyPlans = () => {
   const { session } = useAuth()
@@ -44,7 +39,7 @@ const EnergyPlans = () => {
         .maybeSingle()
       
       if (error) throw error
-      return data
+      return data as UserLifeSituation
     },
     enabled: !!session?.user?.id
   })
@@ -162,7 +157,7 @@ const EnergyPlans = () => {
         .from('user_life_situations')
         .upsert({
           user_id: session.user.id,
-          situation: situation,
+          situation,
           updated_at: new Date().toISOString()
         })
 
