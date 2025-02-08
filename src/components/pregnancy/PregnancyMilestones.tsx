@@ -52,8 +52,14 @@ export const PregnancyMilestones = () => {
       
       const { data, error } = await supabase
         .from('pregnancy_milestones')
-        .insert([{ 
-          ...milestone,
+        .insert([{
+          milestone_type: milestone.milestone_type,
+          custom_title: milestone.custom_title,
+          description: milestone.description,
+          achieved_at: milestone.achieved_at,
+          week_number: milestone.week_number,
+          category: milestone.category,
+          photo_urls: milestone.photo_urls,
           user_id: session.user.id,
           celebration_shared: false
         }])

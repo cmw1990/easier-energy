@@ -374,7 +374,7 @@ export type UserLifeSituationRow = Database['public']['Tables']['user_life_situa
 export type PregnancyWellnessCorrelationsRow = Database['public']['Tables']['pregnancy_wellness_correlations']['Row']
 export type PregnancyMilestoneRow = Database['public']['Tables']['pregnancy_milestones']['Row']
 
-type PregnancyMilestone = Database['public']['Tables']['pregnancy_milestones']['Row'] & {
-  category?: string | null
-  photo_urls?: string[] | null
+export type PregnancyMilestone = Database['public']['Tables']['pregnancy_milestones']['Row'] & {
+  category?: string | null;
+  photo_urls?: string[] | null;
 }
