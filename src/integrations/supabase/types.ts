@@ -4332,6 +4332,7 @@ export type Database = {
       herbal_teas: {
         Row: {
           active_compounds: string[] | null
+          alternative_names: string[] | null
           antioxidant_content: string | null
           aroma_notes: string[] | null
           benefits: string[] | null
@@ -4340,8 +4341,10 @@ export type Database = {
           caffeine_content_mg: number | null
           category: string
           cautions: string[] | null
+          common_combinations: string[] | null
           contraindications: string[] | null
           created_at: string | null
+          cultural_significance: string | null
           description: string
           eco_certifications: string[] | null
           energy_effects: string[] | null
@@ -4358,26 +4361,34 @@ export type Database = {
           organic_certified: boolean | null
           origin_regions: string[] | null
           preparation_methods: string[] | null
+          preparation_variations: Json | null
           processing_method: string | null
+          processing_methods: string[] | null
+          quality_indicators: string[] | null
           research_references: string[] | null
           safety_notes: string | null
           scientific_name: string | null
           seasonal_availability: string[] | null
           shelf_life: string | null
+          source_regions: string[] | null
+          status: string | null
           steep_time_range_seconds: number[] | null
           steeping_vessel_recommendations: string[] | null
           storage_instructions: string | null
           sustainability_info: string | null
           theobromine_content_mg: number | null
           theophylline_content_mg: number | null
+          therapeutic_claims: string[] | null
           traditional_use_regions: string[] | null
           traditional_uses: string[] | null
           updated_at: string | null
           vitamin_content: Json | null
+          warnings_and_interactions: string[] | null
           water_quality_notes: string | null
         }
         Insert: {
           active_compounds?: string[] | null
+          alternative_names?: string[] | null
           antioxidant_content?: string | null
           aroma_notes?: string[] | null
           benefits?: string[] | null
@@ -4386,8 +4397,10 @@ export type Database = {
           caffeine_content_mg?: number | null
           category: string
           cautions?: string[] | null
+          common_combinations?: string[] | null
           contraindications?: string[] | null
           created_at?: string | null
+          cultural_significance?: string | null
           description: string
           eco_certifications?: string[] | null
           energy_effects?: string[] | null
@@ -4404,26 +4417,34 @@ export type Database = {
           organic_certified?: boolean | null
           origin_regions?: string[] | null
           preparation_methods?: string[] | null
+          preparation_variations?: Json | null
           processing_method?: string | null
+          processing_methods?: string[] | null
+          quality_indicators?: string[] | null
           research_references?: string[] | null
           safety_notes?: string | null
           scientific_name?: string | null
           seasonal_availability?: string[] | null
           shelf_life?: string | null
+          source_regions?: string[] | null
+          status?: string | null
           steep_time_range_seconds?: number[] | null
           steeping_vessel_recommendations?: string[] | null
           storage_instructions?: string | null
           sustainability_info?: string | null
           theobromine_content_mg?: number | null
           theophylline_content_mg?: number | null
+          therapeutic_claims?: string[] | null
           traditional_use_regions?: string[] | null
           traditional_uses?: string[] | null
           updated_at?: string | null
           vitamin_content?: Json | null
+          warnings_and_interactions?: string[] | null
           water_quality_notes?: string | null
         }
         Update: {
           active_compounds?: string[] | null
+          alternative_names?: string[] | null
           antioxidant_content?: string | null
           aroma_notes?: string[] | null
           benefits?: string[] | null
@@ -4432,8 +4453,10 @@ export type Database = {
           caffeine_content_mg?: number | null
           category?: string
           cautions?: string[] | null
+          common_combinations?: string[] | null
           contraindications?: string[] | null
           created_at?: string | null
+          cultural_significance?: string | null
           description?: string
           eco_certifications?: string[] | null
           energy_effects?: string[] | null
@@ -4450,22 +4473,29 @@ export type Database = {
           organic_certified?: boolean | null
           origin_regions?: string[] | null
           preparation_methods?: string[] | null
+          preparation_variations?: Json | null
           processing_method?: string | null
+          processing_methods?: string[] | null
+          quality_indicators?: string[] | null
           research_references?: string[] | null
           safety_notes?: string | null
           scientific_name?: string | null
           seasonal_availability?: string[] | null
           shelf_life?: string | null
+          source_regions?: string[] | null
+          status?: string | null
           steep_time_range_seconds?: number[] | null
           steeping_vessel_recommendations?: string[] | null
           storage_instructions?: string | null
           sustainability_info?: string | null
           theobromine_content_mg?: number | null
           theophylline_content_mg?: number | null
+          therapeutic_claims?: string[] | null
           traditional_use_regions?: string[] | null
           traditional_uses?: string[] | null
           updated_at?: string | null
           vitamin_content?: Json | null
+          warnings_and_interactions?: string[] | null
           water_quality_notes?: string | null
         }
         Relationships: []
