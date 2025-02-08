@@ -4329,6 +4329,47 @@ export type Database = {
         }
         Relationships: []
       }
+      herbal_tea_logs_sessions: {
+        Row: {
+          created_at: string | null
+          id: string
+          log_id: string | null
+          notes: string | null
+          rating: number | null
+          steep_number: number
+          steep_time_seconds: number
+          water_temperature: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          log_id?: string | null
+          notes?: string | null
+          rating?: number | null
+          steep_number: number
+          steep_time_seconds: number
+          water_temperature: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          log_id?: string | null
+          notes?: string | null
+          rating?: number | null
+          steep_number?: number
+          steep_time_seconds?: number
+          water_temperature?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "herbal_tea_logs_sessions_log_id_fkey"
+            columns: ["log_id"]
+            isOneToOne: false
+            referencedRelation: "herbal_tea_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       herbal_teas: {
         Row: {
           active_compounds: string[] | null
@@ -10405,6 +10446,45 @@ export type Database = {
           },
           {
             foreignKeyName: "tea_reviews_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "tea_vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tea_vendor_products: {
+        Row: {
+          created_at: string | null
+          id: string
+          price: number
+          tea_id: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          price: number
+          tea_id?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          price?: number
+          tea_id?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tea_vendor_products_tea_id_fkey"
+            columns: ["tea_id"]
+            isOneToOne: false
+            referencedRelation: "herbal_teas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tea_vendor_products_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "tea_vendors"

@@ -10,29 +10,35 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/AuthProvider"
 
 const campaignFormSchema = z.object({
   productId: z.string().uuid(),
   placementType: z.enum(['feed', 'banner', 'sidebar', 'openApp']),
-  budget: z.string().transform((val) => Number(val)),
-  cpc: z.string().transform((val) => Number(val)),
-  durationDays: z.string().transform((val) => Number(val)),
+  budget: z.coerce.number().positive(),
+  cpc: z.coerce.number().positive(),
+  durationDays: z.coerce.number().positive(),
 })
 
 export function AdCampaignForm() {
+  const { session } = useAuth()
   const { toast } = useToast()
   const form = useForm<z.infer<typeof campaignFormSchema>>({
     resolver: zodResolver(campaignFormSchema),
     defaultValues: {
       placementType: 'feed',
-      budget: '50',
-      cpc: '0.10',
-      durationDays: '7',
+      budget: 50,
+      cpc: 0.10,
+      durationDays: 7,
     },
   })
 
   async function onSubmit(values: z.infer<typeof campaignFormSchema>) {
     try {
+      if (!session?.user?.id) {
+        throw new Error("User not authenticated")
+      }
+
       const endsAt = new Date(Date.now() + values.durationDays * 24 * 60 * 60 * 1000).toISOString()
       
       const { error } = await supabase.from('sponsored_products').insert({
@@ -41,6 +47,7 @@ export function AdCampaignForm() {
         budget: values.budget,
         cpc: values.cpc,
         ends_at: endsAt,
+        sponsor_id: session.user.id
       })
 
       if (error) throw error

@@ -13,6 +13,11 @@ interface TeaRecommendation {
   scientific_evidence: string[]
   contraindications: string[]
   optimal_time_of_day: string[]
+  herbal_tea: {
+    name: string
+    description: string
+    category: string
+  }
 }
 
 export function TeaRecommendations() {
@@ -23,17 +28,16 @@ export function TeaRecommendations() {
         .from('tea_recommendations')
         .select(`
           *,
-          tea:herbal_teas(
+          herbal_tea:herbal_teas(
             name,
             description,
             category
           )
         `)
         .order('effectiveness_score', { ascending: false })
-        .returns<TeaRecommendation[]>()
       
       if (error) throw error
-      return data
+      return data as TeaRecommendation[]
     }
   })
 
@@ -83,14 +87,14 @@ export function TeaRecommendations() {
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold">{rec.tea?.name}</h3>
+                  <h3 className="font-semibold">{rec.herbal_tea?.name}</h3>
                   <Badge variant="secondary" className="flex items-center gap-1">
                     {getGoalIcon(rec.goal_type)}
                     {rec.goal_type.charAt(0).toUpperCase() + rec.goal_type.slice(1)}
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {rec.tea?.description}
+                  {rec.herbal_tea?.description}
                 </p>
                 {rec.optimal_time_of_day && (
                   <div className="flex flex-wrap gap-1 mt-2">
