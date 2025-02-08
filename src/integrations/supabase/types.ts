@@ -7762,6 +7762,7 @@ export type Database = {
           technical_requirements: Json | null
           updated_at: string | null
           upvotes_count: number | null
+          vendor_id: string | null
           verification_status:
             | Database["public"]["Enums"]["verification_status"]
             | null
@@ -7832,6 +7833,7 @@ export type Database = {
           technical_requirements?: Json | null
           updated_at?: string | null
           upvotes_count?: number | null
+          vendor_id?: string | null
           verification_status?:
             | Database["public"]["Enums"]["verification_status"]
             | null
@@ -7902,6 +7904,7 @@ export type Database = {
           technical_requirements?: Json | null
           updated_at?: string | null
           upvotes_count?: number | null
+          vendor_id?: string | null
           verification_status?:
             | Database["public"]["Enums"]["verification_status"]
             | null
@@ -7915,6 +7918,13 @@ export type Database = {
             columns: ["maker_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
         ]

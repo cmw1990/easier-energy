@@ -137,7 +137,7 @@ export default function Shop() {
                       onClick={() => handleProductClick(product)}>
                       <CardHeader>
                         <CardTitle className="text-lg">{product.name}</CardTitle>
-                        <CardDescription>{product.vendor.name}</CardDescription>
+                        <CardDescription>{product.vendor?.name}</CardDescription>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-2">

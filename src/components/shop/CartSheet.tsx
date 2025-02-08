@@ -31,24 +31,15 @@ export function CartSheet() {
 
     setIsProcessing(true)
     try {
-      // Get first product's vendor_id (assuming all items are from same vendor)
+      // Get first product's vendor_id
       const firstProduct = items[0]
-      const { data: productData, error: productError } = await supabase
-        .from('products')
-        .select('vendor_id')
-        .eq('id', firstProduct.product_id)
-        .single()
-
-      if (productError) throw productError
-
-      // Create the order
-      const { data: order, error: orderError } = await supabase
+      const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert({
           user_id: session.user.id,
           total_amount: total,
           status: 'pending',
-          vendor_id: productData.vendor_id,
+          vendor_id: firstProduct.product.vendor_id,
           billing_address: {}, // Empty object for now
           shipping_address: {}  // Empty object for now
         })
@@ -59,7 +50,7 @@ export function CartSheet() {
 
       // Create order items
       const orderItems = items.map(item => ({
-        order_id: order.id,
+        order_id: orderData.id,
         product_id: item.product_id,
         quantity: item.quantity,
         price_at_time: item.product.price
