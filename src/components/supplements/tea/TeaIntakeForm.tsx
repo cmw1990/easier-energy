@@ -11,7 +11,9 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Slider } from "@/components/ui/slider"
-import { Info } from "lucide-react"
+import { Info, Leaf, Clock, Thermometer, Scale, Star, AlertCircle } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 type Form = {
   teaName: string;
@@ -45,7 +47,7 @@ export function TeaIntakeForm() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('herbal_teas')
-        .select('name, optimal_temp_celsius, steep_time_range_seconds')
+        .select('name, optimal_temp_celsius, steep_time_range_seconds, category, caffeine_content_mg, benefits')
         .order('name')
       
       if (error) throw error
@@ -130,17 +132,30 @@ export function TeaIntakeForm() {
     logTeaMutation.mutate(form)
   }
 
+  const selectedTea = teaSuggestions?.find(t => t.name === form.teaName)
+
   return (
-    <Card>
+    <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Log Tea Intake</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Leaf className="h-5 w-5" />
+          Log Tea Intake
+        </CardTitle>
         <CardDescription>Track your tea consumption and its effects</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="teaName">Tea Name *</Label>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Tea Selection Section */}
+          <div className="space-y-4">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="teaName" className="flex items-center gap-2">
+                Tea Name *
+                {selectedTea && (
+                  <Badge variant="outline" className="ml-2">
+                    {selectedTea.category}
+                  </Badge>
+                )}
+              </Label>
               <Select
                 value={form.teaName}
                 onValueChange={handleTeaSelection}
@@ -150,16 +165,41 @@ export function TeaIntakeForm() {
                 </SelectTrigger>
                 <SelectContent>
                   {teaSuggestions?.map((tea) => (
-                    <SelectItem key={tea.name} value={tea.name}>
-                      {tea.name}
+                    <SelectItem key={tea.name} value={tea.name} className="flex items-center justify-between">
+                      <span>{tea.name}</span>
+                      {tea.caffeine_content_mg !== null && (
+                        <Badge variant="secondary" className="ml-2">
+                          {tea.caffeine_content_mg}mg caffeine
+                        </Badge>
+                      )}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {selectedTea?.benefits && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {selectedTea.benefits.slice(0, 3).map((benefit, idx) => (
+                    <Badge key={idx} variant="secondary">{benefit}</Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="brewingMethod">Brewing Method</Label>
+            {/* Brewing Method Section */}
+            <div className="space-y-1.5">
+              <Label htmlFor="brewingMethod" className="flex items-center gap-2">
+                Brewing Method
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Choose your preferred brewing method</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </Label>
               <Select 
                 value={form.brewingMethod}
                 onValueChange={value => setForm(prev => ({ ...prev, brewingMethod: value as Form["brewingMethod"] }))}
@@ -175,9 +215,15 @@ export function TeaIntakeForm() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="steepTime">Steep Time (seconds)</Label>
+          {/* Brewing Parameters Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="steepTime" className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                Steep Time (seconds)
+              </Label>
               <Input
                 id="steepTime"
                 type="number"
@@ -185,17 +231,20 @@ export function TeaIntakeForm() {
                 onChange={e => setForm(prev => ({ ...prev, steepTime: e.target.value }))}
                 placeholder="Enter steep time"
               />
-              {form.teaName && teaSuggestions?.find(t => t.name === form.teaName)?.steep_time_range_seconds && (
+              {form.teaName && selectedTea?.steep_time_range_seconds && (
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <Info className="w-3 h-3" />
-                  Recommended: {teaSuggestions.find(t => t.name === form.teaName)?.steep_time_range_seconds[0]}-
-                  {teaSuggestions.find(t => t.name === form.teaName)?.steep_time_range_seconds[1]} seconds
+                  Recommended: {selectedTea.steep_time_range_seconds[0]}-
+                  {selectedTea.steep_time_range_seconds[1]} seconds
                 </p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="waterTemperature">Water Temperature (°C)</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="waterTemperature" className="flex items-center gap-2">
+                <Thermometer className="h-4 w-4" />
+                Water Temperature (°C)
+              </Label>
               <Input
                 id="waterTemperature"
                 type="number"
@@ -203,16 +252,19 @@ export function TeaIntakeForm() {
                 onChange={e => setForm(prev => ({ ...prev, waterTemperature: e.target.value }))}
                 placeholder="Enter temperature"
               />
-              {form.teaName && teaSuggestions?.find(t => t.name === form.teaName)?.optimal_temp_celsius && (
+              {form.teaName && selectedTea?.optimal_temp_celsius && (
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <Info className="w-3 h-3" />
-                  Recommended: {teaSuggestions.find(t => t.name === form.teaName)?.optimal_temp_celsius}°C
+                  Recommended: {selectedTea.optimal_temp_celsius}°C
                 </p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="amount">Amount (grams)</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="amount" className="flex items-center gap-2">
+                <Scale className="h-4 w-4" />
+                Amount (grams)
+              </Label>
               <Input
                 id="amount"
                 type="number"
@@ -222,9 +274,15 @@ export function TeaIntakeForm() {
                 placeholder="Enter amount in grams"
               />
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="rating">Rating (1-5)</Label>
+          {/* Rating and Effects Section */}
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="rating" className="flex items-center gap-2">
+                <Star className="h-4 w-4" />
+                Rating (1-5)
+              </Label>
               <div className="pt-2">
                 <Slider
                   value={[parseInt(form.rating)]}
@@ -232,13 +290,26 @@ export function TeaIntakeForm() {
                   max={5}
                   min={1}
                   step={1}
+                  className="w-full"
                 />
               </div>
               <p className="text-sm text-center mt-2">{form.rating} / 5</p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="effects">Effects (comma-separated)</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="effects" className="flex items-center gap-2">
+                Effects (comma-separated)
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Enter effects separated by commas (e.g., calming, energizing, focus)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </Label>
               <Input
                 id="effects"
                 value={form.effects}
@@ -247,18 +318,23 @@ export function TeaIntakeForm() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="notes">Notes</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="notes" className="flex items-center gap-2">
+                Notes
+              </Label>
               <Textarea
                 id="notes"
                 value={form.notes}
                 onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
-                placeholder="Add any additional notes"
+                placeholder="Add any additional notes about your experience"
+                className="min-h-[100px]"
               />
             </div>
           </div>
 
-          <Button type="submit" className="w-full">Log Tea Intake</Button>
+          <Button type="submit" className="w-full">
+            Log Tea Intake
+          </Button>
         </form>
       </CardContent>
     </Card>
