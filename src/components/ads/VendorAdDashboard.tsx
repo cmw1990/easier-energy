@@ -6,6 +6,7 @@ import { AdCampaignForm } from './AdCampaignForm'
 import { CouponManager } from './CouponManager'
 import { SampleManager } from './SampleManager'
 import { AdAnalytics } from './AdAnalytics'
+import { AdGuide } from './AdGuide'
 
 export function VendorAdDashboard() {
   return (
@@ -18,13 +19,17 @@ export function VendorAdDashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="campaigns">
-            <TabsList className="grid w-full grid-cols-4">
+          <Tabs defaultValue="guide">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="guide">Guide</TabsTrigger>
               <TabsTrigger value="campaigns">Ad Campaigns</TabsTrigger>
               <TabsTrigger value="coupons">Coupons</TabsTrigger>
               <TabsTrigger value="samples">Free Samples</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
+            <TabsContent value="guide">
+              <AdGuide />
+            </TabsContent>
             <TabsContent value="campaigns">
               <AdCampaignForm />
             </TabsContent>
