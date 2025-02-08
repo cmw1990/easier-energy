@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -8,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { NewPlanDialog } from "@/components/energy-plans/NewPlanDialog"
 import { PlanList } from "@/components/energy-plans/PlanList"
 import { PlanFilters } from "@/components/energy-plans/PlanFilters"
-import type { Plan, PlanCategory } from "@/types/energyPlans"
+import type { Plan, PlanCategory, ProgressRecord } from "@/types/energyPlans"
 import { CelebrityPlanGallery } from "@/components/energy-plans/CelebrityPlanGallery"
 
 const EnergyPlans = () => {
