@@ -32,7 +32,7 @@ export function PregnancyMetrics() {
   const [selectedCategory, setSelectedCategory] = useState<MetricCategory>('weight')
   const [newMetric, setNewMetric] = useState({ value: '', notes: '' })
 
-  const { data: metrics, isLoading } = useQuery({
+  const { data: metrics, isLoading, isError } = useQuery({
     queryKey: ['pregnancy-metrics', selectedCategory],
     queryFn: async () => {
       if (!session?.user?.id) return null
@@ -67,7 +67,9 @@ export function PregnancyMetrics() {
         created_at: metric.created_at
       })) as PregnancyMetric[]
     },
-    enabled: !!session?.user?.id
+    enabled: !!session?.user?.id,
+    retry: 2,
+    staleTime: 30000, // Consider data fresh for 30 seconds
   })
 
   const addMetricMutation = useMutation({
@@ -81,8 +83,8 @@ export function PregnancyMetrics() {
           value: metricData.value,
           notes: metricData.notes,
           metric_category: selectedCategory,
-          metric_type: selectedCategory, // Required field from schema
-          category: selectedCategory, // Required field from schema
+          metric_type: selectedCategory,
+          category: selectedCategory,
           created_at: new Date().toISOString()
         }])
         .select()
@@ -99,10 +101,11 @@ export function PregnancyMetrics() {
         description: "Metric added successfully",
       })
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Error adding metric:', error)
       toast({
         title: "Error",
-        description: "Failed to add metric",
+        description: "Failed to add metric. Please try again.",
         variant: "destructive"
       })
     }
@@ -110,7 +113,14 @@ export function PregnancyMetrics() {
 
   const handleAddMetric = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newMetric.value) return
+    if (!newMetric.value) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a value for the metric",
+        variant: "destructive"
+      })
+      return
+    }
     
     addMetricMutation.mutate({
       value: parseFloat(newMetric.value),
@@ -131,8 +141,20 @@ export function PregnancyMetrics() {
     }
   }
 
+  if (isError) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="text-center text-red-500">
+            Failed to load metrics. Please try again later.
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
-    <Card>
+    <Card className="transition-all duration-300 ease-in-out">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Activity className="h-5 w-5 text-pink-500" />
@@ -165,6 +187,7 @@ export function PregnancyMetrics() {
                   placeholder={`Enter ${selectedCategory} value`}
                   value={newMetric.value}
                   onChange={(e) => setNewMetric(prev => ({ ...prev, value: e.target.value }))}
+                  className="transition-all duration-200"
                 />
               </div>
               <div className="flex-1">
@@ -174,9 +197,14 @@ export function PregnancyMetrics() {
                   placeholder="Add notes (optional)"
                   value={newMetric.notes}
                   onChange={(e) => setNewMetric(prev => ({ ...prev, notes: e.target.value }))}
+                  className="transition-all duration-200"
                 />
               </div>
-              <Button type="submit" disabled={addMetricMutation.isPending}>
+              <Button 
+                type="submit" 
+                disabled={addMetricMutation.isPending}
+                className="min-w-[80px] transition-all duration-200"
+              >
                 {addMetricMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -191,7 +219,7 @@ export function PregnancyMetrics() {
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : metrics && metrics.length > 0 ? (
-            <div className="h-[300px]">
+            <div className="h-[300px] transition-all duration-300">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={metrics}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -212,6 +240,12 @@ export function PregnancyMetrics() {
                       `${value}${getMetricUnit(selectedCategory)}`,
                       selectedCategory
                     ]}
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      borderRadius: '8px',
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
                   />
                   <Line
                     type="monotone"
@@ -219,6 +253,8 @@ export function PregnancyMetrics() {
                     stroke="#ec4899"
                     strokeWidth={2}
                     dot={{ fill: '#ec4899' }}
+                    activeDot={{ r: 6, fill: '#ec4899' }}
+                    animationDuration={500}
                   />
                 </LineChart>
               </ResponsiveContainer>
