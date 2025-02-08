@@ -39,7 +39,7 @@ const EnergyPlans = () => {
         .maybeSingle()
       
       if (error) throw error
-      return data as UserLifeSituation
+      return data
     },
     enabled: !!session?.user?.id
   })
