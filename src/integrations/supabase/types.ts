@@ -228,6 +228,42 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_points: {
+        Row: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          boosted: boolean | null
+          created_at: string | null
+          earned_at: string | null
+          expires_at: string | null
+          id: string
+          points: number
+          source_details: Json | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          boosted?: boolean | null
+          created_at?: string | null
+          earned_at?: string | null
+          expires_at?: string | null
+          id?: string
+          points: number
+          source_details?: Json | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: Database["public"]["Enums"]["activity_type"]
+          boosted?: boolean | null
+          created_at?: string | null
+          earned_at?: string | null
+          expires_at?: string | null
+          id?: string
+          points?: number
+          source_details?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       activity_tracking: {
         Row: {
           activity_name: string
@@ -5701,6 +5737,65 @@ export type Database = {
           },
         ]
       }
+      point_redemptions: {
+        Row: {
+          created_at: string | null
+          discount_amount: number
+          id: string
+          order_id: string | null
+          points_used: number
+          user_id: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          discount_amount: number
+          id?: string
+          order_id?: string | null
+          points_used: number
+          user_id: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          discount_amount?: number
+          id?: string
+          order_id?: string | null
+          points_used?: number
+          user_id?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "point_redemptions_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      points_multipliers: {
+        Row: {
+          created_at: string | null
+          id: string
+          multiplier: number
+          subscription_tier: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          multiplier?: number
+          subscription_tier: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          multiplier?: number
+          subscription_tier?: string
+        }
+        Relationships: []
+      }
       preference_test_responses: {
         Row: {
           completion_time: number | null
@@ -8176,6 +8271,53 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reward_thresholds: {
+        Row: {
+          created_at: string | null
+          discount_percentage: number
+          id: string
+          is_active: boolean | null
+          max_discount_amount: number | null
+          points_required: number
+          terms_conditions: string | null
+          valid_from: string | null
+          valid_until: string | null
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          discount_percentage: number
+          id?: string
+          is_active?: boolean | null
+          max_discount_amount?: number | null
+          points_required: number
+          terms_conditions?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          discount_percentage?: number
+          id?: string
+          is_active?: boolean | null
+          max_discount_amount?: number | null
+          points_required?: number
+          terms_conditions?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_thresholds_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
         ]
@@ -12079,6 +12221,17 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_available_discount: {
+        Args: {
+          _user_id: string
+          _vendor_id: string
+        }
+        Returns: {
+          available_points: number
+          max_discount_percentage: number
+          max_discount_amount: number
+        }[]
+      }
       calculate_commission: {
         Args: {
           product_id: string
@@ -12133,6 +12286,7 @@ export type Database = {
     }
     Enums: {
       activity_impact: "positive" | "negative" | "neutral"
+      activity_type: "steps" | "app_usage" | "subscription_boost" | "purchase"
       app_role: "admin" | "user"
       bathing_tag:
         | "energizing"

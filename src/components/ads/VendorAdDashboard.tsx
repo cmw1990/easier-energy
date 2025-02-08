@@ -5,8 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AdCampaignForm } from './AdCampaignForm'
 import { CouponManager } from './CouponManager'
 import { SampleManager } from './SampleManager'
-import { AdAnalytics } from './AdAnalytics'
+import { AdAnalytics } from './analytics/AdAnalytics'
 import { AdGuide } from './AdGuide'
+import { RewardThresholdsManager } from './RewardThresholdsManager'
 
 export function VendorAdDashboard() {
   return (
@@ -15,16 +16,17 @@ export function VendorAdDashboard() {
         <CardHeader>
           <CardTitle>Advertising Dashboard</CardTitle>
           <CardDescription>
-            Manage your advertising campaigns, coupons, and free samples
+            Manage your advertising campaigns, coupons, free samples, and rewards
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="guide">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="guide">Guide</TabsTrigger>
               <TabsTrigger value="campaigns">Ad Campaigns</TabsTrigger>
               <TabsTrigger value="coupons">Coupons</TabsTrigger>
               <TabsTrigger value="samples">Free Samples</TabsTrigger>
+              <TabsTrigger value="rewards">Rewards</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
             <TabsContent value="guide">
@@ -38,6 +40,9 @@ export function VendorAdDashboard() {
             </TabsContent>
             <TabsContent value="samples">
               <SampleManager />
+            </TabsContent>
+            <TabsContent value="rewards">
+              <RewardThresholdsManager />
             </TabsContent>
             <TabsContent value="analytics">
               <AdAnalytics />

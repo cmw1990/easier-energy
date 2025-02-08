@@ -366,6 +366,133 @@ export interface Database {
           metadata?: Json | null
         }
       }
+      activity_points: {
+        Row: {
+          id: string
+          user_id: string
+          activity_type: 'steps' | 'app_usage' | 'subscription_boost' | 'purchase'
+          points: number
+          source_details: Json | null
+          earned_at: string
+          expires_at: string | null
+          boosted: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          activity_type: 'steps' | 'app_usage' | 'subscription_boost' | 'purchase'
+          points: number
+          source_details?: Json | null
+          earned_at?: string
+          expires_at?: string | null
+          boosted?: boolean
+          created_at?: string
+        }
+        Update: {
+          user_id?: string
+          activity_type?: 'steps' | 'app_usage' | 'subscription_boost' | 'purchase'
+          points?: number
+          source_details?: Json | null
+          earned_at?: string
+          expires_at?: string | null
+          boosted?: boolean
+        }
+      }
+      points_multipliers: {
+        Row: {
+          id: string
+          subscription_tier: string
+          multiplier: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          subscription_tier: string
+          multiplier: number
+          created_at?: string
+        }
+        Update: {
+          subscription_tier?: string
+          multiplier?: number
+        }
+      }
+      reward_thresholds: {
+        Row: {
+          id: string
+          vendor_id: string
+          points_required: number
+          discount_percentage: number
+          max_discount_amount: number | null
+          is_active: boolean
+          valid_from: string
+          valid_until: string | null
+          terms_conditions: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          vendor_id: string
+          points_required: number
+          discount_percentage: number
+          max_discount_amount?: number | null
+          is_active?: boolean
+          valid_from?: string
+          valid_until?: string | null
+          terms_conditions?: string | null
+          created_at?: string
+        }
+        Update: {
+          vendor_id?: string
+          points_required?: number
+          discount_percentage?: number
+          max_discount_amount?: number | null
+          is_active?: boolean
+          valid_from?: string
+          valid_until?: string | null
+          terms_conditions?: string | null
+        }
+      }
+      point_redemptions: {
+        Row: {
+          id: string
+          user_id: string
+          vendor_id: string
+          points_used: number
+          discount_amount: number
+          order_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          vendor_id: string
+          points_used: number
+          discount_amount: number
+          order_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          user_id?: string
+          vendor_id?: string
+          points_used?: number
+          discount_amount?: number
+          order_id?: string | null
+        }
+      }
+    }
+    Functions: {
+      calculate_available_discount: {
+        Args: {
+          _user_id: string
+          _vendor_id: string
+        }
+        Returns: {
+          available_points: number
+          max_discount_percentage: number
+          max_discount_amount: number
+        }[]
+      }
     }
   }
 }
