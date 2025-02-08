@@ -1,8 +1,8 @@
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -11,69 +11,138 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Slider } from "@/components/ui/slider"
-import { Info, Leaf, Clock, Thermometer, Scale, Star, AlertCircle } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { 
+  Leaf, Clock, Thermometer, Scale, Star, Droplets, 
+  CloudSun, Wind, AlignJustify, PlusCircle
+} from "lucide-react"
 
-type Form = {
+type TeaIntakeFormValues = {
   teaName: string;
   brewingMethod: "hot_steep" | "cold_brew" | "gongfu" | "western";
-  steepTime: string;
-  waterTemperature: string;
-  amount: string;
-  rating: string;
-  effects: string;
+  steepTimeSeconds: number;
+  waterTemperature: number;
+  amountGrams: number;
+  rating: number;
+  effects: string[];
   notes: string;
-}
+  brewingVessel: string;
+  waterSource: string;
+  environmentFactors: {
+    temperature: number | null;
+    humidity: number | null;
+    lightLevel: number | null;
+    noiseLevel: number | null;
+  };
+  weatherData: {
+    condition: string | null;
+    temperature: number | null;
+    humidity: number | null;
+    pressure: number | null;
+  };
+};
+
+const defaultValues: TeaIntakeFormValues = {
+  teaName: "",
+  brewingMethod: "hot_steep",
+  steepTimeSeconds: 180,
+  waterTemperature: 85,
+  amountGrams: 2.5,
+  rating: 5,
+  effects: [],
+  notes: "",
+  brewingVessel: "",
+  waterSource: "",
+  environmentFactors: {
+    temperature: null,
+    humidity: null,
+    lightLevel: null,
+    noiseLevel: null
+  },
+  weatherData: {
+    condition: null,
+    temperature: null,
+    humidity: null,
+    pressure: null
+  }
+};
 
 export function TeaIntakeForm() {
   const { session } = useAuth()
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  const [form, setForm] = useState<Form>({
-    teaName: "",
-    brewingMethod: "hot_steep",
-    steepTime: "",
-    waterTemperature: "",
-    amount: "",
-    rating: "5",
-    effects: "",
-    notes: ""
-  })
+  const [form, setForm] = useState<TeaIntakeFormValues>(defaultValues)
+  const [steepSessions, setSteepSessions] = useState<Array<{
+    steepNumber: number;
+    steepTimeSeconds: number;
+    waterTemperature: number;
+    rating: number;
+    notes: string;
+  }>>([])
 
-  // Fetch tea suggestions from the database
-  const { data: teaSuggestions } = useQuery({
-    queryKey: ['herbal-teas'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('herbal_teas')
-        .select('name, optimal_temp_celsius, steep_time_range_seconds, category, caffeine_content_mg, benefits')
-        .order('name')
-      
-      if (error) throw error
-      return data
+  // Fetch weather data on component mount
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        // In a real app, you would fetch actual weather data here
+        const mockWeather = {
+          condition: "sunny",
+          temperature: 22,
+          humidity: 45,
+          pressure: 1013
+        }
+        setForm(prev => ({
+          ...prev,
+          weatherData: mockWeather
+        }))
+      } catch (error) {
+        console.error("Error fetching weather:", error)
+      }
     }
-  })
+    fetchWeather()
+  }, [])
 
   const logTeaMutation = useMutation({
-    mutationFn: async (values: Form) => {
+    mutationFn: async (values: TeaIntakeFormValues) => {
       if (!session?.user?.id) throw new Error("User not authenticated")
 
-      const { error } = await supabase
+      // First, create the main tea log entry
+      const { data: logData, error: logError } = await supabase
         .from('herbal_tea_logs')
         .insert({
           user_id: session.user.id,
           tea_name: values.teaName,
           brewing_method: values.brewingMethod,
-          steep_time_seconds: parseInt(values.steepTime),
-          water_temperature: parseInt(values.waterTemperature),
-          amount_grams: parseFloat(values.amount),
-          rating: parseInt(values.rating),
-          effects: values.effects ? values.effects.split(',').map(e => e.trim()) : [],
+          steep_time_seconds: values.steepTimeSeconds,
+          water_temperature: values.waterTemperature,
+          amount_grams: values.amountGrams,
+          rating: values.rating,
+          effects: values.effects,
           notes: values.notes,
+          brewing_vessel: values.brewingVessel,
+          water_source: values.waterSource,
+          environment_factors: values.environmentFactors,
+          weather_data: values.weatherData,
+          steep_count: steepSessions.length || 1
         })
+        .select()
+        .single()
 
-      if (error) throw error
+      if (logError) throw logError
+
+      // Then, if there are multiple steeps, create the brewing sessions
+      if (steepSessions.length > 0) {
+        const { error: sessionsError } = await supabase
+          .from('tea_brewing_sessions')
+          .insert(
+            steepSessions.map(session => ({
+              user_id: session.user.id,
+              tea_log_id: logData.id,
+              ...session
+            }))
+          )
+
+        if (sessionsError) throw sessionsError
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tea-logs'] })
@@ -81,16 +150,8 @@ export function TeaIntakeForm() {
         title: "Success",
         description: "Tea intake logged successfully",
       })
-      setForm({
-        teaName: "",
-        brewingMethod: "hot_steep",
-        steepTime: "",
-        waterTemperature: "",
-        amount: "",
-        rating: "5",
-        effects: "",
-        notes: ""
-      })
+      setForm(defaultValues)
+      setSteepSessions([])
     },
     onError: (error) => {
       toast({
@@ -101,23 +162,6 @@ export function TeaIntakeForm() {
       console.error("Error logging tea:", error)
     }
   })
-
-  const handleTeaSelection = (teaName: string) => {
-    const selectedTea = teaSuggestions?.find(t => t.name === teaName)
-    if (selectedTea) {
-      setForm(prev => ({
-        ...prev,
-        teaName,
-        waterTemperature: selectedTea.optimal_temp_celsius?.toString() || "",
-        steepTime: selectedTea.steep_time_range_seconds?.[0]?.toString() || ""
-      }))
-    } else {
-      setForm(prev => ({
-        ...prev,
-        teaName
-      }))
-    }
-  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -132,208 +176,285 @@ export function TeaIntakeForm() {
     logTeaMutation.mutate(form)
   }
 
-  const selectedTea = teaSuggestions?.find(t => t.name === form.teaName)
+  const addSteepSession = () => {
+    setSteepSessions(prev => [...prev, {
+      steepNumber: prev.length + 1,
+      steepTimeSeconds: Math.round(form.steepTimeSeconds * 1.5), // Increase steep time for subsequent steeps
+      waterTemperature: form.waterTemperature,
+      rating: 5,
+      notes: ""
+    }])
+  }
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Leaf className="h-5 w-5" />
-          Log Tea Intake
+          Log Tea Session
         </CardTitle>
-        <CardDescription>Track your tea consumption and its effects</CardDescription>
+        <CardDescription>Track your tea brewing experience</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Tea Selection Section */}
+          {/* Basic Tea Info */}
           <div className="space-y-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="teaName" className="flex items-center gap-2">
-                Tea Name *
-                {selectedTea && (
-                  <Badge variant="outline" className="ml-2">
-                    {selectedTea.category}
-                  </Badge>
-                )}
-              </Label>
-              <Select
-                value={form.teaName}
-                onValueChange={handleTeaSelection}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select or enter tea name" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teaSuggestions?.map((tea) => (
-                    <SelectItem key={tea.name} value={tea.name} className="flex items-center justify-between">
-                      <span>{tea.name}</span>
-                      {tea.caffeine_content_mg !== null && (
-                        <Badge variant="secondary" className="ml-2">
-                          {tea.caffeine_content_mg}mg caffeine
-                        </Badge>
-                      )}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedTea?.benefits && (
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {selectedTea.benefits.slice(0, 3).map((benefit, idx) => (
-                    <Badge key={idx} variant="secondary">{benefit}</Badge>
-                  ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="teaName">Tea Name *</Label>
+                <Input
+                  id="teaName"
+                  value={form.teaName}
+                  onChange={e => setForm(prev => ({ ...prev, teaName: e.target.value }))}
+                  placeholder="Enter tea name"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="brewingMethod">Brewing Method</Label>
+                <Select
+                  value={form.brewingMethod}
+                  onValueChange={value => setForm(prev => ({ 
+                    ...prev, 
+                    brewingMethod: value as TeaIntakeFormValues["brewingMethod"]
+                  }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hot_steep">Hot Steep</SelectItem>
+                    <SelectItem value="cold_brew">Cold Brew</SelectItem>
+                    <SelectItem value="gongfu">Gongfu</SelectItem>
+                    <SelectItem value="western">Western</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="steepTime" className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Steep Time (seconds)
+                </Label>
+                <Input
+                  id="steepTime"
+                  type="number"
+                  value={form.steepTimeSeconds}
+                  onChange={e => setForm(prev => ({ ...prev, steepTimeSeconds: parseInt(e.target.value) }))}
+                  min="0"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="waterTemperature" className="flex items-center gap-2">
+                  <Thermometer className="h-4 w-4" />
+                  Water Temperature (°C)
+                </Label>
+                <Input
+                  id="waterTemperature"
+                  type="number"
+                  value={form.waterTemperature}
+                  onChange={e => setForm(prev => ({ ...prev, waterTemperature: parseInt(e.target.value) }))}
+                  min="0"
+                  max="100"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="amount" className="flex items-center gap-2">
+                  <Scale className="h-4 w-4" />
+                  Amount (grams)
+                </Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  step="0.1"
+                  value={form.amountGrams}
+                  onChange={e => setForm(prev => ({ ...prev, amountGrams: parseFloat(e.target.value) }))}
+                  min="0"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="brewingVessel" className="flex items-center gap-2">
+                  <AlignJustify className="h-4 w-4" />
+                  Brewing Vessel
+                </Label>
+                <Input
+                  id="brewingVessel"
+                  value={form.brewingVessel}
+                  onChange={e => setForm(prev => ({ ...prev, brewingVessel: e.target.value }))}
+                  placeholder="e.g., Ceramic teapot, Glass gaiwan"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="waterSource" className="flex items-center gap-2">
+                  <Droplets className="h-4 w-4" />
+                  Water Source
+                </Label>
+                <Input
+                  id="waterSource"
+                  value={form.waterSource}
+                  onChange={e => setForm(prev => ({ ...prev, waterSource: e.target.value }))}
+                  placeholder="e.g., Filtered, Spring water"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Environmental Factors */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Environmental Factors</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="roomTemp" className="flex items-center gap-2">
+                  <Thermometer className="h-4 w-4" />
+                  Room Temperature (°C)
+                </Label>
+                <Input
+                  id="roomTemp"
+                  type="number"
+                  value={form.environmentFactors.temperature || ""}
+                  onChange={e => setForm(prev => ({
+                    ...prev,
+                    environmentFactors: {
+                      ...prev.environmentFactors,
+                      temperature: e.target.value ? parseInt(e.target.value) : null
+                    }
+                  }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="humidity" className="flex items-center gap-2">
+                  <CloudSun className="h-4 w-4" />
+                  Humidity (%)
+                </Label>
+                <Input
+                  id="humidity"
+                  type="number"
+                  value={form.environmentFactors.humidity || ""}
+                  onChange={e => setForm(prev => ({
+                    ...prev,
+                    environmentFactors: {
+                      ...prev.environmentFactors,
+                      humidity: e.target.value ? parseInt(e.target.value) : null
+                    }
+                  }))}
+                  min="0"
+                  max="100"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Multiple Steeps */}
+          {steepSessions.map((session, index) => (
+            <div key={session.steepNumber} className="space-y-4 border-t pt-4">
+              <h4 className="font-medium">Steep #{session.steepNumber}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Steep Time (seconds)</Label>
+                  <Input
+                    type="number"
+                    value={session.steepTimeSeconds}
+                    onChange={e => {
+                      const newSessions = [...steepSessions]
+                      newSessions[index].steepTimeSeconds = parseInt(e.target.value)
+                      setSteepSessions(newSessions)
+                    }}
+                  />
                 </div>
-              )}
+                <div className="space-y-2">
+                  <Label>Water Temperature (°C)</Label>
+                  <Input
+                    type="number"
+                    value={session.waterTemperature}
+                    onChange={e => {
+                      const newSessions = [...steepSessions]
+                      newSessions[index].waterTemperature = parseInt(e.target.value)
+                      setSteepSessions(newSessions)
+                    }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Rating</Label>
+                  <div className="pt-2">
+                    <Slider
+                      value={[session.rating]}
+                      onValueChange={([value]) => {
+                        const newSessions = [...steepSessions]
+                        newSessions[index].rating = value
+                        setSteepSessions(newSessions)
+                      }}
+                      max={5}
+                      min={1}
+                      step={1}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Textarea
+                  value={session.notes}
+                  onChange={e => {
+                    const newSessions = [...steepSessions]
+                    newSessions[index].notes = e.target.value
+                    setSteepSessions(newSessions)
+                  }}
+                  placeholder="Enter notes for this steep"
+                />
+              </div>
             </div>
+          ))}
 
-            {/* Brewing Method Section */}
-            <div className="space-y-1.5">
-              <Label htmlFor="brewingMethod" className="flex items-center gap-2">
-                Brewing Method
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="h-4 w-4 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Choose your preferred brewing method</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </Label>
-              <Select 
-                value={form.brewingMethod}
-                onValueChange={value => setForm(prev => ({ ...prev, brewingMethod: value as Form["brewingMethod"] }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select method" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="hot_steep">Hot Steep</SelectItem>
-                  <SelectItem value="cold_brew">Cold Brew</SelectItem>
-                  <SelectItem value="gongfu">Gongfu</SelectItem>
-                  <SelectItem value="western">Western</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={addSteepSession}
+          >
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add Another Steep
+          </Button>
 
-          {/* Brewing Parameters Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="steepTime" className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                Steep Time (seconds)
-              </Label>
-              <Input
-                id="steepTime"
-                type="number"
-                value={form.steepTime}
-                onChange={e => setForm(prev => ({ ...prev, steepTime: e.target.value }))}
-                placeholder="Enter steep time"
-              />
-              {form.teaName && selectedTea?.steep_time_range_seconds && (
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Info className="w-3 h-3" />
-                  Recommended: {selectedTea.steep_time_range_seconds[0]}-
-                  {selectedTea.steep_time_range_seconds[1]} seconds
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="waterTemperature" className="flex items-center gap-2">
-                <Thermometer className="h-4 w-4" />
-                Water Temperature (°C)
-              </Label>
-              <Input
-                id="waterTemperature"
-                type="number"
-                value={form.waterTemperature}
-                onChange={e => setForm(prev => ({ ...prev, waterTemperature: e.target.value }))}
-                placeholder="Enter temperature"
-              />
-              {form.teaName && selectedTea?.optimal_temp_celsius && (
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Info className="w-3 h-3" />
-                  Recommended: {selectedTea.optimal_temp_celsius}°C
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="amount" className="flex items-center gap-2">
-                <Scale className="h-4 w-4" />
-                Amount (grams)
-              </Label>
-              <Input
-                id="amount"
-                type="number"
-                step="0.1"
-                value={form.amount}
-                onChange={e => setForm(prev => ({ ...prev, amount: e.target.value }))}
-                placeholder="Enter amount in grams"
-              />
-            </div>
-          </div>
-
-          {/* Rating and Effects Section */}
+          {/* Rating and Notes */}
           <div className="space-y-4">
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="rating" className="flex items-center gap-2">
                 <Star className="h-4 w-4" />
-                Rating (1-5)
+                Overall Rating (1-5)
               </Label>
               <div className="pt-2">
                 <Slider
-                  value={[parseInt(form.rating)]}
-                  onValueChange={([value]) => setForm(prev => ({ ...prev, rating: value.toString() }))}
+                  value={[form.rating]}
+                  onValueChange={([value]) => setForm(prev => ({ ...prev, rating: value }))}
                   max={5}
                   min={1}
                   step={1}
-                  className="w-full"
                 />
               </div>
-              <p className="text-sm text-center mt-2">{form.rating} / 5</p>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="effects" className="flex items-center gap-2">
-                Effects (comma-separated)
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="h-4 w-4 text-muted-foreground" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Enter effects separated by commas (e.g., calming, energizing, focus)</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </Label>
-              <Input
-                id="effects"
-                value={form.effects}
-                onChange={e => setForm(prev => ({ ...prev, effects: e.target.value }))}
-                placeholder="e.g., calming, energizing, focus"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="notes" className="flex items-center gap-2">
-                Notes
-              </Label>
+            <div className="space-y-2">
+              <Label htmlFor="notes">Notes</Label>
               <Textarea
                 id="notes"
                 value={form.notes}
                 onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
-                placeholder="Add any additional notes about your experience"
-                className="min-h-[100px]"
+                placeholder="Enter any additional notes about your tea session"
               />
             </div>
           </div>
 
           <Button type="submit" className="w-full">
-            Log Tea Intake
+            Log Tea Session
           </Button>
         </form>
       </CardContent>
