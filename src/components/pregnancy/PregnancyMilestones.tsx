@@ -10,9 +10,7 @@ import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 import { PregnancyMilestoneForm } from "./PregnancyMilestoneForm"
 import { AchievementCelebration } from "@/components/achievements/AchievementCelebration"
-import type { Database } from "@/types/supabase"
-
-type PregnancyMilestone = Database['public']['Tables']['pregnancy_milestones']['Row']
+import type { PregnancyMilestone } from "@/types/supabase"
 
 export const PregnancyMilestones = () => {
   const { session } = useAuth()
