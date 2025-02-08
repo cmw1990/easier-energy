@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -27,7 +28,7 @@ const EnergyPlans = () => {
   const [showLifeSituationDialog, setShowLifeSituationDialog] = useState(false)
   const queryClient = useQueryClient()
 
-  const { data: lifeSituation } = useQuery<UserLifeSituationRow | null>({
+  const { data: lifeSituation } = useQuery({
     queryKey: ['user-life-situation', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null
@@ -39,7 +40,7 @@ const EnergyPlans = () => {
         .maybeSingle()
       
       if (error) throw error
-      return data
+      return data as UserLifeSituationRow | null
     },
     enabled: !!session?.user?.id
   })
