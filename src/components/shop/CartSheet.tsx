@@ -3,13 +3,85 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { ShoppingCart, Plus, Minus, Trash2 } from "lucide-react"
+import { ShoppingCart, Plus, Minus, Trash2, CreditCard } from "lucide-react"
 import { useCart } from "./CartProvider"
 import { useState } from "react"
+import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/components/AuthProvider"
+import { useNavigate } from "react-router-dom"
 
 export function CartSheet() {
   const [open, setOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const { items, removeFromCart, updateQuantity, total } = useCart()
+  const { session } = useAuth()
+  const { toast } = useToast()
+  const navigate = useNavigate()
+
+  const handleCheckout = async () => {
+    if (!session?.user) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be signed in to checkout",
+        variant: "destructive"
+      })
+      navigate("/auth")
+      return
+    }
+
+    setIsProcessing(true)
+    try {
+      // Create the order
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          user_id: session.user.id,
+          total_amount: total,
+          status: 'pending'
+        })
+        .select()
+        .single()
+
+      if (orderError) throw orderError
+
+      // Create order items
+      const orderItems = items.map(item => ({
+        order_id: order.id,
+        product_id: item.product_id,
+        quantity: item.quantity,
+        price_at_time: item.product.price
+      }))
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems)
+
+      if (itemsError) throw itemsError
+
+      // Close the cart sheet
+      setOpen(false)
+      
+      // Show success message
+      toast({
+        title: "Order placed successfully!",
+        description: "Thank you for your purchase"
+      })
+
+      // Navigate to order confirmation or orders page
+      // For now, we'll just close the sheet
+      // You can add a dedicated order confirmation page later
+      
+    } catch (error) {
+      console.error('Error creating order:', error)
+      toast({
+        title: "Error placing order",
+        description: "Please try again later",
+        variant: "destructive"
+      })
+    } finally {
+      setIsProcessing(false)
+    }
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -88,8 +160,13 @@ export function CartSheet() {
               <span className="font-medium">Total</span>
               <span className="font-medium">${total.toFixed(2)}</span>
             </div>
-            <Button className="w-full">
-              Proceed to Checkout
+            <Button 
+              className="w-full" 
+              onClick={handleCheckout}
+              disabled={isProcessing}
+            >
+              <CreditCard className="mr-2 h-4 w-4" />
+              {isProcessing ? "Processing..." : "Proceed to Checkout"}
             </Button>
           </div>
         )}
