@@ -14,14 +14,15 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import type { Plan, PlanCategory } from "@/types/energyPlans"
+import type { Plan, PlanCategory, ProgressRecord, LifeSituation } from "@/types/energyPlans"
 
-interface ProgressRecord {
+interface UserLifeSituation {
   id: string
   user_id: string
-  plan_id: string
-  component_id: string
-  completed_at: string | null
+  situation: LifeSituation
+  started_at: string
+  updated_at: string
+  notes: string | null
 }
 
 const EnergyPlans = () => {
@@ -31,6 +32,23 @@ const EnergyPlans = () => {
   const [selectedCategory, setSelectedCategory] = useState<PlanCategory | null>(null)
   const [showLifeSituationDialog, setShowLifeSituationDialog] = useState(false)
   const queryClient = useQueryClient()
+
+  const { data: lifeSituation } = useQuery<UserLifeSituation>({
+    queryKey: ['user-life-situation', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return null
+      
+      const { data, error } = await supabase
+        .from('user_life_situations')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .maybeSingle()
+      
+      if (error) throw error
+      return data
+    },
+    enabled: !!session?.user?.id
+  })
 
   const { data: planProgress } = useQuery<ProgressRecord[]>({
     queryKey: ['energy-plans', 'progress', session?.user?.id],
@@ -138,19 +156,20 @@ const EnergyPlans = () => {
   })
 
   const updateLifeSituationMutation = useMutation({
-    mutationFn: async (situation: string) => {
+    mutationFn: async (situation: LifeSituation) => {
       if (!session?.user) throw new Error("Not authenticated")
       
       const { error } = await supabase
-        .from('user_preferences')
+        .from('user_life_situations')
         .upsert({
           user_id: session.user.id,
-          life_situation: situation
+          situation: situation
         })
 
       if (error) throw error
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-life-situation'] })
       queryClient.invalidateQueries({ queryKey: ['energy-plans'] })
       toast({
         title: "Preferences Updated",
@@ -180,8 +199,8 @@ const EnergyPlans = () => {
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <RadioGroup 
-                  onValueChange={(value) => updateLifeSituationMutation.mutate(value)}
-                  defaultValue="regular"
+                  onValueChange={(value) => updateLifeSituationMutation.mutate(value as LifeSituation)}
+                  defaultValue={lifeSituation?.situation || "regular"}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="regular" id="regular" />
@@ -232,6 +251,7 @@ const EnergyPlans = () => {
             progress={planProgress}
             onSavePlan={(id) => savePlanMutation.mutate(id)}
             savedPlans={savedPlans}
+            currentLifeSituation={lifeSituation?.situation}
           />
         </TabsContent>
 

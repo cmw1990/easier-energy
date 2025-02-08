@@ -1,3 +1,4 @@
+
 export type PlanType = 
   | 'energizing_boost' 
   | 'sustained_focus'
@@ -11,6 +12,7 @@ export type PlanType =
 
 export type PlanVisibility = 'private' | 'public' | 'shared'
 export type PlanCategory = 'charged' | 'recharged'
+export type LifeSituation = 'regular' | 'pregnancy' | 'postpartum' | 'breastfeeding'
 
 export interface CycleAdjustment {
   energyLevelModifier: number
@@ -67,6 +69,14 @@ export interface Plan {
   cyclePhaseRecommendations?: Record<string, string[]>
   hormonalPhaseAdjustments?: Record<string, CycleAdjustment>
   biometricRequirements?: BiometricData
+  lifeSituationAdjustments?: Record<LifeSituation, {
+    energyLevelModifier: number
+    durationModifier: number
+    intensityModifier: number
+    recommendedTimeOfDay?: string[]
+    contraindications?: string[]
+    specialInstructions?: string
+  }>
 }
 
 export interface PlanReview {
@@ -86,3 +96,4 @@ export interface ProgressRecord {
   component_id: string
   completed_at: string | null
 }
+
