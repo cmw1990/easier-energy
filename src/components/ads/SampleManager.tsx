@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -66,8 +65,11 @@ export function SampleManager() {
       const { error } = await supabase
         .from('free_samples')
         .insert({
-          ...values,
-          vendor_id: session?.user?.id
+          vendor_id: session?.user?.id,
+          product_id: values.product_id,
+          quantity: values.quantity,
+          description: values.description,
+          expires_at: values.expires_at
         })
 
       if (error) throw error

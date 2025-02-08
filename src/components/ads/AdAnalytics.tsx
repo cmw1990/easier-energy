@@ -1,11 +1,10 @@
-
 import React from 'react'
 import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
-import { ChartBar, Users, Eye, Click } from 'lucide-react'
+import { ChartBar, Users, Clock, Eye } from 'lucide-react'
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 
@@ -34,6 +33,7 @@ export function AdAnalytics() {
       const { data, error } = await supabase
         .from('ad_impressions')
         .select(`
+          id,
           sponsored_product_id,
           impressed_at,
           clicked_at,
@@ -55,14 +55,14 @@ export function AdAnalytics() {
   })
 
   const { data: demographics } = useQuery({
-    queryKey: ['ad-demographics', campaigns?.map(c => c.id)],
+    queryKey: ['ad-demographics', analytics?.map(a => a.id)],
     queryFn: async () => {
-      if (!campaigns?.length) return []
+      if (!analytics?.length) return []
       
       const { data, error } = await supabase
         .from('ad_viewer_demographics')
         .select('*')
-        .in('impression_id', analytics?.map(a => a.id) || [])
+        .in('impression_id', analytics.map(a => a.id))
       
       if (error) throw error
       return data
@@ -107,7 +107,7 @@ export function AdAnalytics() {
             <CardTitle className="text-sm font-medium">
               Total Clicks
             </CardTitle>
-            <Click className="h-4 w-4 text-muted-foreground" />
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

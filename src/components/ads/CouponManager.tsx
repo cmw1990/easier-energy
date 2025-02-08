@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
-const couponFormSchema = z.object({
+const sampleFormSchema = z.object({
   code: z.string().min(3).max(20),
   discount_amount: z.number().optional(),
   discount_percentage: z.number().min(1).max(100).optional(),
@@ -58,17 +57,22 @@ export function CouponManager() {
     enabled: !!session?.user?.id
   })
 
-  const form = useForm<z.infer<typeof couponFormSchema>>({
-    resolver: zodResolver(couponFormSchema)
+  const form = useForm<z.infer<typeof sampleFormSchema>>({
+    resolver: zodResolver(sampleFormSchema)
   })
 
-  async function onSubmit(values: z.infer<typeof couponFormSchema>) {
+  async function onSubmit(values: z.infer<typeof sampleFormSchema>) {
     try {
       const { error } = await supabase
         .from('coupons')
         .insert({
-          ...values,
-          vendor_id: session?.user?.id
+          code: values.code,
+          vendor_id: session?.user?.id,
+          product_id: values.product_id,
+          discount_amount: values.discount_amount,
+          discount_percentage: values.discount_percentage,
+          description: values.description,
+          expires_at: values.expires_at
         })
 
       if (error) throw error

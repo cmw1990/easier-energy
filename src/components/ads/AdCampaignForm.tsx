@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -34,17 +33,17 @@ export function AdCampaignForm() {
   const { toast } = useToast()
 
   const { data: products } = useQuery({
-    queryKey: ['user-products', session?.user?.id],
+    queryKey: ['vendor-products', session?.user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
         .select('id, name')
         .eq('maker_id', session?.user?.id)
-
+      
       if (error) throw error
       return data
     },
-    enabled: !!session?.user?.id,
+    enabled: !!session?.user?.id
   })
 
   const { data: displayZones } = useQuery({
