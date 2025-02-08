@@ -44,6 +44,15 @@ export interface PlanComponent {
   requiredBiometrics?: BiometricData
 }
 
+export interface ProgressRecord {
+  id: string
+  user_id: string
+  plan_id: string
+  component_id: string
+  completed_at: string | null
+  created_at: string
+}
+
 export interface Plan {
   id: string
   created_at: string
@@ -62,6 +71,9 @@ export interface Plan {
   recommended_time_of_day?: string[]
   suitable_contexts?: string[]
   estimated_duration_minutes?: number
+  energy_plan_components?: PlanComponent[]
+  celebrity_name?: string
+  biometricRequirements?: BiometricData
   hormonalPhaseAdjustments?: Record<string, CycleAdjustment>
   lifeSituationAdjustments?: Record<LifeSituation, {
     energyLevelModifier: number

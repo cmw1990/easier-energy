@@ -1,3 +1,4 @@
+
 import { LifeSituation } from './energyPlans';
 
 export type Json =
@@ -71,13 +72,18 @@ export interface Database {
           created_by: string
           title: string
           description: string | null
-          plan_type: 'quick_boost' | 'sustained_energy' | 'mental_clarity' | 'physical_energy' | 'morning_routine' | 'deep_relaxation' | 'stress_relief' | 'wind_down' | 'sleep_prep' | 'recovery' | 'meditation'
+          plan_type: PlanType
           category: 'charged' | 'recharged'
           visibility: 'private' | 'public' | 'shared'
           is_expert_plan: boolean
           tags: string[]
           likes_count: number
           saves_count: number
+          energy_level_required?: number
+          recommended_time_of_day?: string[]
+          suitable_contexts?: string[]
+          estimated_duration_minutes?: number
+          celebrity_name?: string
         }
         Insert: {
           id?: string
@@ -86,25 +92,35 @@ export interface Database {
           created_by: string
           title: string
           description?: string | null
-          plan_type: 'quick_boost' | 'sustained_energy' | 'mental_clarity' | 'physical_energy' | 'morning_routine' | 'deep_relaxation' | 'stress_relief' | 'wind_down' | 'sleep_prep' | 'recovery' | 'meditation'
+          plan_type: PlanType
           category?: 'charged' | 'recharged'
           visibility?: 'private' | 'public' | 'shared'
           is_expert_plan?: boolean
           tags?: string[]
           likes_count?: number
           saves_count?: number
+          energy_level_required?: number
+          recommended_time_of_day?: string[]
+          suitable_contexts?: string[]
+          estimated_duration_minutes?: number
+          celebrity_name?: string
         }
         Update: {
           created_by?: string
           title?: string
           description?: string | null
-          plan_type?: 'quick_boost' | 'sustained_energy' | 'mental_clarity' | 'physical_energy' | 'morning_routine' | 'deep_relaxation' | 'stress_relief' | 'wind_down' | 'sleep_prep' | 'recovery' | 'meditation'
+          plan_type?: PlanType
           category?: 'charged' | 'recharged'
           visibility?: 'private' | 'public' | 'shared'
           is_expert_plan?: boolean
           tags?: string[]
           likes_count?: number
           saves_count?: number
+          energy_level_required?: number
+          recommended_time_of_day?: string[]
+          suitable_contexts?: string[]
+          estimated_duration_minutes?: number
+          celebrity_name?: string
         }
       }
       energy_plan_components: {
