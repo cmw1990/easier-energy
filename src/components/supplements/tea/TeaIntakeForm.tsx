@@ -167,4 +167,36 @@ export function TeaIntakeForm() {
                   {[1, 2, 3, 4, 5].map(rating => (
                     <SelectItem key={rating} value={rating.toString()}>
                       {rating}
-                
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="effects">Effects (comma-separated)</Label>
+              <Input
+                id="effects"
+                value={form.effects}
+                onChange={e => setForm(prev => ({ ...prev, effects: e.target.value }))}
+                placeholder="e.g., calming, energizing, focus"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea
+                id="notes"
+                value={form.notes}
+                onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
+                placeholder="Add any additional notes"
+              />
+            </div>
+          </div>
+
+          <Button type="submit">Log Tea Intake</Button>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
