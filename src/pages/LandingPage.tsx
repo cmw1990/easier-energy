@@ -1,7 +1,6 @@
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee, Smartphone, Tablet, Laptop, Monitor, Chrome } from "lucide-react"
+import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee, Smartphone, Tablet, Laptop, Monitor, Chrome, Star } from "lucide-react"
 import { Link } from "react-router-dom"
 import { TopNav } from "@/components/layout/TopNav"
 
@@ -80,6 +79,28 @@ const LandingPage = () => {
             <Link to="/why-us">
               <Button variant="ghost" size="lg" className="group">
                 Why The Well-Charged?
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Celebrity Energy Recipes Section */}
+      <section className="container mx-auto px-4 py-12 bg-primary/5 rounded-3xl my-8">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
+          <div className="inline-flex items-center gap-2 text-primary">
+            <Star className="h-6 w-6" />
+            <h2 className="text-3xl font-bold">Celebrity Energy Recipes</h2>
+          </div>
+          <p className="text-lg text-muted-foreground">
+            Discover energy optimization routines from world-class performers, experts, and leaders.
+            Learn from their proven strategies and adapt them to your lifestyle.
+          </p>
+          <div className="flex justify-center">
+            <Link to="/app/energy-plans">
+              <Button size="lg" className="group">
+                Explore Celebrity Plans
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -197,4 +218,3 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
-
