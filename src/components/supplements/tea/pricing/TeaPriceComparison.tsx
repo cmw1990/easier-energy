@@ -13,7 +13,7 @@ interface TeaVendor {
 
 interface TeaVendorProduct {
   id: string
-  price: number
+  price: number  
   url: string
   vendor: TeaVendor
 }
