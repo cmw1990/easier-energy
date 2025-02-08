@@ -41,10 +41,12 @@ export function TeaIntakeForm() {
 
   const logTeaMutation = useMutation({
     mutationFn: async (values: Form) => {
+      if (!session?.user?.id) throw new Error("User not authenticated")
+
       const { error } = await supabase
         .from('herbal_tea_logs')
         .insert({
-          user_id: session?.user?.id,
+          user_id: session.user.id,
           tea_name: values.teaName,
           brewing_method: values.brewingMethod,
           steep_time_seconds: parseInt(values.steepTime),

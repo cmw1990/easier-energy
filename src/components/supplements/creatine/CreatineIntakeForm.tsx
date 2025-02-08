@@ -39,10 +39,12 @@ export function CreatineIntakeForm() {
 
   const logCreatineMutation = useMutation({
     mutationFn: async (values: Form) => {
+      if (!session?.user?.id) throw new Error("User not authenticated")
+
       const { error } = await supabase
         .from('creatine_logs')
         .insert({
-          user_id: session?.user?.id,
+          user_id: session.user.id,
           brand: values.brand,
           dosage_grams: parseFloat(values.dosage),
           form: values.form,
