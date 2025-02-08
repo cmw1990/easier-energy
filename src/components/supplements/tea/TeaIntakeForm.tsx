@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react"
 import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
@@ -135,7 +134,7 @@ export function TeaIntakeForm() {
           .from('herbal_tea_logs_sessions')
           .insert(
             steepSessions.map(session => ({
-              user_id: session?.user?.id,
+              user_id: session.user.id,
               tea_log_id: logData.id,
               steep_number: session.steepNumber,
               steep_time_seconds: session.steepTimeSeconds,
