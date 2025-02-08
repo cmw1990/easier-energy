@@ -14,20 +14,22 @@ import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/components/AuthProvider"
 import type { PregnancyMetric } from "@/types/supabase"
 
-const METRIC_CATEGORIES = [
+type MetricCategory = 'weight' | 'blood_pressure' | 'nutrition' | 'exercise' | 'sleep' | 'mood'
+
+const METRIC_CATEGORIES: { value: MetricCategory; label: string; icon: React.ElementType }[] = [
   { value: 'weight', label: 'Weight', icon: Weight },
   { value: 'blood_pressure', label: 'Blood Pressure', icon: Heart },
   { value: 'nutrition', label: 'Nutrition', icon: Apple },
   { value: 'exercise', label: 'Exercise', icon: Activity },
   { value: 'sleep', label: 'Sleep', icon: Moon },
   { value: 'mood', label: 'Mood', icon: Brain },
-] as const
+]
 
 export function PregnancyMetrics() {
   const { session } = useAuth()
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  const [selectedCategory, setSelectedCategory] = useState<string>('weight')
+  const [selectedCategory, setSelectedCategory] = useState<MetricCategory>('weight')
   const [newMetric, setNewMetric] = useState({ value: '', notes: '' })
 
   const { data: metrics, isLoading } = useQuery({
@@ -40,7 +42,7 @@ export function PregnancyMetrics() {
         .select('*')
         .eq('user_id', session.user.id)
         .eq('metric_category', selectedCategory)
-        .order('date', { ascending: true })
+        .order('created_at', { ascending: true })
 
       if (error) {
         console.error('Error fetching metrics:', error)
@@ -52,7 +54,18 @@ export function PregnancyMetrics() {
         return null
       }
 
-      return data as PregnancyMetric[]
+      // Transform the data to match PregnancyMetric type
+      return data.map(metric => ({
+        id: metric.id,
+        user_id: metric.user_id,
+        date: metric.created_at,
+        value: metric.value,
+        notes: metric.notes || '',
+        category: metric.category,
+        metric_category: metric.metric_category,
+        photo_url: metric.photo_url,
+        created_at: metric.created_at
+      })) as PregnancyMetric[]
     },
     enabled: !!session?.user?.id
   })
@@ -65,10 +78,12 @@ export function PregnancyMetrics() {
         .from('pregnancy_metrics')
         .insert([{
           user_id: session.user.id,
-          date: new Date().toISOString(),
           value: metricData.value,
           notes: metricData.notes,
-          metric_category: selectedCategory
+          metric_category: selectedCategory,
+          metric_type: selectedCategory, // Required field from schema
+          category: selectedCategory, // Required field from schema
+          created_at: new Date().toISOString()
         }])
         .select()
         .single()
@@ -103,7 +118,7 @@ export function PregnancyMetrics() {
     })
   }
 
-  const getMetricUnit = (category: string) => {
+  const getMetricUnit = (category: MetricCategory) => {
     switch (category) {
       case 'weight':
         return 'kg'
@@ -129,7 +144,7 @@ export function PregnancyMetrics() {
           <div className="flex gap-4">
             <Select
               value={selectedCategory}
-              onValueChange={setSelectedCategory}
+              onValueChange={(value: MetricCategory) => setSelectedCategory(value)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select metric" />
