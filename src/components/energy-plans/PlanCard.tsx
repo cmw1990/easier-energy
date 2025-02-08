@@ -58,7 +58,9 @@ export const PlanCard = ({ plan, progress, onSave, onShare, isSaved, showActions
             <CardTitle className="text-xl">{plan.title}</CardTitle>
           </div>
           <div className="flex gap-2">
-            <Badge variant="secondary" className={CategoryColors[plan.category]}>
+            <Badge variant="secondary" 
+              className={`${CategoryColors[plan.category]} transition-colors`}
+            >
               {plan.category === 'charged' ? 'Energy Boost' : 'Recovery & Rest'}
             </Badge>
             {plan.is_expert_plan && (
@@ -68,48 +70,57 @@ export const PlanCard = ({ plan, progress, onSave, onShare, isSaved, showActions
             )}
           </div>
         </div>
-        <CardDescription>{plan.description}</CardDescription>
+        <CardDescription className="mt-2">{plan.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
-              <Timer className="h-4 w-4" />
-              {plan.estimated_duration_minutes} minutes
+              <Timer className="h-4 w-4 flex-shrink-0" />
+              <span>{plan.estimated_duration_minutes} minutes</span>
             </div>
             <div className="flex items-center gap-1">
-              <Target className="h-4 w-4" />
-              Energy Level {plan.energy_level_required}/10
+              <Target className="h-4 w-4 flex-shrink-0" />
+              <span>Energy Level {plan.energy_level_required}/10</span>
             </div>
           </div>
 
           {(plan.recommended_time_of_day?.length || plan.suitable_contexts?.length) && (
             <div className="space-y-2">
               {plan.recommended_time_of_day?.length ? (
-                <div className="flex flex-wrap gap-2">
-                  {plan.recommended_time_of_day.map(time => (
-                    <Badge key={time} variant="outline">{time}</Badge>
-                  ))}
+                <div className="space-y-1">
+                  <div className="text-sm text-muted-foreground">Best Times</div>
+                  <div className="flex flex-wrap gap-2">
+                    {plan.recommended_time_of_day.map(time => (
+                      <Badge key={time} variant="outline">{time}</Badge>
+                    ))}
+                  </div>
                 </div>
               ) : null}
               
               {plan.suitable_contexts?.length ? (
-                <div className="flex flex-wrap gap-2">
-                  {plan.suitable_contexts.map(context => (
-                    <Badge key={context} variant="outline">{context}</Badge>
-                  ))}
+                <div className="space-y-1">
+                  <div className="text-sm text-muted-foreground">Perfect For</div>
+                  <div className="flex flex-wrap gap-2">
+                    {plan.suitable_contexts.map(context => (
+                      <Badge key={context} variant="outline">{context}</Badge>
+                    ))}
+                  </div>
                 </div>
               ) : null}
             </div>
           )}
           
           {plan.tags.length > 0 && (
-            <div className="flex gap-2">
-              {plan.tags.map((tag) => (
-                <Badge key={tag} variant="outline">
-                  {tag}
-                </Badge>
-              ))}
+            <div className="space-y-1">
+              <div className="text-sm text-muted-foreground">Tags</div>
+              <div className="flex flex-wrap gap-2">
+                {plan.tags.map((tag) => (
+                  <Badge key={tag} variant="outline" className="bg-primary/5">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
             </div>
           )}
           
@@ -117,14 +128,23 @@ export const PlanCard = ({ plan, progress, onSave, onShare, isSaved, showActions
             <div className="space-y-1">
               <div className="text-sm text-muted-foreground">Progress</div>
               <Progress value={calculateProgress()} className="h-2" />
+              <div className="text-xs text-muted-foreground text-right">
+                {Math.round(calculateProgress())}% Complete
+              </div>
             </div>
           )}
           
           {showActions && (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Star className="h-4 w-4" />
-                {plan.likes_count} likes
+            <div className="flex items-center justify-between pt-2">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4" />
+                  {plan.likes_count} likes
+                </div>
+                <div className="flex items-center gap-1">
+                  <Share2 className="h-4 w-4" />
+                  {plan.saves_count} saves
+                </div>
               </div>
               
               <div className="flex gap-2">
@@ -133,7 +153,9 @@ export const PlanCard = ({ plan, progress, onSave, onShare, isSaved, showActions
                     variant="outline"
                     size="sm"
                     onClick={() => onSave(plan.id)}
+                    className="gap-2"
                   >
+                    <Star className="h-4 w-4" />
                     Save Plan
                   </Button>
                 )}
@@ -143,13 +165,16 @@ export const PlanCard = ({ plan, progress, onSave, onShare, isSaved, showActions
                     variant="outline"
                     size="sm"
                     onClick={() => onShare(plan)}
+                    className="gap-2"
                   >
-                    <Share2 className="h-4 w-4 mr-2" />
+                    <Share2 className="h-4 w-4" />
                     Share
                   </Button>
                 )}
                 
-                <Button size="sm">View Details</Button>
+                <Button size="sm" className="gap-2">
+                  View Details
+                </Button>
               </div>
             </div>
           )}
