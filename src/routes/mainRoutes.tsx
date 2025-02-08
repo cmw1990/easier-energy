@@ -61,6 +61,16 @@ export const mainRoutes = [
     ),
   },
   {
+    path: "/vendor/ads/dashboard",
+    element: (
+      <AuthProvider>
+        <Layout>
+          <VendorAdDashboard />
+        </Layout>
+      </AuthProvider>
+    ),
+  },
+  {
     path: "/desktop",
     element: <Desktop />,
   },
