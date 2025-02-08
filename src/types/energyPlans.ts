@@ -1,3 +1,4 @@
+
 export type PlanType = 
   | 'energizing_boost' 
   | 'sustained_focus'
