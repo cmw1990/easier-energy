@@ -4242,6 +4242,45 @@ export type Database = {
         }
         Relationships: []
       }
+      herbal_tea_compounds: {
+        Row: {
+          benefits: string[] | null
+          contraindications: string[] | null
+          created_at: string | null
+          description: string
+          id: string
+          name: string
+          research_links: string[] | null
+          scientific_name: string | null
+          synergistic_compounds: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          benefits?: string[] | null
+          contraindications?: string[] | null
+          created_at?: string | null
+          description: string
+          id?: string
+          name: string
+          research_links?: string[] | null
+          scientific_name?: string | null
+          synergistic_compounds?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          benefits?: string[] | null
+          contraindications?: string[] | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          name?: string
+          research_links?: string[] | null
+          scientific_name?: string | null
+          synergistic_compounds?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       herbal_tea_logs: {
         Row: {
           amount_grams: number | null
@@ -4293,84 +4332,141 @@ export type Database = {
       herbal_teas: {
         Row: {
           active_compounds: string[] | null
+          antioxidant_content: string | null
           aroma_notes: string[] | null
           benefits: string[] | null
+          botanical_family: string | null
           brewing_instructions: string
+          caffeine_content_mg: number | null
           category: string
           cautions: string[] | null
           contraindications: string[] | null
           created_at: string | null
           description: string
+          eco_certifications: string[] | null
           energy_effects: string[] | null
+          fair_trade_certified: boolean | null
           flavor_profile: string[] | null
           focus_effects: string[] | null
+          harvesting_season: string[] | null
           id: string
+          image_gallery: string[] | null
+          l_theanine_content_mg: number | null
+          mineral_content: Json | null
           name: string
           optimal_temp_celsius: number | null
+          organic_certified: boolean | null
           origin_regions: string[] | null
           preparation_methods: string[] | null
+          processing_method: string | null
           research_references: string[] | null
           safety_notes: string | null
           scientific_name: string | null
           seasonal_availability: string[] | null
+          shelf_life: string | null
           steep_time_range_seconds: number[] | null
+          steeping_vessel_recommendations: string[] | null
+          storage_instructions: string | null
           sustainability_info: string | null
+          theobromine_content_mg: number | null
+          theophylline_content_mg: number | null
+          traditional_use_regions: string[] | null
           traditional_uses: string[] | null
           updated_at: string | null
+          vitamin_content: Json | null
+          water_quality_notes: string | null
         }
         Insert: {
           active_compounds?: string[] | null
+          antioxidant_content?: string | null
           aroma_notes?: string[] | null
           benefits?: string[] | null
+          botanical_family?: string | null
           brewing_instructions: string
+          caffeine_content_mg?: number | null
           category: string
           cautions?: string[] | null
           contraindications?: string[] | null
           created_at?: string | null
           description: string
+          eco_certifications?: string[] | null
           energy_effects?: string[] | null
+          fair_trade_certified?: boolean | null
           flavor_profile?: string[] | null
           focus_effects?: string[] | null
+          harvesting_season?: string[] | null
           id?: string
+          image_gallery?: string[] | null
+          l_theanine_content_mg?: number | null
+          mineral_content?: Json | null
           name: string
           optimal_temp_celsius?: number | null
+          organic_certified?: boolean | null
           origin_regions?: string[] | null
           preparation_methods?: string[] | null
+          processing_method?: string | null
           research_references?: string[] | null
           safety_notes?: string | null
           scientific_name?: string | null
           seasonal_availability?: string[] | null
+          shelf_life?: string | null
           steep_time_range_seconds?: number[] | null
+          steeping_vessel_recommendations?: string[] | null
+          storage_instructions?: string | null
           sustainability_info?: string | null
+          theobromine_content_mg?: number | null
+          theophylline_content_mg?: number | null
+          traditional_use_regions?: string[] | null
           traditional_uses?: string[] | null
           updated_at?: string | null
+          vitamin_content?: Json | null
+          water_quality_notes?: string | null
         }
         Update: {
           active_compounds?: string[] | null
+          antioxidant_content?: string | null
           aroma_notes?: string[] | null
           benefits?: string[] | null
+          botanical_family?: string | null
           brewing_instructions?: string
+          caffeine_content_mg?: number | null
           category?: string
           cautions?: string[] | null
           contraindications?: string[] | null
           created_at?: string | null
           description?: string
+          eco_certifications?: string[] | null
           energy_effects?: string[] | null
+          fair_trade_certified?: boolean | null
           flavor_profile?: string[] | null
           focus_effects?: string[] | null
+          harvesting_season?: string[] | null
           id?: string
+          image_gallery?: string[] | null
+          l_theanine_content_mg?: number | null
+          mineral_content?: Json | null
           name?: string
           optimal_temp_celsius?: number | null
+          organic_certified?: boolean | null
           origin_regions?: string[] | null
           preparation_methods?: string[] | null
+          processing_method?: string | null
           research_references?: string[] | null
           safety_notes?: string | null
           scientific_name?: string | null
           seasonal_availability?: string[] | null
+          shelf_life?: string | null
           steep_time_range_seconds?: number[] | null
+          steeping_vessel_recommendations?: string[] | null
+          storage_instructions?: string | null
           sustainability_info?: string | null
+          theobromine_content_mg?: number | null
+          theophylline_content_mg?: number | null
+          traditional_use_regions?: string[] | null
           traditional_uses?: string[] | null
           updated_at?: string | null
+          vitamin_content?: Json | null
+          water_quality_notes?: string | null
         }
         Relationships: []
       }
