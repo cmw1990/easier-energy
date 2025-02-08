@@ -2,14 +2,16 @@
 import { useState } from "react"
 import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { Slider } from "@/components/ui/slider"
+import { Info } from "lucide-react"
 
 type Form = {
   teaName: string;
@@ -35,6 +37,20 @@ export function TeaIntakeForm() {
     rating: "5",
     effects: "",
     notes: ""
+  })
+
+  // Fetch tea suggestions from the database
+  const { data: teaSuggestions } = useQuery({
+    queryKey: ['herbal-teas'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('herbal_teas')
+        .select('name, optimal_temp_celsius, steep_time_range_seconds')
+        .order('name')
+      
+      if (error) throw error
+      return data
+    }
   })
 
   const logTeaMutation = useMutation({
@@ -84,6 +100,23 @@ export function TeaIntakeForm() {
     }
   })
 
+  const handleTeaSelection = (teaName: string) => {
+    const selectedTea = teaSuggestions?.find(t => t.name === teaName)
+    if (selectedTea) {
+      setForm(prev => ({
+        ...prev,
+        teaName,
+        waterTemperature: selectedTea.optimal_temp_celsius?.toString() || "",
+        steepTime: selectedTea.steep_time_range_seconds?.[0]?.toString() || ""
+      }))
+    } else {
+      setForm(prev => ({
+        ...prev,
+        teaName
+      }))
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.teaName) {
@@ -101,18 +134,28 @@ export function TeaIntakeForm() {
     <Card>
       <CardHeader>
         <CardTitle>Log Tea Intake</CardTitle>
+        <CardDescription>Track your tea consumption and its effects</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="teaName">Tea Name *</Label>
-              <Input
-                id="teaName"
+              <Select
                 value={form.teaName}
-                onChange={e => setForm(prev => ({ ...prev, teaName: e.target.value }))}
-                placeholder="Enter tea name"
-              />
+                onValueChange={handleTeaSelection}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select or enter tea name" />
+                </SelectTrigger>
+                <SelectContent>
+                  {teaSuggestions?.map((tea) => (
+                    <SelectItem key={tea.name} value={tea.name}>
+                      {tea.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
@@ -142,6 +185,13 @@ export function TeaIntakeForm() {
                 onChange={e => setForm(prev => ({ ...prev, steepTime: e.target.value }))}
                 placeholder="Enter steep time"
               />
+              {form.teaName && teaSuggestions?.find(t => t.name === form.teaName)?.steep_time_range_seconds && (
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Info className="w-3 h-3" />
+                  Recommended: {teaSuggestions.find(t => t.name === form.teaName)?.steep_time_range_seconds[0]}-
+                  {teaSuggestions.find(t => t.name === form.teaName)?.steep_time_range_seconds[1]} seconds
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -153,6 +203,12 @@ export function TeaIntakeForm() {
                 onChange={e => setForm(prev => ({ ...prev, waterTemperature: e.target.value }))}
                 placeholder="Enter temperature"
               />
+              {form.teaName && teaSuggestions?.find(t => t.name === form.teaName)?.optimal_temp_celsius && (
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Info className="w-3 h-3" />
+                  Recommended: {teaSuggestions.find(t => t.name === form.teaName)?.optimal_temp_celsius}°C
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -169,21 +225,16 @@ export function TeaIntakeForm() {
 
             <div className="space-y-2">
               <Label htmlFor="rating">Rating (1-5)</Label>
-              <Select 
-                value={form.rating}
-                onValueChange={value => setForm(prev => ({ ...prev, rating: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Rate tea" />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 2, 3, 4, 5].map(rating => (
-                    <SelectItem key={rating} value={rating.toString()}>
-                      {rating}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="pt-2">
+                <Slider
+                  value={[parseInt(form.rating)]}
+                  onValueChange={([value]) => setForm(prev => ({ ...prev, rating: value.toString() }))}
+                  max={5}
+                  min={1}
+                  step={1}
+                />
+              </div>
+              <p className="text-sm text-center mt-2">{form.rating} / 5</p>
             </div>
 
             <div className="space-y-2">
@@ -207,7 +258,7 @@ export function TeaIntakeForm() {
             </div>
           </div>
 
-          <Button type="submit">Log Tea Intake</Button>
+          <Button type="submit" className="w-full">Log Tea Intake</Button>
         </form>
       </CardContent>
     </Card>
