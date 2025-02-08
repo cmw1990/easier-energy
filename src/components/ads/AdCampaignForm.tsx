@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "@/components/AuthProvider"
 
 const campaignFormSchema = z.object({
@@ -23,6 +24,22 @@ const campaignFormSchema = z.object({
 export function AdCampaignForm() {
   const { session } = useAuth()
   const { toast } = useToast()
+
+  // Query user's products
+  const { data: products } = useQuery({
+    queryKey: ['user-products', session?.user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('id, name')
+        .eq('maker_id', session?.user?.id)
+
+      if (error) throw error
+      return data
+    },
+    enabled: !!session?.user?.id,
+  })
+
   const form = useForm<z.infer<typeof campaignFormSchema>>({
     resolver: zodResolver(campaignFormSchema),
     defaultValues: {
@@ -91,7 +108,11 @@ export function AdCampaignForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {/* Products will be populated here */}
+                      {products?.map(product => (
+                        <SelectItem key={product.id} value={product.id}>
+                          {product.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />

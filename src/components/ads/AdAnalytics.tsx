@@ -4,11 +4,30 @@ import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/components/AuthProvider"
 
 export function AdAnalytics() {
-  const { data: analytics, isLoading } = useQuery({
-    queryKey: ['ad-analytics'],
+  const { session } = useAuth()
+  
+  const { data: campaigns } = useQuery({
+    queryKey: ['campaigns', session?.user?.id],
     queryFn: async () => {
+      const { data: campaigns, error: campaignsError } = await supabase
+        .from('sponsored_products')
+        .select('*')
+        .eq('sponsor_id', session?.user?.id)
+        
+      if (campaignsError) throw campaignsError
+      return campaigns
+    },
+    enabled: !!session?.user?.id
+  })
+
+  const { data: analytics, isLoading } = useQuery({
+    queryKey: ['ad-analytics', campaigns?.map(c => c.id)],
+    queryFn: async () => {
+      if (!campaigns?.length) return []
+      
       const { data, error } = await supabase
         .from('ad_impressions')
         .select(`
@@ -22,11 +41,13 @@ export function AdAnalytics() {
             spent
           )
         `)
-        .eq('sponsored_product_id', 'CURRENT_SPONSORED_ID') // Replace with actual ID
+        .in('sponsored_product_id', campaigns.map(c => c.id))
+        .order('impressed_at', { ascending: true })
       
       if (error) throw error
       return data
-    }
+    },
+    enabled: !!campaigns?.length
   })
 
   if (isLoading) {
