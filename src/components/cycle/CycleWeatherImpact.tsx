@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -65,8 +64,10 @@ export const CycleWeatherImpact = () => {
     const notesValue = formData.get('notes');
     const conditionValue = formData.get('condition');
 
-    // Ensure all required values are strings
+    // Ensure all required values are present and are strings
     if (
+      !symptomTypeValue || 
+      !phaseTypeValue ||
       typeof symptomTypeValue !== 'string' ||
       typeof phaseTypeValue !== 'string'
     ) {
@@ -78,15 +79,30 @@ export const CycleWeatherImpact = () => {
       return;
     }
 
-    // Handle optional string values
+    // Safely convert optional values to the correct types
     const notes = notesValue ? String(notesValue) : undefined;
     const condition = conditionValue ? String(conditionValue) : null;
 
-    // Parse numeric values
-    const temperature = parseFloat(String(formData.get('temperature')));
-    const humidity = parseFloat(String(formData.get('humidity')));
-    const pressure = parseFloat(String(formData.get('pressure')));
-    const symptomIntensity = parseInt(String(formData.get('symptom_intensity')));
+    // Parse and validate numeric values
+    const temperatureValue = formData.get('temperature');
+    const humidityValue = formData.get('humidity');
+    const pressureValue = formData.get('pressure');
+    const symptomIntensityValue = formData.get('symptom_intensity');
+
+    // Ensure numeric values exist and can be parsed
+    if (!temperatureValue || !humidityValue || !pressureValue || !symptomIntensityValue) {
+      toast({
+        title: "Error",
+        description: "Missing required numeric values",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const temperature = parseFloat(String(temperatureValue));
+    const humidity = parseFloat(String(humidityValue));
+    const pressure = parseFloat(String(pressureValue));
+    const symptomIntensity = parseInt(String(symptomIntensityValue));
 
     // Validate numeric values
     if (isNaN(temperature) || isNaN(humidity) || isNaN(pressure) || isNaN(symptomIntensity)) {
