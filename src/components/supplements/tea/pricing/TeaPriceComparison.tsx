@@ -64,7 +64,7 @@ export function TeaPriceComparison({ teaId }: TeaPriceComparisonProps) {
         <CardContent>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between border-b pb-4">
+              <div key={i} className="flex items-center justify-between border-b last:border-0 pb-4">
                 <div className="space-y-2">
                   <Skeleton className="h-4 w-[150px]" />
                   <Skeleton className="h-3 w-[100px]" />
@@ -129,7 +129,7 @@ export function TeaPriceComparison({ teaId }: TeaPriceComparisonProps) {
                         )}
                       </TooltipTrigger>
                       <TooltipContent>
-                        Verified Vendor
+                        Verified Vendor - Quality Assured
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -142,9 +142,18 @@ export function TeaPriceComparison({ teaId }: TeaPriceComparisonProps) {
                 <div className="text-lg font-bold">
                   ${price.price.toFixed(2)}
                   {index === 0 && (
-                    <Badge variant="secondary" className="ml-2 text-xs">
-                      Best Price
-                    </Badge>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Badge variant="secondary" className="ml-2 text-xs">
+                            Best Price
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Lowest price among verified vendors
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )}
                 </div>
                 <Button variant="outline" size="sm" asChild>
