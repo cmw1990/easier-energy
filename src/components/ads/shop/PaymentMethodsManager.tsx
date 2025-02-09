@@ -22,6 +22,20 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Badge } from "@/components/ui/badge"
 
+interface AccountDetails {
+  accountName: string;
+  accountNumber: string;
+  routingNumber?: string;
+}
+
+interface PaymentMethod {
+  id: string;
+  type: 'bank_account' | 'paypal';
+  account_details: AccountDetails;
+  is_default: boolean;
+  created_at: string;
+}
+
 export function PaymentMethodsManager() {
   const { session } = useAuth()
   const { toast } = useToast()
@@ -53,7 +67,7 @@ export function PaymentMethodsManager() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      return data
+      return data as PaymentMethod[]
     },
     enabled: !!session?.user?.id
   })
@@ -175,7 +189,7 @@ export function PaymentMethodsManager() {
               <div className="space-y-4 py-4">
                 <RadioGroup
                   value={newMethod.type}
-                  onValueChange={(value) => setNewMethod(prev => ({ ...prev, type: value }))}
+                  onValueChange={(value: 'bank_account' | 'paypal') => setNewMethod(prev => ({ ...prev, type: value }))}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="bank_account" id="bank" />
@@ -259,8 +273,8 @@ export function PaymentMethodsManager() {
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {method.account_details?.accountName}
-                    {method.type === 'bank_account' && method.account_details?.accountNumber && 
+                    {method.account_details.accountName}
+                    {method.type === 'bank_account' && method.account_details.accountNumber && 
                       ` (**** ${method.account_details.accountNumber.slice(-4)})`}
                   </p>
                 </div>
