@@ -7989,17 +7989,21 @@ export type Database = {
         Row: {
           approach_description: string | null
           areas_of_focus: string[] | null
+          available_slots: Json | null
           avatar_url: string | null
           bio: string | null
           certifications: string[] | null
           consultation_fee: number | null
+          consultation_types: string[] | null
           created_at: string
           credentials: string[]
           education: string[] | null
+          expertise_areas: string[] | null
           full_name: string
           id: string
           is_available: boolean | null
           languages: string[] | null
+          max_clients: number | null
           rating: number | null
           reviews_count: number | null
           session_format: string[] | null
@@ -8008,21 +8012,26 @@ export type Database = {
           user_id: string | null
           verification_status: string | null
           years_experience: number | null
+          years_of_experience: number | null
         }
         Insert: {
           approach_description?: string | null
           areas_of_focus?: string[] | null
+          available_slots?: Json | null
           avatar_url?: string | null
           bio?: string | null
           certifications?: string[] | null
           consultation_fee?: number | null
+          consultation_types?: string[] | null
           created_at?: string
           credentials: string[]
           education?: string[] | null
+          expertise_areas?: string[] | null
           full_name: string
           id?: string
           is_available?: boolean | null
           languages?: string[] | null
+          max_clients?: number | null
           rating?: number | null
           reviews_count?: number | null
           session_format?: string[] | null
@@ -8031,21 +8040,26 @@ export type Database = {
           user_id?: string | null
           verification_status?: string | null
           years_experience?: number | null
+          years_of_experience?: number | null
         }
         Update: {
           approach_description?: string | null
           areas_of_focus?: string[] | null
+          available_slots?: Json | null
           avatar_url?: string | null
           bio?: string | null
           certifications?: string[] | null
           consultation_fee?: number | null
+          consultation_types?: string[] | null
           created_at?: string
           credentials?: string[]
           education?: string[] | null
+          expertise_areas?: string[] | null
           full_name?: string
           id?: string
           is_available?: boolean | null
           languages?: string[] | null
+          max_clients?: number | null
           rating?: number | null
           reviews_count?: number | null
           session_format?: string[] | null
@@ -8054,6 +8068,7 @@ export type Database = {
           user_id?: string | null
           verification_status?: string | null
           years_experience?: number | null
+          years_of_experience?: number | null
         }
         Relationships: []
       }
