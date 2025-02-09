@@ -865,6 +865,30 @@ export type Database = {
         }
         Relationships: []
       }
+      bible_books: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          testament: Database["public"]["Enums"]["bible_testament"]
+          total_chapters: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          testament: Database["public"]["Enums"]["bible_testament"]
+          total_chapters: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          testament?: Database["public"]["Enums"]["bible_testament"]
+          total_chapters?: number
+        }
+        Relationships: []
+      }
       bible_translations: {
         Row: {
           code: string
@@ -14415,6 +14439,7 @@ export type Database = {
         | "muscle_recovery"
         | "stress_relief"
         | "focus_enhancement"
+      bible_testament: "old" | "new"
       biohacking_activity_type:
         | "red_light_therapy"
         | "cold_therapy"
