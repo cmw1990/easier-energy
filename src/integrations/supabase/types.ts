@@ -13192,6 +13192,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_achievements: {
+        Row: {
+          achievement_data: Json | null
+          achievement_type: string
+          created_at: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_data?: Json | null
+          achievement_type: string
+          created_at?: string
+          id?: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_data?: Json | null
+          achievement_type?: string
+          created_at?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_bathing_logs: {
         Row: {
           created_at: string
@@ -14464,6 +14491,98 @@ export type Database = {
           is_public?: boolean | null
           title?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      verse_cross_references: {
+        Row: {
+          created_at: string
+          id: string
+          source_book: string
+          source_chapter: number
+          source_verse: number
+          target_book: string
+          target_chapter: number
+          target_verse: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          source_book: string
+          source_chapter: number
+          source_verse: number
+          target_book: string
+          target_chapter: number
+          target_verse: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          source_book?: string
+          source_chapter?: number
+          source_verse?: number
+          target_book?: string
+          target_chapter?: number
+          target_verse?: number
+        }
+        Relationships: []
+      }
+      verse_tag_assignments: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string
+          id: string
+          tag_id: string
+          verse: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string
+          id?: string
+          tag_id: string
+          verse: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string
+          id?: string
+          tag_id?: string
+          verse?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verse_tag_assignments_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "verse_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verse_tags: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          name?: string
           user_id?: string
         }
         Relationships: []
