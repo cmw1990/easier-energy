@@ -608,3 +608,32 @@ export interface VendorMessage {
   is_from_vendor: boolean;
   created_at: string;
 }
+
+export interface CustomerEngagement {
+  id: string;
+  vendor_id: string;
+  customer_id: string;
+  interaction_type: string;
+  interaction_data: Json;
+  sentiment_score: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MarketplacePlatformMetric {
+  id: string;
+  vendor_id: string;
+  platform_name: string;
+  metrics_data: Json;
+  sync_status: string;
+  last_sync_at: string;
+  created_at: string;
+}
+
+export interface EngagementAnalytic {
+  id: string;
+  vendor_id: string;
+  date: string;
+  engagement_metrics: Json;
+  created_at: string;
+}

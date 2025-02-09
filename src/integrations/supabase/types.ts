@@ -3061,6 +3061,47 @@ export type Database = {
           },
         ]
       }
+      customer_engagements: {
+        Row: {
+          created_at: string | null
+          customer_id: string
+          id: string
+          interaction_data: Json
+          interaction_type: string
+          sentiment_score: number | null
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id: string
+          id?: string
+          interaction_data?: Json
+          interaction_type: string
+          sentiment_score?: number | null
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string
+          id?: string
+          interaction_data?: Json
+          interaction_type?: string
+          sentiment_score?: number | null
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_engagements_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_loyalty_points: {
         Row: {
           created_at: string | null
@@ -4171,6 +4212,38 @@ export type Database = {
           warnings?: string | null
         }
         Relationships: []
+      }
+      engagement_analytics: {
+        Row: {
+          created_at: string | null
+          date: string
+          engagement_metrics: Json
+          id: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          engagement_metrics?: Json
+          id?: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          engagement_metrics?: Json
+          id?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engagement_analytics_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       executive_function_tools: {
         Row: {
@@ -6568,6 +6641,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      marketplace_platform_metrics: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_sync_at: string | null
+          metrics_data: Json
+          platform_name: string
+          sync_status: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_sync_at?: string | null
+          metrics_data?: Json
+          platform_name: string
+          sync_status?: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_sync_at?: string | null
+          metrics_data?: Json
+          platform_name?: string
+          sync_status?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_platform_metrics_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       medication_logs: {
         Row: {
