@@ -153,7 +153,7 @@ export function VendorVerification() {
                     Submitted on {new Date(req.submitted_at).toLocaleDateString()}
                   </p>
                 </div>
-                <Badge variant={req.status === 'pending' ? 'secondary' : 'success'}>
+                <Badge variant={req.status === 'pending' ? 'secondary' : 'default'}>
                   {req.status}
                 </Badge>
               </div>

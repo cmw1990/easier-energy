@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Badge } from "@/components/ui/badge"
 
 export function PaymentMethodsManager() {
   const { session } = useAuth()
@@ -78,16 +79,18 @@ export function PaymentMethodsManager() {
           .eq('vendor_id', vendorData.id)
       }
 
+      const accountDetails = {
+        accountName: newMethod.accountName,
+        accountNumber: newMethod.accountNumber,
+        routingNumber: newMethod.routingNumber
+      }
+
       const { error } = await supabase
         .from('vendor_payment_methods')
         .insert({
           vendor_id: vendorData.id,
           type: newMethod.type,
-          account_details: {
-            accountName: newMethod.accountName,
-            accountNumber: newMethod.accountNumber,
-            routingNumber: newMethod.routingNumber
-          },
+          account_details: accountDetails,
           is_default: newMethod.isDefault
         })
 
@@ -256,8 +259,9 @@ export function PaymentMethodsManager() {
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {method.account_details.accountName}
-                    {method.type === 'bank_account' && ` (**** ${method.account_details.accountNumber.slice(-4)})`}
+                    {method.account_details?.accountName}
+                    {method.type === 'bank_account' && method.account_details?.accountNumber && 
+                      ` (**** ${method.account_details.accountNumber.slice(-4)})`}
                   </p>
                 </div>
                 <Button
