@@ -1,3 +1,4 @@
+
 export interface ConsultationSession {
   id: string;
   client_id: string;
