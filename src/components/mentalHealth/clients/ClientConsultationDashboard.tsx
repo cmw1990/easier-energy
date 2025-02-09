@@ -4,24 +4,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Package, MessageCircle, Clock } from "lucide-react";
+import { Calendar, Package, Clock } from "lucide-react";
 import { ConsultationPackages } from "@/components/mentalHealth/packages/ConsultationPackages";
 
 export function ClientConsultationDashboard() {
   const { session } = useAuth();
 
   const { data: upcomingSessions } = useQuery({
-    queryKey: ['upcoming-client-sessions', session?.user?.id],
+    queryKey: ['upcoming-sessions', session?.user?.id],
     queryFn: async () => {
       const { data } = await supabase
         .from('consultation_sessions')
         .select(`
           *,
-          professional:professional_id(full_name)
+          professional:profiles!consultation_sessions_professional_id_fkey(full_name)
         `)
         .eq('client_id', session?.user?.id)
-        .gte('session_date', new Date().toISOString())
-        .order('session_date')
+        .gte('scheduled_start', new Date().toISOString())
+        .order('scheduled_start')
         .limit(5);
       return data;
     },
@@ -35,8 +35,8 @@ export function ClientConsultationDashboard() {
         .from('package_purchases')
         .select(`
           *,
-          package:package_id(name, description),
-          professional:professional_id(full_name)
+          package:consultation_packages!package_purchases_package_id_fkey(name, description),
+          professional:profiles!package_purchases_professional_id_fkey(full_name)
         `)
         .eq('client_id', session?.user?.id)
         .eq('status', 'active')
@@ -63,7 +63,7 @@ export function ClientConsultationDashboard() {
                   <div>
                     <p className="font-medium">{session.professional?.full_name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(session.session_date).toLocaleString()}
+                      {new Date(session.scheduled_start).toLocaleString()}
                     </p>
                   </div>
                   <Button variant="outline" size="sm">
