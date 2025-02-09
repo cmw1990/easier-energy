@@ -7,6 +7,31 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Package, Clock } from "lucide-react";
 import { ConsultationPackages } from "@/components/mentalHealth/packages/ConsultationPackages";
 
+interface Session {
+  id: string;
+  client_id: string;
+  professional_id: string;
+  scheduled_start: string;
+  professional: {
+    full_name: string;
+  };
+}
+
+interface PackagePurchase {
+  id: string;
+  package_id: string;
+  client_id: string;
+  sessions_remaining: number;
+  expires_at: string;
+  package: {
+    name: string;
+    description: string;
+  };
+  professional: {
+    full_name: string;
+  };
+}
+
 export function ClientConsultationDashboard() {
   const { session } = useAuth();
 
@@ -23,7 +48,7 @@ export function ClientConsultationDashboard() {
         .gte('scheduled_start', new Date().toISOString())
         .order('scheduled_start')
         .limit(5);
-      return data;
+      return data as Session[];
     },
     enabled: !!session?.user?.id
   });
@@ -41,7 +66,7 @@ export function ClientConsultationDashboard() {
         .eq('client_id', session?.user?.id)
         .eq('status', 'active')
         .gte('expires_at', new Date().toISOString());
-      return data;
+      return data as PackagePurchase[];
     },
     enabled: !!session?.user?.id
   });
@@ -61,7 +86,7 @@ export function ClientConsultationDashboard() {
               upcomingSessions.map((session) => (
                 <div key={session.id} className="flex justify-between items-center">
                   <div>
-                    <p className="font-medium">{session.professional?.full_name}</p>
+                    <p className="font-medium">{session.professional.full_name}</p>
                     <p className="text-sm text-muted-foreground">
                       {new Date(session.scheduled_start).toLocaleString()}
                     </p>
@@ -92,7 +117,7 @@ export function ClientConsultationDashboard() {
                     <div>
                       <p className="font-medium">{pkg.package?.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        with {pkg.professional?.full_name}
+                        with {pkg.professional.full_name}
                       </p>
                     </div>
                     <div className="text-right">
