@@ -12413,6 +12413,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          business_name: string | null
           created_at: string | null
           email: string | null
           full_name: string | null
@@ -12425,6 +12426,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          business_name?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -12437,6 +12439,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          business_name?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -20418,6 +20421,12 @@ export type Database = {
       verification_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
+      behavior_pattern: {
+        active_users: number | null
+        engagement_rate: number | null
+        response_rate: number | null
+        segments: Json | null
+      }
       pattern_summary: {
         summary: string | null
         confidence: number | null
