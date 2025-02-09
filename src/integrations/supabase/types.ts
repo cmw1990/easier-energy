@@ -13549,6 +13549,8 @@ export type Database = {
       }
       sagas: {
         Row: {
+          audio_duration_seconds: number | null
+          audio_url: string | null
           author: string | null
           categories: string[] | null
           content: string
@@ -13557,6 +13559,7 @@ export type Database = {
           historical_period: string | null
           id: string
           image_url: string | null
+          narrator_name: string | null
           reading_time_minutes: number | null
           related_sagas: string[] | null
           search_rank: number | null
@@ -13565,6 +13568,8 @@ export type Database = {
           title: string
         }
         Insert: {
+          audio_duration_seconds?: number | null
+          audio_url?: string | null
           author?: string | null
           categories?: string[] | null
           content: string
@@ -13573,6 +13578,7 @@ export type Database = {
           historical_period?: string | null
           id?: string
           image_url?: string | null
+          narrator_name?: string | null
           reading_time_minutes?: number | null
           related_sagas?: string[] | null
           search_rank?: number | null
@@ -13581,6 +13587,8 @@ export type Database = {
           title: string
         }
         Update: {
+          audio_duration_seconds?: number | null
+          audio_url?: string | null
           author?: string | null
           categories?: string[] | null
           content?: string
@@ -13589,6 +13597,7 @@ export type Database = {
           historical_period?: string | null
           id?: string
           image_url?: string | null
+          narrator_name?: string | null
           reading_time_minutes?: number | null
           related_sagas?: string[] | null
           search_rank?: number | null
