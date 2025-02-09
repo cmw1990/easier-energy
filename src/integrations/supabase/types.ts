@@ -2474,7 +2474,7 @@ export type Database = {
           search_vector: unknown | null
           service_times: Json[] | null
           small_groups: Json[] | null
-          social_events: string[] | null
+          social_events: Json | null
           social_media: Json | null
           special_ministries: Json | null
           staff: Json[] | null
@@ -2527,7 +2527,7 @@ export type Database = {
           search_vector?: unknown | null
           service_times?: Json[] | null
           small_groups?: Json[] | null
-          social_events?: string[] | null
+          social_events?: Json | null
           social_media?: Json | null
           special_ministries?: Json | null
           staff?: Json[] | null
@@ -2580,7 +2580,7 @@ export type Database = {
           search_vector?: unknown | null
           service_times?: Json[] | null
           small_groups?: Json[] | null
-          social_events?: string[] | null
+          social_events?: Json | null
           social_media?: Json | null
           special_ministries?: Json | null
           staff?: Json[] | null
@@ -7423,6 +7423,69 @@ export type Database = {
         }
         Relationships: []
       }
+      nordic_accessories: {
+        Row: {
+          crafting_method: string | null
+          created_at: string | null
+          cultural_significance: string | null
+          description: string
+          dimensions: Json | null
+          historical_period: string | null
+          id: string
+          image_urls: string[] | null
+          in_stock: boolean | null
+          materials: string[] | null
+          name: string
+          price: number
+          region_of_origin: string | null
+          search_vector: unknown | null
+          slug: string | null
+          stock_quantity: number | null
+          traditional_use: string | null
+          type: string
+        }
+        Insert: {
+          crafting_method?: string | null
+          created_at?: string | null
+          cultural_significance?: string | null
+          description: string
+          dimensions?: Json | null
+          historical_period?: string | null
+          id?: string
+          image_urls?: string[] | null
+          in_stock?: boolean | null
+          materials?: string[] | null
+          name: string
+          price: number
+          region_of_origin?: string | null
+          search_vector?: unknown | null
+          slug?: string | null
+          stock_quantity?: number | null
+          traditional_use?: string | null
+          type: string
+        }
+        Update: {
+          crafting_method?: string | null
+          created_at?: string | null
+          cultural_significance?: string | null
+          description?: string
+          dimensions?: Json | null
+          historical_period?: string | null
+          id?: string
+          image_urls?: string[] | null
+          in_stock?: boolean | null
+          materials?: string[] | null
+          name?: string
+          price?: number
+          region_of_origin?: string | null
+          search_vector?: unknown | null
+          slug?: string | null
+          stock_quantity?: number | null
+          traditional_use?: string | null
+          type?: string
+        }
+        Relationships: []
+      }
       nordic_accommodations: {
         Row: {
           accessibility_features: string[] | null
@@ -7430,7 +7493,10 @@ export type Database = {
           bedrooms: number
           booking_lead_time: string | null
           cancellation_policy: string | null
+          check_in_time: string | null
+          check_out_time: string | null
           checkin_features: string[] | null
+          cleaning_fee: number | null
           cleaning_protocols: string[] | null
           created_at: string
           cultural_elements: string[] | null
@@ -7458,7 +7524,9 @@ export type Database = {
           search_vector: unknown | null
           seasonal_activities: string[] | null
           seasonal_pricing: Json | null
+          security_deposit: number | null
           security_features: string[] | null
+          slug: string | null
           special_offers: Json[] | null
           sustainability_practices: string[] | null
           total_reviews: number | null
@@ -7470,7 +7538,10 @@ export type Database = {
           bedrooms: number
           booking_lead_time?: string | null
           cancellation_policy?: string | null
+          check_in_time?: string | null
+          check_out_time?: string | null
           checkin_features?: string[] | null
+          cleaning_fee?: number | null
           cleaning_protocols?: string[] | null
           created_at?: string
           cultural_elements?: string[] | null
@@ -7498,7 +7569,9 @@ export type Database = {
           search_vector?: unknown | null
           seasonal_activities?: string[] | null
           seasonal_pricing?: Json | null
+          security_deposit?: number | null
           security_features?: string[] | null
+          slug?: string | null
           special_offers?: Json[] | null
           sustainability_practices?: string[] | null
           total_reviews?: number | null
@@ -7510,7 +7583,10 @@ export type Database = {
           bedrooms?: number
           booking_lead_time?: string | null
           cancellation_policy?: string | null
+          check_in_time?: string | null
+          check_out_time?: string | null
           checkin_features?: string[] | null
+          cleaning_fee?: number | null
           cleaning_protocols?: string[] | null
           created_at?: string
           cultural_elements?: string[] | null
@@ -7538,7 +7614,9 @@ export type Database = {
           search_vector?: unknown | null
           seasonal_activities?: string[] | null
           seasonal_pricing?: Json | null
+          security_deposit?: number | null
           security_features?: string[] | null
+          slug?: string | null
           special_offers?: Json[] | null
           sustainability_practices?: string[] | null
           total_reviews?: number | null
@@ -7553,6 +7631,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      nordic_music: {
+        Row: {
+          artist: string
+          audio_url: string | null
+          created_at: string | null
+          cultural_significance: string | null
+          description: string
+          historical_period: string | null
+          id: string
+          image_url: string | null
+          instruments: string[] | null
+          lyrics: string | null
+          region: string
+          search_vector: unknown | null
+          slug: string | null
+          title: string
+          translations: Json | null
+          type: string
+        }
+        Insert: {
+          artist: string
+          audio_url?: string | null
+          created_at?: string | null
+          cultural_significance?: string | null
+          description: string
+          historical_period?: string | null
+          id?: string
+          image_url?: string | null
+          instruments?: string[] | null
+          lyrics?: string | null
+          region: string
+          search_vector?: unknown | null
+          slug?: string | null
+          title: string
+          translations?: Json | null
+          type: string
+        }
+        Update: {
+          artist?: string
+          audio_url?: string | null
+          created_at?: string | null
+          cultural_significance?: string | null
+          description?: string
+          historical_period?: string | null
+          id?: string
+          image_url?: string | null
+          instruments?: string[] | null
+          lyrics?: string | null
+          region?: string
+          search_vector?: unknown | null
+          slug?: string | null
+          title?: string
+          translations?: Json | null
+          type?: string
+        }
+        Relationships: []
       }
       notification_preferences: {
         Row: {
