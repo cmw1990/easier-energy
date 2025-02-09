@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export function ResourceManager() {
   const { session } = useAuth();
