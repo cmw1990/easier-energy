@@ -2901,6 +2901,107 @@ export type Database = {
           },
         ]
       }
+      consultation_notes: {
+        Row: {
+          client_id: string | null
+          content: string
+          created_at: string
+          follow_up_date: string | null
+          id: string
+          mood_observed: string | null
+          professional_id: string | null
+          progress_notes: string | null
+          recommendations: Json | null
+          session_id: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          content: string
+          created_at?: string
+          follow_up_date?: string | null
+          id?: string
+          mood_observed?: string | null
+          professional_id?: string | null
+          progress_notes?: string | null
+          recommendations?: Json | null
+          session_id?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          content?: string
+          created_at?: string
+          follow_up_date?: string | null
+          id?: string
+          mood_observed?: string | null
+          professional_id?: string | null
+          progress_notes?: string | null
+          recommendations?: Json | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_notes_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "mental_health_professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_notes_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_sessions: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          duration_minutes: number
+          id: string
+          meeting_link: string | null
+          notes: string | null
+          professional_id: string | null
+          session_date: string
+          session_type: string
+          status: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          duration_minutes: number
+          id?: string
+          meeting_link?: string | null
+          notes?: string | null
+          professional_id?: string | null
+          session_date: string
+          session_type: string
+          status?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          meeting_link?: string | null
+          notes?: string | null
+          professional_id?: string | null
+          session_date?: string
+          session_type?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_sessions_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "mental_health_professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupons: {
         Row: {
           active: boolean | null
@@ -7153,6 +7254,160 @@ export type Database = {
           },
         ]
       }
+      mental_health_homework: {
+        Row: {
+          assignment_type: string
+          client_id: string | null
+          client_response: Json | null
+          completion_status: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          feedback: string | null
+          id: string
+          professional_id: string | null
+          title: string
+        }
+        Insert: {
+          assignment_type: string
+          client_id?: string | null
+          client_response?: Json | null
+          completion_status?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          feedback?: string | null
+          id?: string
+          professional_id?: string | null
+          title: string
+        }
+        Update: {
+          assignment_type?: string
+          client_id?: string | null
+          client_response?: Json | null
+          completion_status?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          feedback?: string | null
+          id?: string
+          professional_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mental_health_homework_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "mental_health_professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mental_health_professionals: {
+        Row: {
+          bio: string | null
+          consultation_fee: number | null
+          created_at: string
+          credentials: string[]
+          full_name: string
+          id: string
+          is_available: boolean | null
+          languages: string[] | null
+          specialties: string[]
+          title: string
+          user_id: string | null
+          verification_status: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          consultation_fee?: number | null
+          created_at?: string
+          credentials: string[]
+          full_name: string
+          id?: string
+          is_available?: boolean | null
+          languages?: string[] | null
+          specialties: string[]
+          title: string
+          user_id?: string | null
+          verification_status?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          consultation_fee?: number | null
+          created_at?: string
+          credentials?: string[]
+          full_name?: string
+          id?: string
+          is_available?: boolean | null
+          languages?: string[] | null
+          specialties?: string[]
+          title?: string
+          user_id?: string | null
+          verification_status?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
+      mental_health_progress: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          date: string
+          energy_level: number | null
+          exercise_completion: boolean | null
+          id: string
+          meditation_completion: boolean | null
+          mood_score: number | null
+          next_steps: string | null
+          notes: string | null
+          nutrition_adherence: boolean | null
+          professional_id: string | null
+          sleep_quality: number | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          date?: string
+          energy_level?: number | null
+          exercise_completion?: boolean | null
+          id?: string
+          meditation_completion?: boolean | null
+          mood_score?: number | null
+          next_steps?: string | null
+          notes?: string | null
+          nutrition_adherence?: boolean | null
+          professional_id?: string | null
+          sleep_quality?: number | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          date?: string
+          energy_level?: number | null
+          exercise_completion?: boolean | null
+          id?: string
+          meditation_completion?: boolean | null
+          mood_score?: number | null
+          next_steps?: string | null
+          notes?: string | null
+          nutrition_adherence?: boolean | null
+          professional_id?: string | null
+          sleep_quality?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mental_health_progress_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "mental_health_professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mood_logs: {
         Row: {
           activities: string[] | null
@@ -9168,6 +9423,56 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      prescribed_charge_recipes: {
+        Row: {
+          activities: Json[]
+          client_id: string | null
+          created_at: string
+          description: string | null
+          duration_days: number | null
+          id: string
+          prescription_date: string | null
+          professional_id: string | null
+          schedule: Json
+          status: string | null
+          title: string
+        }
+        Insert: {
+          activities: Json[]
+          client_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          id?: string
+          prescription_date?: string | null
+          professional_id?: string | null
+          schedule: Json
+          status?: string | null
+          title: string
+        }
+        Update: {
+          activities?: Json[]
+          client_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          id?: string
+          prescription_date?: string | null
+          professional_id?: string | null
+          schedule?: Json
+          status?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescribed_charge_recipes_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "mental_health_professionals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       price_alerts: {
         Row: {
