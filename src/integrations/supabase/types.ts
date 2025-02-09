@@ -1777,22 +1777,29 @@ export type Database = {
           created_at: string
           denomination: string | null
           description: string | null
+          dress_code: string | null
           email: string | null
           facilities: Json | null
+          history: string | null
           id: string
           is_verified: boolean | null
           languages: string[] | null
           latitude: number | null
           longitude: number | null
           ministries: Json | null
+          mission_statement: string | null
           name: string
+          parking_info: string | null
           phone: string | null
           postal_code: string
           service_times: Json | null
+          small_groups: Json | null
           social_media: Json | null
+          staff: Json | null
           state: string
           updated_at: string
           website_url: string | null
+          youth_programs: Json | null
         }
         Insert: {
           accessibility_features?: string[] | null
@@ -1802,22 +1809,29 @@ export type Database = {
           created_at?: string
           denomination?: string | null
           description?: string | null
+          dress_code?: string | null
           email?: string | null
           facilities?: Json | null
+          history?: string | null
           id?: string
           is_verified?: boolean | null
           languages?: string[] | null
           latitude?: number | null
           longitude?: number | null
           ministries?: Json | null
+          mission_statement?: string | null
           name: string
+          parking_info?: string | null
           phone?: string | null
           postal_code: string
           service_times?: Json | null
+          small_groups?: Json | null
           social_media?: Json | null
+          staff?: Json | null
           state: string
           updated_at?: string
           website_url?: string | null
+          youth_programs?: Json | null
         }
         Update: {
           accessibility_features?: string[] | null
@@ -1827,22 +1841,29 @@ export type Database = {
           created_at?: string
           denomination?: string | null
           description?: string | null
+          dress_code?: string | null
           email?: string | null
           facilities?: Json | null
+          history?: string | null
           id?: string
           is_verified?: boolean | null
           languages?: string[] | null
           latitude?: number | null
           longitude?: number | null
           ministries?: Json | null
+          mission_statement?: string | null
           name?: string
+          parking_info?: string | null
           phone?: string | null
           postal_code?: string
           service_times?: Json | null
+          small_groups?: Json | null
           social_media?: Json | null
+          staff?: Json | null
           state?: string
           updated_at?: string
           website_url?: string | null
+          youth_programs?: Json | null
         }
         Relationships: []
       }
@@ -8171,6 +8192,187 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_feedback: {
+        Row: {
+          attachments: string[] | null
+          created_at: string
+          description: string
+          id: string
+          priority: Database["public"]["Enums"]["feedback_priority"]
+          product_id: string | null
+          status: Database["public"]["Enums"]["feedback_status"]
+          tags: string[] | null
+          title: string
+          type: Database["public"]["Enums"]["feedback_type"]
+          updated_at: string
+          upvotes_count: number
+          user_id: string | null
+          visibility: string
+        }
+        Insert: {
+          attachments?: string[] | null
+          created_at?: string
+          description: string
+          id?: string
+          priority?: Database["public"]["Enums"]["feedback_priority"]
+          product_id?: string | null
+          status?: Database["public"]["Enums"]["feedback_status"]
+          tags?: string[] | null
+          title: string
+          type?: Database["public"]["Enums"]["feedback_type"]
+          updated_at?: string
+          upvotes_count?: number
+          user_id?: string | null
+          visibility?: string
+        }
+        Update: {
+          attachments?: string[] | null
+          created_at?: string
+          description?: string
+          id?: string
+          priority?: Database["public"]["Enums"]["feedback_priority"]
+          product_id?: string | null
+          status?: Database["public"]["Enums"]["feedback_status"]
+          tags?: string[] | null
+          title?: string
+          type?: Database["public"]["Enums"]["feedback_type"]
+          updated_at?: string
+          upvotes_count?: number
+          user_id?: string | null
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_feedback_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_feedback_analytics: {
+        Row: {
+          average_resolution_time_hours: number | null
+          created_at: string
+          id: string
+          open_issues_count: number
+          product_id: string | null
+          resolved_issues_count: number
+          top_requested_features: string[] | null
+          total_feedback_count: number
+          updated_at: string
+        }
+        Insert: {
+          average_resolution_time_hours?: number | null
+          created_at?: string
+          id?: string
+          open_issues_count?: number
+          product_id?: string | null
+          resolved_issues_count?: number
+          top_requested_features?: string[] | null
+          total_feedback_count?: number
+          updated_at?: string
+        }
+        Update: {
+          average_resolution_time_hours?: number | null
+          created_at?: string
+          id?: string
+          open_issues_count?: number
+          product_id?: string | null
+          resolved_issues_count?: number
+          top_requested_features?: string[] | null
+          total_feedback_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_analytics_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_feedback_analytics_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_feedback_comments: {
+        Row: {
+          content: string
+          created_at: string
+          feedback_id: string | null
+          id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          feedback_id?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          feedback_id?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_comments_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_feedback_upvotes: {
+        Row: {
+          created_at: string
+          feedback_id: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          feedback_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          feedback_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_upvotes_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback"
             referencedColumns: ["id"]
           },
         ]
@@ -15590,6 +15792,13 @@ export type Database = {
         | "stretching"
         | "desk_exercise"
         | "eye_exercise"
+      feedback_priority: "low" | "medium" | "high" | "critical"
+      feedback_status: "open" | "in_progress" | "completed" | "declined"
+      feedback_type:
+        | "feature_request"
+        | "bug_report"
+        | "improvement"
+        | "general"
       feeding_method: "breastfeeding" | "formula" | "mixed" | "solid_transition"
       game_type:
         | "chess"
