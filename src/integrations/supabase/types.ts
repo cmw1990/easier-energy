@@ -1677,6 +1677,175 @@ export type Database = {
           },
         ]
       }
+      church_events: {
+        Row: {
+          church_id: string | null
+          created_at: string
+          description: string | null
+          end_time: string | null
+          event_type: string | null
+          id: string
+          is_recurring: boolean | null
+          location: string | null
+          recurrence_pattern: Json | null
+          start_time: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          church_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string | null
+          event_type?: string | null
+          id?: string
+          is_recurring?: boolean | null
+          location?: string | null
+          recurrence_pattern?: Json | null
+          start_time: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          church_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string | null
+          event_type?: string | null
+          id?: string
+          is_recurring?: boolean | null
+          location?: string | null
+          recurrence_pattern?: Json | null
+          start_time?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_events_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_reviews: {
+        Row: {
+          church_id: string | null
+          created_at: string
+          id: string
+          rating: number | null
+          review_text: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          church_id?: string | null
+          created_at?: string
+          id?: string
+          rating?: number | null
+          review_text?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          church_id?: string | null
+          created_at?: string
+          id?: string
+          rating?: number | null
+          review_text?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_reviews_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      churches: {
+        Row: {
+          accessibility_features: string[] | null
+          address: string
+          city: string
+          country: string
+          created_at: string
+          denomination: string | null
+          description: string | null
+          email: string | null
+          facilities: Json | null
+          id: string
+          is_verified: boolean | null
+          languages: string[] | null
+          latitude: number | null
+          longitude: number | null
+          ministries: Json | null
+          name: string
+          phone: string | null
+          postal_code: string
+          service_times: Json | null
+          social_media: Json | null
+          state: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          accessibility_features?: string[] | null
+          address: string
+          city: string
+          country?: string
+          created_at?: string
+          denomination?: string | null
+          description?: string | null
+          email?: string | null
+          facilities?: Json | null
+          id?: string
+          is_verified?: boolean | null
+          languages?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          ministries?: Json | null
+          name: string
+          phone?: string | null
+          postal_code: string
+          service_times?: Json | null
+          social_media?: Json | null
+          state: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          accessibility_features?: string[] | null
+          address?: string
+          city?: string
+          country?: string
+          created_at?: string
+          denomination?: string | null
+          description?: string | null
+          email?: string | null
+          facilities?: Json | null
+          id?: string
+          is_verified?: boolean | null
+          languages?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          ministries?: Json | null
+          name?: string
+          phone?: string | null
+          postal_code?: string
+          service_times?: Json | null
+          social_media?: Json | null
+          state?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       coffee_brewing_guides: {
         Row: {
           brew_time: string | null
