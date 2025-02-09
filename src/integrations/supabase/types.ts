@@ -3540,6 +3540,36 @@ export type Database = {
         }
         Relationships: []
       }
+      dating_matches: {
+        Row: {
+          created_at: string | null
+          id: string
+          matched_at: string | null
+          user_1_action: string
+          user_2_action: string | null
+          user_id_1: string | null
+          user_id_2: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          matched_at?: string | null
+          user_1_action: string
+          user_2_action?: string | null
+          user_id_1?: string | null
+          user_id_2?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          matched_at?: string | null
+          user_1_action?: string
+          user_2_action?: string | null
+          user_id_1?: string | null
+          user_id_2?: string | null
+        }
+        Relationships: []
+      }
       delivery_tracking: {
         Row: {
           created_at: string | null
@@ -13326,10 +13356,15 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          birth_date: string | null
           created_at: string
+          dating_preferences: Json | null
+          gender: string | null
           id: string
+          interests: string[] | null
           last_active: string
           looking_for_relationship: boolean | null
+          photos: string[] | null
           relationship_preferences: string[] | null
           updated_at: string
           username: string | null
@@ -13337,10 +13372,15 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          birth_date?: string | null
           created_at?: string
+          dating_preferences?: Json | null
+          gender?: string | null
           id: string
+          interests?: string[] | null
           last_active?: string
           looking_for_relationship?: boolean | null
+          photos?: string[] | null
           relationship_preferences?: string[] | null
           updated_at?: string
           username?: string | null
@@ -13348,10 +13388,15 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          birth_date?: string | null
           created_at?: string
+          dating_preferences?: Json | null
+          gender?: string | null
           id?: string
+          interests?: string[] | null
           last_active?: string
           looking_for_relationship?: boolean | null
+          photos?: string[] | null
           relationship_preferences?: string[] | null
           updated_at?: string
           username?: string | null
