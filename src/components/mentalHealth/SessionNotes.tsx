@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
@@ -41,7 +40,7 @@ export function SessionNotes({ sessionId, clientId }: SessionNotesProps) {
   });
 
   // Use useEffect to handle the success case
-  React.useEffect(() => {
+  useEffect(() => {
     if (existingNotes) {
       setNotes({
         content: existingNotes.content || "",

@@ -12,6 +12,9 @@ export interface ConsultationSession {
   notes?: string;
   created_at: string;
   updated_at: string;
+  professional?: {
+    full_name: string;
+  };
 }
 
 export interface ConsultationPackage {
@@ -38,6 +41,10 @@ export interface PackagePurchase {
   total_amount: number;
   status: 'active' | 'expired' | 'cancelled';
   created_at: string;
+  package?: ConsultationPackage;
+  professional?: {
+    full_name: string;
+  };
 }
 
 export interface ClientProgressTracking {
@@ -62,6 +69,14 @@ export interface ConsultationMessage {
   message_type: 'text' | 'file' | 'image';
   file_url?: string;
   created_at: string;
+  sender?: {
+    full_name: string;
+    avatar_url?: string;
+  };
+  receiver?: {
+    full_name: string;
+    avatar_url?: string;
+  };
 }
 
 export interface ConsultationNote {
@@ -74,5 +89,32 @@ export interface ConsultationNote {
   follow_up_date?: string;
   recommendations?: Record<string, any>;
   mood_observed?: string;
+  created_at: string;
+}
+
+export interface CustomerBehavior {
+  id: string;
+  vendor_id: string;
+  behavior_patterns: {
+    active_users: number;
+    engagement_rate: number;
+    response_rate: number;
+    segments: Array<{
+      name: string;
+      value: number;
+    }>;
+  };
+  customer_segments: {
+    new: number;
+    returning: number;
+    inactive: number;
+  };
+  revenue_trends: {
+    daily: Array<{date: string; revenue: number}>;
+    weekly: Array<{week: string; revenue: number}>;
+    monthly: Array<{month: string; revenue: number}>;
+  };
+  engagement_metrics: Record<string, any>;
+  purchase_predictions: Record<string, any>;
   created_at: string;
 }
