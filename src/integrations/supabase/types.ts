@@ -17728,6 +17728,56 @@ export type Database = {
           },
         ]
       }
+      vendor_smart_notifications: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          metadata: Json
+          notification_type: string
+          priority: string
+          scheduled_for: string | null
+          title: string
+          trigger_conditions: Json
+          vendor_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          metadata?: Json
+          notification_type: string
+          priority?: string
+          scheduled_for?: string | null
+          title: string
+          trigger_conditions?: Json
+          vendor_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          metadata?: Json
+          notification_type?: string
+          priority?: string
+          scheduled_for?: string | null
+          title?: string
+          trigger_conditions?: Json
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_smart_notifications_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_social_integrations: {
         Row: {
           created_at: string | null

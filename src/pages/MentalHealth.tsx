@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { CBTExercises } from "@/components/cbt/CBTExercises";
+import CBTExercises from "@/components/cbt/CBTExercises";
 import { ConsultationBooking } from "@/components/mentalHealth/ConsultationBooking";
 import { ProfessionalDirectory } from "@/components/mentalHealth/ProfessionalDirectory";
 import { MoodTracker } from "@/components/mentalHealth/MoodTracker";

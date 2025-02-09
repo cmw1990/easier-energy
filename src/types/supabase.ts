@@ -513,6 +513,26 @@ export interface Database {
           stock?: number | null
         }
       }
+      vendor_smart_notifications: {
+        Row: VendorSmartNotification;
+        Insert: Omit<VendorSmartNotification, 'id' | 'created_at'>;
+        Update: Partial<Omit<VendorSmartNotification, 'id' | 'created_at'>>;
+      };
+      marketplace_platform_metrics: {
+        Row: MarketplaceMetrics;
+        Insert: Omit<MarketplaceMetrics, 'id' | 'created_at'>;
+        Update: Partial<Omit<MarketplaceMetrics, 'id' | 'created_at'>>;
+      };
+      vendor_loyalty_programs: {
+        Row: LoyaltyProgram;
+        Insert: Omit<LoyaltyProgram, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<LoyaltyProgram, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      customer_behavior_analysis: {
+        Row: CustomerBehavior;
+        Insert: Omit<CustomerBehavior, 'id'>;
+        Update: Partial<Omit<CustomerBehavior, 'id'>>;
+      };
     }
     Functions: {
       calculate_available_discount: {
@@ -636,4 +656,81 @@ export interface EngagementAnalytic {
   date: string;
   engagement_metrics: Json;
   created_at: string;
+}
+
+export interface VendorSmartNotification {
+  id: string;
+  vendor_id: string;
+  title: string;
+  content: string;
+  notification_type: string;
+  priority: 'low' | 'medium' | 'high';
+  trigger_conditions: Record<string, any>;
+  metadata: Record<string, any>;
+  created_at: string;
+  is_read: boolean;
+  scheduled_for: string | null;
+}
+
+export interface BehaviorPattern {
+  active_users: number;
+  engagement_rate: number;
+  response_rate: number;
+  peak_hours: number[];
+  segments: Array<{
+    name: string;
+    value: number;
+  }>;
+}
+
+export interface CustomerBehavior {
+  id: string;
+  vendor_id: string;
+  behavior_patterns: BehaviorPattern;
+  engagement_metrics: Record<string, any>;
+  purchase_predictions: Record<string, any>;
+  customer_segments: {
+    new: number;
+    returning: number;
+    inactive: number;
+  };
+  revenue_trends: {
+    daily: Array<{date: string; revenue: number}>;
+    weekly: Array<{week: string; revenue: number}>;
+    monthly: Array<{month: string; revenue: number}>;
+  };
+}
+
+export interface MarketplaceMetrics {
+  id: string;
+  platform_name: string;
+  metrics_data: {
+    total_revenue: number;
+    total_orders: number;
+    conversion_rate: number;
+    other_metrics?: Record<string, any>;
+  };
+  sync_status: string;
+  last_sync_at: string;
+  created_at: string;
+  vendor_id: string;
+}
+
+export interface LoyaltyProgram {
+  id: string;
+  vendor_id: string;
+  program_name: string;
+  points_ratio: number;
+  tiers: Array<{
+    name: string;
+    points_required: number;
+    benefits: string[];
+  }>;
+  rewards: Array<{
+    name: string;
+    points_cost: number;
+    description: string;
+  }>;
+  created_at: string;
+  updated_at: string;
 }
