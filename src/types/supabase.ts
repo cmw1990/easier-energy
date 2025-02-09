@@ -225,7 +225,7 @@ export interface Database {
           order_number?: number
           duration_minutes?: number | null
           settings?: Json
-          notes?: string | null
+          notes?: string
         }
       }
       energy_plan_progress: {
@@ -410,7 +410,7 @@ export interface Database {
           id?: string
           subscription_tier: string
           multiplier: number
-          created_at?: string
+          created_at: string
         }
         Update: {
           subscription_tier?: string
@@ -470,7 +470,7 @@ export interface Database {
           points_used: number
           discount_amount: number
           order_id?: string | null
-          created_at?: string
+          created_at: string
         }
         Update: {
           user_id?: string
