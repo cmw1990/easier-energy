@@ -12539,30 +12539,36 @@ export type Database = {
       runes: {
         Row: {
           created_at: string
+          historical_context: string | null
           id: string
           interpretation: string
           meaning: string
           name: string
+          phonetic_value: string | null
           search_rank: number | null
           search_vector: unknown | null
           symbol: string
         }
         Insert: {
           created_at?: string
+          historical_context?: string | null
           id?: string
           interpretation: string
           meaning: string
           name: string
+          phonetic_value?: string | null
           search_rank?: number | null
           search_vector?: unknown | null
           symbol: string
         }
         Update: {
           created_at?: string
+          historical_context?: string | null
           id?: string
           interpretation?: string
           meaning?: string
           name?: string
+          phonetic_value?: string | null
           search_rank?: number | null
           search_vector?: unknown | null
           symbol?: string
