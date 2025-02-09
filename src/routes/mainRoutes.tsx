@@ -6,6 +6,9 @@ import Auth from "@/pages/Auth"
 import LandingPage from "@/pages/LandingPage"
 import { AuthProvider } from "@/components/AuthProvider"
 import { VendorAdDashboard } from "@/components/ads/VendorAdDashboard"
+import { ConsultationBooking } from "@/components/mentalHealth/ConsultationBooking"
+import { ClientConsultationDashboard } from "@/components/mentalHealth/clients/ClientConsultationDashboard"
+import { ProfessionalConsultationDashboard } from "@/components/mentalHealth/professionals/ProfessionalConsultationDashboard"
 
 const BathingPage = lazy(() => import("@/pages/Bathing"))
 const CBTPage = lazy(() => import("@/pages/CBT"))
@@ -413,6 +416,32 @@ export const mainRoutes = [
             <MentalHealthPage />
           </Suspense>
         ),
+        children: [
+          {
+            path: "consultations",
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <ConsultationBooking />
+              </Suspense>
+            ),
+          },
+          {
+            path: "dashboard",
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <ClientConsultationDashboard />
+              </Suspense>
+            ),
+          },
+          {
+            path: "professional-dashboard",
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <ProfessionalConsultationDashboard />
+              </Suspense>
+            ),
+          },
+        ],
       },
     ],
   },
