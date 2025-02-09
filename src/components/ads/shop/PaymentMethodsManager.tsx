@@ -67,7 +67,12 @@ export function PaymentMethodsManager() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      return data as PaymentMethod[]
+      
+      // Cast the data to ensure account_details is properly typed
+      return (data as any[]).map(method => ({
+        ...method,
+        account_details: method.account_details as AccountDetails
+      })) as PaymentMethod[]
     },
     enabled: !!session?.user?.id
   })
