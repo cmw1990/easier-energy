@@ -2599,6 +2599,42 @@ export type Database = {
         }
         Relationships: []
       }
+      client_preferences: {
+        Row: {
+          client_id: string | null
+          communication_preferences: Json | null
+          created_at: string | null
+          id: string
+          preferred_approaches: string[] | null
+          preferred_gender: string | null
+          preferred_languages: string[] | null
+          timezone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          communication_preferences?: Json | null
+          created_at?: string | null
+          id?: string
+          preferred_approaches?: string[] | null
+          preferred_gender?: string | null
+          preferred_languages?: string[] | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          communication_preferences?: Json | null
+          created_at?: string | null
+          id?: string
+          preferred_approaches?: string[] | null
+          preferred_gender?: string | null
+          preferred_languages?: string[] | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       client_progress_tracking: {
         Row: {
           client_id: string | null
@@ -2937,6 +2973,47 @@ export type Database = {
           },
         ]
       }
+      consultation_feedback: {
+        Row: {
+          anonymous: boolean | null
+          client_id: string | null
+          created_at: string | null
+          feedback_text: string | null
+          id: string
+          professional_id: string | null
+          rating: number | null
+          session_id: string | null
+        }
+        Insert: {
+          anonymous?: boolean | null
+          client_id?: string | null
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string
+          professional_id?: string | null
+          rating?: number | null
+          session_id?: string | null
+        }
+        Update: {
+          anonymous?: boolean | null
+          client_id?: string | null
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string
+          professional_id?: string | null
+          rating?: number | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_feedback_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultation_messages: {
         Row: {
           attachment_url: string | null
@@ -3020,6 +3097,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      consultation_packages: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          price: number
+          professional_id: string | null
+          session_count: number
+          updated_at: string | null
+          validity_days: number
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          price: number
+          professional_id?: string | null
+          session_count: number
+          updated_at?: string | null
+          validity_days: number
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          price?: number
+          professional_id?: string | null
+          session_count?: number
+          updated_at?: string | null
+          validity_days?: number
+        }
+        Relationships: []
       }
       consultation_progress: {
         Row: {
@@ -4316,6 +4432,42 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      emergency_resources: {
+        Row: {
+          availability: string
+          contact_info: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          priority: number | null
+          resource_type: string
+        }
+        Insert: {
+          availability: string
+          contact_info: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          priority?: number | null
+          resource_type: string
+        }
+        Update: {
+          availability?: string
+          contact_info?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          priority?: number | null
+          resource_type?: string
         }
         Relationships: []
       }
@@ -6322,6 +6474,38 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_memberships: {
+        Row: {
+          group_id: string | null
+          id: string
+          joined_at: string | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          group_id?: string | null
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          group_id?: string | null
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_memberships_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "support_groups"
             referencedColumns: ["id"]
           },
         ]
@@ -11628,6 +11812,36 @@ export type Database = {
         }
         Relationships: []
       }
+      professional_specialties: {
+        Row: {
+          certifications: string[] | null
+          created_at: string | null
+          expertise_level: string
+          id: string
+          professional_id: string | null
+          specialty: string
+          years_experience: number | null
+        }
+        Insert: {
+          certifications?: string[] | null
+          created_at?: string | null
+          expertise_level: string
+          id?: string
+          professional_id?: string | null
+          specialty: string
+          years_experience?: number | null
+        }
+        Update: {
+          certifications?: string[] | null
+          created_at?: string | null
+          expertise_level?: string
+          id?: string
+          professional_id?: string | null
+          specialty?: string
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -13184,6 +13398,44 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "support_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_recordings: {
+        Row: {
+          consent_given_at: string | null
+          created_at: string | null
+          duration_seconds: number | null
+          id: string
+          recording_url: string
+          retention_days: number | null
+          session_id: string | null
+        }
+        Insert: {
+          consent_given_at?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          recording_url: string
+          retention_days?: number | null
+          session_id?: string | null
+        }
+        Update: {
+          consent_given_at?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          recording_url?: string
+          retention_days?: number | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_recordings_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -15043,6 +15295,51 @@ export type Database = {
           supplements?: string[]
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      support_groups: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_minutes: number | null
+          facilitator_id: string | null
+          id: string
+          is_private: boolean | null
+          max_participants: number | null
+          meeting_day: string | null
+          meeting_frequency: string | null
+          meeting_time: string | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          facilitator_id?: string | null
+          id?: string
+          is_private?: boolean | null
+          max_participants?: number | null
+          meeting_day?: string | null
+          meeting_frequency?: string | null
+          meeting_time?: string | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          facilitator_id?: string | null
+          id?: string
+          is_private?: boolean | null
+          max_participants?: number | null
+          meeting_day?: string | null
+          meeting_frequency?: string | null
+          meeting_time?: string | null
+          name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }

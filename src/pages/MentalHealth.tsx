@@ -7,8 +7,20 @@ import { ConsultationBooking } from "@/components/mentalHealth/ConsultationBooki
 import { ProfessionalDirectory } from "@/components/mentalHealth/ProfessionalDirectory";
 import { MoodTracker } from "@/components/mentalHealth/MoodTracker";
 import { TherapyDashboard } from "@/components/mentalHealth/TherapyDashboard";
+import { SupportGroups } from "@/components/mentalHealth/groups/SupportGroups";
+import { EmergencyResources } from "@/components/mentalHealth/crisis/EmergencyResources";
+import { ConsultationPackages } from "@/components/mentalHealth/packages/ConsultationPackages";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain, Users, Calendar, Activity, LineChart } from "lucide-react";
+import { 
+  Brain, 
+  Users, 
+  Calendar, 
+  Activity, 
+  LineChart,
+  MessagesSquare,
+  Package,
+  AlertTriangle 
+} from "lucide-react";
 
 export default function MentalHealth() {
   const { session } = useAuth();
@@ -21,7 +33,7 @@ export default function MentalHealth() {
       </div>
 
       <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <TabsList className="grid grid-cols-2 lg:grid-cols-8 gap-4">
           <TabsTrigger value="dashboard" className="gap-2">
             <Activity className="h-4 w-4" />
             Dashboard
@@ -34,6 +46,14 @@ export default function MentalHealth() {
             <Calendar className="h-4 w-4" />
             Consultations
           </TabsTrigger>
+          <TabsTrigger value="packages" className="gap-2">
+            <Package className="h-4 w-4" />
+            Packages
+          </TabsTrigger>
+          <TabsTrigger value="groups" className="gap-2">
+            <MessagesSquare className="h-4 w-4" />
+            Support Groups
+          </TabsTrigger>
           <TabsTrigger value="exercises" className="gap-2">
             <Brain className="h-4 w-4" />
             CBT Exercises
@@ -41,6 +61,10 @@ export default function MentalHealth() {
           <TabsTrigger value="mood" className="gap-2">
             <LineChart className="h-4 w-4" />
             Mood Tracking
+          </TabsTrigger>
+          <TabsTrigger value="emergency" className="gap-2">
+            <AlertTriangle className="h-4 w-4" />
+            Emergency
           </TabsTrigger>
         </TabsList>
 
@@ -56,12 +80,24 @@ export default function MentalHealth() {
           <ConsultationBooking />
         </TabsContent>
 
+        <TabsContent value="packages">
+          <ConsultationPackages />
+        </TabsContent>
+
+        <TabsContent value="groups">
+          <SupportGroups />
+        </TabsContent>
+
         <TabsContent value="exercises">
           <CBTExercises />
         </TabsContent>
 
         <TabsContent value="mood">
           <MoodTracker />
+        </TabsContent>
+
+        <TabsContent value="emergency">
+          <EmergencyResources />
         </TabsContent>
       </Tabs>
     </div>
