@@ -12988,6 +12988,48 @@ export type Database = {
         }
         Relationships: []
       }
+      smart_notifications: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          metadata: Json | null
+          notification_type: string
+          priority: Database["public"]["Enums"]["notification_priority"] | null
+          scheduled_for: string | null
+          title: string
+          trigger_conditions: Json | null
+          vendor_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          metadata?: Json | null
+          notification_type: string
+          priority?: Database["public"]["Enums"]["notification_priority"] | null
+          scheduled_for?: string | null
+          title: string
+          trigger_conditions?: Json | null
+          vendor_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          metadata?: Json | null
+          notification_type?: string
+          priority?: Database["public"]["Enums"]["notification_priority"] | null
+          scheduled_for?: string | null
+          title?: string
+          trigger_conditions?: Json | null
+          vendor_id?: string
+        }
+        Relationships: []
+      }
       smoking_logs: {
         Row: {
           created_at: string | null
@@ -18090,6 +18132,7 @@ export type Database = {
       integration_status: "pending" | "active" | "failed" | "revoked"
       life_situation: "regular" | "pregnancy" | "postpartum" | "breastfeeding"
       mood_category: "positive" | "negative" | "neutral"
+      notification_priority: "low" | "medium" | "high"
       order_status:
         | "pending"
         | "processing"
