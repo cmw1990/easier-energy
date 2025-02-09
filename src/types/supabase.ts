@@ -568,6 +568,31 @@ export interface Database {
         Insert: Omit<ConsultationMessage, 'id' | 'created_at'>
         Update: Partial<Omit<ConsultationMessage, 'id' | 'created_at'>>
       }
+      professional_scheduling_rules: {
+        Row: ProfessionalSchedulingRule;
+        Insert: Omit<ProfessionalSchedulingRule, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<ProfessionalSchedulingRule, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      client_emergency_contacts: {
+        Row: ClientEmergencyContact;
+        Insert: Omit<ClientEmergencyContact, 'id' | 'created_at'>;
+        Update: Partial<Omit<ClientEmergencyContact, 'id' | 'created_at'>>;
+      };
+      consultation_resources: {
+        Row: ConsultationResource;
+        Insert: Omit<ConsultationResource, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<ConsultationResource, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      shared_consultation_resources: {
+        Row: SharedConsultationResource;
+        Insert: Omit<SharedConsultationResource, 'id' | 'created_at'>;
+        Update: Partial<Omit<SharedConsultationResource, 'id' | 'created_at'>>;
+      };
+      consultation_reminders: {
+        Row: ConsultationReminder;
+        Insert: Omit<ConsultationReminder, 'id' | 'created_at'>;
+        Update: Partial<Omit<ConsultationReminder, 'id' | 'created_at'>>;
+      };
     }
     Functions: {
       calculate_available_discount: {
@@ -845,4 +870,63 @@ export interface ConsultationMessage {
   message_type: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface ProfessionalSchedulingRule {
+  id: string;
+  professional_id: string;
+  session_duration_minutes: number;
+  buffer_minutes: number;
+  max_daily_sessions: number;
+  notification_preferences: {
+    email: boolean;
+    sms: boolean;
+    reminders: string[];
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientEmergencyContact {
+  id: string;
+  client_id: string;
+  contact_name: string;
+  relationship: string;
+  phone: string;
+  email?: string;
+  is_primary: boolean;
+  created_at: string;
+}
+
+export interface ConsultationResource {
+  id: string;
+  professional_id: string;
+  title: string;
+  description?: string;
+  resource_type: string;
+  content?: string;
+  file_url?: string;
+  tags: string[];
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SharedConsultationResource {
+  id: string;
+  resource_id: string;
+  client_id: string;
+  shared_by: string;
+  created_at: string;
+}
+
+export interface ConsultationReminder {
+  id: string;
+  session_id: string;
+  recipient_id: string;
+  reminder_type: string;
+  scheduled_for: string;
+  sent_at?: string;
+  status: 'pending' | 'sent' | 'failed';
+  created_at: string;
 }

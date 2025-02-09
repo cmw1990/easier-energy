@@ -2599,6 +2599,47 @@ export type Database = {
         }
         Relationships: []
       }
+      client_emergency_contacts: {
+        Row: {
+          client_id: string | null
+          contact_name: string
+          created_at: string | null
+          email: string | null
+          id: string
+          is_primary: boolean | null
+          phone: string
+          relationship: string
+        }
+        Insert: {
+          client_id?: string | null
+          contact_name: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_primary?: boolean | null
+          phone: string
+          relationship: string
+        }
+        Update: {
+          client_id?: string | null
+          contact_name?: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_primary?: boolean | null
+          phone?: string
+          relationship?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_emergency_contacts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_preferences: {
         Row: {
           client_id: string | null
@@ -3204,6 +3245,104 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "consultation_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_reminders: {
+        Row: {
+          created_at: string | null
+          id: string
+          recipient_id: string | null
+          reminder_type: string
+          scheduled_for: string
+          sent_at: string | null
+          session_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          recipient_id?: string | null
+          reminder_type: string
+          scheduled_for: string
+          sent_at?: string | null
+          session_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          recipient_id?: string | null
+          reminder_type?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          session_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_reminders_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_reminders_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_resources: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          description: string | null
+          file_url: string | null
+          id: string
+          is_public: boolean | null
+          professional_id: string | null
+          resource_type: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          is_public?: boolean | null
+          professional_id?: string | null
+          resource_type: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          is_public?: boolean | null
+          professional_id?: string | null
+          resource_type?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_resources_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -12418,6 +12557,47 @@ export type Database = {
         }
         Relationships: []
       }
+      professional_scheduling_rules: {
+        Row: {
+          buffer_minutes: number
+          created_at: string | null
+          id: string
+          max_daily_sessions: number
+          notification_preferences: Json | null
+          professional_id: string | null
+          session_duration_minutes: number
+          updated_at: string | null
+        }
+        Insert: {
+          buffer_minutes?: number
+          created_at?: string | null
+          id?: string
+          max_daily_sessions?: number
+          notification_preferences?: Json | null
+          professional_id?: string | null
+          session_duration_minutes?: number
+          updated_at?: string | null
+        }
+        Update: {
+          buffer_minutes?: number
+          created_at?: string | null
+          id?: string
+          max_daily_sessions?: number
+          notification_preferences?: Json | null
+          professional_id?: string | null
+          session_duration_minutes?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_scheduling_rules_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       professional_specialties: {
         Row: {
           certifications: string[] | null
@@ -14116,6 +14296,52 @@ export type Database = {
             columns: ["routine_id"]
             isOneToOne: false
             referencedRelation: "bathing_routines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shared_consultation_resources: {
+        Row: {
+          client_id: string | null
+          created_at: string | null
+          id: string
+          resource_id: string | null
+          shared_by: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string | null
+          id?: string
+          resource_id?: string | null
+          shared_by?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string | null
+          id?: string
+          resource_id?: string | null
+          shared_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shared_consultation_resources_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shared_consultation_resources_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shared_consultation_resources_shared_by_fkey"
+            columns: ["shared_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

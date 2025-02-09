@@ -1,0 +1,65 @@
+
+export interface ConsultationSession {
+  id: string;
+  client_id: string;
+  professional_id: string;
+  session_type: string;
+  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
+  scheduled_start: string;
+  scheduled_end: string;
+  actual_start?: string;
+  actual_end?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConsultationPackage {
+  id: string;
+  professional_id: string;
+  name: string;
+  description: string;
+  session_count: number;
+  validity_days: number;
+  price: number;
+  features: string[];
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PackagePurchase {
+  id: string;
+  package_id: string;
+  client_id: string;
+  professional_id: string;
+  sessions_remaining: number;
+  expires_at: string;
+  total_amount: number;
+  status: 'active' | 'expired' | 'cancelled';
+  created_at: string;
+}
+
+export interface ClientProgressTracking {
+  id: string;
+  client_id: string;
+  professional_id: string;
+  session_id: string;
+  progress_rating: number;
+  notes: string;
+  homework: string;
+  next_steps: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConsultationMessage {
+  id: string;
+  session_id: string;
+  sender_id: string;
+  receiver_id: string;
+  message: string;
+  message_type: 'text' | 'file' | 'image';
+  file_url?: string;
+  created_at: string;
+}
