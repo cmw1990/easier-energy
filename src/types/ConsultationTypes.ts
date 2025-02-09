@@ -1,4 +1,3 @@
-
 export interface ConsultationSession {
   id: string;
   client_id: string;
@@ -61,5 +60,18 @@ export interface ConsultationMessage {
   message: string;
   message_type: 'text' | 'file' | 'image';
   file_url?: string;
+  created_at: string;
+}
+
+export interface ConsultationNote {
+  id: string;
+  session_id: string;
+  professional_id: string;
+  client_id: string;
+  content: string;
+  progress_notes?: string;
+  follow_up_date?: string;
+  recommendations?: Record<string, any>;
+  mood_observed?: string;
   created_at: string;
 }

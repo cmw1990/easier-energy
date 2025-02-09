@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { FileText, Save } from "lucide-react";
+import { ConsultationNote } from "@/types/ConsultationTypes";
 
 interface SessionNotesProps {
   sessionId: string;
@@ -19,7 +20,7 @@ export function SessionNotes({ sessionId, clientId }: SessionNotesProps) {
   const { session } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [notes, setNotes] = useState({
+  const [notes, setNotes] = useState<Partial<ConsultationNote>>({
     content: "",
     mood_observed: "",
     progress_notes: "",
@@ -35,20 +36,22 @@ export function SessionNotes({ sessionId, clientId }: SessionNotesProps) {
         .select('*')
         .eq('session_id', sessionId)
         .single();
-      return data;
-    },
-    onSuccess: (data) => {
-      if (data) {
-        setNotes({
-          content: data.content || "",
-          mood_observed: data.mood_observed || "",
-          progress_notes: data.progress_notes || "",
-          recommendations: data.recommendations || {},
-          follow_up_date: data.follow_up_date || ""
-        });
-      }
+      return data as ConsultationNote | null;
     }
   });
+
+  // Use useEffect to handle the success case
+  React.useEffect(() => {
+    if (existingNotes) {
+      setNotes({
+        content: existingNotes.content || "",
+        mood_observed: existingNotes.mood_observed || "",
+        progress_notes: existingNotes.progress_notes || "",
+        recommendations: existingNotes.recommendations || {},
+        follow_up_date: existingNotes.follow_up_date || ""
+      });
+    }
+  }, [existingNotes]);
 
   const saveNotes = useMutation({
     mutationFn: async () => {
