@@ -528,11 +528,46 @@ export interface Database {
         Insert: Omit<LoyaltyProgram, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<LoyaltyProgram, 'id' | 'created_at' | 'updated_at'>>;
       };
-      customer_behavior_analysis: {
-        Row: CustomerBehavior;
-        Insert: Omit<CustomerBehavior, 'id'>;
-        Update: Partial<Omit<CustomerBehavior, 'id'>>;
-      };
+      consultation_sessions: {
+        Row: ConsultationSession
+        Insert: Omit<ConsultationSession, 'id' | 'created_at'>
+        Update: Partial<Omit<ConsultationSession, 'id' | 'created_at'>>
+      }
+      consultation_progress: {
+        Row: ConsultationProgress
+        Insert: Omit<ConsultationProgress, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<ConsultationProgress, 'id' | 'created_at' | 'updated_at'>>
+      }
+      session_feedback: {
+        Row: SessionFeedback
+        Insert: Omit<SessionFeedback, 'id' | 'created_at'>
+        Update: Partial<Omit<SessionFeedback, 'id' | 'created_at'>>
+      }
+      professional_availability: {
+        Row: ProfessionalAvailability
+        Insert: Omit<ProfessionalAvailability, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<ProfessionalAvailability, 'id' | 'created_at' | 'updated_at'>>
+      }
+      professional_analytics: {
+        Row: ProfessionalAnalytics
+        Insert: Omit<ProfessionalAnalytics, 'id' | 'updated_at'>
+        Update: Partial<Omit<ProfessionalAnalytics, 'id' | 'updated_at'>>
+      }
+      professional_resources: {
+        Row: ProfessionalResource
+        Insert: Omit<ProfessionalResource, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<ProfessionalResource, 'id' | 'created_at' | 'updated_at'>>
+      }
+      client_progress_tracking: {
+        Row: ClientProgressTracking
+        Insert: Omit<ClientProgressTracking, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<ClientProgressTracking, 'id' | 'created_at' | 'updated_at'>>
+      }
+      consultation_messages: {
+        Row: ConsultationMessage
+        Insert: Omit<ConsultationMessage, 'id' | 'created_at'>
+        Update: Partial<Omit<ConsultationMessage, 'id' | 'created_at'>>
+      }
     }
     Functions: {
       calculate_available_discount: {
@@ -738,4 +773,76 @@ export interface VendorSmartNotification {
   created_at: string;
   is_read: boolean;
   scheduled_for: string | null;
+}
+
+export interface ConsultationSession {
+  id: string;
+  user_id: string;
+  session_date: string;
+  session_type: string;
+  session_duration: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConsultationProgress {
+  id: string;
+  consultation_id: string;
+  progress_status: string;
+  progress_details: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SessionFeedback {
+  id: string;
+  consultation_id: string;
+  feedback: string;
+  feedback_score: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProfessionalAvailability {
+  id: string;
+  professional_id: string;
+  availability_date: string;
+  availability_time: string;
+  availability_status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProfessionalAnalytics {
+  id: string;
+  professional_id: string;
+  analytics_data: Json;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProfessionalResource {
+  id: string;
+  professional_id: string;
+  resource_type: string;
+  resource_url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientProgressTracking {
+  id: string;
+  client_id: string;
+  progress_data: Json;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConsultationMessage {
+  id: string;
+  consultation_id: string;
+  message: string;
+  message_type: string;
+  created_at: string;
+  updated_at: string;
 }
