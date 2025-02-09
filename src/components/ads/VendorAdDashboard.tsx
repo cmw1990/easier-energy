@@ -21,6 +21,7 @@ import { useVendorSetup } from '@/hooks/useVendorSetup'
 import { VendorVerification } from './shop/VendorVerification'
 import { PaymentMethodsManager } from './shop/PaymentMethodsManager'
 import { WebhookManager } from './shop/WebhookManager'
+import { NotificationPreferencesManager } from './shop/NotificationPreferencesManager'
 
 export function VendorAdDashboard() {
   const { isSetupComplete, setupModal } = useVendorSetup();
@@ -38,7 +39,7 @@ export function VendorAdDashboard() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="guide" className="space-y-4">
-            <TabsList className="grid grid-cols-16">
+            <TabsList className="grid grid-cols-17">
               <TabsTrigger value="guide">Guide</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="products">Products</TabsTrigger>
@@ -55,6 +56,7 @@ export function VendorAdDashboard() {
               <TabsTrigger value="verification">Verification</TabsTrigger>
               <TabsTrigger value="payments">Payments</TabsTrigger>
               <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+              <TabsTrigger value="notifications">Notifications</TabsTrigger>
             </TabsList>
 
             <TabsContent value="guide">
@@ -119,6 +121,10 @@ export function VendorAdDashboard() {
 
             <TabsContent value="webhooks">
               <WebhookManager />
+            </TabsContent>
+
+            <TabsContent value="notifications">
+              <NotificationPreferencesManager />
             </TabsContent>
           </Tabs>
         </CardContent>

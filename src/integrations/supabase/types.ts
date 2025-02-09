@@ -5333,6 +5333,42 @@ export type Database = {
         }
         Relationships: []
       }
+      heritage_sites: {
+        Row: {
+          admission_fee: number | null
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          location: string
+          name: string
+          search_vector: unknown | null
+          visiting_hours: string | null
+        }
+        Insert: {
+          admission_fee?: number | null
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string | null
+          location: string
+          name: string
+          search_vector?: unknown | null
+          visiting_hours?: string | null
+        }
+        Update: {
+          admission_fee?: number | null
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          location?: string
+          name?: string
+          search_vector?: unknown | null
+          visiting_hours?: string | null
+        }
+        Relationships: []
+      }
       hunts: {
         Row: {
           created_at: string | null
@@ -6188,6 +6224,54 @@ export type Database = {
           safety_considerations?: string | null
           side_effects?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      nordic_accommodations: {
+        Row: {
+          amenities: string[] | null
+          bedrooms: number
+          created_at: string
+          description: string
+          id: string
+          image_urls: string[] | null
+          location: string
+          max_guests: number
+          name: string
+          price_per_night: number
+          rating: number | null
+          search_vector: unknown | null
+          total_reviews: number | null
+        }
+        Insert: {
+          amenities?: string[] | null
+          bedrooms: number
+          created_at?: string
+          description: string
+          id?: string
+          image_urls?: string[] | null
+          location: string
+          max_guests: number
+          name: string
+          price_per_night: number
+          rating?: number | null
+          search_vector?: unknown | null
+          total_reviews?: number | null
+        }
+        Update: {
+          amenities?: string[] | null
+          bedrooms?: number
+          created_at?: string
+          description?: string
+          id?: string
+          image_urls?: string[] | null
+          location?: string
+          max_guests?: number
+          name?: string
+          price_per_night?: number
+          rating?: number | null
+          search_vector?: unknown | null
+          total_reviews?: number | null
         }
         Relationships: []
       }
@@ -8198,12 +8282,25 @@ export type Database = {
       }
       product_feedback: {
         Row: {
+          actual_behavior: string | null
+          affected_users: string[] | null
+          assigned_to: string | null
           attachments: string[] | null
           created_at: string
           description: string
+          device_info: Json | null
+          due_date: string | null
+          expected_behavior: string | null
           id: string
+          impact_area: string[] | null
+          labels: string[] | null
           priority: Database["public"]["Enums"]["feedback_priority"]
           product_id: string | null
+          product_version: string | null
+          related_feedback: string[] | null
+          reproduction_steps: string | null
+          resolution_notes: string | null
+          satisfaction_score: number | null
           status: Database["public"]["Enums"]["feedback_status"]
           tags: string[] | null
           title: string
@@ -8211,15 +8308,29 @@ export type Database = {
           updated_at: string
           upvotes_count: number
           user_id: string | null
+          user_role: string | null
           visibility: string
         }
         Insert: {
+          actual_behavior?: string | null
+          affected_users?: string[] | null
+          assigned_to?: string | null
           attachments?: string[] | null
           created_at?: string
           description: string
+          device_info?: Json | null
+          due_date?: string | null
+          expected_behavior?: string | null
           id?: string
+          impact_area?: string[] | null
+          labels?: string[] | null
           priority?: Database["public"]["Enums"]["feedback_priority"]
           product_id?: string | null
+          product_version?: string | null
+          related_feedback?: string[] | null
+          reproduction_steps?: string | null
+          resolution_notes?: string | null
+          satisfaction_score?: number | null
           status?: Database["public"]["Enums"]["feedback_status"]
           tags?: string[] | null
           title: string
@@ -8227,15 +8338,29 @@ export type Database = {
           updated_at?: string
           upvotes_count?: number
           user_id?: string | null
+          user_role?: string | null
           visibility?: string
         }
         Update: {
+          actual_behavior?: string | null
+          affected_users?: string[] | null
+          assigned_to?: string | null
           attachments?: string[] | null
           created_at?: string
           description?: string
+          device_info?: Json | null
+          due_date?: string | null
+          expected_behavior?: string | null
           id?: string
+          impact_area?: string[] | null
+          labels?: string[] | null
           priority?: Database["public"]["Enums"]["feedback_priority"]
           product_id?: string | null
+          product_version?: string | null
+          related_feedback?: string[] | null
+          reproduction_steps?: string | null
+          resolution_notes?: string | null
+          satisfaction_score?: number | null
           status?: Database["public"]["Enums"]["feedback_status"]
           tags?: string[] | null
           title?: string
@@ -8243,6 +8368,7 @@ export type Database = {
           updated_at?: string
           upvotes_count?: number
           user_id?: string | null
+          user_role?: string | null
           visibility?: string
         }
         Relationships: [
@@ -8313,6 +8439,109 @@ export type Database = {
           },
         ]
       }
+      product_feedback_categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          parent_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_feedback_category_assignments: {
+        Row: {
+          category_id: string
+          created_at: string | null
+          feedback_id: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string | null
+          feedback_id: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string | null
+          feedback_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_category_assignments_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_feedback_category_assignments_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_feedback_changelog: {
+        Row: {
+          created_at: string | null
+          feedback_id: string | null
+          field_name: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_id?: string | null
+          field_name: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback_id?: string | null
+          field_name?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_changelog_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_feedback_comments: {
         Row: {
           content: string
@@ -8348,6 +8577,119 @@ export type Database = {
           },
         ]
       }
+      product_feedback_custom_field_values: {
+        Row: {
+          created_at: string | null
+          feedback_id: string | null
+          field_id: string | null
+          id: string
+          value: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_id?: string | null
+          field_id?: string | null
+          id?: string
+          value?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback_id?: string | null
+          field_id?: string | null
+          id?: string
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_custom_field_values_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_feedback_custom_field_values_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback_custom_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_feedback_custom_fields: {
+        Row: {
+          created_at: string | null
+          field_name: string
+          field_type: string
+          id: string
+          options: Json | null
+          product_id: string | null
+          required: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          field_name: string
+          field_type: string
+          id?: string
+          options?: Json | null
+          product_id?: string | null
+          required?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          field_name?: string
+          field_type?: string
+          id?: string
+          options?: Json | null
+          product_id?: string | null
+          required?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_custom_fields_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_feedback_custom_fields_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_feedback_subscriptions: {
+        Row: {
+          created_at: string | null
+          feedback_id: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_subscriptions_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_feedback_upvotes: {
         Row: {
           created_at: string
@@ -8370,6 +8712,38 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "product_feedback_upvotes_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_feedback_vote_history: {
+        Row: {
+          created_at: string | null
+          feedback_id: string | null
+          id: string
+          user_id: string | null
+          vote_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_id?: string | null
+          id?: string
+          user_id?: string | null
+          vote_type: string
+        }
+        Update: {
+          created_at?: string | null
+          feedback_id?: string | null
+          id?: string
+          user_id?: string | null
+          vote_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_feedback_vote_history_feedback_id_fkey"
             columns: ["feedback_id"]
             isOneToOne: false
             referencedRelation: "product_feedback"
@@ -10248,6 +10622,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ruins: {
+        Row: {
+          archaeological_features: string[] | null
+          conservation_status: string | null
+          created_at: string
+          description: string
+          historical_period: string | null
+          id: string
+          image_urls: string[] | null
+          location: string
+          name: string
+          search_vector: unknown | null
+          visiting_info: string | null
+        }
+        Insert: {
+          archaeological_features?: string[] | null
+          conservation_status?: string | null
+          created_at?: string
+          description: string
+          historical_period?: string | null
+          id?: string
+          image_urls?: string[] | null
+          location: string
+          name: string
+          search_vector?: unknown | null
+          visiting_info?: string | null
+        }
+        Update: {
+          archaeological_features?: string[] | null
+          conservation_status?: string | null
+          created_at?: string
+          description?: string
+          historical_period?: string | null
+          id?: string
+          image_urls?: string[] | null
+          location?: string
+          name?: string
+          search_vector?: unknown | null
+          visiting_info?: string | null
+        }
+        Relationships: []
       }
       runes: {
         Row: {
