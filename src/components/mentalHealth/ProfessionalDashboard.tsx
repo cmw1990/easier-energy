@@ -1,19 +1,11 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client"; 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/AuthProvider";
-import { Users, Calendar, DollarSign, Star, BarChart, Target, MessageCircle } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts';
+import { Users, Calendar, Package, Star, Activity, MessageCircle } from "lucide-react";
+import { AvailabilityManager } from "./AvailabilityManager";
 
 export function ProfessionalDashboard() {
   const { session } = useAuth();
@@ -86,7 +78,7 @@ export function ProfessionalDashboard() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analytics?.completed_sessions || 0}</div>
+            <div className="text-2xl font-bold">{analytics?.total_sessions || 0}</div>
             <p className="text-xs text-muted-foreground">Total sessions completed</p>
           </CardContent>
         </Card>
@@ -94,7 +86,7 @@ export function ProfessionalDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -149,7 +141,7 @@ export function ProfessionalDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
+              <Activity className="h-5 w-5" />
               Client Progress
             </CardTitle>
           </CardHeader>
@@ -179,6 +171,15 @@ export function ProfessionalDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Manage Your Availability</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AvailabilityManager />
+        </CardContent>
+      </Card>
     </div>
   );
 }
