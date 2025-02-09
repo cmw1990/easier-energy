@@ -1772,97 +1772,157 @@ export type Database = {
         Row: {
           accessibility_features: string[] | null
           address: string
+          architectural_style: string | null
+          capacity: number | null
+          childcare: boolean | null
           city: string
+          community_services: Json | null
+          contact_persons: Json | null
           country: string
           created_at: string
           denomination: string | null
           description: string | null
           dress_code: string | null
+          education_programs: Json | null
           email: string | null
           facilities: Json | null
+          founding_year: number | null
+          hearing_assistance: boolean | null
           history: string | null
           id: string
           is_verified: boolean | null
           languages: string[] | null
           latitude: number | null
           longitude: number | null
+          main_leader: string | null
           ministries: Json | null
           mission_statement: string | null
           name: string
           parking_info: string | null
           phone: string | null
+          photos: string[] | null
           postal_code: string
+          search_vector: unknown | null
           service_times: Json | null
           small_groups: Json | null
+          social_events: Json | null
           social_media: Json | null
+          special_ministries: Json | null
           staff: Json | null
           state: string
+          tags: string[] | null
+          translations_available: string[] | null
+          transportation_services: Json | null
           updated_at: string
+          virtual_worship_links: Json | null
+          visiting_hours: Json | null
           website_url: string | null
+          wheelchair_accessible: boolean | null
+          worship_style: string[] | null
           youth_programs: Json | null
         }
         Insert: {
           accessibility_features?: string[] | null
           address: string
+          architectural_style?: string | null
+          capacity?: number | null
+          childcare?: boolean | null
           city: string
+          community_services?: Json | null
+          contact_persons?: Json | null
           country?: string
           created_at?: string
           denomination?: string | null
           description?: string | null
           dress_code?: string | null
+          education_programs?: Json | null
           email?: string | null
           facilities?: Json | null
+          founding_year?: number | null
+          hearing_assistance?: boolean | null
           history?: string | null
           id?: string
           is_verified?: boolean | null
           languages?: string[] | null
           latitude?: number | null
           longitude?: number | null
+          main_leader?: string | null
           ministries?: Json | null
           mission_statement?: string | null
           name: string
           parking_info?: string | null
           phone?: string | null
+          photos?: string[] | null
           postal_code: string
+          search_vector?: unknown | null
           service_times?: Json | null
           small_groups?: Json | null
+          social_events?: Json | null
           social_media?: Json | null
+          special_ministries?: Json | null
           staff?: Json | null
           state: string
+          tags?: string[] | null
+          translations_available?: string[] | null
+          transportation_services?: Json | null
           updated_at?: string
+          virtual_worship_links?: Json | null
+          visiting_hours?: Json | null
           website_url?: string | null
+          wheelchair_accessible?: boolean | null
+          worship_style?: string[] | null
           youth_programs?: Json | null
         }
         Update: {
           accessibility_features?: string[] | null
           address?: string
+          architectural_style?: string | null
+          capacity?: number | null
+          childcare?: boolean | null
           city?: string
+          community_services?: Json | null
+          contact_persons?: Json | null
           country?: string
           created_at?: string
           denomination?: string | null
           description?: string | null
           dress_code?: string | null
+          education_programs?: Json | null
           email?: string | null
           facilities?: Json | null
+          founding_year?: number | null
+          hearing_assistance?: boolean | null
           history?: string | null
           id?: string
           is_verified?: boolean | null
           languages?: string[] | null
           latitude?: number | null
           longitude?: number | null
+          main_leader?: string | null
           ministries?: Json | null
           mission_statement?: string | null
           name?: string
           parking_info?: string | null
           phone?: string | null
+          photos?: string[] | null
           postal_code?: string
+          search_vector?: unknown | null
           service_times?: Json | null
           small_groups?: Json | null
+          social_events?: Json | null
           social_media?: Json | null
+          special_ministries?: Json | null
           staff?: Json | null
           state?: string
+          tags?: string[] | null
+          translations_available?: string[] | null
+          transportation_services?: Json | null
           updated_at?: string
+          virtual_worship_links?: Json | null
+          visiting_hours?: Json | null
           website_url?: string | null
+          wheelchair_accessible?: boolean | null
+          worship_style?: string[] | null
           youth_programs?: Json | null
         }
         Relationships: []
@@ -16052,6 +16112,71 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cube:
+        | {
+            Args: {
+              "": number[]
+            }
+            Returns: unknown
+          }
+        | {
+            Args: {
+              "": number
+            }
+            Returns: unknown
+          }
+      cube_dim: {
+        Args: {
+          "": unknown
+        }
+        Returns: number
+      }
+      cube_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      cube_is_point: {
+        Args: {
+          "": unknown
+        }
+        Returns: boolean
+      }
+      cube_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      cube_recv: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      cube_send: {
+        Args: {
+          "": unknown
+        }
+        Returns: string
+      }
+      cube_size: {
+        Args: {
+          "": unknown
+        }
+        Returns: number
+      }
+      earth: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      gc_to_sec: {
+        Args: {
+          "": number
+        }
+        Returns: number
+      }
       get_similar_products: {
         Args: {
           product_id: string
@@ -16080,6 +16205,18 @@ export type Database = {
         }
         Returns: undefined
       }
+      latitude: {
+        Args: {
+          "": unknown
+        }
+        Returns: number
+      }
+      longitude: {
+        Args: {
+          "": unknown
+        }
+        Returns: number
+      }
       products_to_tsvector: {
         Args: {
           name: string
@@ -16089,11 +16226,17 @@ export type Database = {
         }
         Returns: unknown
       }
+      sec_to_gc: {
+        Args: {
+          "": number
+        }
+        Returns: number
+      }
     }
     Enums: {
       activity_impact: "positive" | "negative" | "neutral"
       activity_type: "steps" | "app_usage" | "subscription_boost" | "purchase"
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "product_manager"
       bathing_tag:
         | "energizing"
         | "relaxing"
