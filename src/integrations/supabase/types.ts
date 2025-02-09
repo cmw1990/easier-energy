@@ -2669,7 +2669,15 @@ export type Database = {
           treatment_goals?: string[] | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "client_progress_client_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       coffee_brewing_guides: {
         Row: {
@@ -3042,7 +3050,15 @@ export type Database = {
           receiver_id?: string | null
           sender_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "consultation_messages_sender_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       consultation_notes: {
         Row: {
@@ -3135,7 +3151,15 @@ export type Database = {
           updated_at?: string | null
           validity_days?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "consultation_packages_professional_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       consultation_progress: {
         Row: {
@@ -3222,6 +3246,13 @@ export type Database = {
           status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "consultation_sessions_client_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "consultation_sessions_professional_id_fkey"
             columns: ["professional_id"]
@@ -9157,6 +9188,13 @@ export type Database = {
             columns: ["package_id"]
             isOneToOne: false
             referencedRelation: "consultation_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "package_purchases_professional_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -15951,7 +15989,15 @@ export type Database = {
           name?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "support_groups_facilitator_fkey"
+            columns: ["facilitator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       support_network: {
         Row: {
