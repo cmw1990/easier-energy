@@ -716,6 +716,47 @@ export type Database = {
         }
         Relationships: []
       }
+      audio_content: {
+        Row: {
+          audio_url: string
+          content_type: string
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          id: string
+          realm_id: string | null
+          title: string
+        }
+        Insert: {
+          audio_url: string
+          content_type: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          realm_id?: string | null
+          title: string
+        }
+        Update: {
+          audio_url?: string
+          content_type?: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          realm_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audio_content_realm_id_fkey"
+            columns: ["realm_id"]
+            isOneToOne: false
+            referencedRelation: "realms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       baby_tracking: {
         Row: {
           baby_name: string | null
@@ -1586,6 +1627,56 @@ export type Database = {
           },
         ]
       }
+      characters: {
+        Row: {
+          created_at: string
+          description: string
+          family_connections: Json | null
+          id: string
+          image_url: string | null
+          name: string
+          powers: string[] | null
+          realm_id: string | null
+          search_vector: unknown | null
+          title: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          family_connections?: Json | null
+          id?: string
+          image_url?: string | null
+          name: string
+          powers?: string[] | null
+          realm_id?: string | null
+          search_vector?: unknown | null
+          title?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          family_connections?: Json | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          powers?: string[] | null
+          realm_id?: string | null
+          search_vector?: unknown | null
+          title?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "characters_realm_id_fkey"
+            columns: ["realm_id"]
+            isOneToOne: false
+            referencedRelation: "realms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coffee_brewing_guides: {
         Row: {
           brew_time: string | null
@@ -1754,6 +1845,41 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collection_verses: {
+        Row: {
+          book: string
+          chapter: number
+          collection_id: string
+          created_at: string
+          id: string
+          verse: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          collection_id: string
+          created_at?: string
+          id?: string
+          verse: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          collection_id?: string
+          created_at?: string
+          id?: string
+          verse?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_verses_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "verse_collections"
             referencedColumns: ["id"]
           },
         ]
@@ -6408,6 +6534,79 @@ export type Database = {
           },
         ]
       }
+      plan_day_verses: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string
+          id: string
+          plan_day_id: string
+          verse_end: number
+          verse_start: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string
+          id?: string
+          plan_day_id: string
+          verse_end: number
+          verse_start: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string
+          id?: string
+          plan_day_id?: string
+          verse_end?: number
+          verse_start?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_day_verses_plan_day_id_fkey"
+            columns: ["plan_day_id"]
+            isOneToOne: false
+            referencedRelation: "plan_days"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_days: {
+        Row: {
+          created_at: string
+          day_number: number
+          description: string | null
+          id: string
+          plan_id: string
+          title: string | null
+        }
+        Insert: {
+          created_at?: string
+          day_number: number
+          description?: string | null
+          id?: string
+          plan_id: string
+          title?: string | null
+        }
+        Update: {
+          created_at?: string
+          day_number?: number
+          description?: string | null
+          id?: string
+          plan_id?: string
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_days_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "reading_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       platform_integrations: {
         Row: {
           access_token: string | null
@@ -9711,6 +9910,44 @@ export type Database = {
           symbol?: string
         }
         Relationships: []
+      }
+      saga_narrations: {
+        Row: {
+          audio_url: string
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          language: string
+          narrator_name: string
+          saga_id: string | null
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          language: string
+          narrator_name: string
+          saga_id?: string | null
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          language?: string
+          narrator_name?: string
+          saga_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saga_narrations_saga_id_fkey"
+            columns: ["saga_id"]
+            isOneToOne: false
+            referencedRelation: "sagas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sagas: {
         Row: {
@@ -13234,6 +13471,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_highlights: {
+        Row: {
+          book: string
+          chapter: number
+          color: string
+          created_at: string
+          id: string
+          user_id: string
+          verse: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          color?: string
+          created_at?: string
+          id?: string
+          user_id: string
+          verse: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          color?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+          verse?: number
+        }
+        Relationships: []
+      }
       user_life_situations: {
         Row: {
           id: string
@@ -13258,6 +13525,39 @@ export type Database = {
           started_at?: string | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_notes: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string
+          id: string
+          note_text: string
+          updated_at: string
+          user_id: string
+          verse: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string
+          id?: string
+          note_text: string
+          updated_at?: string
+          user_id: string
+          verse: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string
+          id?: string
+          note_text?: string
+          updated_at?: string
+          user_id?: string
+          verse?: number
         }
         Relationships: []
       }
@@ -14134,6 +14434,36 @@ export type Database = {
           reviewed_at?: string | null
           reviewer_notes?: string | null
           status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      verse_collections: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          title?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
