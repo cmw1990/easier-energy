@@ -9,6 +9,32 @@ import { useAuth } from "@/components/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+interface SmartNotification {
+  id: string
+  vendor_id: string
+  title: string
+  content: string
+  priority: 'low' | 'medium' | 'high'
+  is_read: boolean
+  created_at: string
+}
+
+interface BehaviorPattern {
+  active_users: number
+  engagement_rate: number
+  response_rate: number
+  segments: Array<{
+    name: string
+    value: number
+  }>
+}
+
+interface CustomerBehavior {
+  id: string
+  vendor_id: string
+  behavior_patterns: BehaviorPattern
+}
+
 export function SmartNotifications() {
   const { session } = useAuth()
   const { toast } = useToast()
@@ -29,12 +55,13 @@ export function SmartNotifications() {
   const { data: notifications, isLoading } = useQuery({
     queryKey: ['smart-notifications', vendorId],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('smart_notifications')
+      const { data, error } = await supabase
+        .from('vendor_smart_notifications')
         .select('*')
         .eq('vendor_id', vendorId)
         .order('created_at', { ascending: false })
-      return data
+      if (error) throw error
+      return data as SmartNotification[]
     },
     enabled: !!vendorId
   })
@@ -42,19 +69,20 @@ export function SmartNotifications() {
   const { data: behaviorAnalysis } = useQuery({
     queryKey: ['customer-behavior', vendorId],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('customer_behavior_analysis')
         .select('*')
         .eq('vendor_id', vendorId)
         .single()
-      return data
+      if (error) throw error
+      return data as CustomerBehavior
     },
     enabled: !!vendorId
   })
 
   const markAsRead = async (notificationId: string) => {
     const { error } = await supabase
-      .from('smart_notifications')
+      .from('vendor_smart_notifications')
       .update({ is_read: true })
       .eq('id', notificationId)
 
@@ -180,7 +208,7 @@ export function SmartNotifications() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {behaviorAnalysis.behavior_patterns.segments?.map((segment: any) => (
+                        {behaviorAnalysis.behavior_patterns.segments?.map((segment) => (
                           <div key={segment.name} className="flex items-center justify-between">
                             <span className="text-sm font-medium">{segment.name}</span>
                             <span className="text-sm text-muted-foreground">{segment.value} users</span>
@@ -200,4 +228,3 @@ export function SmartNotifications() {
     </div>
   )
 }
-

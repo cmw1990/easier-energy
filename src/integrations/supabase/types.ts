@@ -6249,6 +6249,7 @@ export type Database = {
           name: string
           search_rank: number | null
           search_vector: unknown | null
+          slug: string | null
           visiting_hours: string | null
         }
         Insert: {
@@ -6261,6 +6262,7 @@ export type Database = {
           name: string
           search_rank?: number | null
           search_vector?: unknown | null
+          slug?: string | null
           visiting_hours?: string | null
         }
         Update: {
@@ -6273,6 +6275,7 @@ export type Database = {
           name?: string
           search_rank?: number | null
           search_vector?: unknown | null
+          slug?: string | null
           visiting_hours?: string | null
         }
         Relationships: []
@@ -11768,6 +11771,7 @@ export type Database = {
           name: string
           search_rank: number | null
           search_vector: unknown | null
+          slug: string | null
           visiting_info: string | null
         }
         Insert: {
@@ -11782,6 +11786,7 @@ export type Database = {
           name: string
           search_rank?: number | null
           search_vector?: unknown | null
+          slug?: string | null
           visiting_info?: string | null
         }
         Update: {
@@ -11796,6 +11801,7 @@ export type Database = {
           name?: string
           search_rank?: number | null
           search_vector?: unknown | null
+          slug?: string | null
           visiting_info?: string | null
         }
         Relationships: []
