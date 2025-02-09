@@ -13701,16 +13701,19 @@ export type Database = {
       }
       sagas: {
         Row: {
+          annotations: Json | null
           audio_duration_seconds: number | null
           audio_url: string | null
           author: string | null
           categories: string[] | null
           content: string
           created_at: string
+          cultural_significance: string | null
           description: string
           historical_period: string | null
           id: string
           image_url: string | null
+          linked_elements: Json | null
           narrator_name: string | null
           reading_time_minutes: number | null
           related_sagas: string[] | null
@@ -13720,16 +13723,19 @@ export type Database = {
           title: string
         }
         Insert: {
+          annotations?: Json | null
           audio_duration_seconds?: number | null
           audio_url?: string | null
           author?: string | null
           categories?: string[] | null
           content: string
           created_at?: string
+          cultural_significance?: string | null
           description: string
           historical_period?: string | null
           id?: string
           image_url?: string | null
+          linked_elements?: Json | null
           narrator_name?: string | null
           reading_time_minutes?: number | null
           related_sagas?: string[] | null
@@ -13739,16 +13745,19 @@ export type Database = {
           title: string
         }
         Update: {
+          annotations?: Json | null
           audio_duration_seconds?: number | null
           audio_url?: string | null
           author?: string | null
           categories?: string[] | null
           content?: string
           created_at?: string
+          cultural_significance?: string | null
           description?: string
           historical_period?: string | null
           id?: string
           image_url?: string | null
+          linked_elements?: Json | null
           narrator_name?: string | null
           reading_time_minutes?: number | null
           related_sagas?: string[] | null

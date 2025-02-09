@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar, Clock, DollarSign, Package } from "lucide-react";
+import { Package, Clock, DollarSign } from "lucide-react";
 
 export function ConsultationPackages() {
   const { session } = useAuth();
@@ -31,7 +31,9 @@ export function ConsultationPackages() {
         .from('consultation_packages')
         .select(`
           *,
-          professional:professional_id(full_name)
+          professional:professional_id (
+            full_name
+          )
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
@@ -80,22 +82,22 @@ export function ConsultationPackages() {
 
   const purchasePackage = useMutation({
     mutationFn: async (pkg: any) => {
-      const { data: purchaseData, error: purchaseError } = await supabase
+      const { data, error } = await supabase
         .from('package_purchases')
-        .insert([{
+        .insert({
           package_id: pkg.id,
           client_id: session?.user?.id,
           professional_id: pkg.professional_id,
           sessions_remaining: pkg.session_count,
-          expires_at: new Date(Date.now() + pkg.validity_days * 24 * 60 * 60 * 1000),
+          expires_at: new Date(Date.now() + pkg.validity_days * 24 * 60 * 60 * 1000).toISOString(),
           total_amount: pkg.price,
           status: 'active'
-        }])
+        })
         .select()
         .single();
 
-      if (purchaseError) throw purchaseError;
-      return purchaseData;
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       toast({
@@ -200,11 +202,10 @@ export function ConsultationPackages() {
                   <span>{pkg.session_count} sessions</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="h-4 w-4" />
+                  <Clock className="h-4 w-4" />
                   <span>Valid for {pkg.validity_days} days</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4" />
                   <span>By {pkg.professional?.full_name}</span>
                 </div>
               </div>
@@ -225,4 +226,3 @@ export function ConsultationPackages() {
     </div>
   );
 }
-

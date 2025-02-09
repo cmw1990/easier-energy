@@ -35,7 +35,9 @@ export function SupportGroups() {
         .from('support_groups')
         .select(`
           *,
-          facilitator:facilitator_id(full_name),
+          facilitator:facilitator_id (
+            full_name
+          ),
           memberships:group_memberships(count)
         `)
         .order('created_at', { ascending: false });
