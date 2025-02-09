@@ -6484,6 +6484,50 @@ export type Database = {
           },
         ]
       }
+      group_bible_studies: {
+        Row: {
+          attachments: string[] | null
+          content: string | null
+          created_at: string | null
+          created_by: string | null
+          group_id: string
+          id: string
+          schedule: Json | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          attachments?: string[] | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          group_id: string
+          id?: string
+          schedule?: Json | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          attachments?: string[] | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          group_id?: string
+          id?: string
+          schedule?: Json | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_bible_studies_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_discussion_comments: {
         Row: {
           content: string
@@ -6822,6 +6866,114 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_study_attendance: {
+        Row: {
+          created_at: string | null
+          id: string
+          joined_at: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          joined_at?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          joined_at?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_study_attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "group_study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_study_progress: {
+        Row: {
+          completed_sessions: number | null
+          created_at: string | null
+          id: string
+          last_session_date: string | null
+          notes: string | null
+          study_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_sessions?: number | null
+          created_at?: string | null
+          id?: string
+          last_session_date?: string | null
+          notes?: string | null
+          study_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_sessions?: number | null
+          created_at?: string | null
+          id?: string
+          last_session_date?: string | null
+          notes?: string | null
+          study_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_study_progress_study_id_fkey"
+            columns: ["study_id"]
+            isOneToOne: false
+            referencedRelation: "group_bible_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_study_sessions: {
+        Row: {
+          created_at: string | null
+          id: string
+          meeting_link: string | null
+          start_time: string
+          study_id: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          meeting_link?: string | null
+          start_time: string
+          study_id?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          meeting_link?: string | null
+          start_time?: string
+          study_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_study_sessions_study_id_fkey"
+            columns: ["study_id"]
+            isOneToOne: false
+            referencedRelation: "group_bible_studies"
             referencedColumns: ["id"]
           },
         ]
