@@ -18,6 +18,8 @@ import { CategoriesManager } from './shop/CategoriesManager'
 import { InventoryManager } from './shop/InventoryManager'
 import { VendorAnalytics } from './shop/VendorAnalytics'
 import { useVendorSetup } from '@/hooks/useVendorSetup'
+import { VendorVerification } from './shop/VendorVerification'
+import { PaymentMethodsManager } from './shop/PaymentMethodsManager'
 
 export function VendorAdDashboard() {
   const { isSetupComplete, setupModal } = useVendorSetup();
@@ -35,7 +37,7 @@ export function VendorAdDashboard() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="guide" className="space-y-4">
-            <TabsList className="grid grid-cols-12">
+            <TabsList className="grid grid-cols-15">
               <TabsTrigger value="guide">Guide</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="products">Products</TabsTrigger>
@@ -49,6 +51,8 @@ export function VendorAdDashboard() {
               <TabsTrigger value="samples">Samples</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsTrigger value="verification">Verification</TabsTrigger>
+              <TabsTrigger value="payments">Payments</TabsTrigger>
             </TabsList>
 
             <TabsContent value="guide">
@@ -102,9 +106,17 @@ export function VendorAdDashboard() {
             <TabsContent value="settings">
               <VendorSettings />
             </TabsContent>
+
+            <TabsContent value="verification">
+              <VendorVerification />
+            </TabsContent>
+
+            <TabsContent value="payments">
+              <PaymentMethodsManager />
+            </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

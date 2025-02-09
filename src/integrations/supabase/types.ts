@@ -10297,6 +10297,35 @@ export type Database = {
           },
         ]
       }
+      shipping_zones_countries: {
+        Row: {
+          country_code: string
+          created_at: string | null
+          id: string
+          zone_id: string | null
+        }
+        Insert: {
+          country_code: string
+          created_at?: string | null
+          id?: string
+          zone_id?: string | null
+        }
+        Update: {
+          country_code?: string
+          created_at?: string | null
+          id?: string
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_zones_countries_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shopping_cart_items: {
         Row: {
           created_at: string
@@ -14254,6 +14283,44 @@ export type Database = {
           },
         ]
       }
+      vendor_payment_methods: {
+        Row: {
+          account_details: Json | null
+          created_at: string | null
+          id: string
+          is_default: boolean | null
+          type: string
+          updated_at: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          account_details?: Json | null
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          type: string
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          account_details?: Json | null
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          type?: string
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_payment_methods_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_payouts: {
         Row: {
           amount: number
@@ -14332,6 +14399,97 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "vendor_ratings_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_store_settings: {
+        Row: {
+          banner_url: string | null
+          created_at: string | null
+          description: string | null
+          display_name: string | null
+          id: string
+          logo_url: string | null
+          social_links: Json | null
+          store_theme: Json | null
+          updated_at: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          banner_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name?: string | null
+          id?: string
+          logo_url?: string | null
+          social_links?: Json | null
+          store_theme?: Json | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          banner_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name?: string | null
+          id?: string
+          logo_url?: string | null
+          social_links?: Json | null
+          store_theme?: Json | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_store_settings_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: true
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_verification_requirements: {
+        Row: {
+          created_at: string | null
+          document_type: string
+          document_url: string | null
+          id: string
+          notes: string | null
+          status: string | null
+          submitted_at: string | null
+          vendor_id: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          document_type: string
+          document_url?: string | null
+          id?: string
+          notes?: string | null
+          status?: string | null
+          submitted_at?: string | null
+          vendor_id?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          document_type?: string
+          document_url?: string | null
+          id?: string
+          notes?: string | null
+          status?: string | null
+          submitted_at?: string | null
+          vendor_id?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_verification_requirements_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "vendors"
