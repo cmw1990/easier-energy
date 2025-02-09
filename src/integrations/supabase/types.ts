@@ -5402,6 +5402,7 @@ export type Database = {
           image_url: string | null
           location: string
           name: string
+          search_rank: number | null
           search_vector: unknown | null
           visiting_hours: string | null
         }
@@ -5413,6 +5414,7 @@ export type Database = {
           image_url?: string | null
           location: string
           name: string
+          search_rank?: number | null
           search_vector?: unknown | null
           visiting_hours?: string | null
         }
@@ -5424,6 +5426,7 @@ export type Database = {
           image_url?: string | null
           location?: string
           name?: string
+          search_rank?: number | null
           search_vector?: unknown | null
           visiting_hours?: string | null
         }
@@ -6300,6 +6303,7 @@ export type Database = {
           name: string
           price_per_night: number
           rating: number | null
+          search_rank: number | null
           search_vector: unknown | null
           total_reviews: number | null
         }
@@ -6315,6 +6319,7 @@ export type Database = {
           name: string
           price_per_night: number
           rating?: number | null
+          search_rank?: number | null
           search_vector?: unknown | null
           total_reviews?: number | null
         }
@@ -6330,6 +6335,7 @@ export type Database = {
           name?: string
           price_per_night?: number
           rating?: number | null
+          search_rank?: number | null
           search_vector?: unknown | null
           total_reviews?: number | null
         }
@@ -10694,6 +10700,7 @@ export type Database = {
           image_urls: string[] | null
           location: string
           name: string
+          search_rank: number | null
           search_vector: unknown | null
           visiting_info: string | null
         }
@@ -10707,6 +10714,7 @@ export type Database = {
           image_urls?: string[] | null
           location: string
           name: string
+          search_rank?: number | null
           search_vector?: unknown | null
           visiting_info?: string | null
         }
@@ -10720,6 +10728,7 @@ export type Database = {
           image_urls?: string[] | null
           location?: string
           name?: string
+          search_rank?: number | null
           search_vector?: unknown | null
           visiting_info?: string | null
         }
