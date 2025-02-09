@@ -78,6 +78,41 @@ export function ConsultationPackages() {
     }
   });
 
+  const purchasePackage = useMutation({
+    mutationFn: async (pkg: any) => {
+      const { data: purchaseData, error: purchaseError } = await supabase
+        .from('package_purchases')
+        .insert([{
+          package_id: pkg.id,
+          client_id: session?.user?.id,
+          professional_id: pkg.professional_id,
+          sessions_remaining: pkg.session_count,
+          expires_at: new Date(Date.now() + pkg.validity_days * 24 * 60 * 60 * 1000),
+          total_amount: pkg.price,
+          status: 'active'
+        }])
+        .select()
+        .single();
+
+      if (purchaseError) throw purchaseError;
+      return purchaseData;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Package purchased successfully! You can now book sessions with this professional."
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to purchase package. Please try again.",
+        variant: "destructive"
+      });
+      console.error('Package purchase error:', error);
+    }
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -174,9 +209,13 @@ export function ConsultationPackages() {
                 </div>
               </div>
               {pkg.professional_id !== session?.user?.id && (
-                <Button className="w-full mt-4">
+                <Button 
+                  className="w-full mt-4" 
+                  onClick={() => purchasePackage.mutate(pkg)}
+                  disabled={purchasePackage.isPending}
+                >
                   <DollarSign className="h-4 w-4 mr-2" />
-                  Purchase Package
+                  {purchasePackage.isPending ? "Processing..." : "Purchase Package"}
                 </Button>
               )}
             </CardContent>
@@ -186,3 +225,4 @@ export function ConsultationPackages() {
     </div>
   );
 }
+

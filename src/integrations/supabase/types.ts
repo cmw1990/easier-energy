@@ -8994,6 +8994,47 @@ export type Database = {
           },
         ]
       }
+      package_session_usage: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          package_purchase_id: string | null
+          professional_id: string | null
+          session_date: string
+          status: string
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          package_purchase_id?: string | null
+          professional_id?: string | null
+          session_date: string
+          status: string
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          package_purchase_id?: string | null
+          professional_id?: string | null
+          session_date?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_session_usage_package_purchase_id_fkey"
+            columns: ["package_purchase_id"]
+            isOneToOne: false
+            referencedRelation: "package_purchases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       participant_screening_criteria: {
         Row: {
           created_at: string | null
