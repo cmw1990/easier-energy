@@ -865,6 +865,65 @@ export type Database = {
         }
         Relationships: []
       }
+      bible_translations: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      bible_verses: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string
+          id: string
+          text: string
+          translation_code: string
+          verse: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string
+          id?: string
+          text: string
+          translation_code: string
+          verse: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string
+          id?: string
+          text?: string
+          translation_code?: string
+          verse?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bible_verses_translation_code_fkey"
+            columns: ["translation_code"]
+            isOneToOne: false
+            referencedRelation: "bible_translations"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       biohacking_devices: {
         Row: {
           brand: string | null
@@ -1454,6 +1513,48 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      character_relationships: {
+        Row: {
+          character1_id: string
+          character2_id: string
+          created_at: string
+          description: string | null
+          id: string
+          relationship_type: string
+        }
+        Insert: {
+          character1_id: string
+          character2_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          relationship_type: string
+        }
+        Update: {
+          character1_id?: string
+          character2_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          relationship_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "character_relationships_character1_id_fkey"
+            columns: ["character1_id"]
+            isOneToOne: false
+            referencedRelation: "creatures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "character_relationships_character2_id_fkey"
+            columns: ["character2_id"]
+            isOneToOne: false
+            referencedRelation: "creatures"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       coffee_brewing_guides: {
         Row: {
@@ -2326,6 +2427,36 @@ export type Database = {
           stress_level?: number | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      daily_facts: {
+        Row: {
+          active_date: string
+          category: string
+          content: string
+          created_at: string
+          id: string
+          source: string | null
+          title: string
+        }
+        Insert: {
+          active_date: string
+          category: string
+          content: string
+          created_at?: string
+          id?: string
+          source?: string | null
+          title: string
+        }
+        Update: {
+          active_date?: string
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          source?: string | null
+          title?: string
         }
         Relationships: []
       }
@@ -8316,6 +8447,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pronunciation_guides: {
+        Row: {
+          audio_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          pronunciation: string
+          term: string
+        }
+        Insert: {
+          audio_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          pronunciation: string
+          term: string
+        }
+        Update: {
+          audio_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          pronunciation?: string
+          term?: string
+        }
+        Relationships: []
+      }
       quit_attempts: {
         Row: {
           challenges_faced: string[] | null
@@ -8435,6 +8593,106 @@ export type Database = {
             columns: ["alternative_product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          correct_answer: string
+          created_at: string
+          explanation: string | null
+          id: string
+          question: string
+          quiz_id: string | null
+          wrong_answers: string[]
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          question: string
+          quiz_id?: string | null
+          wrong_answers: string[]
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          question?: string
+          quiz_id?: string | null
+          wrong_answers?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          difficulty_level: string
+          id: string
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          difficulty_level: string
+          id?: string
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          difficulty_level?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      realm_locations: {
+        Row: {
+          connection_points: Json[] | null
+          coordinates: Json
+          created_at: string
+          description: string | null
+          id: string
+          realm_id: string | null
+        }
+        Insert: {
+          connection_points?: Json[] | null
+          coordinates: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          realm_id?: string | null
+        }
+        Update: {
+          connection_points?: Json[] | null
+          coordinates?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          realm_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "realm_locations_realm_id_fkey"
+            columns: ["realm_id"]
+            isOneToOne: false
+            referencedRelation: "realms"
             referencedColumns: ["id"]
           },
         ]
@@ -12097,6 +12355,39 @@ export type Database = {
         }
         Relationships: []
       }
+      timeline_events: {
+        Row: {
+          created_at: string
+          date_label: string
+          description: string
+          id: string
+          importance_level: number | null
+          related_characters: string[] | null
+          related_realms: string[] | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          date_label: string
+          description: string
+          id?: string
+          importance_level?: number | null
+          related_characters?: string[] | null
+          related_realms?: string[] | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          date_label?: string
+          description?: string
+          id?: string
+          importance_level?: number | null
+          related_characters?: string[] | null
+          related_realms?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
       tool_analytics: {
         Row: {
           completed_actions: number | null
@@ -12858,6 +13149,68 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          created_at: string
+          id: string
+          preferred_version: string | null
+          theme_preference: string | null
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          preferred_version?: string | null
+          theme_preference?: string | null
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          preferred_version?: string | null
+          theme_preference?: string | null
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      user_quiz_results: {
+        Row: {
+          answers_data: Json | null
+          completed_at: string
+          id: string
+          quiz_id: string | null
+          score: number
+          user_id: string
+        }
+        Insert: {
+          answers_data?: Json | null
+          completed_at?: string
+          id?: string
+          quiz_id?: string | null
+          score: number
+          user_id: string
+        }
+        Update: {
+          answers_data?: Json | null
+          completed_at?: string
+          id?: string
+          quiz_id?: string | null
+          score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_quiz_results_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
