@@ -658,20 +658,7 @@ export interface EngagementAnalytic {
   created_at: string;
 }
 
-export interface VendorSmartNotification {
-  id: string;
-  vendor_id: string;
-  title: string;
-  content: string;
-  notification_type: string;
-  priority: 'low' | 'medium' | 'high';
-  trigger_conditions: Record<string, any>;
-  metadata: Record<string, any>;
-  created_at: string;
-  is_read: boolean;
-  scheduled_for: string | null;
-}
-
+// Behavior pattern interface
 export interface BehaviorPattern {
   active_users: number;
   engagement_rate: number;
@@ -683,6 +670,7 @@ export interface BehaviorPattern {
   }>;
 }
 
+// Added type for customer behavior
 export interface CustomerBehavior {
   id: string;
   vendor_id: string;
@@ -701,6 +689,7 @@ export interface CustomerBehavior {
   };
 }
 
+// Added type for marketplace metrics
 export interface MarketplaceMetrics {
   id: string;
   platform_name: string;
@@ -716,6 +705,7 @@ export interface MarketplaceMetrics {
   vendor_id: string;
 }
 
+// Added type for loyalty program
 export interface LoyaltyProgram {
   id: string;
   vendor_id: string;
@@ -733,4 +723,19 @@ export interface LoyaltyProgram {
   }>;
   created_at: string;
   updated_at: string;
+}
+
+// Added type for smart notifications
+export interface VendorSmartNotification {
+  id: string;
+  vendor_id: string;
+  title: string;
+  content: string;
+  notification_type: string;
+  priority: 'low' | 'medium' | 'high';
+  trigger_conditions: Record<string, any>;
+  metadata: Record<string, any>;
+  created_at: string;
+  is_read: boolean;
+  scheduled_for: string | null;
 }
