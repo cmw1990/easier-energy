@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -8,12 +8,18 @@ import { DataTable } from "@/components/ui/data-table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { AlertCircle, History } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export function InventoryManager() {
   const { session } = useAuth();
   const { toast } = useToast();
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
-  const { data: inventory, isLoading, refetch } = useQuery({
+  const { data: inventory, isLoading, error, refetch } = useQuery({
     queryKey: ['vendor-inventory', session?.user?.id],
     queryFn: async () => {
       const { data: vendorData } = await supabase
@@ -30,7 +36,7 @@ export function InventoryManager() {
           id,
           name,
           stock,
-          inventory_logs(
+          inventory_logs (
             quantity_change,
             reason,
             created_at
@@ -121,14 +127,28 @@ export function InventoryManager() {
           variant="outline"
           size="sm"
           onClick={() => {
-            // Open history modal
+            setSelectedProduct(row.original);
+            setHistoryOpen(true);
           }}
         >
+          <History className="h-4 w-4 mr-2" />
           View History
         </Button>
       )
     }
   ];
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          Failed to load inventory data. Please try again later.
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <Card>
@@ -138,13 +158,38 @@ export function InventoryManager() {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div>Loading inventory...</div>
+          <div className="space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
         ) : (
           <DataTable 
             columns={columns}
             data={inventory || []}
           />
         )}
+
+        <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Inventory History - {selectedProduct?.name}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {selectedProduct?.inventory_logs?.map((log: any, index: number) => (
+                <div key={index} className="flex justify-between items-center border-b pb-2">
+                  <div>
+                    <p className="font-medium">Change: {log.quantity_change} units</p>
+                    <p className="text-sm text-muted-foreground">{log.reason}</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(log.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
