@@ -680,6 +680,36 @@ export type Database = {
         }
         Relationships: []
       }
+      artifacts: {
+        Row: {
+          created_at: string
+          description: string
+          history: string
+          id: string
+          name: string
+          owner: string | null
+          powers: string[]
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          history: string
+          id?: string
+          name: string
+          owner?: string | null
+          powers: string[]
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          history?: string
+          id?: string
+          name?: string
+          owner?: string | null
+          powers?: string[]
+        }
+        Relationships: []
+      }
       baby_tracking: {
         Row: {
           baby_name: string | null
@@ -1893,6 +1923,41 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      creatures: {
+        Row: {
+          characteristics: string[]
+          created_at: string
+          description: string
+          id: string
+          name: string
+          realm_id: string | null
+        }
+        Insert: {
+          characteristics: string[]
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          realm_id?: string | null
+        }
+        Update: {
+          characteristics?: string[]
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          realm_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creatures_realm_id_fkey"
+            columns: ["realm_id"]
+            isOneToOne: false
+            referencedRelation: "realms"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cycle_exercise_recommendations: {
         Row: {
@@ -8374,6 +8439,30 @@ export type Database = {
           },
         ]
       }
+      realms: {
+        Row: {
+          characteristic_features: string[]
+          created_at: string
+          description: string
+          id: string
+          name: string
+        }
+        Insert: {
+          characteristic_features: string[]
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+        }
+        Update: {
+          characteristic_features?: string[]
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       recovery_milestones: {
         Row: {
           achieved_at: string
@@ -9173,6 +9262,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      runes: {
+        Row: {
+          created_at: string
+          id: string
+          interpretation: string
+          meaning: string
+          name: string
+          symbol: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interpretation: string
+          meaning: string
+          name: string
+          symbol: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interpretation?: string
+          meaning?: string
+          name?: string
+          symbol?: string
+        }
+        Relationships: []
       }
       sagas: {
         Row: {
