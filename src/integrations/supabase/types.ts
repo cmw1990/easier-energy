@@ -106,6 +106,268 @@ export type Database = {
         }
         Relationships: []
       }
+      accommodation_calendar: {
+        Row: {
+          accommodation_id: string | null
+          base_price: number | null
+          check_in_allowed: boolean | null
+          check_out_allowed: boolean | null
+          created_at: string | null
+          date: string
+          id: string
+          is_available: boolean | null
+          minimum_stay: number | null
+          notes: string | null
+          special_conditions: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          accommodation_id?: string | null
+          base_price?: number | null
+          check_in_allowed?: boolean | null
+          check_out_allowed?: boolean | null
+          created_at?: string | null
+          date: string
+          id?: string
+          is_available?: boolean | null
+          minimum_stay?: number | null
+          notes?: string | null
+          special_conditions?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          accommodation_id?: string | null
+          base_price?: number | null
+          check_in_allowed?: boolean | null
+          check_out_allowed?: boolean | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          is_available?: boolean | null
+          minimum_stay?: number | null
+          notes?: string | null
+          special_conditions?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_calendar_accommodation_id_fkey"
+            columns: ["accommodation_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_accommodations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accommodation_finances: {
+        Row: {
+          accommodation_id: string | null
+          average_daily_rate: number | null
+          cleaning_fees: number | null
+          created_at: string | null
+          id: string
+          maintenance_costs: number | null
+          month: number | null
+          net_income: number | null
+          occupancy_rate: number | null
+          platform_fees: number | null
+          revenue_per_available_room: number | null
+          total_bookings: number | null
+          total_revenue: number | null
+          updated_at: string | null
+          vendor_id: string | null
+          year: number | null
+        }
+        Insert: {
+          accommodation_id?: string | null
+          average_daily_rate?: number | null
+          cleaning_fees?: number | null
+          created_at?: string | null
+          id?: string
+          maintenance_costs?: number | null
+          month?: number | null
+          net_income?: number | null
+          occupancy_rate?: number | null
+          platform_fees?: number | null
+          revenue_per_available_room?: number | null
+          total_bookings?: number | null
+          total_revenue?: number | null
+          updated_at?: string | null
+          vendor_id?: string | null
+          year?: number | null
+        }
+        Update: {
+          accommodation_id?: string | null
+          average_daily_rate?: number | null
+          cleaning_fees?: number | null
+          created_at?: string | null
+          id?: string
+          maintenance_costs?: number | null
+          month?: number | null
+          net_income?: number | null
+          occupancy_rate?: number | null
+          platform_fees?: number | null
+          revenue_per_available_room?: number | null
+          total_bookings?: number | null
+          total_revenue?: number | null
+          updated_at?: string | null
+          vendor_id?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_finances_accommodation_id_fkey"
+            columns: ["accommodation_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_accommodations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accommodation_finances_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accommodation_maintenance: {
+        Row: {
+          accommodation_id: string | null
+          attachments: string[] | null
+          completed_date: string | null
+          cost: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          priority: string | null
+          scheduled_date: string | null
+          status: string | null
+          type: string
+          updated_at: string | null
+          vendor_notes: string | null
+        }
+        Insert: {
+          accommodation_id?: string | null
+          attachments?: string[] | null
+          completed_date?: string | null
+          cost?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          priority?: string | null
+          scheduled_date?: string | null
+          status?: string | null
+          type: string
+          updated_at?: string | null
+          vendor_notes?: string | null
+        }
+        Update: {
+          accommodation_id?: string | null
+          attachments?: string[] | null
+          completed_date?: string | null
+          cost?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          priority?: string | null
+          scheduled_date?: string | null
+          status?: string | null
+          type?: string
+          updated_at?: string | null
+          vendor_notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_maintenance_accommodation_id_fkey"
+            columns: ["accommodation_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_accommodations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accommodation_reviews: {
+        Row: {
+          accommodation_id: string | null
+          accuracy_rating: number | null
+          booking_id: string | null
+          checkin_rating: number | null
+          cleanliness_rating: number | null
+          communication_rating: number | null
+          created_at: string | null
+          guest_id: string | null
+          helpful_votes: number | null
+          host_response: string | null
+          id: string
+          location_rating: number | null
+          photos: string[] | null
+          rating: number | null
+          reported: boolean | null
+          review_text: string | null
+          status: string | null
+          updated_at: string | null
+          value_rating: number | null
+        }
+        Insert: {
+          accommodation_id?: string | null
+          accuracy_rating?: number | null
+          booking_id?: string | null
+          checkin_rating?: number | null
+          cleanliness_rating?: number | null
+          communication_rating?: number | null
+          created_at?: string | null
+          guest_id?: string | null
+          helpful_votes?: number | null
+          host_response?: string | null
+          id?: string
+          location_rating?: number | null
+          photos?: string[] | null
+          rating?: number | null
+          reported?: boolean | null
+          review_text?: string | null
+          status?: string | null
+          updated_at?: string | null
+          value_rating?: number | null
+        }
+        Update: {
+          accommodation_id?: string | null
+          accuracy_rating?: number | null
+          booking_id?: string | null
+          checkin_rating?: number | null
+          cleanliness_rating?: number | null
+          communication_rating?: number | null
+          created_at?: string | null
+          guest_id?: string | null
+          helpful_votes?: number | null
+          host_response?: string | null
+          id?: string
+          location_rating?: number | null
+          photos?: string[] | null
+          rating?: number | null
+          reported?: boolean | null
+          review_text?: string | null
+          status?: string | null
+          updated_at?: string | null
+          value_rating?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accommodation_reviews_accommodation_id_fkey"
+            columns: ["accommodation_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_accommodations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accommodation_reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       achievement_progress: {
         Row: {
           achievement_id: string
@@ -1405,6 +1667,117 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      bookings: {
+        Row: {
+          accommodation_id: string | null
+          additional_services: Json | null
+          arrival_time: string | null
+          cancellation_date: string | null
+          cancellation_reason: string | null
+          check_in: string
+          check_in_instructions: string | null
+          check_out: string
+          created_at: string | null
+          departure_time: string | null
+          dietary_requirements: string[] | null
+          guest_count: number
+          guest_count_adults: number | null
+          guest_count_children: number | null
+          guest_count_infants: number | null
+          guest_id: string
+          guest_notes: string | null
+          host_notes: string | null
+          house_rules_accepted: boolean | null
+          id: string
+          payment_status: string | null
+          refund_amount: number | null
+          review_submitted: boolean | null
+          special_requests: string | null
+          status: string | null
+          total_price: number
+          transportation_needed: boolean | null
+          updated_at: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          accommodation_id?: string | null
+          additional_services?: Json | null
+          arrival_time?: string | null
+          cancellation_date?: string | null
+          cancellation_reason?: string | null
+          check_in: string
+          check_in_instructions?: string | null
+          check_out: string
+          created_at?: string | null
+          departure_time?: string | null
+          dietary_requirements?: string[] | null
+          guest_count: number
+          guest_count_adults?: number | null
+          guest_count_children?: number | null
+          guest_count_infants?: number | null
+          guest_id: string
+          guest_notes?: string | null
+          host_notes?: string | null
+          house_rules_accepted?: boolean | null
+          id?: string
+          payment_status?: string | null
+          refund_amount?: number | null
+          review_submitted?: boolean | null
+          special_requests?: string | null
+          status?: string | null
+          total_price: number
+          transportation_needed?: boolean | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          accommodation_id?: string | null
+          additional_services?: Json | null
+          arrival_time?: string | null
+          cancellation_date?: string | null
+          cancellation_reason?: string | null
+          check_in?: string
+          check_in_instructions?: string | null
+          check_out?: string
+          created_at?: string | null
+          departure_time?: string | null
+          dietary_requirements?: string[] | null
+          guest_count?: number
+          guest_count_adults?: number | null
+          guest_count_children?: number | null
+          guest_count_infants?: number | null
+          guest_id?: string
+          guest_notes?: string | null
+          host_notes?: string | null
+          house_rules_accepted?: boolean | null
+          id?: string
+          payment_status?: string | null
+          refund_amount?: number | null
+          review_submitted?: boolean | null
+          special_requests?: string | null
+          status?: string | null
+          total_price?: number
+          transportation_needed?: boolean | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_accommodation_id_fkey"
+            columns: ["accommodation_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_accommodations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       caffeine_products: {
         Row: {
@@ -6716,51 +7089,120 @@ export type Database = {
       }
       nordic_accommodations: {
         Row: {
+          accessibility_features: string[] | null
           amenities: string[] | null
           bedrooms: number
+          booking_lead_time: string | null
+          cancellation_policy: string | null
+          checkin_features: string[] | null
+          cleaning_protocols: string[] | null
           created_at: string
+          cultural_elements: string[] | null
           description: string
+          eco_certifications: string[] | null
+          group_booking_rules: Json | null
+          guest_requirements: string[] | null
+          house_rules: string[] | null
           id: string
           image_urls: string[] | null
+          languages_spoken: string[] | null
+          local_experiences: string[] | null
           location: string
           max_guests: number
+          maximum_stay: number | null
+          minimum_stay: number | null
           name: string
+          nearby_attractions: string[] | null
+          payment_options: string[] | null
           price_per_night: number
+          property_history: string | null
           rating: number | null
+          room_configurations: Json | null
           search_rank: number | null
           search_vector: unknown | null
+          seasonal_activities: string[] | null
+          seasonal_pricing: Json | null
+          security_features: string[] | null
+          special_offers: Json[] | null
+          sustainability_practices: string[] | null
           total_reviews: number | null
         }
         Insert: {
+          accessibility_features?: string[] | null
           amenities?: string[] | null
           bedrooms: number
+          booking_lead_time?: string | null
+          cancellation_policy?: string | null
+          checkin_features?: string[] | null
+          cleaning_protocols?: string[] | null
           created_at?: string
+          cultural_elements?: string[] | null
           description: string
+          eco_certifications?: string[] | null
+          group_booking_rules?: Json | null
+          guest_requirements?: string[] | null
+          house_rules?: string[] | null
           id?: string
           image_urls?: string[] | null
+          languages_spoken?: string[] | null
+          local_experiences?: string[] | null
           location: string
           max_guests: number
+          maximum_stay?: number | null
+          minimum_stay?: number | null
           name: string
+          nearby_attractions?: string[] | null
+          payment_options?: string[] | null
           price_per_night: number
+          property_history?: string | null
           rating?: number | null
+          room_configurations?: Json | null
           search_rank?: number | null
           search_vector?: unknown | null
+          seasonal_activities?: string[] | null
+          seasonal_pricing?: Json | null
+          security_features?: string[] | null
+          special_offers?: Json[] | null
+          sustainability_practices?: string[] | null
           total_reviews?: number | null
         }
         Update: {
+          accessibility_features?: string[] | null
           amenities?: string[] | null
           bedrooms?: number
+          booking_lead_time?: string | null
+          cancellation_policy?: string | null
+          checkin_features?: string[] | null
+          cleaning_protocols?: string[] | null
           created_at?: string
+          cultural_elements?: string[] | null
           description?: string
+          eco_certifications?: string[] | null
+          group_booking_rules?: Json | null
+          guest_requirements?: string[] | null
+          house_rules?: string[] | null
           id?: string
           image_urls?: string[] | null
+          languages_spoken?: string[] | null
+          local_experiences?: string[] | null
           location?: string
           max_guests?: number
+          maximum_stay?: number | null
+          minimum_stay?: number | null
           name?: string
+          nearby_attractions?: string[] | null
+          payment_options?: string[] | null
           price_per_night?: number
+          property_history?: string | null
           rating?: number | null
+          room_configurations?: Json | null
           search_rank?: number | null
           search_vector?: unknown | null
+          seasonal_activities?: string[] | null
+          seasonal_pricing?: Json | null
+          security_features?: string[] | null
+          special_offers?: Json[] | null
+          sustainability_practices?: string[] | null
           total_reviews?: number | null
         }
         Relationships: []
@@ -15914,6 +16356,96 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      vendor_profiles: {
+        Row: {
+          address: string | null
+          average_rating: number | null
+          booking_acceptance_rate: number | null
+          business_license: string | null
+          business_name: string
+          contact_email: string
+          created_at: string | null
+          cultural_expertise: string[] | null
+          emergency_contact: Json | null
+          host_qualities: string[] | null
+          hosting_experience_years: number | null
+          id: string
+          insurance_verified: boolean | null
+          local_guide: boolean | null
+          payout_info: Json | null
+          phone_number: string | null
+          preferred_communication_method: string | null
+          property_management_style: string | null
+          response_rate: number | null
+          response_time: string | null
+          stripe_account_id: string | null
+          superhost_status: boolean | null
+          tax_id: string | null
+          total_properties: number | null
+          user_id: string
+          vendor_languages: string[] | null
+          verification_status: string | null
+        }
+        Insert: {
+          address?: string | null
+          average_rating?: number | null
+          booking_acceptance_rate?: number | null
+          business_license?: string | null
+          business_name: string
+          contact_email: string
+          created_at?: string | null
+          cultural_expertise?: string[] | null
+          emergency_contact?: Json | null
+          host_qualities?: string[] | null
+          hosting_experience_years?: number | null
+          id?: string
+          insurance_verified?: boolean | null
+          local_guide?: boolean | null
+          payout_info?: Json | null
+          phone_number?: string | null
+          preferred_communication_method?: string | null
+          property_management_style?: string | null
+          response_rate?: number | null
+          response_time?: string | null
+          stripe_account_id?: string | null
+          superhost_status?: boolean | null
+          tax_id?: string | null
+          total_properties?: number | null
+          user_id: string
+          vendor_languages?: string[] | null
+          verification_status?: string | null
+        }
+        Update: {
+          address?: string | null
+          average_rating?: number | null
+          booking_acceptance_rate?: number | null
+          business_license?: string | null
+          business_name?: string
+          contact_email?: string
+          created_at?: string | null
+          cultural_expertise?: string[] | null
+          emergency_contact?: Json | null
+          host_qualities?: string[] | null
+          hosting_experience_years?: number | null
+          id?: string
+          insurance_verified?: boolean | null
+          local_guide?: boolean | null
+          payout_info?: Json | null
+          phone_number?: string | null
+          preferred_communication_method?: string | null
+          property_management_style?: string | null
+          response_rate?: number | null
+          response_time?: string | null
+          stripe_account_id?: string | null
+          superhost_status?: boolean | null
+          tax_id?: string | null
+          total_properties?: number | null
+          user_id?: string
+          vendor_languages?: string[] | null
+          verification_status?: string | null
+        }
+        Relationships: []
       }
       vendor_ratings: {
         Row: {
