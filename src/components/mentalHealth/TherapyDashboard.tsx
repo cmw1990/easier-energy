@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain, Calendar, ClipboardCheck, Activity } from "lucide-react";
+import { Brain, Calendar, ClipboardCheck, Activity, MessageCircle, FileText, Target, Trophy } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 export function TherapyDashboard() {
@@ -31,30 +31,33 @@ export function TherapyDashboard() {
     enabled: !!session?.user?.id
   });
 
-  const { data: prescribedRecipes } = useQuery({
-    queryKey: ['prescribed-recipes', session?.user?.id],
+  const { data: progress } = useQuery({
+    queryKey: ['client-progress', session?.user?.id],
     queryFn: async () => {
       const { data } = await supabase
-        .from('prescribed_charge_recipes')
+        .from('client_progress_tracking')
         .select('*')
         .eq('client_id', session?.user?.id)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
       return data;
     },
     enabled: !!session?.user?.id
   });
 
-  const { data: progress } = useQuery({
-    queryKey: ['mental-health-progress', session?.user?.id],
+  const { data: latestMessages } = useQuery({
+    queryKey: ['latest-messages', session?.user?.id],
     queryFn: async () => {
       const { data } = await supabase
-        .from('mental_health_progress')
-        .select('*')
-        .eq('client_id', session?.user?.id)
-        .order('date', { ascending: false })
-        .limit(1)
-        .single();
+        .from('consultation_messages')
+        .select(`
+          *,
+          sender:sender_id(full_name)
+        `)
+        .or(`sender_id.eq.${session?.user?.id},receiver_id.eq.${session?.user?.id}`)
+        .order('created_at', { ascending: false })
+        .limit(5);
       return data;
     },
     enabled: !!session?.user?.id
@@ -65,57 +68,61 @@ export function TherapyDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Mood Score</CardTitle>
-            <Brain className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Next Session</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{progress?.mood_score || '-'}/10</div>
-            <Progress 
-              value={((progress?.mood_score || 0) / 10) * 100} 
-              className="mt-2"
-            />
+            {upcomingSessions?.[0] ? (
+              <div>
+                <div className="text-2xl font-bold">
+                  {new Date(upcomingSessions[0].session_date).toLocaleDateString()}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(upcomingSessions[0].session_date).toLocaleTimeString()}
+                </p>
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">No upcoming sessions</div>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Energy Level</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Progress</CardTitle>
+            <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{progress?.energy_level || '-'}/10</div>
-            <Progress 
-              value={((progress?.energy_level || 0) / 10) * 100} 
-              className="mt-2"
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sleep Quality</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{progress?.sleep_quality || '-'}/10</div>
-            <Progress 
-              value={((progress?.sleep_quality || 0) / 10) * 100} 
-              className="mt-2"
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Daily Goals</CardTitle>
-            <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {progress?.exercise_completion && <div className="text-sm">✓ Exercise</div>}
-              {progress?.meditation_completion && <div className="text-sm">✓ Meditation</div>}
-              {progress?.nutrition_adherence && <div className="text-sm">✓ Nutrition</div>}
+            <div className="text-2xl font-bold">
+              {progress?.milestone_achievements?.length || 0} Goals
             </div>
+            <Progress 
+              value={progress?.milestone_achievements?.length ? 
+                (progress.milestone_achievements.length / (progress.treatment_goals?.length || 1)) * 100 : 0} 
+              className="mt-2"
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Messages</CardTitle>
+            <MessageCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{latestMessages?.length || 0}</div>
+            <p className="text-xs text-muted-foreground">Unread messages</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Resources</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">Shared resources</p>
           </CardContent>
         </Card>
       </div>
@@ -154,29 +161,66 @@ export function TherapyDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
-              Prescribed Activities
+              <Target className="h-5 w-5" />
+              Treatment Goals
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {prescribedRecipes?.length ? (
-              prescribedRecipes.map((recipe) => (
-                <div key={recipe.id} className="space-y-2">
-                  <h3 className="font-medium">{recipe.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {recipe.description}
-                  </p>
-                  <Button variant="outline" size="sm">
-                    View Details
-                  </Button>
+            {progress?.treatment_goals?.length ? (
+              progress.treatment_goals.map((goal, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      checked={progress.milestone_achievements?.includes(goal)}
+                      readOnly
+                      className="h-4 w-4 rounded border-gray-300"
+                    />
+                    <span className={progress.milestone_achievements?.includes(goal) ? 
+                      "line-through text-muted-foreground" : ""}>
+                      {goal}
+                    </span>
+                  </div>
                 </div>
               ))
             ) : (
-              <p className="text-muted-foreground">No prescribed activities</p>
+              <p className="text-muted-foreground">No goals set</p>
             )}
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageCircle className="h-5 w-5" />
+            Recent Messages
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {latestMessages?.map((message) => (
+              <div key={message.id} className="flex gap-4 items-start">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  {message.sender?.full_name?.[0] || '?'}
+                </div>
+                <div className="flex-1">
+                  <div className="flex justify-between">
+                    <p className="font-medium">{message.sender?.full_name}</p>
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(message.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{message.message_text}</p>
+                </div>
+              </div>
+            ))}
+            {!latestMessages?.length && (
+              <p className="text-muted-foreground">No messages</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
