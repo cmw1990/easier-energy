@@ -4381,6 +4381,30 @@ export type Database = {
         }
         Relationships: []
       }
+      gods: {
+        Row: {
+          created_at: string
+          description: string
+          domain: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          domain: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          domain?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       gratitude_journal: {
         Row: {
           category: Database["public"]["Enums"]["gratitude_category"]
@@ -9150,6 +9174,30 @@ export type Database = {
           },
         ]
       }
+      sagas: {
+        Row: {
+          content: string
+          created_at: string
+          description: string
+          id: string
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          description: string
+          id?: string
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          description?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       seller_analytics: {
         Row: {
           churned_subscribers: number | null
@@ -12358,6 +12406,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_bookmarks: {
+        Row: {
+          content_id: string
+          content_type: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          content_id: string
+          content_type: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_caffeine_logs: {
         Row: {
