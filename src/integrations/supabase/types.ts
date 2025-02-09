@@ -5098,26 +5098,32 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          notes: string | null
           product_id: string
           quantity_change: number
           reason: string | null
           updated_at: string | null
+          updated_by: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
+          notes?: string | null
           product_id: string
           quantity_change: number
           reason?: string | null
           updated_at?: string | null
+          updated_by?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
+          notes?: string | null
           product_id?: string
           quantity_change?: number
           reason?: string | null
           updated_at?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {
@@ -6108,6 +6114,8 @@ export type Database = {
           carrier: string | null
           created_at: string
           estimated_delivery: string | null
+          fulfillment_notes: string | null
+          fulfillment_status: string | null
           id: string
           payment_intent_id: string | null
           payment_status: string | null
@@ -6125,6 +6133,8 @@ export type Database = {
           carrier?: string | null
           created_at?: string
           estimated_delivery?: string | null
+          fulfillment_notes?: string | null
+          fulfillment_status?: string | null
           id?: string
           payment_intent_id?: string | null
           payment_status?: string | null
@@ -6142,6 +6152,8 @@ export type Database = {
           carrier?: string | null
           created_at?: string
           estimated_delivery?: string | null
+          fulfillment_notes?: string | null
+          fulfillment_status?: string | null
           id?: string
           payment_intent_id?: string | null
           payment_status?: string | null
@@ -8270,6 +8282,7 @@ export type Database = {
           comments_count: number | null
           condition: string | null
           contraindications: string[] | null
+          cost_price: number | null
           country_of_origin: string | null
           created_at: string | null
           demo_url: string | null
@@ -8330,6 +8343,7 @@ export type Database = {
           version: string | null
           warranty_info: Json | null
           weight_grams: number | null
+          wholesale_price: number | null
         }
         Insert: {
           access_instructions?: string | null
@@ -8346,6 +8360,7 @@ export type Database = {
           comments_count?: number | null
           condition?: string | null
           contraindications?: string[] | null
+          cost_price?: number | null
           country_of_origin?: string | null
           created_at?: string | null
           demo_url?: string | null
@@ -8406,6 +8421,7 @@ export type Database = {
           version?: string | null
           warranty_info?: Json | null
           weight_grams?: number | null
+          wholesale_price?: number | null
         }
         Update: {
           access_instructions?: string | null
@@ -8422,6 +8438,7 @@ export type Database = {
           comments_count?: number | null
           condition?: string | null
           contraindications?: string[] | null
+          cost_price?: number | null
           country_of_origin?: string | null
           created_at?: string | null
           demo_url?: string | null
@@ -8482,6 +8499,7 @@ export type Database = {
           version?: string | null
           warranty_info?: Json | null
           weight_grams?: number | null
+          wholesale_price?: number | null
         }
         Relationships: [
           {
@@ -13871,6 +13889,44 @@ export type Database = {
           },
         ]
       }
+      vendor_notification_preferences: {
+        Row: {
+          created_at: string | null
+          id: string
+          inventory_alerts: boolean | null
+          low_stock_threshold: number | null
+          order_notifications: boolean | null
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          inventory_alerts?: boolean | null
+          low_stock_threshold?: number | null
+          order_notifications?: boolean | null
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          inventory_alerts?: boolean | null
+          low_stock_threshold?: number | null
+          order_notifications?: boolean | null
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_notification_preferences_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_payouts: {
         Row: {
           amount: number
@@ -13968,6 +14024,7 @@ export type Database = {
           customer_service_email: string | null
           customer_service_phone: string | null
           id: string
+          inventory_value: number | null
           location: string | null
           minimum_order_amount: number | null
           name: string
@@ -13998,6 +14055,7 @@ export type Database = {
           customer_service_email?: string | null
           customer_service_phone?: string | null
           id?: string
+          inventory_value?: number | null
           location?: string | null
           minimum_order_amount?: number | null
           name: string
@@ -14028,6 +14086,7 @@ export type Database = {
           customer_service_email?: string | null
           customer_service_phone?: string | null
           id?: string
+          inventory_value?: number | null
           location?: string | null
           minimum_order_amount?: number | null
           name?: string
