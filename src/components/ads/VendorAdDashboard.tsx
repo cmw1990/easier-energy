@@ -22,6 +22,12 @@ import { VendorVerification } from './shop/VendorVerification'
 import { PaymentMethodsManager } from './shop/PaymentMethodsManager'
 import { WebhookManager } from './shop/WebhookManager'
 import { NotificationPreferencesManager } from './shop/NotificationPreferencesManager'
+import { AIAnalytics } from './shop/AIAnalytics'
+import { CustomerEngagement } from './shop/CustomerEngagement'
+import { LoyaltyProgram } from './shop/LoyaltyProgram'
+import { MultiLocationInventory } from './shop/MultiLocationInventory'
+import { SmartNotifications } from './shop/SmartNotifications'
+import { MarketplaceIntegration } from './shop/MarketplaceIntegration'
 
 export function VendorAdDashboard() {
   const { isSetupComplete, setupModal } = useVendorSetup();
@@ -39,7 +45,7 @@ export function VendorAdDashboard() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="guide" className="space-y-4">
-            <TabsList className="grid grid-cols-17">
+            <TabsList className="grid grid-cols-23 scroll-pl-6 overflow-x-auto">
               <TabsTrigger value="guide">Guide</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="products">Products</TabsTrigger>
@@ -52,6 +58,12 @@ export function VendorAdDashboard() {
               <TabsTrigger value="coupons">Coupons</TabsTrigger>
               <TabsTrigger value="samples">Samples</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="ai-analytics">AI Insights</TabsTrigger>
+              <TabsTrigger value="engagement">Engagement</TabsTrigger>
+              <TabsTrigger value="loyalty">Loyalty</TabsTrigger>
+              <TabsTrigger value="multi-location">Locations</TabsTrigger>
+              <TabsTrigger value="smart-notifications">Smart Alerts</TabsTrigger>
+              <TabsTrigger value="marketplace">Marketplace</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
               <TabsTrigger value="verification">Verification</TabsTrigger>
               <TabsTrigger value="payments">Payments</TabsTrigger>
@@ -105,6 +117,30 @@ export function VendorAdDashboard() {
 
             <TabsContent value="analytics">
               <VendorAnalytics />
+            </TabsContent>
+
+            <TabsContent value="ai-analytics">
+              <AIAnalytics />
+            </TabsContent>
+
+            <TabsContent value="engagement">
+              <CustomerEngagement />
+            </TabsContent>
+
+            <TabsContent value="loyalty">
+              <LoyaltyProgram />
+            </TabsContent>
+
+            <TabsContent value="multi-location">
+              <MultiLocationInventory />
+            </TabsContent>
+
+            <TabsContent value="smart-notifications">
+              <SmartNotifications />
+            </TabsContent>
+
+            <TabsContent value="marketplace">
+              <MarketplaceIntegration />
             </TabsContent>
 
             <TabsContent value="settings">

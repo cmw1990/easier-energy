@@ -1730,6 +1730,181 @@ export type Database = {
           },
         ]
       }
+      church_followers: {
+        Row: {
+          church_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_followers_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_ownership_claims: {
+        Row: {
+          church_id: string
+          created_at: string
+          id: string
+          proof_documents: string[] | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string
+          id?: string
+          proof_documents?: string[] | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string
+          id?: string
+          proof_documents?: string[] | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_ownership_claims_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_post_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "church_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "church_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_posts: {
+        Row: {
+          author_id: string
+          church_id: string
+          comments_count: number | null
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          likes_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          church_id: string
+          comments_count?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          likes_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          church_id?: string
+          comments_count?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          likes_count?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_posts_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       church_reviews: {
         Row: {
           church_id: string | null
@@ -1814,6 +1989,7 @@ export type Database = {
           translations_available: string[] | null
           transportation_services: Json | null
           updated_at: string
+          verified_owner_id: string | null
           virtual_worship_links: Json | null
           visiting_hours: Json | null
           website_url: string | null
@@ -1866,6 +2042,7 @@ export type Database = {
           translations_available?: string[] | null
           transportation_services?: Json | null
           updated_at?: string
+          verified_owner_id?: string | null
           virtual_worship_links?: Json | null
           visiting_hours?: Json | null
           website_url?: string | null
@@ -1918,6 +2095,7 @@ export type Database = {
           translations_available?: string[] | null
           transportation_services?: Json | null
           updated_at?: string
+          verified_owner_id?: string | null
           virtual_worship_links?: Json | null
           visiting_hours?: Json | null
           website_url?: string | null
@@ -2468,6 +2646,82 @@ export type Database = {
             columns: ["realm_id"]
             isOneToOne: false
             referencedRelation: "realms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_behavior_analysis: {
+        Row: {
+          behavior_patterns: Json | null
+          created_at: string | null
+          engagement_metrics: Json | null
+          id: string
+          purchase_predictions: Json | null
+          user_id: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          behavior_patterns?: Json | null
+          created_at?: string | null
+          engagement_metrics?: Json | null
+          id?: string
+          purchase_predictions?: Json | null
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          behavior_patterns?: Json | null
+          created_at?: string | null
+          engagement_metrics?: Json | null
+          id?: string
+          purchase_predictions?: Json | null
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_behavior_analysis_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_loyalty_points: {
+        Row: {
+          created_at: string | null
+          id: string
+          points: number | null
+          tier: string | null
+          updated_at: string | null
+          user_id: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          points?: number | null
+          tier?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          points?: number | null
+          tier?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_loyalty_points_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
         ]
@@ -3841,6 +4095,38 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_votes: {
+        Row: {
+          created_at: string | null
+          feedback_id: string | null
+          id: string
+          user_id: string | null
+          vote_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_id?: string | null
+          id?: string
+          user_id?: string | null
+          vote_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback_id?: string | null
+          id?: string
+          user_id?: string | null
+          vote_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_votes_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       featured_products: {
         Row: {
           created_at: string | null
@@ -3879,6 +4165,89 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      feedback_roadmap: {
+        Row: {
+          assigned_team: string | null
+          created_at: string | null
+          dependencies: string[] | null
+          development_status: string | null
+          feedback_id: string | null
+          id: string
+          milestone: string | null
+          planned_release_date: string | null
+          risks: string[] | null
+          sprint_number: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_team?: string | null
+          created_at?: string | null
+          dependencies?: string[] | null
+          development_status?: string | null
+          feedback_id?: string | null
+          id?: string
+          milestone?: string | null
+          planned_release_date?: string | null
+          risks?: string[] | null
+          sprint_number?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_team?: string | null
+          created_at?: string | null
+          dependencies?: string[] | null
+          development_status?: string | null
+          feedback_id?: string | null
+          id?: string
+          milestone?: string | null
+          planned_release_date?: string | null
+          risks?: string[] | null
+          sprint_number?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_roadmap_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "product_feedback"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback_templates: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          product_type: string
+          template_fields: Json
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          product_type: string
+          template_fields?: Json
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          product_type?: string
+          template_fields?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       feeding_logs: {
         Row: {
@@ -5505,6 +5874,61 @@ export type Database = {
             columns: ["integration_id"]
             isOneToOne: false
             referencedRelation: "platform_integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_locations: {
+        Row: {
+          id: string
+          last_restock_at: string | null
+          location_id: string | null
+          low_stock_threshold: number | null
+          product_id: string | null
+          quantity: number | null
+          reorder_point: number | null
+          reorder_quantity: number | null
+        }
+        Insert: {
+          id?: string
+          last_restock_at?: string | null
+          location_id?: string | null
+          low_stock_threshold?: number | null
+          product_id?: string | null
+          quantity?: number | null
+          reorder_point?: number | null
+          reorder_quantity?: number | null
+        }
+        Update: {
+          id?: string
+          last_restock_at?: string | null
+          location_id?: string | null
+          low_stock_threshold?: number | null
+          product_id?: string | null
+          quantity?: number | null
+          reorder_point?: number | null
+          reorder_quantity?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_locations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "inventory_locations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -7941,6 +8365,54 @@ export type Database = {
           },
           {
             foreignKeyName: "product_analytics_aggregated_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_analytics_ai: {
+        Row: {
+          created_at: string | null
+          customer_segments: Json | null
+          id: string
+          inventory_forecast: Json | null
+          performance_prediction: Json | null
+          price_optimization: Json | null
+          product_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_segments?: Json | null
+          id?: string
+          inventory_forecast?: Json | null
+          performance_prediction?: Json | null
+          price_optimization?: Json | null
+          product_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_segments?: Json | null
+          id?: string
+          inventory_forecast?: Json | null
+          performance_prediction?: Json | null
+          price_optimization?: Json | null
+          product_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_analytics_ai_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_analytics_ai_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
@@ -14987,6 +15459,44 @@ export type Database = {
           },
         ]
       }
+      vendor_chat_sessions: {
+        Row: {
+          ended_at: string | null
+          id: string
+          rating: number | null
+          started_at: string | null
+          status: string | null
+          user_id: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          ended_at?: string | null
+          id?: string
+          rating?: number | null
+          started_at?: string | null
+          status?: string | null
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          ended_at?: string | null
+          id?: string
+          rating?: number | null
+          started_at?: string | null
+          status?: string | null
+          user_id?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_chat_sessions_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_customer_messages: {
         Row: {
           created_at: string | null
@@ -15066,6 +15576,143 @@ export type Database = {
           },
         ]
       }
+      vendor_locations: {
+        Row: {
+          address: string | null
+          coordinates: unknown | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          location_name: string
+          vendor_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          coordinates?: unknown | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          location_name: string
+          vendor_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          coordinates?: unknown | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          location_name?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_locations_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_loyalty_programs: {
+        Row: {
+          created_at: string | null
+          id: string
+          points_ratio: number
+          program_name: string
+          rewards: Json | null
+          tiers: Json | null
+          updated_at: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          points_ratio: number
+          program_name: string
+          rewards?: Json | null
+          tiers?: Json | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          points_ratio?: number
+          program_name?: string
+          rewards?: Json | null
+          tiers?: Json | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_loyalty_programs_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_marketplace_listings: {
+        Row: {
+          created_at: string | null
+          external_id: string | null
+          id: string
+          last_sync_at: string | null
+          platform: string
+          product_id: string | null
+          status: string | null
+          sync_status: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          external_id?: string | null
+          id?: string
+          last_sync_at?: string | null
+          platform: string
+          product_id?: string | null
+          status?: string | null
+          sync_status?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          external_id?: string | null
+          id?: string
+          last_sync_at?: string | null
+          platform?: string
+          product_id?: string | null
+          status?: string | null
+          sync_status?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_marketplace_listings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_analytics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "vendor_marketplace_listings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_marketplace_listings_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_messages: {
         Row: {
           created_at: string | null
@@ -15132,6 +15779,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "vendor_notification_preferences_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_notification_rules: {
+        Row: {
+          channels: Json | null
+          conditions: Json | null
+          created_at: string | null
+          event_type: string
+          id: string
+          is_active: boolean | null
+          priority: number | null
+          rule_name: string
+          vendor_id: string | null
+        }
+        Insert: {
+          channels?: Json | null
+          conditions?: Json | null
+          created_at?: string | null
+          event_type: string
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          rule_name: string
+          vendor_id?: string | null
+        }
+        Update: {
+          channels?: Json | null
+          conditions?: Json | null
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          rule_name?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_notification_rules_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "vendors"
@@ -15255,6 +15946,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "vendor_ratings_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_social_integrations: {
+        Row: {
+          created_at: string | null
+          credentials: Json | null
+          id: string
+          is_active: boolean | null
+          last_sync_at: string | null
+          platform: string
+          settings: Json | null
+          vendor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          platform: string
+          settings?: Json | null
+          vendor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          platform?: string
+          settings?: Json | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_social_integrations_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "vendors"
