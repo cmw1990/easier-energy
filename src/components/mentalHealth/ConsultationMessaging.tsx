@@ -6,7 +6,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { PaperClip, Send } from "lucide-react";
+import { Paperclip, Send } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function ConsultationMessaging({ 
