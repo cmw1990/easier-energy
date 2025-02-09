@@ -13449,30 +13449,51 @@ export type Database = {
       }
       sagas: {
         Row: {
+          author: string | null
+          categories: string[] | null
           content: string
           created_at: string
           description: string
+          historical_period: string | null
           id: string
+          image_url: string | null
+          reading_time_minutes: number | null
+          related_sagas: string[] | null
           search_rank: number | null
           search_vector: unknown | null
+          slug: string | null
           title: string
         }
         Insert: {
+          author?: string | null
+          categories?: string[] | null
           content: string
           created_at?: string
           description: string
+          historical_period?: string | null
           id?: string
+          image_url?: string | null
+          reading_time_minutes?: number | null
+          related_sagas?: string[] | null
           search_rank?: number | null
           search_vector?: unknown | null
+          slug?: string | null
           title: string
         }
         Update: {
+          author?: string | null
+          categories?: string[] | null
           content?: string
           created_at?: string
           description?: string
+          historical_period?: string | null
           id?: string
+          image_url?: string | null
+          reading_time_minutes?: number | null
+          related_sagas?: string[] | null
           search_rank?: number | null
           search_vector?: unknown | null
+          slug?: string | null
           title?: string
         }
         Relationships: []
