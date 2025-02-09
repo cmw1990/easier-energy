@@ -7306,45 +7306,69 @@ export type Database = {
       }
       mental_health_professionals: {
         Row: {
+          approach_description: string | null
+          areas_of_focus: string[] | null
+          avatar_url: string | null
           bio: string | null
+          certifications: string[] | null
           consultation_fee: number | null
           created_at: string
           credentials: string[]
+          education: string[] | null
           full_name: string
           id: string
           is_available: boolean | null
           languages: string[] | null
-          specialties: string[]
+          rating: number | null
+          reviews_count: number | null
+          session_format: string[] | null
+          specialties: Database["public"]["Enums"]["expert_specialty"][]
           title: string
           user_id: string | null
           verification_status: string | null
           years_experience: number | null
         }
         Insert: {
+          approach_description?: string | null
+          areas_of_focus?: string[] | null
+          avatar_url?: string | null
           bio?: string | null
+          certifications?: string[] | null
           consultation_fee?: number | null
           created_at?: string
           credentials: string[]
+          education?: string[] | null
           full_name: string
           id?: string
           is_available?: boolean | null
           languages?: string[] | null
-          specialties: string[]
+          rating?: number | null
+          reviews_count?: number | null
+          session_format?: string[] | null
+          specialties: Database["public"]["Enums"]["expert_specialty"][]
           title: string
           user_id?: string | null
           verification_status?: string | null
           years_experience?: number | null
         }
         Update: {
+          approach_description?: string | null
+          areas_of_focus?: string[] | null
+          avatar_url?: string | null
           bio?: string | null
+          certifications?: string[] | null
           consultation_fee?: number | null
           created_at?: string
           credentials?: string[]
+          education?: string[] | null
           full_name?: string
           id?: string
           is_available?: boolean | null
           languages?: string[] | null
-          specialties?: string[]
+          rating?: number | null
+          reviews_count?: number | null
+          session_format?: string[] | null
+          specialties?: Database["public"]["Enums"]["expert_specialty"][]
           title?: string
           user_id?: string | null
           verification_status?: string | null
@@ -19005,6 +19029,27 @@ export type Database = {
         | "stretching"
         | "desk_exercise"
         | "eye_exercise"
+      expert_specialty:
+        | "mental_health"
+        | "nutrition"
+        | "supplements"
+        | "fatigue"
+        | "adhd"
+        | "memory"
+        | "brain_exercise"
+        | "dementia"
+        | "sleep"
+        | "anxiety"
+        | "depression"
+        | "stress"
+        | "cognitive_health"
+        | "mindfulness"
+        | "holistic_health"
+        | "behavioral_therapy"
+        | "energy_management"
+        | "focus_training"
+        | "cognitive_rehabilitation"
+        | "neuroplasticity"
       feedback_priority: "low" | "medium" | "high" | "critical"
       feedback_status: "open" | "in_progress" | "completed" | "declined"
       feedback_type:
