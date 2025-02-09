@@ -1,290 +1,322 @@
 
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { useAuth } from "@/components/AuthProvider"
-import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea" 
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import { useAuth } from "@/components/AuthProvider"
+import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { Separator } from "@/components/ui/separator"
 
-const VENDOR_RULES = `
-1. Product Quality Standards:
-   - All products must be authentic and as described
-   - Products must meet applicable safety standards
-   - Clear product descriptions and accurate images required
-
-2. Shipping and Delivery:
-   - Accurate processing times must be maintained
-   - Proper packaging to ensure safe delivery
-   - Valid tracking numbers must be provided
-
-3. Customer Service:
-   - Respond to customer inquiries within 24 hours
-   - Professional communication at all times
-   - Fair and transparent return policy required
-
-4. Compliance:
-   - Adhere to all applicable laws and regulations
-   - Maintain required licenses and permits
-   - Proper tax reporting and collection
-
-5. Platform Policies:
-   - Maintain accurate inventory levels
-   - No prohibited items or services
-   - Commission fees as agreed upon
-
-Violation of these rules may result in suspension or termination of vendor privileges.
-`;
+const settingsSchema = z.object({
+  business_registration: z.string().min(1, "Business registration is required"),
+  tax_id: z.string().min(1, "Tax ID is required"),
+  return_policy: z.string().min(1, "Return policy is required"),
+  shipping_policy: z.string().min(1, "Shipping policy is required"),
+  customer_service_email: z.string().email("Must be a valid email"),
+  customer_service_phone: z.string().optional(),
+  shop_enabled: z.boolean().default(false),
+  shop_announcement: z.string().optional(),
+  minimum_order_amount: z.number().min(0).default(0),
+  rules_accepted: z.boolean()
+})
 
 export function VendorSettings() {
-  const { session } = useAuth();
-  const { toast } = useToast();
-  const [settings, setSettings] = useState({
-    business_registration: '',
-    tax_id: '',
-    return_policy: '',
-    shipping_policy: '',
-    customer_service_email: '',
-    customer_service_phone: '',
-    rules_accepted: false,
-    // Shop settings
-    shop_enabled: false,
-    shop_announcement: '',
-    minimum_order_amount: 0
-  });
+  const { session } = useAuth()
+  const { toast } = useToast()
+  const [loading, setLoading] = useState(false)
 
-  const { data: vendor, isLoading } = useQuery({
-    queryKey: ['vendor-settings', session?.user?.id],
-    queryFn: async () => {
+  const form = useForm<z.infer<typeof settingsSchema>>({
+    resolver: zodResolver(settingsSchema),
+    defaultValues: {
+      business_registration: '',
+      tax_id: '',
+      return_policy: '',
+      shipping_policy: '',
+      customer_service_email: '',
+      customer_service_phone: '',
+      shop_enabled: false,
+      shop_announcement: '',
+      minimum_order_amount: 0,
+      rules_accepted: false
+    }
+  })
+
+  useEffect(() => {
+    async function loadVendorSettings() {
+      if (!session?.user?.id) return
+
       const { data, error } = await supabase
         .from('vendors')
         .select('*')
-        .eq('claimed_by', session?.user?.id)
-        .single();
+        .eq('claimed_by', session.user.id)
+        .single()
 
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!session?.user?.id
-  });
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load vendor settings",
+          variant: "destructive"
+        })
+        return
+      }
 
-  useEffect(() => {
-    if (vendor) {
-      setSettings({
-        business_registration: vendor.business_registration || '',
-        tax_id: vendor.tax_id || '',
-        return_policy: vendor.return_policy || '',
-        shipping_policy: vendor.shipping_policy || '',
-        customer_service_email: vendor.customer_service_email || '',
-        customer_service_phone: vendor.customer_service_phone || '',
-        rules_accepted: vendor.rules_accepted || false,
-        shop_enabled: vendor.shop_enabled || false,
-        shop_announcement: vendor.shop_announcement || '',
-        minimum_order_amount: vendor.minimum_order_amount || 0
-      });
+      if (data) {
+        form.reset({
+          business_registration: data.business_registration || '',
+          tax_id: data.tax_id || '',
+          return_policy: data.return_policy || '',
+          shipping_policy: data.shipping_policy || '',
+          customer_service_email: data.customer_service_email || '',
+          customer_service_phone: data.customer_service_phone || '',
+          shop_enabled: data.shop_enabled || false,
+          shop_announcement: data.shop_announcement || '',
+          minimum_order_amount: data.minimum_order_amount || 0,
+          rules_accepted: data.rules_accepted || false
+        })
+      }
     }
-  }, [vendor]);
 
-  const saveSettings = async () => {
+    loadVendorSettings()
+  }, [session?.user?.id])
+
+  async function onSubmit(values: z.infer<typeof settingsSchema>) {
+    if (!session?.user?.id) return
+
+    setLoading(true)
     try {
+      const updates = {
+        ...values,
+        rules_accepted_at: values.rules_accepted ? new Date().toISOString() : null
+      }
+
       const { error } = await supabase
         .from('vendors')
-        .update({
-          ...settings,
-          rules_accepted_at: settings.rules_accepted ? new Date().toISOString() : null
-        })
-        .eq('claimed_by', session?.user?.id);
+        .update(updates)
+        .eq('claimed_by', session.user.id)
 
-      if (error) throw error;
+      if (error) throw error
 
       toast({
         title: "Success",
-        description: "Settings saved successfully"
-      });
+        description: "Vendor settings updated successfully"
+      })
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to save settings",
+        description: "Failed to update vendor settings",
         variant: "destructive"
-      });
+      })
+    } finally {
+      setLoading(false)
     }
-  };
-
-  if (isLoading) {
-    return <div>Loading settings...</div>;
   }
 
   return (
     <div className="space-y-6">
-      {/* Business Information */}
       <Card>
         <CardHeader>
-          <CardTitle>Business Information</CardTitle>
+          <CardTitle>Vendor Settings</CardTitle>
           <CardDescription>
-            Provide your business details and documentation
+            Configure your vendor profile and shop settings
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-2">
-            <Label htmlFor="business_registration">Business Registration Number</Label>
-            <Input
-              id="business_registration"
-              value={settings.business_registration}
-              onChange={(e) => setSettings(s => ({ ...s, business_registration: e.target.value }))}
-            />
-          </div>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              {/* Business Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Business Information</h3>
+                <FormField
+                  control={form.control}
+                  name="business_registration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Business Registration Number</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
 
-          <div className="grid gap-2">
-            <Label htmlFor="tax_id">Tax ID</Label>
-            <Input
-              id="tax_id"
-              value={settings.tax_id}
-              onChange={(e) => setSettings(s => ({ ...s, tax_id: e.target.value }))}
-            />
-          </div>
+                <FormField
+                  control={form.control}
+                  name="tax_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tax ID</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Separator />
+
+              {/* Policies */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Store Policies</h3>
+                <FormField
+                  control={form.control}
+                  name="return_policy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Return Policy</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} rows={4} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="shipping_policy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Shipping Policy</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} rows={4} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Separator />
+
+              {/* Customer Service */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Customer Service</h3>
+                <FormField
+                  control={form.control}
+                  name="customer_service_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Support Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="customer_service_phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Support Phone</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Separator />
+
+              {/* Shop Settings */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Shop Settings</h3>
+                <FormField
+                  control={form.control}
+                  name="shop_enabled"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Enable Shop</FormLabel>
+                        <FormDescription>
+                          Make your products available for purchase
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="shop_announcement"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Shop Announcement</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Display an announcement message in your shop
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="minimum_order_amount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Minimum Order Amount ($)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field}
+                          onChange={e => field.onChange(parseFloat(e.target.value))}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Separator />
+
+              {/* Terms Acceptance */}
+              <FormField
+                control={form.control}
+                name="rules_accepted"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">
+                        Accept Vendor Rules and Terms
+                      </FormLabel>
+                      <FormDescription>
+                        You must accept our vendor rules and terms to sell on our platform
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <Button type="submit" disabled={loading}>
+                {loading ? "Saving..." : "Save Settings"}
+              </Button>
+            </form>
+          </Form>
         </CardContent>
       </Card>
-
-      {/* Shop Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Shop Settings</CardTitle>
-          <CardDescription>
-            Configure your shop's settings and policies
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="shop_enabled"
-              checked={settings.shop_enabled}
-              onCheckedChange={(checked) => setSettings(s => ({ ...s, shop_enabled: checked }))}
-            />
-            <Label htmlFor="shop_enabled">Enable Shop</Label>
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="shop_announcement">Shop Announcement</Label>
-            <Textarea
-              id="shop_announcement"
-              value={settings.shop_announcement}
-              onChange={(e) => setSettings(s => ({ ...s, shop_announcement: e.target.value }))}
-              placeholder="Announce special offers or important information"
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="minimum_order_amount">Minimum Order Amount ($)</Label>
-            <Input
-              id="minimum_order_amount"
-              type="number"
-              value={settings.minimum_order_amount}
-              onChange={(e) => setSettings(s => ({ ...s, minimum_order_amount: Number(e.target.value) }))}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Policies */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Policies</CardTitle>
-          <CardDescription>
-            Set up your store policies
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-2">
-            <Label htmlFor="return_policy">Return Policy</Label>
-            <Textarea
-              id="return_policy"
-              value={settings.return_policy}
-              onChange={(e) => setSettings(s => ({ ...s, return_policy: e.target.value }))}
-              rows={4}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="shipping_policy">Shipping Policy</Label>
-            <Textarea
-              id="shipping_policy"
-              value={settings.shipping_policy}
-              onChange={(e) => setSettings(s => ({ ...s, shipping_policy: e.target.value }))}
-              rows={4}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Customer Service */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Customer Service</CardTitle>
-          <CardDescription>
-            Contact information for customer support
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-2">
-            <Label htmlFor="customer_service_email">Support Email</Label>
-            <Input
-              id="customer_service_email"
-              type="email"
-              value={settings.customer_service_email}
-              onChange={(e) => setSettings(s => ({ ...s, customer_service_email: e.target.value }))}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="customer_service_phone">Support Phone</Label>
-            <Input
-              id="customer_service_phone"
-              type="tel"
-              value={settings.customer_service_phone}
-              onChange={(e) => setSettings(s => ({ ...s, customer_service_phone: e.target.value }))}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Vendor Rules */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Vendor Rules and Terms</CardTitle>
-          <CardDescription>
-            Review and accept our vendor rules and terms
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-muted p-4 rounded-lg">
-            <pre className="whitespace-pre-wrap text-sm">
-              {VENDOR_RULES}
-            </pre>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="rules_accepted"
-              checked={settings.rules_accepted}
-              onCheckedChange={(checked) => setSettings(s => ({ ...s, rules_accepted: checked }))}
-            />
-            <Label htmlFor="rules_accepted">
-              I accept the vendor rules and terms
-            </Label>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="flex justify-end">
-        <Button onClick={saveSettings} size="lg">
-          Save Settings
-        </Button>
-      </div>
     </div>
-  );
+  )
 }
