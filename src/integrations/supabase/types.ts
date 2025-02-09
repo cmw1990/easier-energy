@@ -689,6 +689,8 @@ export type Database = {
           name: string
           owner: string | null
           powers: string[]
+          search_rank: number | null
+          search_vector: unknown | null
         }
         Insert: {
           created_at?: string
@@ -698,6 +700,8 @@ export type Database = {
           name: string
           owner?: string | null
           powers: string[]
+          search_rank?: number | null
+          search_vector?: unknown | null
         }
         Update: {
           created_at?: string
@@ -707,6 +711,8 @@ export type Database = {
           name?: string
           owner?: string | null
           powers?: string[]
+          search_rank?: number | null
+          search_vector?: unknown | null
         }
         Relationships: []
       }
@@ -2057,6 +2063,8 @@ export type Database = {
           id: string
           name: string
           realm_id: string | null
+          search_rank: number | null
+          search_vector: unknown | null
         }
         Insert: {
           characteristics: string[]
@@ -2065,6 +2073,8 @@ export type Database = {
           id?: string
           name: string
           realm_id?: string | null
+          search_rank?: number | null
+          search_vector?: unknown | null
         }
         Update: {
           characteristics?: string[]
@@ -2073,6 +2083,8 @@ export type Database = {
           id?: string
           name?: string
           realm_id?: string | null
+          search_rank?: number | null
+          search_vector?: unknown | null
         }
         Relationships: [
           {
@@ -6571,6 +6583,62 @@ export type Database = {
         }
         Relationships: []
       }
+      prayer_items: {
+        Row: {
+          answered: boolean | null
+          answered_at: string | null
+          content: string
+          created_at: string
+          id: string
+          list_id: string
+        }
+        Insert: {
+          answered?: boolean | null
+          answered_at?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          list_id: string
+        }
+        Update: {
+          answered?: boolean | null
+          answered_at?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          list_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prayer_items_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "prayer_lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prayer_lists: {
+        Row: {
+          created_at: string
+          id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       preference_test_responses: {
         Row: {
           completion_time: number | null
@@ -8686,6 +8754,30 @@ export type Database = {
         }
         Relationships: []
       }
+      reading_plans: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_days: number | null
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       realm_locations: {
         Row: {
           connection_points: Json[] | null
@@ -8724,24 +8816,48 @@ export type Database = {
       realms: {
         Row: {
           characteristic_features: string[]
+          climate: string | null
+          connected_realms: string[] | null
           created_at: string
           description: string
           id: string
+          image_url: string | null
+          inhabitants: string[] | null
+          mythology_era: string | null
           name: string
+          notable_locations: string[] | null
+          search_rank: number | null
+          search_vector: unknown | null
         }
         Insert: {
           characteristic_features: string[]
+          climate?: string | null
+          connected_realms?: string[] | null
           created_at?: string
           description: string
           id?: string
+          image_url?: string | null
+          inhabitants?: string[] | null
+          mythology_era?: string | null
           name: string
+          notable_locations?: string[] | null
+          search_rank?: number | null
+          search_vector?: unknown | null
         }
         Update: {
           characteristic_features?: string[]
+          climate?: string | null
+          connected_realms?: string[] | null
           created_at?: string
           description?: string
           id?: string
+          image_url?: string | null
+          inhabitants?: string[] | null
+          mythology_era?: string | null
           name?: string
+          notable_locations?: string[] | null
+          search_rank?: number | null
+          search_vector?: unknown | null
         }
         Relationships: []
       }
@@ -9552,6 +9668,8 @@ export type Database = {
           interpretation: string
           meaning: string
           name: string
+          search_rank: number | null
+          search_vector: unknown | null
           symbol: string
         }
         Insert: {
@@ -9560,6 +9678,8 @@ export type Database = {
           interpretation: string
           meaning: string
           name: string
+          search_rank?: number | null
+          search_vector?: unknown | null
           symbol: string
         }
         Update: {
@@ -9568,6 +9688,8 @@ export type Database = {
           interpretation?: string
           meaning?: string
           name?: string
+          search_rank?: number | null
+          search_vector?: unknown | null
           symbol?: string
         }
         Relationships: []
@@ -9578,6 +9700,8 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          search_rank: number | null
+          search_vector: unknown | null
           title: string
         }
         Insert: {
@@ -9585,6 +9709,8 @@ export type Database = {
           created_at?: string
           description: string
           id?: string
+          search_rank?: number | null
+          search_vector?: unknown | null
           title: string
         }
         Update: {
@@ -9592,6 +9718,8 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          search_rank?: number | null
+          search_vector?: unknown | null
           title?: string
         }
         Relationships: []
@@ -10818,6 +10946,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      study_notes: {
+        Row: {
+          book: string
+          chapter: number
+          color: string | null
+          created_at: string
+          id: string
+          note_text: string
+          updated_at: string
+          user_id: string
+          verse: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          color?: string | null
+          created_at?: string
+          id?: string
+          note_text: string
+          updated_at?: string
+          user_id: string
+          verse: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          color?: string | null
+          created_at?: string
+          id?: string
+          note_text?: string
+          updated_at?: string
+          user_id?: string
+          verse?: number
+        }
+        Relationships: []
       }
       study_participants: {
         Row: {
@@ -13236,6 +13400,47 @@ export type Database = {
           },
         ]
       }
+      user_reading_progress: {
+        Row: {
+          completed_readings: Json | null
+          created_at: string
+          current_day: number | null
+          id: string
+          last_read_at: string | null
+          plan_id: string | null
+          streak_count: number | null
+          user_id: string
+        }
+        Insert: {
+          completed_readings?: Json | null
+          created_at?: string
+          current_day?: number | null
+          id?: string
+          last_read_at?: string | null
+          plan_id?: string | null
+          streak_count?: number | null
+          user_id: string
+        }
+        Update: {
+          completed_readings?: Json | null
+          created_at?: string
+          current_day?: number | null
+          id?: string
+          last_read_at?: string | null
+          plan_id?: string | null
+          streak_count?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_reading_progress_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "reading_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -14389,6 +14594,10 @@ export type Database = {
           date_to_check: string
         }
         Returns: number
+      }
+      create_types_bible_file: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       get_similar_products: {
         Args: {
