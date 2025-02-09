@@ -44,6 +44,7 @@ const ExpertConsultancyPage = lazy(() => import("@/pages/ExpertConsultancy"))
 const CyclePage = lazy(() => import("@/pages/Cycle"))
 const PregnancyPage = lazy(() => import("@/pages/Pregnancy"))
 const ShopPage = lazy(() => import("@/pages/Shop"))
+const MentalHealthPage = lazy(() => import("@/pages/MentalHealth"))
 
 export const mainRoutes = [
   {
@@ -402,6 +403,14 @@ export const mainRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ShopPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "mental-health",
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <MentalHealthPage />
           </Suspense>
         ),
       },
