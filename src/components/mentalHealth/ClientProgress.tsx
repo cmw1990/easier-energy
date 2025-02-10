@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,26 +16,38 @@ interface ClientProgressProps {
   clientId: string;
 }
 
+const defaultProgress: Omit<ClientProgressTracking, 'id' | 'created_at' | 'updated_at'> = {
+  progress_rating: 5,
+  notes: "",
+  homework: "",
+  next_steps: "",
+  client_id: "",
+  professional_id: "",
+  session_id: ""
+};
+
 export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
   const { session } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [progress, setProgress] = useState<ClientProgressTracking>({
-    progress_rating: 5,
-    notes: "",
-    homework: "",
-    next_steps: ""
+  const [progress, setProgress] = useState<Omit<ClientProgressTracking, 'id' | 'created_at' | 'updated_at'>>({
+    ...defaultProgress,
+    client_id: clientId,
+    session_id: sessionId,
+    professional_id: session?.user?.id || ""
   });
 
   const { data: existingProgress } = useQuery({
     queryKey: ['client-progress', sessionId],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('consultation_progress')
         .select('*')
         .eq('session_id', sessionId)
         .single();
-      return data;
+      
+      if (error) throw error;
+      return data as ClientProgressTracking;
     },
     enabled: !!sessionId
   });
@@ -46,10 +59,8 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
       const { data, error } = await supabase
         .from('consultation_progress')
         .upsert({
-          session_id: sessionId,
-          client_id: clientId,
+          ...progress,
           professional_id: session.user.id,
-          ...progress
         })
         .select()
         .single();
@@ -76,12 +87,13 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
 
   useEffect(() => {
     if (existingProgress) {
-      setProgress({
-        progress_rating: existingProgress.progress_rating || 5,
-        notes: existingProgress.notes || "",
-        homework: existingProgress.homework || "",
-        next_steps: existingProgress.next_steps || ""
-      });
+      setProgress(prev => ({
+        ...prev,
+        progress_rating: existingProgress.progress_rating,
+        notes: existingProgress.notes,
+        homework: existingProgress.homework,
+        next_steps: existingProgress.next_steps
+      }));
     }
   }, [existingProgress]);
 

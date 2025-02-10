@@ -3646,7 +3646,7 @@ export type Database = {
       }
       customer_behavior_analysis: {
         Row: {
-          behavior_patterns: Json | null
+          behavior_patterns: Json
           created_at: string | null
           engagement_metrics: Json | null
           id: string
@@ -3655,7 +3655,7 @@ export type Database = {
           vendor_id: string | null
         }
         Insert: {
-          behavior_patterns?: Json | null
+          behavior_patterns?: Json
           created_at?: string | null
           engagement_metrics?: Json | null
           id?: string
@@ -3664,7 +3664,7 @@ export type Database = {
           vendor_id?: string | null
         }
         Update: {
-          behavior_patterns?: Json | null
+          behavior_patterns?: Json
           created_at?: string | null
           engagement_metrics?: Json | null
           id?: string
@@ -19101,8 +19101,8 @@ export type Database = {
           id: string
           points_ratio: number
           program_name: string
-          rewards: Json | null
-          tiers: Json | null
+          rewards: Json
+          tiers: Json
           updated_at: string | null
           vendor_id: string | null
         }
@@ -19111,8 +19111,8 @@ export type Database = {
           id?: string
           points_ratio: number
           program_name: string
-          rewards?: Json | null
-          tiers?: Json | null
+          rewards?: Json
+          tiers?: Json
           updated_at?: string | null
           vendor_id?: string | null
         }
@@ -19121,8 +19121,8 @@ export type Database = {
           id?: string
           points_ratio?: number
           program_name?: string
-          rewards?: Json | null
-          tiers?: Json | null
+          rewards?: Json
+          tiers?: Json
           updated_at?: string | null
           vendor_id?: string | null
         }

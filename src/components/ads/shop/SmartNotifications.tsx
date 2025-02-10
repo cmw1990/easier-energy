@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
@@ -87,8 +86,31 @@ export function SmartNotifications() {
         .select('*')
         .eq('vendor_id', vendorId)
         .single()
-      if (error) throw error
-      return data as CustomerBehavior
+      
+      if (error) throw error;
+      
+      // Ensure the data matches our type
+      const typedData: CustomerBehavior = {
+        ...data,
+        behavior_patterns: {
+          active_users: data.behavior_patterns.active_users || 0,
+          engagement_rate: data.behavior_patterns.engagement_rate || 0,
+          response_rate: data.behavior_patterns.response_rate || 0,
+          segments: data.behavior_patterns.segments || []
+        },
+        customer_segments: {
+          new: 0,
+          returning: 0,
+          inactive: 0
+        },
+        revenue_trends: {
+          daily: [],
+          weekly: [],
+          monthly: []
+        }
+      };
+      
+      return typedData;
     },
     enabled: !!vendorId
   })
