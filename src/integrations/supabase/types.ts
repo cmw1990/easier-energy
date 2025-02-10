@@ -2715,6 +2715,53 @@ export type Database = {
         }
         Relationships: []
       }
+      client_progress: {
+        Row: {
+          client_id: string
+          created_at: string
+          homework: string | null
+          id: string
+          next_steps: string | null
+          notes: string | null
+          professional_id: string
+          progress_rating: number | null
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          homework?: string | null
+          id?: string
+          next_steps?: string | null
+          notes?: string | null
+          professional_id: string
+          progress_rating?: number | null
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          homework?: string | null
+          id?: string
+          next_steps?: string | null
+          notes?: string | null
+          professional_id?: string
+          progress_rating?: number | null
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_progress_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_progress_tracking: {
         Row: {
           client_id: string | null

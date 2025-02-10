@@ -1,66 +1,52 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/AuthProvider";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Target, Plus } from "lucide-react";
-import { ClientProgressTracking } from "@/types/ConsultationTypes";
 
 interface ClientProgressProps {
-  sessionId: string;
   clientId: string;
+  sessionId: string;
 }
 
-const defaultProgress: Omit<ClientProgressTracking, 'id' | 'created_at' | 'updated_at'> = {
-  progress_rating: 5,
-  notes: "",
-  homework: "",
-  next_steps: "",
-  client_id: "",
-  professional_id: "",
-  session_id: ""
-};
-
-export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
-  const { session } = useAuth();
+export function ClientProgress({ clientId, sessionId }: ClientProgressProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [progress, setProgress] = useState<Omit<ClientProgressTracking, 'id' | 'created_at' | 'updated_at'>>({
-    ...defaultProgress,
-    client_id: clientId,
-    session_id: sessionId,
-    professional_id: session?.user?.id || ""
+  const [progressData, setProgressData] = useState({
+    progress_rating: 5,
+    notes: "",
+    homework: "",
+    next_steps: ""
   });
 
   const { data: existingProgress } = useQuery({
     queryKey: ['client-progress', sessionId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('consultation_progress')
+        .from('client_progress')
         .select('*')
         .eq('session_id', sessionId)
         .single();
-      
-      if (error) throw error;
-      return data as ClientProgressTracking;
+
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
     },
     enabled: !!sessionId
   });
 
   const updateProgress = useMutation({
     mutationFn: async () => {
-      if (!session?.user?.id) throw new Error("Not authenticated");
-      
       const { data, error } = await supabase
-        .from('consultation_progress')
+        .from('client_progress')
         .upsert({
-          ...progress,
-          professional_id: session.user.id,
+          session_id: sessionId,
+          client_id: clientId,
+          professional_id: (await supabase.auth.getUser()).data.user?.id,
+          ...progressData
         })
         .select()
         .single();
@@ -81,29 +67,26 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
         description: "Failed to update progress",
         variant: "destructive"
       });
-      console.error('Progress error:', error);
+      console.error('Progress update error:', error);
     }
   });
 
-  useEffect(() => {
+  // Update form when existing data is loaded
+  useState(() => {
     if (existingProgress) {
-      setProgress(prev => ({
-        ...prev,
-        progress_rating: existingProgress.progress_rating,
-        notes: existingProgress.notes,
-        homework: existingProgress.homework,
-        next_steps: existingProgress.next_steps
-      }));
+      setProgressData({
+        progress_rating: existingProgress.progress_rating || 5,
+        notes: existingProgress.notes || "",
+        homework: existingProgress.homework || "",
+        next_steps: existingProgress.next_steps || ""
+      });
     }
-  }, [existingProgress]);
+  });
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Target className="h-5 w-5" />
-          Client Progress Tracking
-        </CardTitle>
+        <CardTitle>Client Progress Tracking</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
@@ -112,8 +95,8 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
             type="number"
             min="1"
             max="10"
-            value={progress.progress_rating}
-            onChange={(e) => setProgress(prev => ({ 
+            value={progressData.progress_rating}
+            onChange={(e) => setProgressData(prev => ({ 
               ...prev, 
               progress_rating: parseInt(e.target.value) 
             }))}
@@ -123,8 +106,11 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Progress Notes</label>
           <Textarea
-            value={progress.notes}
-            onChange={(e) => setProgress(prev => ({ ...prev, notes: e.target.value }))}
+            value={progressData.notes}
+            onChange={(e) => setProgressData(prev => ({ 
+              ...prev, 
+              notes: e.target.value 
+            }))}
             placeholder="Document client's progress..."
           />
         </div>
@@ -132,8 +118,11 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Homework/Exercises</label>
           <Textarea
-            value={progress.homework}
-            onChange={(e) => setProgress(prev => ({ ...prev, homework: e.target.value }))}
+            value={progressData.homework}
+            onChange={(e) => setProgressData(prev => ({ 
+              ...prev, 
+              homework: e.target.value 
+            }))}
             placeholder="Assign homework or exercises..."
           />
         </div>
@@ -141,8 +130,11 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Next Steps</label>
           <Textarea
-            value={progress.next_steps}
-            onChange={(e) => setProgress(prev => ({ ...prev, next_steps: e.target.value }))}
+            value={progressData.next_steps}
+            onChange={(e) => setProgressData(prev => ({ 
+              ...prev, 
+              next_steps: e.target.value 
+            }))}
             placeholder="Outline next steps and goals..."
           />
         </div>
@@ -152,7 +144,6 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
           disabled={updateProgress.isPending}
           className="w-full"
         >
-          <Plus className="h-4 w-4 mr-2" />
           {updateProgress.isPending ? "Updating..." : "Update Progress"}
         </Button>
       </CardContent>
