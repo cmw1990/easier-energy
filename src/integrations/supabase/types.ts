@@ -19426,6 +19426,50 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          amount: number
+          commission_amount: number
+          created_at: string | null
+          customer_id: string | null
+          id: string
+          status: string
+          stripe_payment_intent_id: string | null
+          updated_at: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          amount: number
+          commission_amount: number
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          amount?: number
+          commission_amount?: number
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       treatment_plans: {
         Row: {
           client_id: string | null
