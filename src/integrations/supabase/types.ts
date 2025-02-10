@@ -912,6 +912,39 @@ export type Database = {
           },
         ]
       }
+      ai_verse_recommendations: {
+        Row: {
+          context_tags: string[] | null
+          created_at: string | null
+          id: string
+          reasoning: string | null
+          recommendation_type: string
+          sentiment_match: number | null
+          user_id: string
+          verse_reference: string
+        }
+        Insert: {
+          context_tags?: string[] | null
+          created_at?: string | null
+          id?: string
+          reasoning?: string | null
+          recommendation_type: string
+          sentiment_match?: number | null
+          user_id: string
+          verse_reference: string
+        }
+        Update: {
+          context_tags?: string[] | null
+          created_at?: string | null
+          id?: string
+          reasoning?: string | null
+          recommendation_type?: string
+          sentiment_match?: number | null
+          user_id?: string
+          verse_reference?: string
+        }
+        Relationships: []
+      }
       analytics_access: {
         Row: {
           access_level: string
@@ -3210,6 +3243,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      community_insights: {
+        Row: {
+          ai_enhanced_tags: string[] | null
+          created_at: string | null
+          id: string
+          insight: string
+          likes_count: number | null
+          user_id: string
+          verse_reference: string
+        }
+        Insert: {
+          ai_enhanced_tags?: string[] | null
+          created_at?: string | null
+          id?: string
+          insight: string
+          likes_count?: number | null
+          user_id: string
+          verse_reference: string
+        }
+        Update: {
+          ai_enhanced_tags?: string[] | null
+          created_at?: string | null
+          id?: string
+          insight?: string
+          likes_count?: number | null
+          user_id?: string
+          verse_reference?: string
+        }
+        Relationships: []
       }
       consultation_availability: {
         Row: {
@@ -11144,6 +11207,39 @@ export type Database = {
           },
         ]
       }
+      prayer_journals: {
+        Row: {
+          ai_insights: string | null
+          content: string
+          created_at: string | null
+          id: string
+          prayer_themes: string[] | null
+          sentiment: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_insights?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+          prayer_themes?: string[] | null
+          sentiment?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_insights?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          prayer_themes?: string[] | null
+          sentiment?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       prayer_lists: {
         Row: {
           created_at: string
@@ -15304,6 +15400,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      scripture_meditations: {
+        Row: {
+          background_audio_url: string | null
+          created_at: string | null
+          duration_minutes: number | null
+          id: string
+          meditation_prompt: string
+          verse_reference: string
+        }
+        Insert: {
+          background_audio_url?: string | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          meditation_prompt: string
+          verse_reference: string
+        }
+        Update: {
+          background_audio_url?: string | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          meditation_prompt?: string
+          verse_reference?: string
+        }
+        Relationships: []
+      }
+      scripture_wellness_prompts: {
+        Row: {
+          category: string
+          created_at: string | null
+          emotional_tags: string[] | null
+          id: string
+          prompt: string
+          recommended_time_of_day: string | null
+          verse_reference: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          emotional_tags?: string[] | null
+          id?: string
+          prompt: string
+          recommended_time_of_day?: string | null
+          verse_reference: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          emotional_tags?: string[] | null
+          id?: string
+          prompt?: string
+          recommended_time_of_day?: string | null
+          verse_reference?: string
+        }
+        Relationships: []
       }
       seller_analytics: {
         Row: {
@@ -21129,6 +21282,36 @@ export type Database = {
           reviewer_notes?: string | null
           status?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      verse_audio_narrations: {
+        Row: {
+          audio_url: string
+          created_at: string | null
+          duration_seconds: number | null
+          id: string
+          language: string | null
+          verse_reference: string
+          voice_style: string | null
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          language?: string | null
+          verse_reference: string
+          voice_style?: string | null
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          language?: string | null
+          verse_reference?: string
+          voice_style?: string | null
         }
         Relationships: []
       }
