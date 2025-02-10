@@ -3108,6 +3108,36 @@ export type Database = {
           },
         ]
       }
+      consultation_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number | null
+          end_time: string
+          id: string
+          is_available: boolean | null
+          professional_id: string | null
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week?: number | null
+          end_time: string
+          id?: string
+          is_available?: boolean | null
+          professional_id?: string | null
+          start_time: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number | null
+          end_time?: string
+          id?: string
+          is_available?: boolean | null
+          professional_id?: string | null
+          start_time?: string
+        }
+        Relationships: []
+      }
       consultation_feedback: {
         Row: {
           anonymous: boolean | null
@@ -3241,6 +3271,36 @@ export type Database = {
           },
         ]
       }
+      consultation_notifications: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       consultation_packages: {
         Row: {
           created_at: string | null
@@ -3284,6 +3344,50 @@ export type Database = {
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_payments: {
+        Row: {
+          amount: number
+          client_id: string | null
+          created_at: string
+          id: string
+          package_id: string | null
+          payment_method: string | null
+          professional_id: string | null
+          status: string | null
+          transaction_id: string | null
+        }
+        Insert: {
+          amount: number
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          package_id?: string | null
+          payment_method?: string | null
+          professional_id?: string | null
+          status?: string | null
+          transaction_id?: string | null
+        }
+        Update: {
+          amount?: number
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          package_id?: string | null
+          payment_method?: string | null
+          professional_id?: string | null
+          status?: string | null
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_payments_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_packages"
             referencedColumns: ["id"]
           },
         ]
@@ -3429,6 +3533,47 @@ export type Database = {
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_reviews: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          id: string
+          is_anonymous: boolean | null
+          professional_id: string | null
+          rating: number | null
+          review_text: string | null
+          session_id: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          is_anonymous?: boolean | null
+          professional_id?: string | null
+          rating?: number | null
+          review_text?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          is_anonymous?: boolean | null
+          professional_id?: string | null
+          rating?: number | null
+          review_text?: string | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_reviews_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_sessions"
             referencedColumns: ["id"]
           },
         ]
