@@ -6815,6 +6815,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_group"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "group_bible_studies_group_id_fkey"
             columns: ["group_id"]
             isOneToOne: false
