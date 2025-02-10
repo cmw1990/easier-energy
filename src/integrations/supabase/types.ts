@@ -1281,6 +1281,42 @@ export type Database = {
         }
         Relationships: []
       }
+      bible_commentaries: {
+        Row: {
+          author: string
+          book: string
+          chapter: number
+          content: string
+          created_at: string
+          id: string
+          source: string | null
+          translation_code: string | null
+          verse: number
+        }
+        Insert: {
+          author: string
+          book: string
+          chapter: number
+          content: string
+          created_at?: string
+          id?: string
+          source?: string | null
+          translation_code?: string | null
+          verse: number
+        }
+        Update: {
+          author?: string
+          book?: string
+          chapter?: number
+          content?: string
+          created_at?: string
+          id?: string
+          source?: string | null
+          translation_code?: string | null
+          verse?: number
+        }
+        Relationships: []
+      }
       bible_study_groups: {
         Row: {
           created_at: string | null
@@ -4837,6 +4873,136 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      devotional_plan_days: {
+        Row: {
+          content: string
+          created_at: string
+          day_number: number
+          id: string
+          plan_id: string | null
+          prayer_focus: string | null
+          reflection_questions: string[] | null
+          scripture_reference: string
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          day_number: number
+          id?: string
+          plan_id?: string | null
+          prayer_focus?: string | null
+          reflection_questions?: string[] | null
+          scripture_reference: string
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          day_number?: number
+          id?: string
+          plan_id?: string | null
+          prayer_focus?: string | null
+          reflection_questions?: string[] | null
+          scripture_reference?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devotional_plan_days_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "devotional_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      devotional_plans: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          duration_days: number
+          id: string
+          is_featured: boolean | null
+          preview_content: string | null
+          title: string
+          topics: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration_days: number
+          id?: string
+          is_featured?: boolean | null
+          preview_content?: string | null
+          title: string
+          topics?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration_days?: number
+          id?: string
+          is_featured?: boolean | null
+          preview_content?: string | null
+          title?: string
+          topics?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      devotional_progress: {
+        Row: {
+          completed_at: string | null
+          completed_days: number[] | null
+          current_day: number | null
+          id: string
+          last_completed_day: string | null
+          notes: string | null
+          plan_id: string | null
+          started_at: string
+          streak_count: number | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_days?: number[] | null
+          current_day?: number | null
+          id?: string
+          last_completed_day?: string | null
+          notes?: string | null
+          plan_id?: string | null
+          started_at?: string
+          streak_count?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          completed_days?: number[] | null
+          current_day?: number | null
+          id?: string
+          last_completed_day?: string | null
+          notes?: string | null
+          plan_id?: string | null
+          started_at?: string
+          streak_count?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devotional_progress_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "devotional_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       devotionals: {
         Row: {
@@ -11261,6 +11427,33 @@ export type Database = {
         }
         Relationships: []
       }
+      prayer_partners: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+          user_id_1: string | null
+          user_id_2: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id_1?: string | null
+          user_id_2?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id_1?: string | null
+          user_id_2?: string | null
+        }
+        Relationships: []
+      }
       prayer_requests: {
         Row: {
           content: string
@@ -15626,6 +15819,42 @@ export type Database = {
           status?: Database["public"]["Enums"]["verification_status"] | null
           submitted_at?: string | null
           tax_id?: string | null
+        }
+        Relationships: []
+      }
+      sermon_notes: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          media_urls: string[] | null
+          scripture_references: string[] | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          media_urls?: string[] | null
+          scripture_references?: string[] | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          media_urls?: string[] | null
+          scripture_references?: string[] | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -22346,6 +22575,7 @@ export type Database = {
         | "in_progress"
         | "completed"
         | "cancelled"
+      content_connection_type: "film" | "book" | "music" | "game" | "art"
       delivery_status: "pending" | "in_transit" | "delivered" | "failed"
       digital_product_category:
         | "discord_servers"
