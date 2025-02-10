@@ -3616,10 +3616,12 @@ export type Database = {
           client_id: string | null
           created_at: string
           duration_minutes: number
+          feedback_submitted: boolean | null
           id: string
           meeting_link: string | null
           notes: string | null
           professional_id: string | null
+          scheduled_start: string
           session_date: string
           session_type: string
           status: string | null
@@ -3628,10 +3630,12 @@ export type Database = {
           client_id?: string | null
           created_at?: string
           duration_minutes: number
+          feedback_submitted?: boolean | null
           id?: string
           meeting_link?: string | null
           notes?: string | null
           professional_id?: string | null
+          scheduled_start?: string
           session_date: string
           session_type: string
           status?: string | null
@@ -3640,10 +3644,12 @@ export type Database = {
           client_id?: string | null
           created_at?: string
           duration_minutes?: number
+          feedback_submitted?: boolean | null
           id?: string
           meeting_link?: string | null
           notes?: string | null
           professional_id?: string | null
+          scheduled_start?: string
           session_date?: string
           session_type?: string
           status?: string | null
@@ -13212,7 +13218,9 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           business_name: string | null
+          consultation_fee: number | null
           created_at: string | null
           email: string | null
           full_name: string | null
@@ -13221,12 +13229,18 @@ export type Database = {
           notification_settings: Json | null
           push_token: string | null
           role: string | null
+          specialties: string[] | null
+          title: string | null
           updated_at: string | null
           username: string | null
+          verified: boolean | null
+          years_experience: number | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           business_name?: string | null
+          consultation_fee?: number | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -13235,12 +13249,18 @@ export type Database = {
           notification_settings?: Json | null
           push_token?: string | null
           role?: string | null
+          specialties?: string[] | null
+          title?: string | null
           updated_at?: string | null
           username?: string | null
+          verified?: boolean | null
+          years_experience?: number | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           business_name?: string | null
+          consultation_fee?: number | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -13249,8 +13269,12 @@ export type Database = {
           notification_settings?: Json | null
           push_token?: string | null
           role?: string | null
+          specialties?: string[] | null
+          title?: string | null
           updated_at?: string | null
           username?: string | null
+          verified?: boolean | null
+          years_experience?: number | null
         }
         Relationships: []
       }
