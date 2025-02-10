@@ -16322,6 +16322,60 @@ export type Database = {
         }
         Relationships: []
       }
+      search_logs: {
+        Row: {
+          created_at: string | null
+          filter_type: string | null
+          id: string
+          location: string | null
+          query: string
+          results_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          filter_type?: string | null
+          id?: string
+          location?: string | null
+          query: string
+          results_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          filter_type?: string | null
+          id?: string
+          location?: string | null
+          query?: string
+          results_count?: number | null
+        }
+        Relationships: []
+      }
+      search_rankings: {
+        Row: {
+          click_count: number | null
+          content_id: string
+          content_type: string
+          id: string
+          last_clicked: string | null
+          search_weight: number | null
+        }
+        Insert: {
+          click_count?: number | null
+          content_id: string
+          content_type: string
+          id?: string
+          last_clicked?: string | null
+          search_weight?: number | null
+        }
+        Update: {
+          click_count?: number | null
+          content_id?: string
+          content_type?: string
+          id?: string
+          last_clicked?: string | null
+          search_weight?: number | null
+        }
+        Relationships: []
+      }
       seller_analytics: {
         Row: {
           churned_subscribers: number | null
