@@ -953,6 +953,8 @@ export type Database = {
           powers: string[]
           search_rank: number | null
           search_vector: unknown | null
+          tags: string[] | null
+          type: string | null
         }
         Insert: {
           created_at?: string
@@ -964,6 +966,8 @@ export type Database = {
           powers: string[]
           search_rank?: number | null
           search_vector?: unknown | null
+          tags?: string[] | null
+          type?: string | null
         }
         Update: {
           created_at?: string
@@ -975,6 +979,8 @@ export type Database = {
           powers?: string[]
           search_rank?: number | null
           search_vector?: unknown | null
+          tags?: string[] | null
+          type?: string | null
         }
         Relationships: []
       }
