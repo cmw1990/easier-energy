@@ -1017,6 +1017,133 @@ export type Database = {
         }
         Relationships: []
       }
+      artwork_collection_items: {
+        Row: {
+          added_at: string
+          artwork_id: string
+          collection_id: string
+        }
+        Insert: {
+          added_at?: string
+          artwork_id: string
+          collection_id: string
+        }
+        Update: {
+          added_at?: string
+          artwork_id?: string
+          collection_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artwork_collection_items_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_artwork"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "artwork_collection_items_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "artwork_collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      artwork_collections: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      artwork_comments: {
+        Row: {
+          artwork_id: string | null
+          content: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artwork_comments_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_artwork"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      artwork_likes: {
+        Row: {
+          artwork_id: string | null
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artwork_likes_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_artwork"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audio_bible_progress: {
         Row: {
           book: string
@@ -23108,6 +23235,36 @@ export type Database = {
           similarity_score: number
         }[]
       }
+      gtrgm_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: {
+          "": unknown
+        }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
       has_role: {
         Args: {
           _user_id: string
@@ -23153,6 +23310,22 @@ export type Database = {
           "": number
         }
         Returns: number
+      }
+      set_limit: {
+        Args: {
+          "": number
+        }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: {
+          "": string
+        }
+        Returns: string[]
       }
     }
     Enums: {
