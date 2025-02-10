@@ -12,7 +12,7 @@ export interface ConsultationSession {
   created_at: string;
   professional?: {
     full_name: string;
-  }[];
+  };
 }
 
 export interface ConsultationPackage {
@@ -23,7 +23,7 @@ export interface ConsultationPackage {
   session_count: number;
   validity_days: number;
   price: number;
-  features: string[];
+  features?: string[];
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -88,4 +88,67 @@ export interface ConsultationNote {
   recommendations?: Record<string, any>;
   mood_observed?: string;
   created_at: string;
+}
+
+export interface MarketplaceMetrics {
+  id: string;
+  metrics_data: {
+    total_revenue: number;
+    total_orders: number;
+    conversion_rate: number;
+  };
+  vendor_id: string;
+  platform_name: string;
+  sync_status: string;
+  last_sync_at?: string;
+  created_at: string;
+}
+
+export interface CustomerBehavior {
+  id: string;
+  vendor_id: string;
+  behavior_patterns: {
+    active_users: number;
+    engagement_rate: number;
+    response_rate: number;
+    segments: Array<{
+      name: string;
+      value: number;
+    }>;
+  };
+  customer_segments: {
+    new: number;
+    returning: number;
+    inactive: number;
+  };
+  revenue_trends: {
+    daily: Array<{date: string; revenue: number}>;
+    weekly: Array<{week: string; revenue: number}>;
+    monthly: Array<{month: string; revenue: number}>;
+  };
+  created_at: string;
+}
+
+export interface LoyaltyProgram {
+  id: string;
+  vendor_id: string;
+  program_name: string;
+  points_ratio: number;
+  tiers?: {
+    name: string;
+    points_required: number;
+    benefits: string[];
+  }[];
+  rewards?: {
+    name: string;
+    points_cost: number;
+    description: string;
+  }[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Option {
+  value: string;
+  label: string;
 }
