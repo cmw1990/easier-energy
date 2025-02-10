@@ -2640,6 +2640,45 @@ export type Database = {
           },
         ]
       }
+      client_goals: {
+        Row: {
+          client_id: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          professional_id: string | null
+          progress: number | null
+          status: string
+          target_date: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          professional_id?: string | null
+          progress?: number | null
+          status?: string
+          target_date?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          professional_id?: string | null
+          progress?: number | null
+          status?: string
+          target_date?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       client_preferences: {
         Row: {
           client_id: string | null
@@ -3346,6 +3385,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      consultation_scheduling_rules: {
+        Row: {
+          availability_hours: Json
+          buffer_minutes: number
+          created_at: string | null
+          id: string
+          max_daily_sessions: number
+          professional_id: string | null
+          session_duration_minutes: number
+          updated_at: string | null
+        }
+        Insert: {
+          availability_hours?: Json
+          buffer_minutes?: number
+          created_at?: string | null
+          id?: string
+          max_daily_sessions?: number
+          professional_id?: string | null
+          session_duration_minutes?: number
+          updated_at?: string | null
+        }
+        Update: {
+          availability_hours?: Json
+          buffer_minutes?: number
+          created_at?: string | null
+          id?: string
+          max_daily_sessions?: number
+          professional_id?: string | null
+          session_duration_minutes?: number
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       consultation_sessions: {
         Row: {
@@ -7179,6 +7251,44 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_session_attendees: {
+        Row: {
+          created_at: string | null
+          feedback: string | null
+          id: string
+          joined_at: string | null
+          session_id: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          joined_at?: string | null
+          session_id?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          joined_at?: string | null
+          session_id?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_session_attendees_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "support_group_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -16444,6 +16554,56 @@ export type Database = {
         }
         Relationships: []
       }
+      support_group_sessions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_minutes: number
+          facilitator_id: string | null
+          group_id: string | null
+          id: string
+          max_participants: number | null
+          meeting_link: string | null
+          session_date: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number
+          facilitator_id?: string | null
+          group_id?: string | null
+          id?: string
+          max_participants?: number | null
+          meeting_link?: string | null
+          session_date: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number
+          facilitator_id?: string | null
+          group_id?: string | null
+          id?: string
+          max_participants?: number | null
+          meeting_link?: string | null
+          session_date?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_group_sessions_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "support_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_groups: {
         Row: {
           created_at: string | null
@@ -17865,6 +18025,51 @@ export type Database = {
           max_fee?: number | null
           min_fee?: number | null
           type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      treatment_plans: {
+        Row: {
+          client_id: string | null
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          goals: Json | null
+          id: string
+          interventions: Json | null
+          professional_id: string | null
+          start_date: string | null
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          goals?: Json | null
+          id?: string
+          interventions?: Json | null
+          professional_id?: string | null
+          start_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          goals?: Json | null
+          id?: string
+          interventions?: Json | null
+          professional_id?: string | null
+          start_date?: string | null
+          status?: string
+          title?: string
           updated_at?: string | null
         }
         Relationships: []

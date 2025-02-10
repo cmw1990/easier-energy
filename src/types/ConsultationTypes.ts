@@ -152,3 +152,76 @@ export interface Option {
   value: string;
   label: string;
 }
+
+export interface SchedulingRule {
+  id: string;
+  professional_id: string;
+  availability_hours: {
+    [key: string]: string[]; // day -> array of hour slots
+  };
+  buffer_minutes: number;
+  max_daily_sessions: number;
+  session_duration_minutes: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientGoal {
+  id: string;
+  client_id: string;
+  professional_id: string;
+  title: string;
+  description?: string;
+  target_date?: string;
+  status: 'in_progress' | 'completed' | 'cancelled';
+  progress: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TreatmentPlan {
+  id: string;
+  client_id: string;
+  professional_id: string;
+  title: string;
+  description?: string;
+  goals: {
+    title: string;
+    description?: string;
+    completed: boolean;
+  }[];
+  interventions: {
+    type: string;
+    description: string;
+    frequency?: string;
+  }[];
+  start_date?: string;
+  end_date?: string;
+  status: 'active' | 'completed' | 'discontinued';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GroupSession {
+  id: string;
+  group_id: string;
+  title: string;
+  description?: string;
+  session_date: string;
+  duration_minutes: number;
+  max_participants?: number;
+  meeting_link?: string;
+  facilitator_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SessionAttendee {
+  id: string;
+  session_id: string;
+  user_id: string;
+  status: 'registered' | 'attended' | 'cancelled';
+  joined_at?: string;
+  feedback?: string;
+  created_at: string;
+}
