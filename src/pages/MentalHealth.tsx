@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CBTExercises from "@/components/cbt/CBTExercises";
@@ -10,7 +10,11 @@ import { TherapyDashboard } from "@/components/mentalHealth/TherapyDashboard";
 import { SupportGroups } from "@/components/mentalHealth/groups/SupportGroups";
 import { EmergencyResources } from "@/components/mentalHealth/crisis/EmergencyResources";
 import { ConsultationPackages } from "@/components/mentalHealth/packages/ConsultationPackages";
+import { ProfessionalDashboard } from "@/components/mentalHealth/professionals/ProfessionalDashboard";
+import { ClientDashboard } from "@/components/mentalHealth/clients/ClientDashboard";
 import { useAuth } from "@/components/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Brain, 
   Users, 
@@ -24,6 +28,36 @@ import {
 
 export default function MentalHealth() {
   const { session } = useAuth();
+  const [userRole, setUserRole] = useState<'client' | 'professional' | null>(null);
+
+  const { data: profile } = useQuery({
+    queryKey: ['user-profile', session?.user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session?.user?.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id
+  });
+
+  useEffect(() => {
+    if (profile?.role) {
+      setUserRole(profile.role as 'client' | 'professional');
+    }
+  }, [profile]);
+
+  if (userRole === 'professional') {
+    return <ProfessionalDashboard />;
+  }
+
+  if (userRole === 'client') {
+    return <ClientDashboard />;
+  }
 
   return (
     <div className="container mx-auto p-4 space-y-6">
