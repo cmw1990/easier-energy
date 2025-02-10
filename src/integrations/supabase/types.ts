@@ -6953,6 +6953,13 @@ export type Database = {
             referencedRelation: "group_messages"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "group_message_reactions_message_id_fkey1"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "group_messages"
+            referencedColumns: ["id"]
+          },
         ]
       }
       group_message_threads: {
@@ -6985,6 +6992,13 @@ export type Database = {
             referencedRelation: "group_messages"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "group_message_threads_parent_message_id_fkey1"
+            columns: ["parent_message_id"]
+            isOneToOne: false
+            referencedRelation: "group_messages"
+            referencedColumns: ["id"]
+          },
         ]
       }
       group_messages: {
@@ -6994,6 +7008,7 @@ export type Database = {
           group_id: string
           id: string
           parent_id: string | null
+          profiles: Json | null
           user_id: string
         }
         Insert: {
@@ -7002,6 +7017,7 @@ export type Database = {
           group_id: string
           id?: string
           parent_id?: string | null
+          profiles?: Json | null
           user_id: string
         }
         Update: {
@@ -7010,6 +7026,7 @@ export type Database = {
           group_id?: string
           id?: string
           parent_id?: string | null
+          profiles?: Json | null
           user_id?: string
         }
         Relationships: [
@@ -7021,7 +7038,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "group_messages_group_id_fkey1"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "group_messages_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "group_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_messages_parent_id_fkey1"
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "group_messages"
@@ -7226,6 +7257,7 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          profiles: Json | null
           session_id: string
           status: string
           user_id: string
@@ -7233,6 +7265,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
+          profiles?: Json | null
           session_id: string
           status?: string
           user_id: string
@@ -7240,6 +7273,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
+          profiles?: Json | null
           session_id?: string
           status?: string
           user_id?: string
@@ -7247,6 +7281,13 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "group_study_session_attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "group_study_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_study_session_attendance_session_id_fkey1"
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "group_study_sessions"
@@ -7296,6 +7337,7 @@ export type Database = {
           end_date: string | null
           group_id: string
           id: string
+          profiles: Json | null
           start_date: string | null
           title: string
           updated_at: string | null
@@ -7306,6 +7348,7 @@ export type Database = {
           end_date?: string | null
           group_id: string
           id?: string
+          profiles?: Json | null
           start_date?: string | null
           title: string
           updated_at?: string | null
@@ -7316,6 +7359,7 @@ export type Database = {
           end_date?: string | null
           group_id?: string
           id?: string
+          profiles?: Json | null
           start_date?: string | null
           title?: string
           updated_at?: string | null
@@ -7323,6 +7367,13 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "group_volunteer_opportunities_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_volunteer_opportunities_group_id_fkey1"
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
@@ -7352,6 +7403,13 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "group_volunteer_signups_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "group_volunteer_opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_volunteer_signups_opportunity_id_fkey1"
             columns: ["opportunity_id"]
             isOneToOne: false
             referencedRelation: "group_volunteer_opportunities"
