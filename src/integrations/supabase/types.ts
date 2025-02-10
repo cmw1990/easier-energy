@@ -1180,6 +1180,50 @@ export type Database = {
         }
         Relationships: []
       }
+      bible_audio: {
+        Row: {
+          audio_url: string
+          book: string
+          chapter: number
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          narrator_name: string | null
+          translation_code: string | null
+          verse: number
+        }
+        Insert: {
+          audio_url: string
+          book: string
+          chapter: number
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          narrator_name?: string | null
+          translation_code?: string | null
+          verse: number
+        }
+        Update: {
+          audio_url?: string
+          book?: string
+          chapter?: number
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          narrator_name?: string | null
+          translation_code?: string | null
+          verse?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bible_audio_translation_code_fkey"
+            columns: ["translation_code"]
+            isOneToOne: false
+            referencedRelation: "bible_translations"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       bible_books: {
         Row: {
           created_at: string
@@ -1321,6 +1365,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "bible_verses_translation_code_fkey"
+            columns: ["translation_code"]
+            isOneToOne: false
+            referencedRelation: "bible_translations"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      bible_version_details: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          includes_deuterocanonical: boolean | null
+          language: string | null
+          tradition: Database["public"]["Enums"]["bible_tradition"] | null
+          translation_code: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          includes_deuterocanonical?: boolean | null
+          language?: string | null
+          tradition?: Database["public"]["Enums"]["bible_tradition"] | null
+          translation_code?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          includes_deuterocanonical?: boolean | null
+          language?: string | null
+          tradition?: Database["public"]["Enums"]["bible_tradition"] | null
+          translation_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bible_version_details_translation_code_fkey"
             columns: ["translation_code"]
             isOneToOne: false
             referencedRelation: "bible_translations"
@@ -16328,6 +16410,39 @@ export type Database = {
           },
         ]
       }
+      strongs_concordance: {
+        Row: {
+          created_at: string
+          definition: string
+          greek_word: string | null
+          hebrew_aramaic_word: string | null
+          id: string
+          strongs_number: string
+          transliteration: string | null
+          usage_examples: Json | null
+        }
+        Insert: {
+          created_at?: string
+          definition: string
+          greek_word?: string | null
+          hebrew_aramaic_word?: string | null
+          id?: string
+          strongs_number: string
+          transliteration?: string | null
+          usage_examples?: Json | null
+        }
+        Update: {
+          created_at?: string
+          definition?: string
+          greek_word?: string | null
+          hebrew_aramaic_word?: string | null
+          id?: string
+          strongs_number?: string
+          transliteration?: string | null
+          usage_examples?: Json | null
+        }
+        Relationships: []
+      }
       study_data_points: {
         Row: {
           collected_at: string | null
@@ -20435,6 +20550,47 @@ export type Database = {
         }
         Relationships: []
       }
+      verse_word_mappings: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string
+          id: string
+          strongs_number: string | null
+          verse: number
+          word: string
+          word_position: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string
+          id?: string
+          strongs_number?: string | null
+          verse: number
+          word: string
+          word_position: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string
+          id?: string
+          strongs_number?: string | null
+          verse?: number
+          word?: string
+          word_position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verse_word_mappings_strongs_number_fkey"
+            columns: ["strongs_number"]
+            isOneToOne: false
+            referencedRelation: "strongs_concordance"
+            referencedColumns: ["strongs_number"]
+          },
+        ]
+      }
       visual_organization_tools: {
         Row: {
           color_scheme: string[] | null
@@ -21170,6 +21326,7 @@ export type Database = {
         | "stress_relief"
         | "focus_enhancement"
       bible_testament: "old" | "new"
+      bible_tradition: "catholic" | "protestant" | "orthodox"
       biohacking_activity_type:
         | "red_light_therapy"
         | "cold_therapy"
