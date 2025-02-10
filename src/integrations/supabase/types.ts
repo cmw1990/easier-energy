@@ -6573,6 +6573,39 @@ export type Database = {
           },
         ]
       }
+      featured_content: {
+        Row: {
+          created_at: string | null
+          description: string
+          href: string
+          icon_name: string
+          id: string
+          image_url: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          href: string
+          icon_name: string
+          id?: string
+          image_url?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          href?: string
+          icon_name?: string
+          id?: string
+          image_url?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       featured_products: {
         Row: {
           created_at: string | null
