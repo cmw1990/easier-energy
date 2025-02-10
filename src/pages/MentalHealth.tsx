@@ -13,6 +13,7 @@ import { EmergencyResources } from "@/components/mentalHealth/crisis/EmergencyRe
 import { ConsultationPackages } from "@/components/mentalHealth/packages/ConsultationPackages";
 import { ProfessionalDashboard } from "@/components/mentalHealth/professionals/ProfessionalDashboard";
 import { ClientDashboard } from "@/components/mentalHealth/clients/ClientDashboard";
+import { TreatmentPlanManager } from "@/components/mentalHealth/treatment/TreatmentPlanManager";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
@@ -26,7 +27,8 @@ import {
   MessagesSquare,
   Package,
   AlertTriangle,
-  Loader2 
+  Loader2,
+  ClipboardList
 } from "lucide-react";
 
 export default function MentalHealth() {
