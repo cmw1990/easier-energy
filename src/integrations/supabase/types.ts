@@ -13021,6 +13021,7 @@ export type Database = {
           is_verified: boolean | null
           notification_settings: Json | null
           push_token: string | null
+          role: string | null
           updated_at: string | null
           username: string | null
         }
@@ -13034,6 +13035,7 @@ export type Database = {
           is_verified?: boolean | null
           notification_settings?: Json | null
           push_token?: string | null
+          role?: string | null
           updated_at?: string | null
           username?: string | null
         }
@@ -13047,6 +13049,7 @@ export type Database = {
           is_verified?: boolean | null
           notification_settings?: Json | null
           push_token?: string | null
+          role?: string | null
           updated_at?: string | null
           username?: string | null
         }
