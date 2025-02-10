@@ -6971,6 +6971,7 @@ export type Database = {
           domain: string
           id: string
           name: string
+          slug: string
         }
         Insert: {
           created_at?: string
@@ -6978,6 +6979,7 @@ export type Database = {
           domain: string
           id?: string
           name: string
+          slug: string
         }
         Update: {
           created_at?: string
@@ -6985,6 +6987,7 @@ export type Database = {
           domain?: string
           id?: string
           name?: string
+          slug?: string
         }
         Relationships: []
       }
