@@ -1,16 +1,23 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { useQuery } from "@tanstack/react-query";
 
 interface AuthContextType {
   session: Session | null;
   loading: boolean;
+  userRole: string | null;
 }
 
-const AuthContext = createContext<AuthContextType>({ session: null, loading: true });
+const AuthContext = createContext<AuthContextType>({ 
+  session: null, 
+  loading: true,
+  userRole: null 
+});
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -23,13 +30,55 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Fetch user role
+  const { data: roleData } = useQuery({
+    queryKey: ['user-role', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id
+  });
+
+  // Create or update user settings on authentication
+  const initializeUserSettings = async (userId: string) => {
+    const { error } = await supabase
+      .from('user_settings')
+      .upsert({
+        user_id: userId,
+        updated_at: new Date().toISOString()
+      });
+
+    if (error) {
+      console.error('Error initializing user settings:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (roleData) {
+      setUserRole(roleData.role);
+    }
+  }, [roleData]);
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session?.user?.id) {
+        initializeUserSettings(session.user.id);
+      }
       setLoading(false);
     }).catch((error) => {
       console.error("Error getting session:", error);
@@ -48,6 +97,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setSession(session);
       if (!session) {
         navigate("/auth");
+      } else if (session.user?.id) {
+        initializeUserSettings(session.user.id);
       }
     });
 
@@ -56,7 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <AuthContext.Provider value={{ session, loading }}>
+      <AuthContext.Provider value={{ session, loading, userRole }}>
         {children}
       </AuthContext.Provider>
       <Toaster />

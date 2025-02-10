@@ -1,3 +1,4 @@
+
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/components/AuthProvider";
@@ -20,7 +21,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -32,6 +34,43 @@ const Layout = ({ children }: LayoutProps) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
+  // Fetch user settings
+  const { data: userSettings } = useQuery({
+    queryKey: ['user-settings', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return null;
+      const { data, error } = await supabase
+        .from('user_settings')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id
+  });
+
+  // Track navigation state
+  const updateNavigationState = async (currentRoute: string) => {
+    if (!session?.user?.id) return;
+
+    try {
+      const { error } = await supabase
+        .from('navigation_states')
+        .upsert({
+          user_id: session.user.id,
+          current_route: currentRoute,
+          previous_route: window.location.pathname,
+          state_data: { timestamp: new Date().toISOString() }
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating navigation state:', error);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -40,6 +79,7 @@ const Layout = ({ children }: LayoutProps) => {
         title: "Signed out successfully",
         description: "Come back soon!",
       });
+      navigate("/auth");
     } catch (error) {
       toast({
         title: "Error signing out",
@@ -57,7 +97,9 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="h-full flex flex-col">
       <div className="flex items-center gap-2 p-4 border-b">
         <Battery className="h-5 w-5 text-emerald-500" />
-        <h1 className="text-xl font-semibold">Energy Support</h1>
+        <Link to="/" className="text-xl font-semibold hover:text-primary transition-colors">
+          Energy Support
+        </Link>
       </div>
       <AppSidebar />
     </div>
@@ -102,6 +144,11 @@ const Layout = ({ children }: LayoutProps) => {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="cursor-pointer">
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut}>
                     Sign Out
                   </DropdownMenuItem>

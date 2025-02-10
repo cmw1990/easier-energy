@@ -9358,6 +9358,33 @@ export type Database = {
         }
         Relationships: []
       }
+      navigation_states: {
+        Row: {
+          created_at: string | null
+          current_route: string
+          id: string
+          previous_route: string | null
+          state_data: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_route: string
+          id?: string
+          previous_route?: string | null
+          state_data?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_route?: string
+          id?: string
+          previous_route?: string | null
+          state_data?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       noise_sensitivity_settings: {
         Row: {
           auto_adjust_enabled: boolean | null
@@ -19329,6 +19356,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_settings: {
+        Row: {
+          created_at: string | null
+          feature_preferences: Json | null
+          id: string
+          layout_preference: Json | null
+          notification_settings: Json | null
+          theme_preference: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feature_preferences?: Json | null
+          id?: string
+          layout_preference?: Json | null
+          notification_settings?: Json | null
+          theme_preference?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feature_preferences?: Json | null
+          id?: string
+          layout_preference?: Json | null
+          notification_settings?: Json | null
+          theme_preference?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       user_sleep_profiles: {
         Row: {
