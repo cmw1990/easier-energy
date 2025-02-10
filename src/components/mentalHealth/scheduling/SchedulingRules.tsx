@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { MultiSelect } from "@/components/ui/multi-select";
+import { MultiSelect, Option } from "@/components/ui/multi-select";
 import { useToast } from "@/hooks/use-toast";
 import { Settings, Clock, Bell } from "lucide-react";
 
-const REMINDER_OPTIONS = [
+const REMINDER_OPTIONS: Option[] = [
   { value: "24h", label: "24 hours before" },
   { value: "12h", label: "12 hours before" },
   { value: "2h", label: "2 hours before" },
@@ -20,18 +20,29 @@ const REMINDER_OPTIONS = [
   { value: "30m", label: "30 minutes before" }
 ];
 
+interface SchedulingRules {
+  session_duration_minutes: number;
+  buffer_minutes: number;
+  max_daily_sessions: number;
+  notification_preferences: {
+    email: boolean;
+    sms: boolean;
+    reminders: Option[];
+  };
+}
+
 export function SchedulingRules() {
   const { session } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [rules, setRules] = useState({
+  const [rules, setRules] = useState<SchedulingRules>({
     session_duration_minutes: 50,
     buffer_minutes: 10,
     max_daily_sessions: 8,
     notification_preferences: {
       email: true,
       sms: false,
-      reminders: ["24h", "1h"]
+      reminders: REMINDER_OPTIONS.slice(0, 2)
     }
   });
 
@@ -54,7 +65,14 @@ export function SchedulingRules() {
         .from('professional_scheduling_rules')
         .upsert({
           professional_id: session?.user?.id,
-          ...rules
+          session_duration_minutes: rules.session_duration_minutes,
+          buffer_minutes: rules.buffer_minutes,
+          max_daily_sessions: rules.max_daily_sessions,
+          notification_preferences: {
+            email: rules.notification_preferences.email,
+            sms: rules.notification_preferences.sms,
+            reminders: rules.notification_preferences.reminders.map(r => r.value)
+          }
         })
         .select()
         .single();
@@ -179,12 +197,12 @@ export function SchedulingRules() {
                 <Label>Reminder Times</Label>
                 <MultiSelect
                   options={REMINDER_OPTIONS}
-                  value={rules.notification_preferences.reminders}
-                  onChange={(value) => setRules(prev => ({
+                  selected={rules.notification_preferences.reminders}
+                  onChange={(selected) => setRules(prev => ({
                     ...prev,
                     notification_preferences: {
                       ...prev.notification_preferences,
-                      reminders: value
+                      reminders: selected
                     }
                   }))}
                   placeholder="Select reminder times..."
