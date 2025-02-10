@@ -54,6 +54,10 @@ export function LoyaltyProgram() {
     enabled: !!vendorId
   });
 
+  if (!session?.user) {
+    return null;
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -66,7 +70,7 @@ export function LoyaltyProgram() {
         <CardContent>
           {isLoading ? (
             <div className="flex items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
             </div>
           ) : programData ? (
             <div className="space-y-6">
@@ -103,3 +107,29 @@ export function LoyaltyProgram() {
                 <div className="flex items-center gap-2 mb-4">
                   <Gift className="h-4 w-4" />
                   <h4 className="font-medium">Available Rewards</h4>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {programData.rewards?.map((reward: LoyaltyReward) => (
+                    <div key={reward.name} className="p-4 rounded-lg border bg-card">
+                      <h5 className="font-medium">{reward.name}</h5>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {reward.points_cost} points required
+                      </p>
+                      <p className="mt-2 text-sm">
+                        {reward.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center p-8">
+              <p className="text-muted-foreground">No loyalty program found</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
