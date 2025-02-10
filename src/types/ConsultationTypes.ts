@@ -1,4 +1,3 @@
-
 export interface ConsultationSession {
   id: string;
   client_id: string;
@@ -6,11 +5,12 @@ export interface ConsultationSession {
   session_type: string;
   status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
   session_date: string;
+  scheduled_start: string;
   duration_minutes: number;
   meeting_link?: string;
   notes?: string;
   created_at: string;
-  professional?: {
+  professional: {
     full_name: string;
   };
 }
@@ -40,7 +40,7 @@ export interface PackagePurchase {
   status: 'active' | 'expired' | 'cancelled';
   created_at: string;
   package?: ConsultationPackage;
-  professional?: {
+  professional: {
     full_name: string;
   };
 }

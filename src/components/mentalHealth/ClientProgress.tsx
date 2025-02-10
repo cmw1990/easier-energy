@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
@@ -9,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Target, Plus } from "lucide-react";
+import { ClientProgressTracking } from "@/types/ConsultationTypes";
 
 interface ClientProgressProps {
   sessionId: string;
@@ -19,7 +19,7 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
   const { session } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [progress, setProgress] = useState({
+  const [progress, setProgress] = useState<ClientProgressTracking>({
     progress_rating: 5,
     notes: "",
     homework: "",

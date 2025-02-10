@@ -1,9 +1,9 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { Users, TrendingUp, MessageCircle } from 'lucide-react';
+import { CustomerBehavior } from "@/types/ConsultationTypes";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -15,17 +15,7 @@ export function CustomerEngagement() {
         .from('customer_behavior_analysis')
         .select('*')
         .single();
-      return data as {
-        behavior_patterns: {
-          active_users: number;
-          engagement_rate: number;
-          response_rate: number;
-          segments: Array<{
-            name: string;
-            value: number;
-          }>;
-        };
-      };
+      return data as unknown as CustomerBehavior; // Type assertion after unknown
     }
   });
 

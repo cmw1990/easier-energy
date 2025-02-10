@@ -1,17 +1,17 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Package, Clock } from "lucide-react";
+import { Calendar, Package } from "lucide-react";
 import { ConsultationPackages } from "@/components/mentalHealth/packages/ConsultationPackages";
+import { ConsultationSession, PackagePurchase } from "@/types/ConsultationTypes";
 
 interface Session {
   id: string;
   client_id: string;
   professional_id: string;
-  scheduled_start: string;
+  session_date: string;
   professional: {
     full_name: string;
   };
@@ -45,10 +45,10 @@ export function ClientConsultationDashboard() {
           professional:profiles!consultation_sessions_professional_id_fkey(full_name)
         `)
         .eq('client_id', session?.user?.id)
-        .gte('scheduled_start', new Date().toISOString())
-        .order('scheduled_start')
+        .gte('session_date', new Date().toISOString())
+        .order('session_date')
         .limit(5);
-      return data as Session[];
+      return (data || []) as ConsultationSession[];
     },
     enabled: !!session?.user?.id
   });
@@ -88,7 +88,7 @@ export function ClientConsultationDashboard() {
                   <div>
                     <p className="font-medium">{session.professional.full_name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(session.scheduled_start).toLocaleString()}
+                      {new Date(session.session_date).toLocaleString()}
                     </p>
                   </div>
                   <Button variant="outline" size="sm">
