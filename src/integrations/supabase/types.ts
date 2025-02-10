@@ -2853,6 +2853,7 @@ export type Database = {
       client_progress_tracking: {
         Row: {
           client_id: string | null
+          client_type: string | null
           created_at: string | null
           homework: string | null
           id: string
@@ -2868,6 +2869,7 @@ export type Database = {
         }
         Insert: {
           client_id?: string | null
+          client_type?: string | null
           created_at?: string | null
           homework?: string | null
           id?: string
@@ -2883,6 +2885,7 @@ export type Database = {
         }
         Update: {
           client_id?: string | null
+          client_type?: string | null
           created_at?: string | null
           homework?: string | null
           id?: string
@@ -9055,6 +9058,7 @@ export type Database = {
           reviews_count: number | null
           session_format: string[] | null
           specialties: Database["public"]["Enums"]["expert_specialty"][]
+          therapy_specialties: string[] | null
           title: string
           user_id: string | null
           verification_status: string | null
@@ -9083,6 +9087,7 @@ export type Database = {
           reviews_count?: number | null
           session_format?: string[] | null
           specialties: Database["public"]["Enums"]["expert_specialty"][]
+          therapy_specialties?: string[] | null
           title: string
           user_id?: string | null
           verification_status?: string | null
@@ -9111,6 +9116,7 @@ export type Database = {
           reviews_count?: number | null
           session_format?: string[] | null
           specialties?: Database["public"]["Enums"]["expert_specialty"][]
+          therapy_specialties?: string[] | null
           title?: string
           user_id?: string | null
           verification_status?: string | null
@@ -21716,6 +21722,17 @@ export type Database = {
         response_rate: number | null
         segments: Json | null
       }
+      behavior_pattern_type: {
+        active_users: number | null
+        engagement_rate: number | null
+        response_rate: number | null
+        segments: string[] | null
+      }
+      customer_segments_type: {
+        new_customers: number | null
+        inactive_customers: number | null
+        returning_customers: number | null
+      }
       pattern_summary: {
         summary: string | null
         confidence: number | null
@@ -21725,6 +21742,11 @@ export type Database = {
         summary: string | null
         confidence: number | null
         last_updated: string | null
+      }
+      revenue_trends_type: {
+        daily_revenue: number[] | null
+        weekly_revenue: number[] | null
+        monthly_revenue: number[] | null
       }
     }
   }
