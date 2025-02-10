@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -22,8 +23,8 @@ const PlanTypeIcons: Record<string, any> = {
 }
 
 const CategoryColors = {
-  charged: "bg-orange-100 text-orange-800 dark:bg-orange-900/30",
-  recharged: "bg-blue-100 text-blue-800 dark:bg-blue-900/30"
+  charged: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200",
+  recharged: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200"
 } as const
 
 interface PlanCardProps {
@@ -35,23 +36,30 @@ interface PlanCardProps {
   showActions?: boolean
 }
 
-export const PlanCard = ({ plan, progress, onSave, onShare, isSaved, showActions = true }: PlanCardProps) => {
+export const PlanCard = ({ 
+  plan, 
+  progress, 
+  onSave, 
+  onShare, 
+  isSaved, 
+  showActions = true 
+}: PlanCardProps) => {
   const Icon = PlanTypeIcons[plan.plan_type] || Brain
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
   const calculateProgress = () => {
-    if (!progress || !plan.energy_plan_components.length) return 0
+    if (!progress || !plan.energy_plan_components?.length) return 0
     const completedSteps = progress.filter(p => p.plan_id === plan.id && p.completed_at).length
     return (completedSteps / plan.energy_plan_components.length) * 100
   }
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className="group hover:shadow-lg transition-all duration-300 hover:border-primary/20">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-primary/10 rounded-full">
+            <div className="p-2 bg-primary/10 rounded-full group-hover:bg-primary/20 transition-colors">
               <Icon className="h-5 w-5 text-primary" />
             </div>
             <CardTitle className="text-xl">{plan.title}</CardTitle>
@@ -63,7 +71,7 @@ export const PlanCard = ({ plan, progress, onSave, onShare, isSaved, showActions
               {plan.category === 'charged' ? 'Energy Boost' : 'Recovery & Rest'}
             </Badge>
             {plan.is_expert_plan && (
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200">
                 Expert Plan
               </Badge>
             )}
