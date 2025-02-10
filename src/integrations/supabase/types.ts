@@ -10244,45 +10244,65 @@ export type Database = {
           approved: boolean | null
           artist_name: string
           artwork_type: string
+          available_quantity: number | null
           created_at: string | null
           description: string
+          for_sale: boolean | null
           id: string
           image_url: string | null
           inspiration_source: string | null
           interpretation_notes: string | null
           is_community_submission: boolean | null
+          price: number | null
           tags: string[] | null
           title: string
+          vendor_id: string | null
         }
         Insert: {
           approved?: boolean | null
           artist_name: string
           artwork_type: string
+          available_quantity?: number | null
           created_at?: string | null
           description: string
+          for_sale?: boolean | null
           id?: string
           image_url?: string | null
           inspiration_source?: string | null
           interpretation_notes?: string | null
           is_community_submission?: boolean | null
+          price?: number | null
           tags?: string[] | null
           title: string
+          vendor_id?: string | null
         }
         Update: {
           approved?: boolean | null
           artist_name?: string
           artwork_type?: string
+          available_quantity?: number | null
           created_at?: string | null
           description?: string
+          for_sale?: boolean | null
           id?: string
           image_url?: string | null
           inspiration_source?: string | null
           interpretation_notes?: string | null
           is_community_submission?: boolean | null
+          price?: number | null
           tags?: string[] | null
           title?: string
+          vendor_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "nordic_artwork_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       nordic_music: {
         Row: {
@@ -21151,6 +21171,7 @@ export type Database = {
           user_id: string
           vendor_languages: string[] | null
           verification_status: string | null
+          verified: boolean | null
         }
         Insert: {
           address?: string | null
@@ -21180,6 +21201,7 @@ export type Database = {
           user_id: string
           vendor_languages?: string[] | null
           verification_status?: string | null
+          verified?: boolean | null
         }
         Update: {
           address?: string | null
@@ -21209,6 +21231,7 @@ export type Database = {
           user_id?: string
           vendor_languages?: string[] | null
           verification_status?: string | null
+          verified?: boolean | null
         }
         Relationships: []
       }
