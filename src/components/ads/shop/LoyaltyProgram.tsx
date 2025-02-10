@@ -1,13 +1,13 @@
 
-import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { Trophy, Gift, Users } from 'lucide-react'
-import { useAuth } from "@/components/AuthProvider"
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Trophy, Gift, Users } from 'lucide-react';
+import { useAuth } from "@/components/AuthProvider";
+import { LoyaltyProgram as LoyaltyProgramType } from "@/types/ConsultationTypes";
 
 export function LoyaltyProgram() {
-  const { session } = useAuth()
+  const { session } = useAuth();
 
   const { data: vendorId } = useQuery({
     queryKey: ['vendor-id', session?.user?.id],
@@ -16,11 +16,11 @@ export function LoyaltyProgram() {
         .from('vendors')
         .select('id')
         .eq('claimed_by', session?.user?.id)
-        .single()
-      return data?.id
+        .single();
+      return data?.id;
     },
     enabled: !!session?.user?.id
-  })
+  });
 
   const { data: programData, isLoading } = useQuery({
     queryKey: ['loyalty-program', vendorId],
@@ -29,11 +29,11 @@ export function LoyaltyProgram() {
         .from('vendor_loyalty_programs')
         .select('*')
         .eq('vendor_id', vendorId)
-        .single()
-      return data
+        .single();
+      return data as LoyaltyProgramType;
     },
     enabled: !!vendorId
-  })
+  });
 
   return (
     <div className="space-y-6">
@@ -64,7 +64,7 @@ export function LoyaltyProgram() {
                   <h4 className="font-medium">Membership Tiers</h4>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {programData.tiers?.map((tier: any) => (
+                  {programData.tiers?.map((tier) => (
                     <div key={tier.name} className="p-4 rounded-lg border bg-card">
                       <h5 className="font-medium">{tier.name}</h5>
                       <p className="mt-1 text-sm text-muted-foreground">
@@ -86,7 +86,7 @@ export function LoyaltyProgram() {
                   <h4 className="font-medium">Available Rewards</h4>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {programData.rewards?.map((reward: any) => (
+                  {programData.rewards?.map((reward) => (
                     <div key={reward.name} className="p-4 rounded-lg border bg-card">
                       <h5 className="font-medium">{reward.name}</h5>
                       <p className="mt-1 text-sm text-muted-foreground">
@@ -106,5 +106,5 @@ export function LoyaltyProgram() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

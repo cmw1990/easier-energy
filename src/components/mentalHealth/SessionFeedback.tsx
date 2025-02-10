@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,13 +33,7 @@ export function SessionFeedback({ sessionId, professionalId }: SessionFeedbackPr
         .single();
       return data;
     },
-    onSuccess: (data) => {
-      if (data) {
-        setRating(data.rating);
-        setFeedback(data.feedback_text || "");
-        setIsAnonymous(data.anonymous);
-      }
-    }
+    enabled: !!sessionId && !!session?.user?.id
   });
 
   const submitFeedback = useMutation({

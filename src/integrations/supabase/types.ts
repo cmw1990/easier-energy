@@ -6660,6 +6660,7 @@ export type Database = {
           content: string | null
           created_at: string | null
           created_by: string | null
+          description: string | null
           group_id: string
           id: string
           schedule: Json | null
@@ -6671,6 +6672,7 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           created_by?: string | null
+          description?: string | null
           group_id: string
           id?: string
           schedule?: Json | null
@@ -6682,6 +6684,7 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           created_by?: string | null
+          description?: string | null
           group_id?: string
           id?: string
           schedule?: Json | null
@@ -6920,6 +6923,112 @@ export type Database = {
           },
         ]
       }
+      group_message_reactions: {
+        Row: {
+          created_at: string | null
+          emoji: string
+          id: string
+          message_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          emoji: string
+          id?: string
+          message_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          emoji?: string
+          id?: string
+          message_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_message_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "group_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_message_threads: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          parent_message_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          parent_message_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          parent_message_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_message_threads_parent_message_id_fkey"
+            columns: ["parent_message_id"]
+            isOneToOne: false
+            referencedRelation: "group_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          group_id: string
+          id: string
+          parent_id: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          group_id: string
+          id?: string
+          parent_id?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          group_id?: string
+          id?: string
+          parent_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_messages_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_messages_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "group_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_prayer_requests: {
         Row: {
           content: string
@@ -7113,6 +7222,38 @@ export type Database = {
           },
         ]
       }
+      group_study_session_attendance: {
+        Row: {
+          created_at: string | null
+          id: string
+          session_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          session_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          session_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_study_session_attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "group_study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_study_sessions: {
         Row: {
           created_at: string | null
@@ -7144,6 +7285,76 @@ export type Database = {
             columns: ["study_id"]
             isOneToOne: false
             referencedRelation: "group_bible_studies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_volunteer_opportunities: {
+        Row: {
+          created_at: string | null
+          description: string
+          end_date: string | null
+          group_id: string
+          id: string
+          start_date: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          end_date?: string | null
+          group_id: string
+          id?: string
+          start_date?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          end_date?: string | null
+          group_id?: string
+          id?: string
+          start_date?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_volunteer_opportunities_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_volunteer_signups: {
+        Row: {
+          created_at: string | null
+          id: string
+          opportunity_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          opportunity_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          opportunity_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_volunteer_signups_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "group_volunteer_opportunities"
             referencedColumns: ["id"]
           },
         ]

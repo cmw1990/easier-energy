@@ -1,20 +1,17 @@
-
 export interface ConsultationSession {
   id: string;
   client_id: string;
   professional_id: string;
   session_type: string;
   status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
-  scheduled_start: string;
-  scheduled_end: string;
-  actual_start?: string;
-  actual_end?: string;
+  session_date: string;
+  duration_minutes: number;
+  meeting_link?: string;
   notes?: string;
   created_at: string;
-  updated_at: string;
   professional?: {
     full_name: string;
-  };
+  }[];
 }
 
 export interface ConsultationPackage {
@@ -164,4 +161,3 @@ export interface SessionNote {
   mood_observed?: string;
   created_at: string;
 }
-

@@ -1,23 +1,23 @@
 
 import * as React from "react"
-import { cn } from "@/lib/utils"
 import { Check, X } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
 
-export type Option = {
-  label: string
-  value: string
+export interface Option {
+  label: string;
+  value: string;
 }
 
 interface MultiSelectProps {
-  options: Option[]
-  selected: Option[]
-  onChange: (options: Option[]) => void
-  className?: string
-  placeholder?: string
+  options: Option[];
+  selected: Option[];
+  onChange: (options: Option[]) => void;
+  className?: string;
+  placeholder?: string;
 }
 
 export function MultiSelect({

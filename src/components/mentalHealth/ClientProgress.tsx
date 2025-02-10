@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,7 +25,7 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
     next_steps: ""
   });
 
-  const { data: existingProgress } = useQuery({
+  const { data: progress } = useQuery({
     queryKey: ['client-progress', sessionId],
     queryFn: async () => {
       const { data } = await supabase
@@ -36,49 +35,7 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
         .single();
       return data;
     },
-    onSuccess: (data) => {
-      if (data) {
-        setProgress({
-          progress_rating: data.progress_rating || 5,
-          notes: data.notes || "",
-          homework: data.homework || "",
-          next_steps: data.next_steps || ""
-        });
-      }
-    }
-  });
-
-  const updateProgress = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase
-        .from('consultation_progress')
-        .upsert({
-          session_id: sessionId,
-          professional_id: session?.user?.id,
-          client_id: clientId,
-          ...progress
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['client-progress'] });
-      toast({
-        title: "Success",
-        description: "Progress updated successfully"
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to update progress",
-        variant: "destructive"
-      });
-      console.error('Progress error:', error);
-    }
+    enabled: !!sessionId
   });
 
   return (
@@ -96,7 +53,7 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
             type="number"
             min="1"
             max="10"
-            value={progress.progress_rating}
+            value={progress?.progress_rating}
             onChange={(e) => setProgress(prev => ({ 
               ...prev, 
               progress_rating: parseInt(e.target.value) 
@@ -107,7 +64,7 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Progress Notes</label>
           <Textarea
-            value={progress.notes}
+            value={progress?.notes}
             onChange={(e) => setProgress(prev => ({ ...prev, notes: e.target.value }))}
             placeholder="Document client's progress..."
           />
@@ -116,7 +73,7 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Homework/Exercises</label>
           <Textarea
-            value={progress.homework}
+            value={progress?.homework}
             onChange={(e) => setProgress(prev => ({ ...prev, homework: e.target.value }))}
             placeholder="Assign homework or exercises..."
           />
@@ -125,7 +82,7 @@ export function ClientProgress({ sessionId, clientId }: ClientProgressProps) {
         <div className="space-y-2">
           <label className="text-sm font-medium">Next Steps</label>
           <Textarea
-            value={progress.next_steps}
+            value={progress?.next_steps}
             onChange={(e) => setProgress(prev => ({ ...prev, next_steps: e.target.value }))}
             placeholder="Outline next steps and goals..."
           />
