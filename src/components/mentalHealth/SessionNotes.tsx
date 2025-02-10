@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,7 +40,6 @@ export function SessionNotes({ sessionId, clientId }: SessionNotesProps) {
     }
   });
 
-  // Use useEffect to handle the success case
   useEffect(() => {
     if (existingNotes) {
       setNotes({
@@ -54,13 +54,18 @@ export function SessionNotes({ sessionId, clientId }: SessionNotesProps) {
 
   const saveNotes = useMutation({
     mutationFn: async () => {
+      if (!notes.content) {
+        throw new Error("Content is required");
+      }
+
       const { data, error } = await supabase
         .from('consultation_notes')
         .upsert({
           session_id: sessionId,
           professional_id: session?.user?.id,
           client_id: clientId,
-          ...notes
+          ...notes,
+          content: notes.content // Ensure content is included and not undefined
         })
         .select()
         .single();
