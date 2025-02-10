@@ -2854,33 +2854,45 @@ export type Database = {
         Row: {
           client_id: string | null
           created_at: string | null
+          homework: string | null
           id: string
           milestone_achievements: string[] | null
           next_assessment_date: string | null
+          next_steps: string | null
+          notes: string | null
           professional_id: string | null
           progress_notes: string | null
+          progress_rating: number | null
           treatment_goals: string[] | null
           updated_at: string | null
         }
         Insert: {
           client_id?: string | null
           created_at?: string | null
+          homework?: string | null
           id?: string
           milestone_achievements?: string[] | null
           next_assessment_date?: string | null
+          next_steps?: string | null
+          notes?: string | null
           professional_id?: string | null
           progress_notes?: string | null
+          progress_rating?: number | null
           treatment_goals?: string[] | null
           updated_at?: string | null
         }
         Update: {
           client_id?: string | null
           created_at?: string | null
+          homework?: string | null
           id?: string
           milestone_achievements?: string[] | null
           next_assessment_date?: string | null
+          next_steps?: string | null
+          notes?: string | null
           professional_id?: string | null
           progress_notes?: string | null
+          progress_rating?: number | null
           treatment_goals?: string[] | null
           updated_at?: string | null
         }
@@ -3998,6 +4010,41 @@ export type Database = {
             columns: ["realm_id"]
             isOneToOne: false
             referencedRelation: "realms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_behavior: {
+        Row: {
+          behavior_patterns: Json | null
+          created_at: string | null
+          customer_segments: Json | null
+          id: string
+          revenue_trends: Json | null
+          vendor_id: string | null
+        }
+        Insert: {
+          behavior_patterns?: Json | null
+          created_at?: string | null
+          customer_segments?: Json | null
+          id?: string
+          revenue_trends?: Json | null
+          vendor_id?: string | null
+        }
+        Update: {
+          behavior_patterns?: Json | null
+          created_at?: string | null
+          customer_segments?: Json | null
+          id?: string
+          revenue_trends?: Json | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_behavior_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
         ]

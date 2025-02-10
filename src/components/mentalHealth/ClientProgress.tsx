@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { ClientProgressTracking } from "@/types/ConsultationTypes";
 
 interface ClientProgressProps {
   clientId: string;
@@ -16,7 +17,7 @@ interface ClientProgressProps {
 export function ClientProgress({ clientId, sessionId }: ClientProgressProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [progressData, setProgressData] = useState({
+  const [progressData, setProgressData] = useState<Partial<ClientProgressTracking>>({
     progress_rating: 5,
     notes: "",
     homework: "",
@@ -27,13 +28,13 @@ export function ClientProgress({ clientId, sessionId }: ClientProgressProps) {
     queryKey: ['client-progress', sessionId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('client_progress')
+        .from('client_progress_tracking')
         .select('*')
         .eq('session_id', sessionId)
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
-      return data;
+      return data as ClientProgressTracking;
     },
     enabled: !!sessionId
   });
@@ -41,21 +42,21 @@ export function ClientProgress({ clientId, sessionId }: ClientProgressProps) {
   const updateProgress = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase
-        .from('client_progress')
+        .from('client_progress_tracking')
         .upsert({
           session_id: sessionId,
           client_id: clientId,
-          professional_id: (await supabase.auth.getUser()).data.user?.id,
           ...progressData
         })
-        .select()
-        .single();
+        .select();
 
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['client-progress'] });
+    },
+    onSuccess: () => {
       toast({
         title: "Success",
         description: "Progress updated successfully"

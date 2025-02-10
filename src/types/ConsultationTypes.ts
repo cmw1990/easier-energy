@@ -5,7 +5,7 @@ export interface ConsultationSession {
   session_type: string;
   status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
   session_date: string;
-  scheduled_start: string;
+  scheduled_start: string | null;
   duration_minutes: number;
   meeting_link?: string;
   notes?: string;
@@ -111,6 +111,7 @@ export interface CustomerBehavior {
     active_users: number;
     engagement_rate: number;
     response_rate: number;
+    peak_hours?: number[];
     segments: Array<{
       name: string;
       value: number;
