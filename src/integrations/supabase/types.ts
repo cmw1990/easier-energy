@@ -7129,6 +7129,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_profiles_announcements"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "group_announcements_group_id_fkey"
             columns: ["group_id"]
             isOneToOne: false
@@ -7259,6 +7266,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_profiles_discussions"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "group_discussions_group_id_fkey"
             columns: ["group_id"]
             isOneToOne: false
@@ -7311,6 +7325,7 @@ export type Database = {
           location: string | null
           meeting_link: string | null
           start_time: string
+          status: string | null
           title: string
           updated_at: string | null
         }
@@ -7325,6 +7340,7 @@ export type Database = {
           location?: string | null
           meeting_link?: string | null
           start_time: string
+          status?: string | null
           title: string
           updated_at?: string | null
         }
@@ -7339,10 +7355,18 @@ export type Database = {
           location?: string | null
           meeting_link?: string | null
           start_time?: string
+          status?: string | null
           title?: string
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_profiles_events"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "group_events_group_id_fkey"
             columns: ["group_id"]
@@ -7524,6 +7548,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_profiles_messages"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "group_messages_group_id_fkey"
             columns: ["group_id"]
             isOneToOne: false
@@ -7664,6 +7695,13 @@ export type Database = {
           url?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_profiles_resources"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "group_resources_group_id_fkey"
             columns: ["group_id"]
@@ -7811,6 +7849,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_profiles_attendance"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "group_study_session_attendance_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
@@ -7917,18 +7962,21 @@ export type Database = {
           created_at: string | null
           id: string
           opportunity_id: string
+          status: string | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
           opportunity_id: string
+          status?: string | null
           user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
           opportunity_id?: string
+          status?: string | null
           user_id?: string
         }
         Relationships: [
@@ -8330,6 +8378,56 @@ export type Database = {
           water_quality_notes?: string | null
         }
         Relationships: []
+      }
+      heritage_site_sponsorships: {
+        Row: {
+          amount: number
+          created_at: string | null
+          cultural_alignment_notes: string | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          site_id: string | null
+          sponsor_description: string | null
+          sponsor_name: string
+          sponsorship_level: string
+          start_date: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          cultural_alignment_notes?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          site_id?: string | null
+          sponsor_description?: string | null
+          sponsor_name: string
+          sponsorship_level: string
+          start_date: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          cultural_alignment_notes?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          site_id?: string | null
+          sponsor_description?: string | null
+          sponsor_name?: string
+          sponsorship_level?: string
+          start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "heritage_site_sponsorships_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "heritage_sites"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       heritage_sites: {
         Row: {
@@ -9057,6 +9155,48 @@ export type Database = {
           },
         ]
       }
+      membership_tiers: {
+        Row: {
+          benefits: string[]
+          created_at: string | null
+          description: string | null
+          discount_percentage: number | null
+          exclusive_content_access: boolean | null
+          id: string
+          is_active: boolean | null
+          max_bookings_per_month: number | null
+          name: string
+          price: number
+          priority_support: boolean | null
+        }
+        Insert: {
+          benefits?: string[]
+          created_at?: string | null
+          description?: string | null
+          discount_percentage?: number | null
+          exclusive_content_access?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          max_bookings_per_month?: number | null
+          name: string
+          price: number
+          priority_support?: boolean | null
+        }
+        Update: {
+          benefits?: string[]
+          created_at?: string | null
+          description?: string | null
+          discount_percentage?: number | null
+          exclusive_content_access?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          max_bookings_per_month?: number | null
+          name?: string
+          price?: number
+          priority_support?: boolean | null
+        }
+        Relationships: []
+      }
       mental_health_homework: {
         Row: {
           assignment_type: string
@@ -9629,11 +9769,14 @@ export type Database = {
           cultural_elements: string[] | null
           description: string
           eco_certifications: string[] | null
+          featured_price: number | null
+          featured_until: string | null
           group_booking_rules: Json | null
           guest_requirements: string[] | null
           house_rules: string[] | null
           id: string
           image_urls: string[] | null
+          is_featured: boolean | null
           languages_spoken: string[] | null
           local_experiences: string[] | null
           location: string
@@ -9674,11 +9817,14 @@ export type Database = {
           cultural_elements?: string[] | null
           description: string
           eco_certifications?: string[] | null
+          featured_price?: number | null
+          featured_until?: string | null
           group_booking_rules?: Json | null
           guest_requirements?: string[] | null
           house_rules?: string[] | null
           id?: string
           image_urls?: string[] | null
+          is_featured?: boolean | null
           languages_spoken?: string[] | null
           local_experiences?: string[] | null
           location: string
@@ -9719,11 +9865,14 @@ export type Database = {
           cultural_elements?: string[] | null
           description?: string
           eco_certifications?: string[] | null
+          featured_price?: number | null
+          featured_until?: string | null
           group_booking_rules?: Json | null
           guest_requirements?: string[] | null
           house_rules?: string[] | null
           id?: string
           image_urls?: string[] | null
+          is_featured?: boolean | null
           languages_spoken?: string[] | null
           local_experiences?: string[] | null
           location?: string
@@ -9815,6 +9964,56 @@ export type Database = {
           type?: string
         }
         Relationships: []
+      }
+      nordic_partnerships: {
+        Row: {
+          business_name: string
+          commission_rate: number
+          created_at: string | null
+          cultural_authenticity_score: number | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          partnership_type: string
+          products: string[] | null
+          vendor_id: string | null
+          website_url: string | null
+        }
+        Insert: {
+          business_name: string
+          commission_rate?: number
+          created_at?: string | null
+          cultural_authenticity_score?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          partnership_type: string
+          products?: string[] | null
+          vendor_id?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          business_name?: string
+          commission_rate?: number
+          created_at?: string | null
+          cultural_authenticity_score?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          partnership_type?: string
+          products?: string[] | null
+          vendor_id?: string | null
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nordic_partnerships_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notification_preferences: {
         Row: {
@@ -11346,6 +11545,48 @@ export type Database = {
           is_active?: boolean | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      premium_nordic_content: {
+        Row: {
+          access_level: string
+          author_id: string | null
+          content_type: string
+          content_url: string | null
+          created_at: string | null
+          cultural_tags: string[] | null
+          description: string | null
+          id: string
+          preview_content: string | null
+          price: number
+          title: string
+        }
+        Insert: {
+          access_level?: string
+          author_id?: string | null
+          content_type: string
+          content_url?: string | null
+          created_at?: string | null
+          cultural_tags?: string[] | null
+          description?: string | null
+          id?: string
+          preview_content?: string | null
+          price: number
+          title: string
+        }
+        Update: {
+          access_level?: string
+          author_id?: string | null
+          content_type?: string
+          content_url?: string | null
+          created_at?: string | null
+          cultural_tags?: string[] | null
+          description?: string | null
+          id?: string
+          preview_content?: string | null
+          price?: number
+          title?: string
         }
         Relationships: []
       }
@@ -19180,6 +19421,50 @@ export type Database = {
         }
         Relationships: []
       }
+      user_memberships: {
+        Row: {
+          auto_renew: boolean | null
+          created_at: string | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          payment_status: string | null
+          start_date: string
+          tier_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          payment_status?: string | null
+          start_date?: string
+          tier_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          auto_renew?: boolean | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          payment_status?: string | null
+          start_date?: string
+          tier_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_memberships_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "membership_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_notes: {
         Row: {
           book: string
@@ -20814,6 +21099,57 @@ export type Database = {
             referencedColumns: ["strongs_number"]
           },
         ]
+      }
+      virtual_experiences: {
+        Row: {
+          created_at: string | null
+          cultural_focus: string[] | null
+          description: string
+          duration_minutes: number
+          experience_type: string
+          host_id: string | null
+          id: string
+          is_active: boolean | null
+          max_participants: number | null
+          price: number
+          requirements: string[] | null
+          scheduled_for: string | null
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          cultural_focus?: string[] | null
+          description: string
+          duration_minutes: number
+          experience_type: string
+          host_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_participants?: number | null
+          price: number
+          requirements?: string[] | null
+          scheduled_for?: string | null
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          cultural_focus?: string[] | null
+          description?: string
+          duration_minutes?: number
+          experience_type?: string
+          host_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_participants?: number | null
+          price?: number
+          requirements?: string[] | null
+          scheduled_for?: string | null
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
       }
       visual_organization_tools: {
         Row: {
