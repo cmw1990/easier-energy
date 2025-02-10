@@ -3774,6 +3774,54 @@ export type Database = {
           },
         ]
       }
+      content_connections: {
+        Row: {
+          accuracy_rating: number | null
+          created_at: string | null
+          creator: string | null
+          cultural_notes: string | null
+          description: string
+          id: string
+          media_links: string[] | null
+          modern_interpretation_title: string
+          modern_interpretation_type: string
+          original_content_id: string
+          original_content_type: string
+          release_year: number | null
+          title: string
+        }
+        Insert: {
+          accuracy_rating?: number | null
+          created_at?: string | null
+          creator?: string | null
+          cultural_notes?: string | null
+          description: string
+          id?: string
+          media_links?: string[] | null
+          modern_interpretation_title: string
+          modern_interpretation_type: string
+          original_content_id: string
+          original_content_type: string
+          release_year?: number | null
+          title: string
+        }
+        Update: {
+          accuracy_rating?: number | null
+          created_at?: string | null
+          creator?: string | null
+          cultural_notes?: string | null
+          description?: string
+          id?: string
+          media_links?: string[] | null
+          modern_interpretation_title?: string
+          modern_interpretation_type?: string
+          original_content_id?: string
+          original_content_type?: string
+          release_year?: number | null
+          title?: string
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           active: boolean | null
@@ -4016,6 +4064,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      cultural_gatherings: {
+        Row: {
+          accessibility_info: string | null
+          contact_details: Json | null
+          cost_details: Json | null
+          created_at: string | null
+          cultural_guidelines: string | null
+          date_end: string | null
+          date_start: string | null
+          description: string
+          event_name: string
+          event_type: string
+          id: string
+          location: string | null
+          max_participants: number | null
+          organizer_info: Json | null
+          registration_required: boolean | null
+        }
+        Insert: {
+          accessibility_info?: string | null
+          contact_details?: Json | null
+          cost_details?: Json | null
+          created_at?: string | null
+          cultural_guidelines?: string | null
+          date_end?: string | null
+          date_start?: string | null
+          description: string
+          event_name: string
+          event_type: string
+          id?: string
+          location?: string | null
+          max_participants?: number | null
+          organizer_info?: Json | null
+          registration_required?: boolean | null
+        }
+        Update: {
+          accessibility_info?: string | null
+          contact_details?: Json | null
+          cost_details?: Json | null
+          created_at?: string | null
+          cultural_guidelines?: string | null
+          date_end?: string | null
+          date_start?: string | null
+          description?: string
+          event_name?: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          max_participants?: number | null
+          organizer_info?: Json | null
+          registration_required?: boolean | null
+        }
+        Relationships: []
       }
       customer_behavior: {
         Row: {
@@ -9907,6 +10009,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      nordic_artwork: {
+        Row: {
+          approved: boolean | null
+          artist_name: string
+          artwork_type: string
+          created_at: string | null
+          description: string
+          id: string
+          image_url: string | null
+          inspiration_source: string | null
+          interpretation_notes: string | null
+          is_community_submission: boolean | null
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          approved?: boolean | null
+          artist_name: string
+          artwork_type: string
+          created_at?: string | null
+          description: string
+          id?: string
+          image_url?: string | null
+          inspiration_source?: string | null
+          interpretation_notes?: string | null
+          is_community_submission?: boolean | null
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          approved?: boolean | null
+          artist_name?: string
+          artwork_type?: string
+          created_at?: string | null
+          description?: string
+          id?: string
+          image_url?: string | null
+          inspiration_source?: string | null
+          interpretation_notes?: string | null
+          is_community_submission?: boolean | null
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: []
       }
       nordic_music: {
         Row: {
@@ -16779,6 +16926,54 @@ export type Database = {
           relationship_preferences?: string[] | null
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      spiritual_practices: {
+        Row: {
+          associated_elements: string[] | null
+          category: string
+          created_at: string | null
+          cultural_context: string | null
+          description: string
+          historical_basis: string | null
+          id: string
+          modern_adaptation: string | null
+          practice_name: string
+          recommended_resources: string[] | null
+          respectful_guidelines: string | null
+          safety_notes: string | null
+          seasonal_timing: string | null
+        }
+        Insert: {
+          associated_elements?: string[] | null
+          category: string
+          created_at?: string | null
+          cultural_context?: string | null
+          description: string
+          historical_basis?: string | null
+          id?: string
+          modern_adaptation?: string | null
+          practice_name: string
+          recommended_resources?: string[] | null
+          respectful_guidelines?: string | null
+          safety_notes?: string | null
+          seasonal_timing?: string | null
+        }
+        Update: {
+          associated_elements?: string[] | null
+          category?: string
+          created_at?: string | null
+          cultural_context?: string | null
+          description?: string
+          historical_basis?: string | null
+          id?: string
+          modern_adaptation?: string | null
+          practice_name?: string
+          recommended_resources?: string[] | null
+          respectful_guidelines?: string | null
+          safety_notes?: string | null
+          seasonal_timing?: string | null
         }
         Relationships: []
       }
