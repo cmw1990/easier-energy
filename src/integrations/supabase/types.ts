@@ -1017,6 +1017,72 @@ export type Database = {
         }
         Relationships: []
       }
+      audio_bible_progress: {
+        Row: {
+          book: string
+          chapter: number
+          completed: boolean | null
+          created_at: string
+          id: string
+          last_position: number | null
+          updated_at: string
+          user_id: string
+          verse: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          last_position?: number | null
+          updated_at?: string
+          user_id: string
+          verse: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          last_position?: number | null
+          updated_at?: string
+          user_id?: string
+          verse?: number
+        }
+        Relationships: []
+      }
+      audio_bible_settings: {
+        Row: {
+          auto_advance: boolean | null
+          created_at: string
+          id: string
+          playback_speed: number | null
+          preferred_narrator: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_advance?: boolean | null
+          created_at?: string
+          id?: string
+          playback_speed?: number | null
+          preferred_narrator?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_advance?: boolean | null
+          created_at?: string
+          id?: string
+          playback_speed?: number | null
+          preferred_narrator?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       audio_content: {
         Row: {
           audio_url: string
@@ -1317,6 +1383,126 @@ export type Database = {
         }
         Relationships: []
       }
+      bible_maps: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string
+          locations: Json | null
+          period: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url: string
+          locations?: Json | null
+          period?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          locations?: Json | null
+          period?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      bible_quiz_questions: {
+        Row: {
+          category: string | null
+          correct_answer: string
+          created_at: string
+          difficulty_level: string | null
+          explanation: string | null
+          id: string
+          question: string
+          wrong_answers: string[]
+        }
+        Insert: {
+          category?: string | null
+          correct_answer: string
+          created_at?: string
+          difficulty_level?: string | null
+          explanation?: string | null
+          id?: string
+          question: string
+          wrong_answers: string[]
+        }
+        Update: {
+          category?: string | null
+          correct_answer?: string
+          created_at?: string
+          difficulty_level?: string | null
+          explanation?: string | null
+          id?: string
+          question?: string
+          wrong_answers?: string[]
+        }
+        Relationships: []
+      }
+      bible_quiz_scores: {
+        Row: {
+          category: string | null
+          created_at: string
+          difficulty_level: string | null
+          id: string
+          questions_answered: number
+          score: number
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          difficulty_level?: string | null
+          id?: string
+          questions_answered: number
+          score: number
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          difficulty_level?: string | null
+          id?: string
+          questions_answered?: number
+          score?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      bible_quizzes: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          difficulty_level: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       bible_study_groups: {
         Row: {
           created_at: string | null
@@ -1381,6 +1567,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      bible_timeline_events: {
+        Row: {
+          biblical_reference: string | null
+          category: string | null
+          created_at: string
+          date_approx: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          title: string
+          year_approx: number | null
+        }
+        Insert: {
+          biblical_reference?: string | null
+          category?: string | null
+          created_at?: string
+          date_approx?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          title: string
+          year_approx?: number | null
+        }
+        Update: {
+          biblical_reference?: string | null
+          category?: string | null
+          created_at?: string
+          date_approx?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          title?: string
+          year_approx?: number | null
+        }
+        Relationships: []
       }
       bible_translations: {
         Row: {
@@ -2587,6 +2809,91 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "church_reviews_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_service_times: {
+        Row: {
+          church_id: string | null
+          created_at: string
+          day_of_week: string
+          end_time: string | null
+          id: string
+          service_type: string | null
+          start_time: string
+        }
+        Insert: {
+          church_id?: string | null
+          created_at?: string
+          day_of_week: string
+          end_time?: string | null
+          id?: string
+          service_type?: string | null
+          start_time: string
+        }
+        Update: {
+          church_id?: string | null
+          created_at?: string
+          day_of_week?: string
+          end_time?: string | null
+          id?: string
+          service_type?: string | null
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_service_times_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      church_services: {
+        Row: {
+          church_id: string | null
+          created_at: string
+          day_of_week: number
+          description: string | null
+          end_time: string
+          id: string
+          is_recurring: boolean | null
+          service_type: string | null
+          start_time: string
+          title: string
+        }
+        Insert: {
+          church_id?: string | null
+          created_at?: string
+          day_of_week: number
+          description?: string | null
+          end_time: string
+          id?: string
+          is_recurring?: boolean | null
+          service_type?: string | null
+          start_time: string
+          title: string
+        }
+        Update: {
+          church_id?: string | null
+          created_at?: string
+          day_of_week?: number
+          description?: string | null
+          end_time?: string
+          id?: string
+          is_recurring?: boolean | null
+          service_type?: string | null
+          start_time?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_services_church_id_fkey"
             columns: ["church_id"]
             isOneToOne: false
             referencedRelation: "churches"
@@ -10245,61 +10552,278 @@ export type Database = {
           artist_name: string
           artwork_type: string
           available_quantity: number | null
+          category: string | null
+          category_id: string | null
+          comments_count: number | null
+          commission_available: boolean | null
+          commission_info: Json | null
           created_at: string | null
+          cultural_significance: string | null
           description: string
+          dimensions: Json | null
+          exhibition_history: Json[] | null
+          featured: boolean | null
+          featured_until: string | null
           for_sale: boolean | null
           id: string
           image_url: string | null
           inspiration_source: string | null
           interpretation_notes: string | null
           is_community_submission: boolean | null
+          license_type: string | null
+          likes_count: number | null
+          materials: string[] | null
           price: number | null
+          search_vector: unknown | null
           tags: string[] | null
+          technique: string | null
           title: string
           vendor_id: string | null
+          views_count: number | null
         }
         Insert: {
           approved?: boolean | null
           artist_name: string
           artwork_type: string
           available_quantity?: number | null
+          category?: string | null
+          category_id?: string | null
+          comments_count?: number | null
+          commission_available?: boolean | null
+          commission_info?: Json | null
           created_at?: string | null
+          cultural_significance?: string | null
           description: string
+          dimensions?: Json | null
+          exhibition_history?: Json[] | null
+          featured?: boolean | null
+          featured_until?: string | null
           for_sale?: boolean | null
           id?: string
           image_url?: string | null
           inspiration_source?: string | null
           interpretation_notes?: string | null
           is_community_submission?: boolean | null
+          license_type?: string | null
+          likes_count?: number | null
+          materials?: string[] | null
           price?: number | null
+          search_vector?: unknown | null
           tags?: string[] | null
+          technique?: string | null
           title: string
           vendor_id?: string | null
+          views_count?: number | null
         }
         Update: {
           approved?: boolean | null
           artist_name?: string
           artwork_type?: string
           available_quantity?: number | null
+          category?: string | null
+          category_id?: string | null
+          comments_count?: number | null
+          commission_available?: boolean | null
+          commission_info?: Json | null
           created_at?: string | null
+          cultural_significance?: string | null
           description?: string
+          dimensions?: Json | null
+          exhibition_history?: Json[] | null
+          featured?: boolean | null
+          featured_until?: string | null
           for_sale?: boolean | null
           id?: string
           image_url?: string | null
           inspiration_source?: string | null
           interpretation_notes?: string | null
           is_community_submission?: boolean | null
+          license_type?: string | null
+          likes_count?: number | null
+          materials?: string[] | null
           price?: number | null
+          search_vector?: unknown | null
           tags?: string[] | null
+          technique?: string | null
           title?: string
           vendor_id?: string | null
+          views_count?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "nordic_artwork_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_artwork_categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "nordic_artwork_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "vendor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nordic_artwork_categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          parent_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nordic_artwork_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_artwork_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nordic_artwork_collection_items: {
+        Row: {
+          added_at: string | null
+          artwork_id: string
+          collection_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          artwork_id: string
+          collection_id: string
+        }
+        Update: {
+          added_at?: string | null
+          artwork_id?: string
+          collection_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nordic_artwork_collection_items_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_artwork"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nordic_artwork_collection_items_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_artwork_collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nordic_artwork_collections: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          search_vector: unknown | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          search_vector?: unknown | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          search_vector?: unknown | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      nordic_artwork_comments: {
+        Row: {
+          artwork_id: string | null
+          comment: string
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          artwork_id?: string | null
+          comment: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          artwork_id?: string | null
+          comment?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nordic_artwork_comments_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_artwork"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nordic_artwork_likes: {
+        Row: {
+          artwork_id: string | null
+          created_at: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          artwork_id?: string | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          artwork_id?: string | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nordic_artwork_likes_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "nordic_artwork"
             referencedColumns: ["id"]
           },
         ]
@@ -15877,6 +16401,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      sermons: {
+        Row: {
+          audio_url: string | null
+          church_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          recorded_date: string | null
+          scripture_references: string[] | null
+          speaker: string | null
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          audio_url?: string | null
+          church_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          recorded_date?: string | null
+          scripture_references?: string[] | null
+          speaker?: string | null
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          audio_url?: string | null
+          church_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          recorded_date?: string | null
+          scripture_references?: string[] | null
+          speaker?: string | null
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sermons_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       session_feedback: {
         Row: {
@@ -21671,6 +22242,42 @@ export type Database = {
           target_book?: string
           target_chapter?: number
           target_verse?: number
+        }
+        Relationships: []
+      }
+      verse_memorization: {
+        Row: {
+          book: string
+          chapter: number
+          confidence_level: number | null
+          created_at: string
+          id: string
+          last_reviewed: string | null
+          next_review: string | null
+          user_id: string
+          verse: number
+        }
+        Insert: {
+          book: string
+          chapter: number
+          confidence_level?: number | null
+          created_at?: string
+          id?: string
+          last_reviewed?: string | null
+          next_review?: string | null
+          user_id: string
+          verse: number
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          confidence_level?: number | null
+          created_at?: string
+          id?: string
+          last_reviewed?: string | null
+          next_review?: string | null
+          user_id?: string
+          verse?: number
         }
         Relationships: []
       }
