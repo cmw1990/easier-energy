@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import CBTExercises from "@/components/cbt/CBTExercises";
 import { ConsultationBooking } from "@/components/mentalHealth/ConsultationBooking";
 import { ProfessionalDirectory } from "@/components/mentalHealth/ProfessionalDirectory";
@@ -12,6 +13,7 @@ import { EmergencyResources } from "@/components/mentalHealth/crisis/EmergencyRe
 import { ConsultationPackages } from "@/components/mentalHealth/packages/ConsultationPackages";
 import { ProfessionalDashboard } from "@/components/mentalHealth/professionals/ProfessionalDashboard";
 import { ClientDashboard } from "@/components/mentalHealth/clients/ClientDashboard";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,14 +25,16 @@ import {
   LineChart,
   MessagesSquare,
   Package,
-  AlertTriangle 
+  AlertTriangle,
+  Loader2 
 } from "lucide-react";
 
 export default function MentalHealth() {
   const { session } = useAuth();
+  const { toast } = useToast();
   const [userRole, setUserRole] = useState<'client' | 'professional' | null>(null);
 
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading } = useQuery({
     queryKey: ['user-profile', session?.user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,7 +43,14 @@ export default function MentalHealth() {
         .eq('id', session?.user?.id)
         .single();
       
-      if (error) throw error;
+      if (error) {
+        toast({
+          title: "Error loading profile",
+          description: "Please try again later",
+          variant: "destructive"
+        });
+        throw error;
+      }
       return data;
     },
     enabled: !!session?.user?.id
@@ -50,6 +61,22 @@ export default function MentalHealth() {
       setUserRole(profile.role as 'client' | 'professional');
     }
   }, [profile]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-4 space-y-6">
+        <div className="flex items-center gap-2 mb-6">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <h1 className="text-3xl font-bold">Loading...</h1>
+        </div>
+        <div className="grid gap-4">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-[200px] w-full" />
+          <Skeleton className="h-[200px] w-full" />
+        </div>
+      </div>
+    );
+  }
 
   if (userRole === 'professional') {
     return <ProfessionalDashboard />;
@@ -103,35 +130,51 @@ export default function MentalHealth() {
         </TabsList>
 
         <TabsContent value="dashboard">
-          <TherapyDashboard />
+          <Card>
+            <TherapyDashboard />
+          </Card>
         </TabsContent>
 
         <TabsContent value="professionals">
-          <ProfessionalDirectory />
+          <Card>
+            <ProfessionalDirectory />
+          </Card>
         </TabsContent>
 
         <TabsContent value="consultations">
-          <ConsultationBooking />
+          <Card>
+            <ConsultationBooking />
+          </Card>
         </TabsContent>
 
         <TabsContent value="packages">
-          <ConsultationPackages />
+          <Card>
+            <ConsultationPackages />
+          </Card>
         </TabsContent>
 
         <TabsContent value="groups">
-          <SupportGroups />
+          <Card>
+            <SupportGroups />
+          </Card>
         </TabsContent>
 
         <TabsContent value="exercises">
-          <CBTExercises />
+          <Card>
+            <CBTExercises />
+          </Card>
         </TabsContent>
 
         <TabsContent value="mood">
-          <MoodTracker />
+          <Card>
+            <MoodTracker />
+          </Card>
         </TabsContent>
 
         <TabsContent value="emergency">
-          <EmergencyResources />
+          <Card>
+            <EmergencyResources />
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
