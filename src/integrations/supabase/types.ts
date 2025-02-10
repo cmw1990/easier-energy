@@ -6663,6 +6663,7 @@ export type Database = {
           description: string | null
           group_id: string
           id: string
+          is_active: boolean | null
           schedule: Json | null
           title: string
           updated_at: string | null
@@ -6675,6 +6676,7 @@ export type Database = {
           description?: string | null
           group_id: string
           id?: string
+          is_active?: boolean | null
           schedule?: Json | null
           title: string
           updated_at?: string | null
@@ -6687,6 +6689,7 @@ export type Database = {
           description?: string | null
           group_id?: string
           id?: string
+          is_active?: boolean | null
           schedule?: Json | null
           title?: string
           updated_at?: string | null
