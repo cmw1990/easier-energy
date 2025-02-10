@@ -5222,19 +5222,61 @@ export type Database = {
           },
         ]
       }
+      energy_plan_views: {
+        Row: {
+          id: string
+          plan_id: string | null
+          session_duration: number | null
+          user_id: string | null
+          user_role: string | null
+          viewed_at: string | null
+        }
+        Insert: {
+          id?: string
+          plan_id?: string | null
+          session_duration?: number | null
+          user_id?: string | null
+          user_role?: string | null
+          viewed_at?: string | null
+        }
+        Update: {
+          id?: string
+          plan_id?: string | null
+          session_duration?: number | null
+          user_id?: string | null
+          user_role?: string | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "energy_plan_views_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "energy_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       energy_plans: {
         Row: {
           category: string | null
+          contraindications: string[] | null
           created_at: string
           created_by: string
           description: string | null
           energy_level_required: number | null
           estimated_duration_minutes: number | null
+          expertise_level:
+            | Database["public"]["Enums"]["plan_expertise_level"]
+            | null
           id: string
           is_expert_plan: boolean | null
           likes_count: number | null
           plan_type: Database["public"]["Enums"]["plan_type"]
+          professional_notes: string | null
+          recommended_roles: string[] | null
           recommended_time_of_day: string[] | null
+          requires_certification: boolean | null
           saves_count: number | null
           suitable_contexts: string[] | null
           suitable_life_situations:
@@ -5243,20 +5285,28 @@ export type Database = {
           tags: string[] | null
           title: string
           updated_at: string
+          vendor_id: string | null
           visibility: Database["public"]["Enums"]["plan_visibility"] | null
         }
         Insert: {
           category?: string | null
+          contraindications?: string[] | null
           created_at?: string
           created_by: string
           description?: string | null
           energy_level_required?: number | null
           estimated_duration_minutes?: number | null
+          expertise_level?:
+            | Database["public"]["Enums"]["plan_expertise_level"]
+            | null
           id?: string
           is_expert_plan?: boolean | null
           likes_count?: number | null
           plan_type: Database["public"]["Enums"]["plan_type"]
+          professional_notes?: string | null
+          recommended_roles?: string[] | null
           recommended_time_of_day?: string[] | null
+          requires_certification?: boolean | null
           saves_count?: number | null
           suitable_contexts?: string[] | null
           suitable_life_situations?:
@@ -5265,20 +5315,28 @@ export type Database = {
           tags?: string[] | null
           title: string
           updated_at?: string
+          vendor_id?: string | null
           visibility?: Database["public"]["Enums"]["plan_visibility"] | null
         }
         Update: {
           category?: string | null
+          contraindications?: string[] | null
           created_at?: string
           created_by?: string
           description?: string | null
           energy_level_required?: number | null
           estimated_duration_minutes?: number | null
+          expertise_level?:
+            | Database["public"]["Enums"]["plan_expertise_level"]
+            | null
           id?: string
           is_expert_plan?: boolean | null
           likes_count?: number | null
           plan_type?: Database["public"]["Enums"]["plan_type"]
+          professional_notes?: string | null
+          recommended_roles?: string[] | null
           recommended_time_of_day?: string[] | null
+          requires_certification?: boolean | null
           saves_count?: number | null
           suitable_contexts?: string[] | null
           suitable_life_situations?:
@@ -5287,6 +5345,7 @@ export type Database = {
           tags?: string[] | null
           title?: string
           updated_at?: string
+          vendor_id?: string | null
           visibility?: Database["public"]["Enums"]["plan_visibility"] | null
         }
         Relationships: [
@@ -5295,6 +5354,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "energy_plans_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
         ]
@@ -13279,6 +13345,39 @@ export type Database = {
           professional_id?: string | null
           start_time?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      professional_certifications: {
+        Row: {
+          certification_type: string
+          created_at: string | null
+          expiry_date: string | null
+          id: string
+          issued_date: string
+          issuing_authority: string
+          user_id: string | null
+          verification_url: string | null
+        }
+        Insert: {
+          certification_type: string
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          issued_date: string
+          issuing_authority: string
+          user_id?: string | null
+          verification_url?: string | null
+        }
+        Update: {
+          certification_type?: string
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          issued_date?: string
+          issuing_authority?: string
+          user_id?: string | null
+          verification_url?: string | null
         }
         Relationships: []
       }
@@ -21629,6 +21728,11 @@ export type Database = {
         | "delivered"
         | "cancelled"
         | "refunded"
+      plan_expertise_level:
+        | "beginner"
+        | "intermediate"
+        | "advanced"
+        | "professional"
       plan_type:
         | "energizing_boost"
         | "sustained_focus"
