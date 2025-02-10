@@ -126,7 +126,7 @@
   }
 
   .elegant-card {
-    @apply bg-card/50 backdrop-blur-sm border border-border/50 shadow-sm
+    @apply bg-background/50 backdrop-blur-sm border border-border/50 shadow-sm
            hover:shadow-md hover:border-border/80 transition-all duration-300;
   }
 }
