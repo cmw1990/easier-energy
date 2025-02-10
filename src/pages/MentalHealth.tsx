@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion";
 import { 
   Brain, 
   Users, 
@@ -30,6 +31,19 @@ import {
   Loader2,
   ClipboardList
 } from "lucide-react";
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+const stagger = {
+  visible: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 export default function MentalHealth() {
   const { session } = useAuth();
@@ -66,7 +80,12 @@ export default function MentalHealth() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-4 space-y-6">
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+        className="container mx-auto p-4 space-y-6"
+      >
         <div className="flex items-center gap-2 mb-6">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <h1 className="text-3xl font-bold">Loading...</h1>
@@ -76,7 +95,7 @@ export default function MentalHealth() {
           <Skeleton className="h-[200px] w-full" />
           <Skeleton className="h-[200px] w-full" />
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -89,96 +108,93 @@ export default function MentalHealth() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <div className="flex items-center gap-2 mb-6">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+      className="container mx-auto p-4 space-y-6"
+    >
+      <motion.div 
+        variants={fadeIn}
+        className="flex items-center gap-2 mb-6"
+      >
         <Brain className="h-8 w-8 text-primary" />
         <h1 className="text-3xl font-bold">Mental Health Support</h1>
-      </div>
+      </motion.div>
 
       <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList className="grid grid-cols-2 lg:grid-cols-8 gap-4">
-          <TabsTrigger value="dashboard" className="gap-2">
-            <Activity className="h-4 w-4" />
-            Dashboard
-          </TabsTrigger>
-          <TabsTrigger value="professionals" className="gap-2">
-            <Users className="h-4 w-4" />
-            Find Professional
-          </TabsTrigger>
-          <TabsTrigger value="consultations" className="gap-2">
-            <Calendar className="h-4 w-4" />
-            Consultations
-          </TabsTrigger>
-          <TabsTrigger value="packages" className="gap-2">
-            <Package className="h-4 w-4" />
-            Packages
-          </TabsTrigger>
-          <TabsTrigger value="groups" className="gap-2">
-            <MessagesSquare className="h-4 w-4" />
-            Support Groups
-          </TabsTrigger>
-          <TabsTrigger value="exercises" className="gap-2">
-            <Brain className="h-4 w-4" />
-            CBT Exercises
-          </TabsTrigger>
-          <TabsTrigger value="mood" className="gap-2">
-            <LineChart className="h-4 w-4" />
-            Mood Tracking
-          </TabsTrigger>
-          <TabsTrigger value="emergency" className="gap-2">
-            <AlertTriangle className="h-4 w-4" />
-            Emergency
-          </TabsTrigger>
-        </TabsList>
+        <motion.div variants={stagger}>
+          <TabsList className="grid grid-cols-2 lg:grid-cols-8 gap-4">
+            {[
+              { value: "dashboard", icon: <Activity className="h-4 w-4" />, label: "Dashboard" },
+              { value: "professionals", icon: <Users className="h-4 w-4" />, label: "Find Professional" },
+              { value: "consultations", icon: <Calendar className="h-4 w-4" />, label: "Consultations" },
+              { value: "packages", icon: <Package className="h-4 w-4" />, label: "Packages" },
+              { value: "groups", icon: <MessagesSquare className="h-4 w-4" />, label: "Support Groups" },
+              { value: "exercises", icon: <Brain className="h-4 w-4" />, label: "CBT Exercises" },
+              { value: "mood", icon: <LineChart className="h-4 w-4" />, label: "Mood Tracking" },
+              { value: "emergency", icon: <AlertTriangle className="h-4 w-4" />, label: "Emergency" }
+            ].map((tab) => (
+              <motion.div key={tab.value} variants={fadeIn}>
+                <TabsTrigger value={tab.value} className="gap-2">
+                  {tab.icon}
+                  {tab.label}
+                </TabsTrigger>
+              </motion.div>
+            ))}
+          </TabsList>
+        </motion.div>
 
-        <TabsContent value="dashboard">
-          <Card>
-            <TherapyDashboard />
-          </Card>
-        </TabsContent>
+        <motion.div variants={fadeIn}>
+          <TabsContent value="dashboard">
+            <Card>
+              <TherapyDashboard />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="professionals">
-          <Card>
-            <ProfessionalDirectory />
-          </Card>
-        </TabsContent>
+          <TabsContent value="professionals">
+            <Card>
+              <ProfessionalDirectory />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="consultations">
-          <Card>
-            <ConsultationBooking />
-          </Card>
-        </TabsContent>
+          <TabsContent value="consultations">
+            <Card>
+              <ConsultationBooking />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="packages">
-          <Card>
-            <ConsultationPackages />
-          </Card>
-        </TabsContent>
+          <TabsContent value="packages">
+            <Card>
+              <ConsultationPackages />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="groups">
-          <Card>
-            <SupportGroups />
-          </Card>
-        </TabsContent>
+          <TabsContent value="groups">
+            <Card>
+              <SupportGroups />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="exercises">
-          <Card>
-            <CBTExercises />
-          </Card>
-        </TabsContent>
+          <TabsContent value="exercises">
+            <Card>
+              <CBTExercises />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="mood">
-          <Card>
-            <MoodTracker />
-          </Card>
-        </TabsContent>
+          <TabsContent value="mood">
+            <Card>
+              <MoodTracker />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="emergency">
-          <Card>
-            <EmergencyResources />
-          </Card>
-        </TabsContent>
+          <TabsContent value="emergency">
+            <Card>
+              <EmergencyResources />
+            </Card>
+          </TabsContent>
+        </motion.div>
       </Tabs>
-    </div>
+    </motion.div>
   );
 }
