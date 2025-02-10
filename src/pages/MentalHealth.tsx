@@ -34,7 +34,7 @@ import {
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
 };
 
 const stagger = {
@@ -42,6 +42,15 @@ const stagger = {
     transition: {
       staggerChildren: 0.1
     }
+  }
+};
+
+const tabVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.3, ease: "easeOut" }
   }
 };
 
@@ -91,9 +100,9 @@ export default function MentalHealth() {
           <h1 className="text-3xl font-bold">Loading...</h1>
         </div>
         <div className="grid gap-4">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-[200px] w-full" />
-          <Skeleton className="h-[200px] w-full" />
+          <Skeleton className="h-12 w-full animate-pulse" />
+          <Skeleton className="h-[200px] w-full animate-pulse" />
+          <Skeleton className="h-[200px] w-full animate-pulse" />
         </div>
       </motion.div>
     );
@@ -118,7 +127,7 @@ export default function MentalHealth() {
         variants={fadeIn}
         className="flex items-center gap-2 mb-6"
       >
-        <Brain className="h-8 w-8 text-primary" />
+        <Brain className="h-8 w-8 text-primary animate-pulse" />
         <h1 className="text-3xl font-bold">Mental Health Support</h1>
       </motion.div>
 
@@ -135,8 +144,11 @@ export default function MentalHealth() {
               { value: "mood", icon: <LineChart className="h-4 w-4" />, label: "Mood Tracking" },
               { value: "emergency", icon: <AlertTriangle className="h-4 w-4" />, label: "Emergency" }
             ].map((tab) => (
-              <motion.div key={tab.value} variants={fadeIn}>
-                <TabsTrigger value={tab.value} className="gap-2">
+              <motion.div key={tab.value} variants={tabVariants}>
+                <TabsTrigger 
+                  value={tab.value} 
+                  className="gap-2 hover-lift subtle-scale"
+                >
                   {tab.icon}
                   {tab.label}
                 </TabsTrigger>
@@ -147,49 +159,49 @@ export default function MentalHealth() {
 
         <motion.div variants={fadeIn}>
           <TabsContent value="dashboard">
-            <Card>
+            <Card className="elegant-card">
               <TherapyDashboard />
             </Card>
           </TabsContent>
 
           <TabsContent value="professionals">
-            <Card>
+            <Card className="elegant-card">
               <ProfessionalDirectory />
             </Card>
           </TabsContent>
 
           <TabsContent value="consultations">
-            <Card>
+            <Card className="elegant-card">
               <ConsultationBooking />
             </Card>
           </TabsContent>
 
           <TabsContent value="packages">
-            <Card>
+            <Card className="elegant-card">
               <ConsultationPackages />
             </Card>
           </TabsContent>
 
           <TabsContent value="groups">
-            <Card>
+            <Card className="elegant-card">
               <SupportGroups />
             </Card>
           </TabsContent>
 
           <TabsContent value="exercises">
-            <Card>
+            <Card className="elegant-card">
               <CBTExercises />
             </Card>
           </TabsContent>
 
           <TabsContent value="mood">
-            <Card>
+            <Card className="elegant-card">
               <MoodTracker />
             </Card>
           </TabsContent>
 
           <TabsContent value="emergency">
-            <Card>
+            <Card className="elegant-card">
               <EmergencyResources />
             </Card>
           </TabsContent>
