@@ -2,8 +2,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { MarketplaceMetrics } from "@/types/ConsultationTypes";
+
+interface MarketplaceMetrics {
+  id: string
+  metrics_data: {
+    total_revenue: number
+    total_orders: number
+    conversion_rate: number
+  }
+}
 
 export function MarketplaceIntegration() {
   const { data: metrics } = useQuery({

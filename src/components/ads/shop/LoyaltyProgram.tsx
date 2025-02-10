@@ -4,7 +4,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Trophy, Gift, Users } from 'lucide-react';
 import { useAuth } from "@/components/AuthProvider";
-import { LoyaltyProgram as LoyaltyProgramType } from "@/types/ConsultationTypes";
+
+interface LoyaltyTier {
+  name: string;
+  points_required: number;
+  benefits: string[];
+}
+
+interface LoyaltyReward {
+  name: string;
+  points_cost: number;
+  description: string;
+}
+
+interface LoyaltyProgram {
+  id: string;
+  program_name: string;
+  points_ratio: number;
+  tiers: LoyaltyTier[];
+  rewards: LoyaltyReward[];
+}
 
 export function LoyaltyProgram() {
   const { session } = useAuth();
@@ -30,7 +49,7 @@ export function LoyaltyProgram() {
         .select('*')
         .eq('vendor_id', vendorId)
         .single();
-      return data as LoyaltyProgramType;
+      return data as LoyaltyProgram;
     },
     enabled: !!vendorId
   });
@@ -64,7 +83,7 @@ export function LoyaltyProgram() {
                   <h4 className="font-medium">Membership Tiers</h4>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {programData.tiers?.map((tier) => (
+                  {programData.tiers?.map((tier: LoyaltyTier) => (
                     <div key={tier.name} className="p-4 rounded-lg border bg-card">
                       <h5 className="font-medium">{tier.name}</h5>
                       <p className="mt-1 text-sm text-muted-foreground">
@@ -84,27 +103,3 @@ export function LoyaltyProgram() {
                 <div className="flex items-center gap-2 mb-4">
                   <Gift className="h-4 w-4" />
                   <h4 className="font-medium">Available Rewards</h4>
-                </div>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {programData.rewards?.map((reward) => (
-                    <div key={reward.name} className="p-4 rounded-lg border bg-card">
-                      <h5 className="font-medium">{reward.name}</h5>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {reward.points_cost} points
-                      </p>
-                      <p className="mt-1 text-sm">{reward.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center space-y-4">
-              <p className="text-muted-foreground">No loyalty program configured</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  );
-}

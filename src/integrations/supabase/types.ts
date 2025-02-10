@@ -3724,7 +3724,7 @@ export type Database = {
           meeting_link: string | null
           notes: string | null
           professional_id: string | null
-          scheduled_start: string
+          scheduled_start: string | null
           session_date: string
           session_type: string
           status: string | null
@@ -3738,7 +3738,7 @@ export type Database = {
           meeting_link?: string | null
           notes?: string | null
           professional_id?: string | null
-          scheduled_start?: string
+          scheduled_start?: string | null
           session_date: string
           session_type: string
           status?: string | null
@@ -3752,7 +3752,7 @@ export type Database = {
           meeting_link?: string | null
           notes?: string | null
           professional_id?: string | null
-          scheduled_start?: string
+          scheduled_start?: string | null
           session_date?: string
           session_type?: string
           status?: string | null
@@ -4056,27 +4056,33 @@ export type Database = {
         Row: {
           behavior_patterns: Json
           created_at: string | null
+          customer_segments: Json
           engagement_metrics: Json | null
           id: string
           purchase_predictions: Json | null
+          revenue_trends: Json
           user_id: string | null
           vendor_id: string | null
         }
         Insert: {
           behavior_patterns?: Json
           created_at?: string | null
+          customer_segments?: Json
           engagement_metrics?: Json | null
           id?: string
           purchase_predictions?: Json | null
+          revenue_trends?: Json
           user_id?: string | null
           vendor_id?: string | null
         }
         Update: {
           behavior_patterns?: Json
           created_at?: string | null
+          customer_segments?: Json
           engagement_metrics?: Json | null
           id?: string
           purchase_predictions?: Json | null
+          revenue_trends?: Json
           user_id?: string | null
           vendor_id?: string | null
         }
@@ -10118,6 +10124,7 @@ export type Database = {
           expires_at: string
           id: string
           package_id: string | null
+          professional: Json | null
           professional_id: string | null
           sessions_remaining: number
           status: string
@@ -10129,6 +10136,7 @@ export type Database = {
           expires_at: string
           id?: string
           package_id?: string | null
+          professional?: Json | null
           professional_id?: string | null
           sessions_remaining: number
           status: string
@@ -10140,6 +10148,7 @@ export type Database = {
           expires_at?: string
           id?: string
           package_id?: string | null
+          professional?: Json | null
           professional_id?: string | null
           sessions_remaining?: number
           status?: string
