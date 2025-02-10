@@ -14603,6 +14603,47 @@ export type Database = {
         }
         Relationships: []
       }
+      scheduling_rules: {
+        Row: {
+          availability_hours: Json
+          buffer_minutes: number
+          created_at: string | null
+          id: string
+          max_daily_sessions: number
+          professional_id: string | null
+          session_duration_minutes: number
+          updated_at: string | null
+        }
+        Insert: {
+          availability_hours?: Json
+          buffer_minutes?: number
+          created_at?: string | null
+          id?: string
+          max_daily_sessions?: number
+          professional_id?: string | null
+          session_duration_minutes?: number
+          updated_at?: string | null
+        }
+        Update: {
+          availability_hours?: Json
+          buffer_minutes?: number
+          created_at?: string | null
+          id?: string
+          max_daily_sessions?: number
+          professional_id?: string | null
+          session_duration_minutes?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduling_rules_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seller_analytics: {
         Row: {
           churned_subscribers: number | null
