@@ -2621,6 +2621,36 @@ export type Database = {
           },
         ]
       }
+      child_faith_milestones: {
+        Row: {
+          created_at: string
+          description: string | null
+          family_member_id: string | null
+          id: string
+          milestone_date: string
+          milestone_type: string
+          photos: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          family_member_id?: string | null
+          id?: string
+          milestone_date: string
+          milestone_type: string
+          photos?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          family_member_id?: string | null
+          id?: string
+          milestone_date?: string
+          milestone_type?: string
+          photos?: string[] | null
+        }
+        Relationships: []
+      }
       christian_events: {
         Row: {
           church_id: string | null
@@ -2676,6 +2706,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      christian_marriage_resources: {
+        Row: {
+          bible_reference: string | null
+          category: string
+          content: string
+          created_at: string
+          id: string
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          bible_reference?: string | null
+          category: string
+          content: string
+          created_at?: string
+          id?: string
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          bible_reference?: string | null
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
+      christian_parenting_resources: {
+        Row: {
+          age_group: string
+          bible_reference: string | null
+          category: string
+          content: string
+          created_at: string
+          id: string
+          title: string
+        }
+        Insert: {
+          age_group: string
+          bible_reference?: string | null
+          category: string
+          content: string
+          created_at?: string
+          id?: string
+          title: string
+        }
+        Update: {
+          age_group?: string
+          bible_reference?: string | null
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
       }
       church_events: {
         Row: {
@@ -5240,6 +5330,72 @@ export type Database = {
         }
         Relationships: []
       }
+      dating_profiles: {
+        Row: {
+          about_me: string | null
+          age: number
+          church_involvement: string | null
+          created_at: string | null
+          denomination: string | null
+          faith_journey: string | null
+          faith_level: Database["public"]["Enums"]["faith_level"]
+          favorite_bible_verses: string[] | null
+          id: string
+          interests: string[] | null
+          looking_for: string | null
+          ministry_participation: string[] | null
+          occupation: string | null
+          photos: string[] | null
+          prayer_life_description: string | null
+          relationship_intent: Database["public"]["Enums"]["relationship_intent"]
+          spiritual_gifts: string[] | null
+          updated_at: string | null
+          values_and_beliefs: string[] | null
+        }
+        Insert: {
+          about_me?: string | null
+          age: number
+          church_involvement?: string | null
+          created_at?: string | null
+          denomination?: string | null
+          faith_journey?: string | null
+          faith_level: Database["public"]["Enums"]["faith_level"]
+          favorite_bible_verses?: string[] | null
+          id: string
+          interests?: string[] | null
+          looking_for?: string | null
+          ministry_participation?: string[] | null
+          occupation?: string | null
+          photos?: string[] | null
+          prayer_life_description?: string | null
+          relationship_intent: Database["public"]["Enums"]["relationship_intent"]
+          spiritual_gifts?: string[] | null
+          updated_at?: string | null
+          values_and_beliefs?: string[] | null
+        }
+        Update: {
+          about_me?: string | null
+          age?: number
+          church_involvement?: string | null
+          created_at?: string | null
+          denomination?: string | null
+          faith_journey?: string | null
+          faith_level?: Database["public"]["Enums"]["faith_level"]
+          favorite_bible_verses?: string[] | null
+          id?: string
+          interests?: string[] | null
+          looking_for?: string | null
+          ministry_participation?: string[] | null
+          occupation?: string | null
+          photos?: string[] | null
+          prayer_life_description?: string | null
+          relationship_intent?: Database["public"]["Enums"]["relationship_intent"]
+          spiritual_gifts?: string[] | null
+          updated_at?: string | null
+          values_and_beliefs?: string[] | null
+        }
+        Relationships: []
+      }
       delivery_tracking: {
         Row: {
           created_at: string | null
@@ -6505,6 +6661,213 @@ export type Database = {
           total_exercises?: number | null
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      family_devotionals: {
+        Row: {
+          activity_suggestion: string | null
+          age_appropriate_notes: Json | null
+          completed_by: string[] | null
+          content: string
+          created_at: string
+          discussion_questions: Json | null
+          family_id: string | null
+          id: string
+          scripture_reference: string
+          title: string
+        }
+        Insert: {
+          activity_suggestion?: string | null
+          age_appropriate_notes?: Json | null
+          completed_by?: string[] | null
+          content: string
+          created_at?: string
+          discussion_questions?: Json | null
+          family_id?: string | null
+          id?: string
+          scripture_reference: string
+          title: string
+        }
+        Update: {
+          activity_suggestion?: string | null
+          age_appropriate_notes?: Json | null
+          completed_by?: string[] | null
+          content?: string
+          created_at?: string
+          discussion_questions?: Json | null
+          family_id?: string | null
+          id?: string
+          scripture_reference?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_devotionals_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "family_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_members: {
+        Row: {
+          birth_date: string | null
+          created_at: string | null
+          family_id: string | null
+          id: string
+          member_user_id: string | null
+          name: string
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          birth_date?: string | null
+          created_at?: string | null
+          family_id?: string | null
+          id?: string
+          member_user_id?: string | null
+          name: string
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          birth_date?: string | null
+          created_at?: string | null
+          family_id?: string | null
+          id?: string
+          member_user_id?: string | null
+          name?: string
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "family_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_planning: {
+        Row: {
+          biblical_principles: string[] | null
+          courtship_guidelines: string[] | null
+          created_at: string | null
+          family_worship_plans: string | null
+          financial_planning_goals: string[] | null
+          id: string
+          marriage_prep_status: string | null
+          mentorship_needs: string[] | null
+          premarital_counseling_status: string | null
+          spiritual_goals: string[] | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          biblical_principles?: string[] | null
+          courtship_guidelines?: string[] | null
+          created_at?: string | null
+          family_worship_plans?: string | null
+          financial_planning_goals?: string[] | null
+          id?: string
+          marriage_prep_status?: string | null
+          mentorship_needs?: string[] | null
+          premarital_counseling_status?: string | null
+          spiritual_goals?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          biblical_principles?: string[] | null
+          courtship_guidelines?: string[] | null
+          created_at?: string | null
+          family_worship_plans?: string | null
+          financial_planning_goals?: string[] | null
+          id?: string
+          marriage_prep_status?: string | null
+          mentorship_needs?: string[] | null
+          premarital_counseling_status?: string | null
+          spiritual_goals?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      family_prayer_requests: {
+        Row: {
+          answered_date: string | null
+          content: string
+          created_at: string
+          created_by: string | null
+          family_id: string | null
+          id: string
+          status: string | null
+          title: string
+        }
+        Insert: {
+          answered_date?: string | null
+          content: string
+          created_at?: string
+          created_by?: string | null
+          family_id?: string | null
+          id?: string
+          status?: string | null
+          title: string
+        }
+        Update: {
+          answered_date?: string | null
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          family_id?: string | null
+          id?: string
+          status?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_prayer_requests_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "family_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_units: {
+        Row: {
+          created_at: string
+          description: string | null
+          family_verse: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          prayer_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          family_verse?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          prayer_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          family_verse?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          prayer_time?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -11490,6 +11853,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      parenting_resources: {
+        Row: {
+          activities: string[] | null
+          age_group: string
+          bible_references: string[] | null
+          category: string
+          content: string
+          created_at: string | null
+          devotional_content: string | null
+          discussion_questions: string[] | null
+          id: string
+          practical_tips: string[] | null
+          title: string
+        }
+        Insert: {
+          activities?: string[] | null
+          age_group: string
+          bible_references?: string[] | null
+          category: string
+          content: string
+          created_at?: string | null
+          devotional_content?: string | null
+          discussion_questions?: string[] | null
+          id?: string
+          practical_tips?: string[] | null
+          title: string
+        }
+        Update: {
+          activities?: string[] | null
+          age_group?: string
+          bible_references?: string[] | null
+          category?: string
+          content?: string
+          created_at?: string | null
+          devotional_content?: string | null
+          discussion_questions?: string[] | null
+          id?: string
+          practical_tips?: string[] | null
+          title?: string
+        }
+        Relationships: []
       }
       participant_screening_criteria: {
         Row: {
@@ -23307,6 +23712,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      ensure_script_tag: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       gc_to_sec: {
         Args: {
           "": number
@@ -23561,6 +23970,7 @@ export type Database = {
         | "focus_training"
         | "cognitive_rehabilitation"
         | "neuroplasticity"
+      faith_level: "new_believer" | "growing" | "mature" | "mentor"
       feedback_priority: "low" | "medium" | "high" | "critical"
       feedback_status: "open" | "in_progress" | "completed" | "declined"
       feedback_type:
@@ -23651,6 +24061,7 @@ export type Database = {
         | "taper_down"
         | "nrt_assisted"
         | "harm_reduction"
+      relationship_intent: "marriage" | "friendship" | "mentorship"
       reproductive_exercise_type:
         | "kegel_basic"
         | "kegel_advanced"
