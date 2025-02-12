@@ -9734,6 +9734,53 @@ export type Database = {
           },
         ]
       }
+      insurance_claim_submissions: {
+        Row: {
+          claim_id: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          payer_claim_id: string | null
+          response_details: Json | null
+          status: string
+          submission_date: string | null
+          submission_method: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          claim_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          payer_claim_id?: string | null
+          response_details?: Json | null
+          status: string
+          submission_date?: string | null
+          submission_method?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          claim_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          payer_claim_id?: string | null
+          response_details?: Json | null
+          status?: string
+          submission_date?: string | null
+          submission_method?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_claim_submissions_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       insurance_claims: {
         Row: {
           billed_amount: number
@@ -9807,30 +9854,98 @@ export type Database = {
           },
         ]
       }
+      insurance_eligibility_checks: {
+        Row: {
+          client_insurance_id: string | null
+          coinsurance_percentage: number | null
+          copay_amount: number | null
+          coverage_details: Json | null
+          created_at: string | null
+          deductible_remaining: number | null
+          error_message: string | null
+          id: string
+          professional_id: string
+          status: string
+          updated_at: string | null
+          verification_date: string | null
+        }
+        Insert: {
+          client_insurance_id?: string | null
+          coinsurance_percentage?: number | null
+          copay_amount?: number | null
+          coverage_details?: Json | null
+          created_at?: string | null
+          deductible_remaining?: number | null
+          error_message?: string | null
+          id?: string
+          professional_id: string
+          status: string
+          updated_at?: string | null
+          verification_date?: string | null
+        }
+        Update: {
+          client_insurance_id?: string | null
+          coinsurance_percentage?: number | null
+          copay_amount?: number | null
+          coverage_details?: Json | null
+          created_at?: string | null
+          deductible_remaining?: number | null
+          error_message?: string | null
+          id?: string
+          professional_id?: string
+          status?: string
+          updated_at?: string | null
+          verification_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_eligibility_checks_client_insurance_id_fkey"
+            columns: ["client_insurance_id"]
+            isOneToOne: false
+            referencedRelation: "client_insurance"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       insurance_providers: {
         Row: {
+          claims_api_endpoint: string | null
           created_at: string | null
+          eligibility_api_endpoint: string | null
           id: string
           is_active: boolean | null
           name: string
           payer_id: string
+          provider_network: string[] | null
+          supported_claim_types: string[] | null
           updated_at: string | null
+          verification_method: string | null
         }
         Insert: {
+          claims_api_endpoint?: string | null
           created_at?: string | null
+          eligibility_api_endpoint?: string | null
           id?: string
           is_active?: boolean | null
           name: string
           payer_id: string
+          provider_network?: string[] | null
+          supported_claim_types?: string[] | null
           updated_at?: string | null
+          verification_method?: string | null
         }
         Update: {
+          claims_api_endpoint?: string | null
           created_at?: string | null
+          eligibility_api_endpoint?: string | null
           id?: string
           is_active?: boolean | null
           name?: string
           payer_id?: string
+          provider_network?: string[] | null
+          supported_claim_types?: string[] | null
           updated_at?: string | null
+          verification_method?: string | null
         }
         Relationships: []
       }
@@ -23833,6 +23948,14 @@ export type Database = {
         }
         Returns: number
       }
+      check_insurance_eligibility: {
+        Args: {
+          _insurance_id: string
+          _professional_id: string
+          _service_type: string
+        }
+        Returns: Json
+      }
       create_types_bible_file: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -24006,6 +24129,12 @@ export type Database = {
           "": string
         }
         Returns: string[]
+      }
+      submit_insurance_claim: {
+        Args: {
+          _claim_id: string
+        }
+        Returns: Json
       }
     }
     Enums: {
