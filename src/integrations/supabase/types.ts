@@ -3520,6 +3520,7 @@ export type Database = {
           professional_id: string | null
           progress_notes: string | null
           progress_rating: number | null
+          session_id: string | null
           treatment_goals: string[] | null
           updated_at: string | null
         }
@@ -3536,6 +3537,7 @@ export type Database = {
           professional_id?: string | null
           progress_notes?: string | null
           progress_rating?: number | null
+          session_id?: string | null
           treatment_goals?: string[] | null
           updated_at?: string | null
         }
@@ -3552,6 +3554,7 @@ export type Database = {
           professional_id?: string | null
           progress_notes?: string | null
           progress_rating?: number | null
+          session_id?: string | null
           treatment_goals?: string[] | null
           updated_at?: string | null
         }
@@ -3561,6 +3564,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_progress_tracking_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -9899,6 +9909,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_client_insurance"
+            columns: ["client_insurance_id"]
+            isOneToOne: false
+            referencedRelation: "client_insurance"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "insurance_eligibility_checks_client_insurance_id_fkey"
             columns: ["client_insurance_id"]
             isOneToOne: false
@@ -12105,6 +12122,13 @@ export type Database = {
           total_amount?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_professional"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "package_purchases_package_id_fkey"
             columns: ["package_id"]
