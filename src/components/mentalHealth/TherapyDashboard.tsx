@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/AuthProvider";
-import { Brain, Calendar, ClipboardCheck, Activity, MessageCircle, FileText, Target, Trophy } from "lucide-react";
+import { Brain, Calendar, ClipboardCheck, Activity, MessageCircle, FileText, Target, Trophy, Shield } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { InsuranceManager } from "../insurance/InsuranceManager";
 
 export function TherapyDashboard() {
   const { session } = useAuth();
@@ -40,7 +41,7 @@ export function TherapyDashboard() {
         .eq('client_id', session?.user?.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
       return data;
     },
     enabled: !!session?.user?.id
@@ -58,6 +59,29 @@ export function TherapyDashboard() {
         .or(`sender_id.eq.${session?.user?.id},receiver_id.eq.${session?.user?.id}`)
         .order('created_at', { ascending: false })
         .limit(5);
+      return data;
+    },
+    enabled: !!session?.user?.id
+  });
+
+  const { data: insuranceInfo } = useQuery({
+    queryKey: ['client-insurance', session?.user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('client_insurance')
+        .select(`
+          id,
+          insurance_providers (
+            name,
+            verification_method
+          ),
+          insurance_eligibility_checks (
+            status,
+            verification_date
+          )
+        `)
+        .eq('client_id', session?.user?.id)
+        .maybeSingle();
       return data;
     },
     enabled: !!session?.user?.id
@@ -117,15 +141,31 @@ export function TherapyDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Resources</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Insurance</CardTitle>
+            <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">Shared resources</p>
+            <div className="text-2xl font-bold">
+              {insuranceInfo?.insurance_providers?.name || 'Not Set'}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {insuranceInfo?.insurance_eligibility_checks?.[0]?.status === 'verified' 
+                ? 'Coverage Verified' 
+                : 'Verification Needed'}
+            </p>
           </CardContent>
         </Card>
       </div>
+
+      {/* Insurance Manager Integration */}
+      {session?.user?.id && upcomingSessions?.[0] && insuranceInfo && (
+        <InsuranceManager
+          sessionId={upcomingSessions[0].id}
+          clientId={session.user.id}
+          professionalId={upcomingSessions[0].professional_id}
+          clientInsuranceId={insuranceInfo.id}
+        />
+      )}
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
