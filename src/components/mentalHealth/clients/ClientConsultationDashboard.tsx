@@ -57,8 +57,8 @@ export function ClientConsultationDashboard() {
         .from('package_purchases')
         .select(`
           *,
-          package:consultation_packages!package_purchases_package_id_fkey(name, description),
-          professional:profiles!package_purchases_professional_id_fkey(full_name)
+          package:consultation_packages (name, description),
+          professional:profiles!package_purchases_professional_id_fkey (full_name)
         `)
         .eq('client_id', session?.user?.id)
         .eq('status', 'active')
@@ -67,9 +67,7 @@ export function ClientConsultationDashboard() {
       return (data || []).map(pkg => ({
         ...pkg,
         professional: {
-          full_name: typeof pkg.professional === 'object' ? 
-            pkg.professional.full_name || 'Unknown Professional' : 
-            'Unknown Professional'
+          full_name: pkg.professional?.full_name || 'Unknown Professional'
         }
       })) as PackagePurchaseType[];
     },

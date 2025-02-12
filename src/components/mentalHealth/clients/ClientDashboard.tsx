@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,15 +52,15 @@ export function ClientDashboard() {
     enabled: !!session?.user?.id
   });
 
-  const { data: activePurchases } = useQuery({
+const { data: activePurchases } = useQuery({
     queryKey: ['active-packages', session?.user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('package_purchases')
         .select(`
           *,
-          package:package_id(*),
-          professional:professional_id(
+          package:consultation_packages (*),
+          professional:profiles!package_purchases_professional_id_fkey (
             full_name
           )
         `)
@@ -70,7 +69,13 @@ export function ClientDashboard() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as PackagePurchase[];
+      
+      return (data || []).map(purchase => ({
+        ...purchase,
+        professional: {
+          full_name: purchase.professional?.full_name || 'Unknown Professional'
+        }
+      }));
     },
     enabled: !!session?.user?.id
   });
