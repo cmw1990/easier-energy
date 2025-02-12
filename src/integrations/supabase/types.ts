@@ -11736,6 +11736,36 @@ export type Database = {
           },
         ]
       }
+      norse_names: {
+        Row: {
+          created_at: string | null
+          gender: string | null
+          historical_context: string | null
+          id: string
+          meaning: string | null
+          name_part: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          gender?: string | null
+          historical_context?: string | null
+          id?: string
+          meaning?: string | null
+          name_part: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          gender?: string | null
+          historical_context?: string | null
+          id?: string
+          meaning?: string | null
+          name_part?: string
+          type?: string | null
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           break_reminder_style: Json | null
@@ -15809,6 +15839,36 @@ export type Database = {
           },
         ]
       }
+      quiz_results: {
+        Row: {
+          category: string
+          created_at: string | null
+          difficulty: string
+          id: string
+          questions_answered: number
+          score: number
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          difficulty: string
+          id?: string
+          questions_answered: number
+          score: number
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          difficulty?: string
+          id?: string
+          questions_answered?: number
+          score?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       quizzes: {
         Row: {
           category: string
@@ -16851,6 +16911,33 @@ export type Database = {
           search_rank?: number | null
           search_vector?: unknown | null
           symbol?: string
+        }
+        Relationships: []
+      }
+      runic_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_public: boolean | null
+          message_latin: string
+          message_runes: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_public?: boolean | null
+          message_latin: string
+          message_runes: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_public?: boolean | null
+          message_latin?: string
+          message_runes?: string
+          user_id?: string
         }
         Relationships: []
       }
