@@ -1,3 +1,5 @@
+
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,9 +31,9 @@ export function ClientProgress({ clientId, sessionId }: ClientProgressProps) {
         .from('client_progress_tracking')
         .select('*')
         .eq('session_id', sessionId)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) throw error;
       return data as ClientProgressTracking;
     },
     enabled: !!sessionId

@@ -36,17 +36,17 @@ export function LoyaltyProgram() {
       if (!data) return null;
 
       // Type assertion with validation
-      const tiers = Array.isArray(data.tiers) ? data.tiers.map(tier => ({
+      const tiers = Array.isArray(data.tiers) ? data.tiers.map((tier: any) => ({
         name: String(tier.name || ''),
         points_required: Number(tier.points_required || 0),
         benefits: Array.isArray(tier.benefits) ? tier.benefits.map(String) : []
-      })) : [];
+      })) as LoyaltyTier[] : [];
 
-      const rewards = Array.isArray(data.rewards) ? data.rewards.map(reward => ({
+      const rewards = Array.isArray(data.rewards) ? data.rewards.map((reward: any) => ({
         name: String(reward.name || ''),
         points_cost: Number(reward.points_cost || 0),
         description: String(reward.description || '')
-      })) : [];
+      })) as LoyaltyReward[] : [];
 
       return {
         ...data,

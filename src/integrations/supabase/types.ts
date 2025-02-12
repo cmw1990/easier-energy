@@ -9744,6 +9744,53 @@ export type Database = {
           },
         ]
       }
+      insurance_claim_processing: {
+        Row: {
+          claim_id: string
+          created_at: string | null
+          id: string
+          last_processed_at: string | null
+          processed_at: string | null
+          processing_errors: string[] | null
+          processor_notes: string | null
+          resubmission_count: number | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          claim_id: string
+          created_at?: string | null
+          id?: string
+          last_processed_at?: string | null
+          processed_at?: string | null
+          processing_errors?: string[] | null
+          processor_notes?: string | null
+          resubmission_count?: number | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          claim_id?: string
+          created_at?: string | null
+          id?: string
+          last_processed_at?: string | null
+          processed_at?: string | null
+          processing_errors?: string[] | null
+          processor_notes?: string | null
+          resubmission_count?: number | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_claim_processing_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       insurance_claim_submissions: {
         Row: {
           claim_id: string | null
@@ -9923,6 +9970,80 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      insurance_eob_documents: {
+        Row: {
+          claim_id: string
+          created_at: string | null
+          document_url: string
+          id: string
+          issued_date: string
+          patient_responsibility: number | null
+          received_date: string | null
+          total_allowed: number | null
+          total_billed: number
+          total_paid: number | null
+        }
+        Insert: {
+          claim_id: string
+          created_at?: string | null
+          document_url: string
+          id?: string
+          issued_date: string
+          patient_responsibility?: number | null
+          received_date?: string | null
+          total_allowed?: number | null
+          total_billed: number
+          total_paid?: number | null
+        }
+        Update: {
+          claim_id?: string
+          created_at?: string | null
+          document_url?: string
+          id?: string
+          issued_date?: string
+          patient_responsibility?: number | null
+          received_date?: string | null
+          total_allowed?: number | null
+          total_billed?: number
+          total_paid?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_eob_documents_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurance_provider_networks: {
+        Row: {
+          coverage_area: string[]
+          created_at: string | null
+          id: string
+          name: string
+          network_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          coverage_area?: string[]
+          created_at?: string | null
+          id?: string
+          name: string
+          network_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          coverage_area?: string[]
+          created_at?: string | null
+          id?: string
+          name?: string
+          network_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       insurance_providers: {
         Row: {
