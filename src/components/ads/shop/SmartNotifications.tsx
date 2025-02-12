@@ -8,7 +8,7 @@ import { CustomerBehavior } from "@/types/ConsultationTypes";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-export function CustomerEngagement() {
+export function SmartNotifications() {
   const { data: customerData } = useQuery({
     queryKey: ['customer-behavior-analysis'],
     queryFn: async () => {
@@ -19,26 +19,31 @@ export function CustomerEngagement() {
 
       if (!data) return null;
 
-      // Transform the data to match CustomerBehavior type
+      // Handle the Json type properly by safely accessing properties
+      const behaviorPatterns = typeof data.behavior_patterns === 'object' ? data.behavior_patterns : {};
+      const customerSegments = typeof data.customer_segments === 'object' ? data.customer_segments : {};
+      const revenueTrends = typeof data.revenue_trends === 'object' ? data.revenue_trends : {};
+
+      // Transform the data to match CustomerBehavior type with proper type checking
       return {
         id: data.id,
         vendor_id: data.vendor_id,
         behavior_patterns: {
-          active_users: data.behavior_patterns?.active_users || 0,
-          engagement_rate: data.behavior_patterns?.engagement_rate || 0,
-          response_rate: data.behavior_patterns?.response_rate || 0,
-          peak_hours: data.behavior_patterns?.peak_hours || [],
-          segments: data.behavior_patterns?.segments || []
+          active_users: Number(behaviorPatterns?.active_users) || 0,
+          engagement_rate: Number(behaviorPatterns?.engagement_rate) || 0,
+          response_rate: Number(behaviorPatterns?.response_rate) || 0,
+          peak_hours: Array.isArray(behaviorPatterns?.peak_hours) ? behaviorPatterns.peak_hours : [],
+          segments: Array.isArray(behaviorPatterns?.segments) ? behaviorPatterns.segments : []
         },
         customer_segments: {
-          new: data.customer_segments?.new || 0,
-          returning: data.customer_segments?.returning || 0,
-          inactive: data.customer_segments?.inactive || 0
+          new: Number(customerSegments?.new) || 0,
+          returning: Number(customerSegments?.returning) || 0,
+          inactive: Number(customerSegments?.inactive) || 0
         },
         revenue_trends: {
-          daily: data.revenue_trends?.daily || [],
-          weekly: data.revenue_trends?.weekly || [],
-          monthly: data.revenue_trends?.monthly || []
+          daily: Array.isArray(revenueTrends?.daily) ? revenueTrends.daily : [],
+          weekly: Array.isArray(revenueTrends?.weekly) ? revenueTrends.weekly : [],
+          monthly: Array.isArray(revenueTrends?.monthly) ? revenueTrends.monthly : []
         },
         created_at: data.created_at
       } as CustomerBehavior;
