@@ -5,19 +5,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Package } from "lucide-react";
 import { ConsultationPackages } from "@/components/mentalHealth/packages/ConsultationPackages";
-import { ConsultationSession, PackagePurchase } from "@/types/ConsultationTypes";
+import type { ConsultationSession } from "@/types/ConsultationTypes";
 
-interface Session {
-  id: string;
-  client_id: string;
-  professional_id: string;
-  session_date: string;
-  professional: {
-    full_name: string;
-  };
-}
-
-interface PackagePurchase {
+// Remove the conflicting PackagePurchase import and use the type directly
+interface PackagePurchaseType {
   id: string;
   package_id: string;
   client_id: string;
@@ -48,7 +39,13 @@ export function ClientConsultationDashboard() {
         .gte('session_date', new Date().toISOString())
         .order('session_date')
         .limit(5);
-      return (data || []) as ConsultationSession[];
+
+      return (data || []).map(session => ({
+        ...session,
+        professional: {
+          full_name: session.professional?.[0]?.full_name || 'Unknown Professional'
+        }
+      })) as ConsultationSession[];
     },
     enabled: !!session?.user?.id
   });
@@ -66,7 +63,15 @@ export function ClientConsultationDashboard() {
         .eq('client_id', session?.user?.id)
         .eq('status', 'active')
         .gte('expires_at', new Date().toISOString());
-      return data as PackagePurchase[];
+
+      return (data || []).map(pkg => ({
+        ...pkg,
+        professional: {
+          full_name: typeof pkg.professional === 'object' ? 
+            pkg.professional.full_name || 'Unknown Professional' : 
+            'Unknown Professional'
+        }
+      })) as PackagePurchaseType[];
     },
     enabled: !!session?.user?.id
   });

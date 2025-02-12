@@ -1,11 +1,12 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/AuthProvider";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { Users, TrendingUp, MessageCircle } from 'lucide-react';
-import { LoyaltyProgram as LoyaltyProgramType } from "@/types/insurance";
+import { Users, TrendingUp, MessageCircle, Trophy, Gift } from 'lucide-react';
+import { LoyaltyProgram as LoyaltyProgramType, LoyaltyTier, LoyaltyReward } from "@/types/insurance";
 
 export function LoyaltyProgram() {
   const { session } = useAuth();
@@ -34,10 +35,23 @@ export function LoyaltyProgram() {
 
       if (!data) return null;
 
+      // Type assertion with validation
+      const tiers = Array.isArray(data.tiers) ? data.tiers.map(tier => ({
+        name: String(tier.name || ''),
+        points_required: Number(tier.points_required || 0),
+        benefits: Array.isArray(tier.benefits) ? tier.benefits.map(String) : []
+      })) : [];
+
+      const rewards = Array.isArray(data.rewards) ? data.rewards.map(reward => ({
+        name: String(reward.name || ''),
+        points_cost: Number(reward.points_cost || 0),
+        description: String(reward.description || '')
+      })) : [];
+
       return {
         ...data,
-        tiers: data.tiers as LoyaltyProgramType['tiers'],
-        rewards: data.rewards as LoyaltyProgramType['rewards'],
+        tiers,
+        rewards,
       } as LoyaltyProgramType;
     },
     enabled: !!vendorId
