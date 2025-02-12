@@ -15619,49 +15619,70 @@ export type Database = {
       }
       realms: {
         Row: {
+          access_points: string[] | null
           characteristic_features: string[]
           climate: string | null
           connected_realms: string[] | null
           created_at: string
+          cultural_significance: string | null
           description: string
+          governing_forces: string[] | null
+          historical_significance: string | null
           id: string
           image_url: string | null
           inhabitants: string[] | null
+          magical_properties: string[] | null
           mythology_era: string | null
+          myths_and_legends: string[] | null
           name: string
           notable_locations: string[] | null
           search_rank: number | null
           search_vector: unknown | null
+          seasonal_changes: string | null
         }
         Insert: {
+          access_points?: string[] | null
           characteristic_features: string[]
           climate?: string | null
           connected_realms?: string[] | null
           created_at?: string
+          cultural_significance?: string | null
           description: string
+          governing_forces?: string[] | null
+          historical_significance?: string | null
           id?: string
           image_url?: string | null
           inhabitants?: string[] | null
+          magical_properties?: string[] | null
           mythology_era?: string | null
+          myths_and_legends?: string[] | null
           name: string
           notable_locations?: string[] | null
           search_rank?: number | null
           search_vector?: unknown | null
+          seasonal_changes?: string | null
         }
         Update: {
+          access_points?: string[] | null
           characteristic_features?: string[]
           climate?: string | null
           connected_realms?: string[] | null
           created_at?: string
+          cultural_significance?: string | null
           description?: string
+          governing_forces?: string[] | null
+          historical_significance?: string | null
           id?: string
           image_url?: string | null
           inhabitants?: string[] | null
+          magical_properties?: string[] | null
           mythology_era?: string | null
+          myths_and_legends?: string[] | null
           name?: string
           notable_locations?: string[] | null
           search_rank?: number | null
           search_vector?: unknown | null
+          seasonal_changes?: string | null
         }
         Relationships: []
       }
