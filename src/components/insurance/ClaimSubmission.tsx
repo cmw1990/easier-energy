@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,24 +49,31 @@ export const ClaimSubmission = ({
       const { data: claim, error: claimError } = await supabase
         .from('insurance_claims')
         .insert({
-          session_id: sessionId,
+          service_date: new Date().toISOString(),
           client_insurance_id: clientInsuranceId,
           professional_id: professionalId,
           diagnosis_codes: diagnosisCodes,
           procedure_codes: procedureCodes,
+          billed_amount: 100, // This should be dynamic based on session cost
           status: 'pending',
-          submission_date: new Date().toISOString()
+          session_id: sessionId
         })
         .select()
         .single();
 
       if (claimError) throw claimError;
 
-      // Then submit it through the RPC function
-      const { data: submission, error: submissionError } = await supabase.rpc(
-        'submit_insurance_claim',
-        { _claim_id: claim.id }
-      );
+      // Then create the claim submission
+      const { data: submission, error: submissionError } = await supabase
+        .from('insurance_claim_submissions')
+        .insert({
+          claim_id: claim.id,
+          submission_method: 'electronic',
+          status: 'pending',
+          submission_date: new Date().toISOString()
+        })
+        .select()
+        .single();
 
       if (submissionError) throw submissionError;
 

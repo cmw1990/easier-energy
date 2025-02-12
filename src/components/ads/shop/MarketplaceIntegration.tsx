@@ -2,15 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-interface MarketplaceMetrics {
-  id: string
-  metrics_data: {
-    total_revenue: number
-    total_orders: number 
-    conversion_rate: number
-  }
-}
+import { MarketplaceMetrics } from "@/types/insurance";
 
 export function MarketplaceIntegration() {
   const { data: metrics } = useQuery({
@@ -20,7 +12,13 @@ export function MarketplaceIntegration() {
         .from('marketplace_platform_metrics')
         .select('*')
         .single();
-      return data as MarketplaceMetrics;
+
+      if (!data) return null;
+      
+      return {
+        ...data,
+        metrics_data: data.metrics_data as MarketplaceMetrics['metrics_data']
+      } as MarketplaceMetrics;
     }
   });
 
