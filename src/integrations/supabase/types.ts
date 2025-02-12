@@ -3360,6 +3360,69 @@ export type Database = {
         }
         Relationships: []
       }
+      client_insurance: {
+        Row: {
+          client_id: string
+          coverage_details: Json | null
+          created_at: string | null
+          group_number: string | null
+          id: string
+          is_primary: boolean | null
+          policy_number: string
+          provider_id: string
+          relationship_to_subscriber: string
+          subscriber_id: string
+          subscriber_name: string
+          updated_at: string | null
+          verification_status: string | null
+        }
+        Insert: {
+          client_id: string
+          coverage_details?: Json | null
+          created_at?: string | null
+          group_number?: string | null
+          id?: string
+          is_primary?: boolean | null
+          policy_number: string
+          provider_id: string
+          relationship_to_subscriber: string
+          subscriber_id: string
+          subscriber_name: string
+          updated_at?: string | null
+          verification_status?: string | null
+        }
+        Update: {
+          client_id?: string
+          coverage_details?: Json | null
+          created_at?: string | null
+          group_number?: string | null
+          id?: string
+          is_primary?: boolean | null
+          policy_number?: string
+          provider_id?: string
+          relationship_to_subscriber?: string
+          subscriber_id?: string
+          subscriber_name?: string
+          updated_at?: string | null
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_insurance_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_insurance_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_preferences: {
         Row: {
           client_id: string | null
@@ -9670,6 +9733,106 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      insurance_claims: {
+        Row: {
+          billed_amount: number
+          claim_number: string | null
+          client_insurance_id: string
+          created_at: string | null
+          diagnosis_codes: string[] | null
+          id: string
+          procedure_codes: string[] | null
+          professional_id: string
+          response_details: Json | null
+          service_date: string
+          session_id: string
+          status: string | null
+          submission_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          billed_amount: number
+          claim_number?: string | null
+          client_insurance_id: string
+          created_at?: string | null
+          diagnosis_codes?: string[] | null
+          id?: string
+          procedure_codes?: string[] | null
+          professional_id: string
+          response_details?: Json | null
+          service_date: string
+          session_id: string
+          status?: string | null
+          submission_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          billed_amount?: number
+          claim_number?: string | null
+          client_insurance_id?: string
+          created_at?: string | null
+          diagnosis_codes?: string[] | null
+          id?: string
+          procedure_codes?: string[] | null
+          professional_id?: string
+          response_details?: Json | null
+          service_date?: string
+          session_id?: string
+          status?: string | null
+          submission_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_claims_client_insurance_id_fkey"
+            columns: ["client_insurance_id"]
+            isOneToOne: false
+            referencedRelation: "client_insurance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurance_claims_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurance_claims_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurance_providers: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          payer_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          payer_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          payer_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       integration_sync_logs: {
         Row: {

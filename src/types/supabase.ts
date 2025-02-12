@@ -593,6 +593,21 @@ export interface Database {
         Insert: Omit<ConsultationReminder, 'id' | 'created_at'>;
         Update: Partial<Omit<ConsultationReminder, 'id' | 'created_at'>>;
       };
+      insurance_providers: {
+        Row: InsuranceProvider;
+        Insert: Omit<InsuranceProvider, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<InsuranceProvider, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      client_insurance: {
+        Row: ClientInsurance;
+        Insert: Omit<ClientInsurance, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<ClientInsurance, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      insurance_claims: {
+        Row: InsuranceClaim;
+        Insert: Omit<InsuranceClaim, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<InsuranceClaim, 'id' | 'created_at' | 'updated_at'>>;
+      };
     }
     Functions: {
       calculate_available_discount: {
@@ -929,4 +944,46 @@ export interface ConsultationReminder {
   sent_at?: string;
   status: 'pending' | 'sent' | 'failed';
   created_at: string;
+}
+
+export interface InsuranceProvider {
+  id: string;
+  name: string;
+  payer_id: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientInsurance {
+  id: string;
+  client_id: string;
+  provider_id: string;
+  policy_number: string;
+  group_number: string | null;
+  subscriber_id: string;
+  subscriber_name: string;
+  relationship_to_subscriber: string;
+  verification_status: string;
+  coverage_details: Json | null;
+  is_primary: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InsuranceClaim {
+  id: string;
+  session_id: string;
+  client_insurance_id: string;
+  professional_id: string;
+  claim_number: string | null;
+  service_date: string;
+  diagnosis_codes: string[];
+  procedure_codes: string[];
+  billed_amount: number;
+  status: string;
+  submission_date: string | null;
+  response_details: Json | null;
+  created_at: string;
+  updated_at: string;
 }
