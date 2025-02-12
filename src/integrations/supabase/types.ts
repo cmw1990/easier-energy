@@ -12093,6 +12093,7 @@ export type Database = {
           package_id: string | null
           professional: Json | null
           professional_id: string | null
+          professional_name: string | null
           sessions_remaining: number
           status: string
           total_amount: number
@@ -12105,6 +12106,7 @@ export type Database = {
           package_id?: string | null
           professional?: Json | null
           professional_id?: string | null
+          professional_name?: string | null
           sessions_remaining: number
           status: string
           total_amount: number
@@ -12117,6 +12119,7 @@ export type Database = {
           package_id?: string | null
           professional?: Json | null
           professional_id?: string | null
+          professional_name?: string | null
           sessions_remaining?: number
           status?: string
           total_amount?: number
