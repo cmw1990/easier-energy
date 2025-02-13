@@ -2042,6 +2042,51 @@ export type Database = {
         }
         Relationships: []
       }
+      blocking_rules: {
+        Row: {
+          blocking_type: Database["public"]["Enums"]["blocking_type"]
+          created_at: string | null
+          description: string | null
+          distraction_score: number | null
+          id: string
+          is_active: boolean | null
+          is_premium: boolean | null
+          name: string
+          pattern: Database["public"]["Enums"]["rule_pattern"]
+          rule_value: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          blocking_type: Database["public"]["Enums"]["blocking_type"]
+          created_at?: string | null
+          description?: string | null
+          distraction_score?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_premium?: boolean | null
+          name: string
+          pattern: Database["public"]["Enums"]["rule_pattern"]
+          rule_value: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          blocking_type?: Database["public"]["Enums"]["blocking_type"]
+          created_at?: string | null
+          description?: string | null
+          distraction_score?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_premium?: boolean | null
+          name?: string
+          pattern?: Database["public"]["Enums"]["rule_pattern"]
+          rule_value?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       board_games: {
         Row: {
           board_size: number | null
@@ -21650,6 +21695,39 @@ export type Database = {
           },
         ]
       }
+      user_blocking_preferences: {
+        Row: {
+          created_at: string | null
+          custom_settings: Json | null
+          enable_ai_suggestions: boolean | null
+          enable_analytics: boolean | null
+          strict_mode: boolean | null
+          updated_at: string | null
+          user_id: string
+          whitelist: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          custom_settings?: Json | null
+          enable_ai_suggestions?: boolean | null
+          enable_analytics?: boolean | null
+          strict_mode?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          whitelist?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          custom_settings?: Json | null
+          enable_ai_suggestions?: boolean | null
+          enable_analytics?: boolean | null
+          strict_mode?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          whitelist?: string[] | null
+        }
+        Relationships: []
+      }
       user_bookmarks: {
         Row: {
           content_id: string
@@ -24589,6 +24667,7 @@ export type Database = {
         | "cellular_voltage"
         | "quantum_health"
         | "longevity_markers"
+      blocking_type: "ad" | "distraction" | "combined"
       brewing_method: "hot_steep" | "cold_brew" | "gongfu" | "western"
       cbt_exercise_type:
         | "thought_record"
@@ -24768,6 +24847,7 @@ export type Database = {
         | "biomedical"
       review_type: "product" | "alternative" | "experience"
       risk_level: "low" | "medium" | "high"
+      rule_pattern: "domain" | "element" | "keyword" | "ai_suggested"
       session_feedback_type: "client_to_professional" | "professional_to_client"
       sleep_content_type:
         | "guide"
