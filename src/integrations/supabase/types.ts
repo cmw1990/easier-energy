@@ -9744,6 +9744,44 @@ export type Database = {
           },
         ]
       }
+      insurance_claim_attachments: {
+        Row: {
+          claim_id: string
+          created_at: string | null
+          file_name: string
+          file_type: string
+          file_url: string
+          id: string
+          uploaded_by: string
+        }
+        Insert: {
+          claim_id: string
+          created_at?: string | null
+          file_name: string
+          file_type: string
+          file_url: string
+          id?: string
+          uploaded_by: string
+        }
+        Update: {
+          claim_id?: string
+          created_at?: string | null
+          file_name?: string
+          file_type?: string
+          file_url?: string
+          id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_claim_attachments_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       insurance_claim_processing: {
         Row: {
           claim_id: string
@@ -10018,6 +10056,50 @@ export type Database = {
           },
         ]
       }
+      insurance_fee_schedules: {
+        Row: {
+          allowed_amount: number
+          created_at: string | null
+          effective_date: string
+          end_date: string | null
+          id: string
+          insurance_provider_id: string
+          service_code: string
+          service_description: string
+          updated_at: string | null
+        }
+        Insert: {
+          allowed_amount: number
+          created_at?: string | null
+          effective_date: string
+          end_date?: string | null
+          id?: string
+          insurance_provider_id: string
+          service_code: string
+          service_description: string
+          updated_at?: string | null
+        }
+        Update: {
+          allowed_amount?: number
+          created_at?: string | null
+          effective_date?: string
+          end_date?: string | null
+          id?: string
+          insurance_provider_id?: string
+          service_code?: string
+          service_description?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_fee_schedules_insurance_provider_id_fkey"
+            columns: ["insurance_provider_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       insurance_provider_networks: {
         Row: {
           coverage_area: string[]
@@ -10086,6 +10168,59 @@ export type Database = {
           verification_method?: string | null
         }
         Relationships: []
+      }
+      insurance_verification_history: {
+        Row: {
+          client_insurance_id: string
+          coinsurance_percentage: number | null
+          copay_amount: number | null
+          coverage_details: Json | null
+          created_at: string | null
+          deductible_remaining: number | null
+          error_message: string | null
+          id: string
+          professional_id: string
+          updated_at: string | null
+          verification_status: string
+          verified_at: string | null
+        }
+        Insert: {
+          client_insurance_id: string
+          coinsurance_percentage?: number | null
+          copay_amount?: number | null
+          coverage_details?: Json | null
+          created_at?: string | null
+          deductible_remaining?: number | null
+          error_message?: string | null
+          id?: string
+          professional_id: string
+          updated_at?: string | null
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Update: {
+          client_insurance_id?: string
+          coinsurance_percentage?: number | null
+          copay_amount?: number | null
+          coverage_details?: Json | null
+          created_at?: string | null
+          deductible_remaining?: number | null
+          error_message?: string | null
+          id?: string
+          professional_id?: string
+          updated_at?: string | null
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_verification_history_client_insurance_id_fkey"
+            columns: ["client_insurance_id"]
+            isOneToOne: false
+            referencedRelation: "client_insurance"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       integration_sync_logs: {
         Row: {
