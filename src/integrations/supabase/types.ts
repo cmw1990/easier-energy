@@ -9929,6 +9929,7 @@ export type Database = {
           created_at: string | null
           diagnosis_codes: string[] | null
           id: string
+          priority: string | null
           procedure_codes: string[] | null
           processing_notes: string | null
           professional_id: string
@@ -9937,6 +9938,7 @@ export type Database = {
           session_id: string
           status: string | null
           submission_date: string | null
+          supporting_documents: string[] | null
           tracking_number: string | null
           updated_at: string | null
         }
@@ -9947,6 +9949,7 @@ export type Database = {
           created_at?: string | null
           diagnosis_codes?: string[] | null
           id?: string
+          priority?: string | null
           procedure_codes?: string[] | null
           processing_notes?: string | null
           professional_id: string
@@ -9955,6 +9958,7 @@ export type Database = {
           session_id: string
           status?: string | null
           submission_date?: string | null
+          supporting_documents?: string[] | null
           tracking_number?: string | null
           updated_at?: string | null
         }
@@ -9965,6 +9969,7 @@ export type Database = {
           created_at?: string | null
           diagnosis_codes?: string[] | null
           id?: string
+          priority?: string | null
           procedure_codes?: string[] | null
           processing_notes?: string | null
           professional_id?: string
@@ -9973,6 +9978,7 @@ export type Database = {
           session_id?: string
           status?: string | null
           submission_date?: string | null
+          supporting_documents?: string[] | null
           tracking_number?: string | null
           updated_at?: string | null
         }
@@ -10010,6 +10016,8 @@ export type Database = {
           deductible_remaining: number | null
           error_message: string | null
           id: string
+          insurance_group_name: string | null
+          insurance_plan_name: string | null
           professional_id: string
           status: string
           updated_at: string | null
@@ -10024,6 +10032,8 @@ export type Database = {
           deductible_remaining?: number | null
           error_message?: string | null
           id?: string
+          insurance_group_name?: string | null
+          insurance_plan_name?: string | null
           professional_id: string
           status: string
           updated_at?: string | null
@@ -10038,6 +10048,8 @@ export type Database = {
           deductible_remaining?: number | null
           error_message?: string | null
           id?: string
+          insurance_group_name?: string | null
+          insurance_plan_name?: string | null
           professional_id?: string
           status?: string
           updated_at?: string | null
@@ -10183,6 +10195,44 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      insurance_plans: {
+        Row: {
+          coverage_details: Json | null
+          created_at: string | null
+          id: string
+          plan_name: string
+          plan_type: string
+          provider_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          coverage_details?: Json | null
+          created_at?: string | null
+          id?: string
+          plan_name: string
+          plan_type: string
+          provider_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          coverage_details?: Json | null
+          created_at?: string | null
+          id?: string
+          plan_name?: string
+          plan_type?: string
+          provider_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_plans_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_providers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       insurance_provider_networks: {
         Row: {
