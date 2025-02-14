@@ -5,16 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash } from "lucide-react";
+import { Plus, Trash, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function AdBlockingRules() {
   const { session } = useAuth();
   const { toast } = useToast();
   const [newRule, setNewRule] = useState("");
   const [ruleType, setRuleType] = useState("network");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState(0);
 
   const { data: rules, refetch } = useQuery({
     queryKey: ['ad-blocking-rules', session?.user?.id],
@@ -23,7 +32,7 @@ export function AdBlockingRules() {
         .from('ad_blocking_rules')
         .select('*')
         .eq('user_id', session?.user?.id)
-        .order('created_at', { ascending: false });
+        .order('priority', { ascending: false });
 
       if (error) throw error;
       return data;
@@ -41,6 +50,8 @@ export function AdBlockingRules() {
           user_id: session.user.id,
           rule_type: ruleType,
           pattern: newRule,
+          description,
+          priority,
           is_active: true
         });
 
@@ -52,6 +63,8 @@ export function AdBlockingRules() {
       });
 
       setNewRule("");
+      setDescription("");
+      setPriority(0);
       refetch();
     } catch (error) {
       console.error('Error adding rule:', error);
@@ -108,27 +121,60 @@ export function AdBlockingRules() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
-        <Input
-          placeholder="Enter blocking rule pattern"
-          value={newRule}
-          onChange={(e) => setNewRule(e.target.value)}
-        />
-        <select
-          className="px-3 py-2 border rounded-md"
-          value={ruleType}
-          onChange={(e) => setRuleType(e.target.value)}
-        >
-          <option value="network">Network</option>
-          <option value="cosmetic">Cosmetic</option>
-          <option value="script">Script</option>
-          <option value="element">Element</option>
-          <option value="custom">Custom</option>
-        </select>
-        <Button onClick={addRule}>
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <div className="grid gap-4">
+          <div>
+            <Label>Rule Pattern</Label>
+            <Input
+              placeholder="Enter blocking rule pattern (e.g., *ads*.js)"
+              value={newRule}
+              onChange={(e) => setNewRule(e.target.value)}
+            />
+          </div>
+          
+          <div>
+            <Label>Description</Label>
+            <Input
+              placeholder="Rule description (optional)"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Rule Type</Label>
+              <Select value={ruleType} onValueChange={setRuleType}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="network">Network</SelectItem>
+                  <SelectItem value="cosmetic">Cosmetic</SelectItem>
+                  <SelectItem value="script">Script</SelectItem>
+                  <SelectItem value="element">Element</SelectItem>
+                  <SelectItem value="custom">Custom</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Priority</Label>
+              <Input
+                type="number"
+                min="0"
+                max="100"
+                value={priority}
+                onChange={(e) => setPriority(parseInt(e.target.value))}
+              />
+            </div>
+          </div>
+        </div>
+
+        <Button onClick={addRule} className="w-full">
           <Plus className="h-4 w-4 mr-2" />
-          Add
+          Add Rule
         </Button>
       </div>
 
@@ -136,16 +182,34 @@ export function AdBlockingRules() {
         {rules?.map((rule) => (
           <div
             key={rule.id}
-            className="flex items-center justify-between p-2 border rounded-lg"
+            className="flex items-center justify-between p-4 border rounded-lg"
           >
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={rule.is_active}
-                onCheckedChange={() => toggleRule(rule.id, rule.is_active)}
-              />
-              <div>
-                <Label>{rule.pattern}</Label>
-                <p className="text-sm text-muted-foreground">{rule.rule_type}</p>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={rule.is_active}
+                  onCheckedChange={() => toggleRule(rule.id, rule.is_active)}
+                />
+                <Label className="font-medium">{rule.pattern}</Label>
+                {rule.priority > 50 && (
+                  <AlertCircle className="h-4 w-4 text-yellow-500" title="High Priority Rule" />
+                )}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {rule.description && <p>{rule.description}</p>}
+                <div className="flex gap-2 mt-1">
+                  <span className="px-2 py-0.5 bg-primary/10 rounded-full text-xs">
+                    {rule.rule_type}
+                  </span>
+                  <span className="px-2 py-0.5 bg-primary/10 rounded-full text-xs">
+                    Priority: {rule.priority}
+                  </span>
+                  {rule.hits_count > 0 && (
+                    <span className="px-2 py-0.5 bg-primary/10 rounded-full text-xs">
+                      Hits: {rule.hits_count}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <Button
