@@ -9930,12 +9930,14 @@ export type Database = {
           diagnosis_codes: string[] | null
           id: string
           procedure_codes: string[] | null
+          processing_notes: string | null
           professional_id: string
           response_details: Json | null
           service_date: string
           session_id: string
           status: string | null
           submission_date: string | null
+          tracking_number: string | null
           updated_at: string | null
         }
         Insert: {
@@ -9946,12 +9948,14 @@ export type Database = {
           diagnosis_codes?: string[] | null
           id?: string
           procedure_codes?: string[] | null
+          processing_notes?: string | null
           professional_id: string
           response_details?: Json | null
           service_date: string
           session_id: string
           status?: string | null
           submission_date?: string | null
+          tracking_number?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -9962,12 +9966,14 @@ export type Database = {
           diagnosis_codes?: string[] | null
           id?: string
           procedure_codes?: string[] | null
+          processing_notes?: string | null
           professional_id?: string
           response_details?: Json | null
           service_date?: string
           session_id?: string
           status?: string | null
           submission_date?: string | null
+          tracking_number?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -10144,6 +10150,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      insurance_notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          metadata: Json | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          metadata?: Json | null
+          title: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          metadata?: Json | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       insurance_provider_networks: {
         Row: {
