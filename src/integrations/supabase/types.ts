@@ -7064,6 +7064,48 @@ export type Database = {
           },
         ]
       }
+      family_relationships: {
+        Row: {
+          created_at: string
+          from_member_id: string
+          id: string
+          relationship_type: string
+          to_member_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          from_member_id: string
+          id?: string
+          relationship_type: string
+          to_member_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          from_member_id?: string
+          id?: string
+          relationship_type?: string
+          to_member_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_relationships_from_member_id_fkey"
+            columns: ["from_member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_relationships_to_member_id_fkey"
+            columns: ["to_member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_units: {
         Row: {
           created_at: string
