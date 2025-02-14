@@ -24762,6 +24762,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_ad_block_stats: {
+        Args: {
+          user_id: string
+          block_date: string
+          ads_inc?: number
+          bandwidth_inc?: number
+          time_inc?: number
+        }
+        Returns: undefined
+      }
       increment_comment_downvotes: {
         Args: {
           comment_id: string
