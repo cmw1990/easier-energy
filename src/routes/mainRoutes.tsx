@@ -1,10 +1,11 @@
+
 import { RouteObject } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Dashboard } from "@/pages/Dashboard";
 import { InsuranceDashboard } from "@/pages/insurance/Dashboard";
 import { SubmitClaim } from "@/pages/insurance/SubmitClaim";
 import { VerifyCoverage } from "@/pages/insurance/VerifyCoverage";
-import { EnergyPlansPage } from "@/pages/EnergyPlansPage";
+import EnergyPlans from "@/pages/EnergyPlans";
 import { EnergyPlanDetailsPage } from "@/pages/EnergyPlanDetailsPage";
 import { CreateEnergyPlanPage } from "@/pages/CreateEnergyPlanPage";
 import { EditEnergyPlanPage } from "@/pages/EditEnergyPlanPage";
@@ -62,7 +63,7 @@ export const mainRoutes: RouteObject[] = [
       },
       {
         path: "energy-plans",
-        element: <EnergyPlansPage />,
+        element: <EnergyPlans />,
       },
       {
         path: "energy-plans/:id",
