@@ -559,6 +559,114 @@ export type Database = {
         }
         Relationships: []
       }
+      ad_blocking_exceptions: {
+        Row: {
+          created_at: string | null
+          domain: string
+          expiry_date: string | null
+          id: string
+          is_temporary: boolean | null
+          reason: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          domain: string
+          expiry_date?: string | null
+          id?: string
+          is_temporary?: boolean | null
+          reason?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          domain?: string
+          expiry_date?: string | null
+          id?: string
+          is_temporary?: boolean | null
+          reason?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      ad_blocking_rules: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          pattern: string
+          priority: number | null
+          rule_type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          pattern: string
+          priority?: number | null
+          rule_type: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          pattern?: string
+          priority?: number | null
+          rule_type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      ad_blocking_stats: {
+        Row: {
+          ads_blocked: number | null
+          bandwidth_saved: number | null
+          created_at: string | null
+          date: string
+          id: string
+          load_time_saved: number | null
+          stats_data: Json | null
+          trackers_blocked: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          ads_blocked?: number | null
+          bandwidth_saved?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          load_time_saved?: number | null
+          stats_data?: Json | null
+          trackers_blocked?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          ads_blocked?: number | null
+          bandwidth_saved?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          load_time_saved?: number | null
+          stats_data?: Json | null
+          trackers_blocked?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ad_campaign_stats: {
         Row: {
           campaign_id: string | null

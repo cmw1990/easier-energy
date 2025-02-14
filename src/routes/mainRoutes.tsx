@@ -9,6 +9,7 @@ import EnergyPlans from "@/pages/EnergyPlans";
 import { EnergyPlanDetailsPage } from "@/pages/EnergyPlanDetailsPage";
 import { CreateEnergyPlanPage } from "@/pages/CreateEnergyPlanPage";
 import { EditEnergyPlanPage } from "@/pages/EditEnergyPlanPage";
+import { AdBlockerPage } from "@/pages/AdBlockerPage";
 
 export const mainRoutes: RouteObject[] = [
   {
@@ -46,7 +47,12 @@ export const mainRoutes: RouteObject[] = [
       {
         path: "energy-plans/:id/edit",
         element: <EditEnergyPlanPage />,
+      },
+      {
+        path: "ad-blocker",
+        element: <AdBlockerPage />,
       }
     ],
   },
 ];
+
