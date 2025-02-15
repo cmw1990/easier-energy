@@ -73,6 +73,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [roleData]);
 
   useEffect(() => {
+    // Refresh token function
+    const refreshToken = async () => {
+      const { data: { session: newSession }, error } = await supabase.auth.refreshSession();
+      if (error) {
+        console.error('Error refreshing token:', error);
+        toast({
+          title: "Session Error",
+          description: "Please sign in again",
+          variant: "destructive",
+        });
+        navigate("/auth");
+      } else if (newSession) {
+        setSession(newSession);
+        if (newSession.user?.id) {
+          initializeUserSettings(newSession.user.id);
+        }
+      }
+    };
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -80,6 +99,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         initializeUserSettings(session.user.id);
       }
       setLoading(false);
+
+      // Set up token refresh interval
+      const tokenRefreshInterval = setInterval(() => {
+        if (session) {
+          refreshToken();
+        }
+      }, 3600000); // Refresh token every hour
+
+      return () => clearInterval(tokenRefreshInterval);
     }).catch((error) => {
       console.error("Error getting session:", error);
       setLoading(false);
