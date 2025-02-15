@@ -3995,6 +3995,27 @@ export type Database = {
         }
         Relationships: []
       }
+      cognitive_distortions: {
+        Row: {
+          description: string
+          examples: string[] | null
+          id: string
+          name: string
+        }
+        Insert: {
+          description: string
+          examples?: string[] | null
+          id?: string
+          name: string
+        }
+        Update: {
+          description?: string
+          examples?: string[] | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       collection_products: {
         Row: {
           added_at: string | null
@@ -5081,6 +5102,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      crisis_plans: {
+        Row: {
+          coping_strategies: string[] | null
+          created_at: string | null
+          crisis_hotlines: string[] | null
+          emergency_contacts: Json[] | null
+          id: string
+          medications: Json[] | null
+          professional_contacts: Json[] | null
+          safe_places: string[] | null
+          support_contacts: Json[] | null
+          triggers: string[] | null
+          updated_at: string | null
+          user_id: string
+          warning_signs: string[] | null
+        }
+        Insert: {
+          coping_strategies?: string[] | null
+          created_at?: string | null
+          crisis_hotlines?: string[] | null
+          emergency_contacts?: Json[] | null
+          id?: string
+          medications?: Json[] | null
+          professional_contacts?: Json[] | null
+          safe_places?: string[] | null
+          support_contacts?: Json[] | null
+          triggers?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          warning_signs?: string[] | null
+        }
+        Update: {
+          coping_strategies?: string[] | null
+          created_at?: string | null
+          crisis_hotlines?: string[] | null
+          emergency_contacts?: Json[] | null
+          id?: string
+          medications?: Json[] | null
+          professional_contacts?: Json[] | null
+          safe_places?: string[] | null
+          support_contacts?: Json[] | null
+          triggers?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          warning_signs?: string[] | null
+        }
+        Relationships: []
       }
       crisis_resources: {
         Row: {
@@ -11949,6 +12018,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mood_journals: {
+        Row: {
+          activities: string[] | null
+          anxiety_level: number | null
+          challenges: string[] | null
+          created_at: string | null
+          energy_level: number | null
+          entry_date: string | null
+          gratitude_points: string[] | null
+          id: string
+          journal_entry: string | null
+          mood_rating: number | null
+          positive_thoughts: string[] | null
+          sleep_quality: number | null
+          solutions: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activities?: string[] | null
+          anxiety_level?: number | null
+          challenges?: string[] | null
+          created_at?: string | null
+          energy_level?: number | null
+          entry_date?: string | null
+          gratitude_points?: string[] | null
+          id?: string
+          journal_entry?: string | null
+          mood_rating?: number | null
+          positive_thoughts?: string[] | null
+          sleep_quality?: number | null
+          solutions?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activities?: string[] | null
+          anxiety_level?: number | null
+          challenges?: string[] | null
+          created_at?: string | null
+          energy_level?: number | null
+          entry_date?: string | null
+          gratitude_points?: string[] | null
+          id?: string
+          journal_entry?: string | null
+          mood_rating?: number | null
+          positive_thoughts?: string[] | null
+          sleep_quality?: number | null
+          solutions?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       mood_logs: {
         Row: {
@@ -22010,6 +22133,51 @@ export type Database = {
           origin?: string | null
           type?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      thought_records: {
+        Row: {
+          automatic_thoughts: string[] | null
+          cognitive_distortions: string[] | null
+          created_at: string | null
+          emotion_intensities: number[] | null
+          emotions: string[] | null
+          entry_date: string | null
+          id: string
+          outcome: string | null
+          rational_responses: string[] | null
+          situation: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          automatic_thoughts?: string[] | null
+          cognitive_distortions?: string[] | null
+          created_at?: string | null
+          emotion_intensities?: number[] | null
+          emotions?: string[] | null
+          entry_date?: string | null
+          id?: string
+          outcome?: string | null
+          rational_responses?: string[] | null
+          situation: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          automatic_thoughts?: string[] | null
+          cognitive_distortions?: string[] | null
+          created_at?: string | null
+          emotion_intensities?: number[] | null
+          emotions?: string[] | null
+          entry_date?: string | null
+          id?: string
+          outcome?: string | null
+          rational_responses?: string[] | null
+          situation?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }

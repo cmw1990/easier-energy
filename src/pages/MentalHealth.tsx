@@ -6,6 +6,7 @@ import CBTExercises from "@/components/cbt/CBTExercises";
 import { ConsultationBooking } from "@/components/mentalHealth/ConsultationBooking";
 import { ProfessionalDirectory } from "@/components/mentalHealth/ProfessionalDirectory";
 import { MoodTracker } from "@/components/mentalHealth/MoodTracker";
+import { MoodJournal } from "@/components/mentalHealth/journal/MoodJournal";
 import { TherapyDashboard } from "@/components/mentalHealth/TherapyDashboard";
 import { SupportGroups } from "@/components/mentalHealth/groups/SupportGroups";
 import { EmergencyResources } from "@/components/mentalHealth/crisis/EmergencyResources";
@@ -200,9 +201,14 @@ export default function MentalHealth() {
           </TabsContent>
 
           <TabsContent value="mood">
-            <Card className="elegant-card">
-              <MoodTracker />
-            </Card>
+            <div className="space-y-4">
+              <Card className="elegant-card">
+                <MoodTracker />
+              </Card>
+              <Card className="elegant-card">
+                <MoodJournal />
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="triggers">
