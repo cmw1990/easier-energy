@@ -8561,6 +8561,51 @@ export type Database = {
           },
         ]
       }
+      goal_tracking: {
+        Row: {
+          created_at: string
+          current_amount: number
+          goal_type: string
+          id: string
+          initial_amount: number
+          progress_notes: string | null
+          start_date: string
+          status: string | null
+          target_amount: number
+          target_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_amount: number
+          goal_type: string
+          id?: string
+          initial_amount: number
+          progress_notes?: string | null
+          start_date?: string
+          status?: string | null
+          target_amount: number
+          target_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_amount?: number
+          goal_type?: string
+          id?: string
+          initial_amount?: number
+          progress_notes?: string | null
+          start_date?: string
+          status?: string | null
+          target_amount?: number
+          target_date?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           achieved_date: string | null
@@ -9593,6 +9638,42 @@ export type Database = {
           search_vector?: unknown | null
           settings?: Json | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      habit_replacements: {
+        Row: {
+          created_at: string
+          effectiveness_rating: number | null
+          id: string
+          new_habit: string
+          notes: string | null
+          old_habit: string
+          trigger_situation: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          effectiveness_rating?: number | null
+          id?: string
+          new_habit: string
+          notes?: string | null
+          old_habit: string
+          trigger_situation: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          effectiveness_rating?: number | null
+          id?: string
+          new_habit?: string
+          notes?: string | null
+          old_habit?: string
+          trigger_situation?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -16622,6 +16703,36 @@ export type Database = {
           },
         ]
       }
+      quit_strategies: {
+        Row: {
+          created_at: string
+          description: string
+          difficulty_level: number | null
+          id: string
+          name: string
+          recommended_duration_days: number | null
+          success_rate: number | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          difficulty_level?: number | null
+          id?: string
+          name: string
+          recommended_duration_days?: number | null
+          success_rate?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          difficulty_level?: number | null
+          id?: string
+          name?: string
+          recommended_duration_days?: number | null
+          success_rate?: number | null
+        }
+        Relationships: []
+      }
       quiz_questions: {
         Row: {
           correct_answer: string
@@ -20498,6 +20609,36 @@ export type Database = {
           relationship?: string
           supporter_name?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      support_resources: {
+        Row: {
+          content_url: string | null
+          created_at: string
+          description: string
+          id: string
+          resource_type: string | null
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          content_url?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          resource_type?: string | null
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          content_url?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          resource_type?: string | null
+          tags?: string[] | null
+          title?: string
         }
         Relationships: []
       }
@@ -24860,6 +25001,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      wellness_metrics: {
+        Row: {
+          coping_strategies_used: string[] | null
+          energy_level: number | null
+          focus_level: number | null
+          id: string
+          logged_at: string
+          mood_level: number | null
+          notes: string | null
+          sleep_quality: number | null
+          stress_level: number | null
+          triggers: string[] | null
+          user_id: string
+        }
+        Insert: {
+          coping_strategies_used?: string[] | null
+          energy_level?: number | null
+          focus_level?: number | null
+          id?: string
+          logged_at?: string
+          mood_level?: number | null
+          notes?: string | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          triggers?: string[] | null
+          user_id: string
+        }
+        Update: {
+          coping_strategies_used?: string[] | null
+          energy_level?: number | null
+          focus_level?: number | null
+          id?: string
+          logged_at?: string
+          mood_level?: number | null
+          notes?: string | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          triggers?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
       }
       wishlists: {
         Row: {
