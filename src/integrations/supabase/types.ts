@@ -490,6 +490,39 @@ export type Database = {
         }
         Relationships: []
       }
+      achievements_config: {
+        Row: {
+          badge_icon: string | null
+          category: Database["public"]["Enums"]["achievement_category"]
+          created_at: string | null
+          description: string
+          id: string
+          name: string
+          points: number
+          threshold: number | null
+        }
+        Insert: {
+          badge_icon?: string | null
+          category: Database["public"]["Enums"]["achievement_category"]
+          created_at?: string | null
+          description: string
+          id?: string
+          name: string
+          points?: number
+          threshold?: number | null
+        }
+        Update: {
+          badge_icon?: string | null
+          category?: Database["public"]["Enums"]["achievement_category"]
+          created_at?: string | null
+          description?: string
+          id?: string
+          name?: string
+          points?: number
+          threshold?: number | null
+        }
+        Relationships: []
+      }
       activity_points: {
         Row: {
           activity_type: Database["public"]["Enums"]["activity_type"]
@@ -4860,6 +4893,54 @@ export type Database = {
         }
         Relationships: []
       }
+      coping_strategies_library: {
+        Row: {
+          category: string
+          contraindications: string[] | null
+          created_at: string | null
+          description: string
+          difficulty_level: number | null
+          effectiveness_data: Json | null
+          energy_required: number | null
+          estimated_time_minutes: number | null
+          focus_required: number | null
+          id: string
+          instructions: string | null
+          name: string
+          suitable_for: string[] | null
+        }
+        Insert: {
+          category: string
+          contraindications?: string[] | null
+          created_at?: string | null
+          description: string
+          difficulty_level?: number | null
+          effectiveness_data?: Json | null
+          energy_required?: number | null
+          estimated_time_minutes?: number | null
+          focus_required?: number | null
+          id?: string
+          instructions?: string | null
+          name: string
+          suitable_for?: string[] | null
+        }
+        Update: {
+          category?: string
+          contraindications?: string[] | null
+          created_at?: string | null
+          description?: string
+          difficulty_level?: number | null
+          effectiveness_data?: Json | null
+          energy_required?: number | null
+          estimated_time_minutes?: number | null
+          focus_required?: number | null
+          id?: string
+          instructions?: string | null
+          name?: string
+          suitable_for?: string[] | null
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           active: boolean | null
@@ -5793,6 +5874,72 @@ export type Database = {
           id?: string
           source?: string | null
           title?: string
+        }
+        Relationships: []
+      }
+      daily_wellness_logs: {
+        Row: {
+          challenges_faced: string[] | null
+          coping_strategies_used: string[] | null
+          cravings_intensity: number | null
+          created_at: string | null
+          date: string
+          energy_level: number | null
+          exercise_minutes: number | null
+          focus_level: number | null
+          id: string
+          medication_adherence: boolean | null
+          mood_level: number | null
+          notes: string | null
+          side_effects: string[] | null
+          sleep_quality: number | null
+          stress_level: number | null
+          trigger_situations: string[] | null
+          user_id: string
+          water_intake_ml: number | null
+          wins_today: string[] | null
+        }
+        Insert: {
+          challenges_faced?: string[] | null
+          coping_strategies_used?: string[] | null
+          cravings_intensity?: number | null
+          created_at?: string | null
+          date?: string
+          energy_level?: number | null
+          exercise_minutes?: number | null
+          focus_level?: number | null
+          id?: string
+          medication_adherence?: boolean | null
+          mood_level?: number | null
+          notes?: string | null
+          side_effects?: string[] | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          trigger_situations?: string[] | null
+          user_id: string
+          water_intake_ml?: number | null
+          wins_today?: string[] | null
+        }
+        Update: {
+          challenges_faced?: string[] | null
+          coping_strategies_used?: string[] | null
+          cravings_intensity?: number | null
+          created_at?: string | null
+          date?: string
+          energy_level?: number | null
+          exercise_minutes?: number | null
+          focus_level?: number | null
+          id?: string
+          medication_adherence?: boolean | null
+          mood_level?: number | null
+          notes?: string | null
+          side_effects?: string[] | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          trigger_situations?: string[] | null
+          user_id?: string
+          water_intake_ml?: number | null
+          wins_today?: string[] | null
         }
         Relationships: []
       }
@@ -17007,6 +17154,60 @@ export type Database = {
         }
         Relationships: []
       }
+      quit_journey_settings: {
+        Row: {
+          created_at: string | null
+          focus_preferences: Json | null
+          id: string
+          initial_daily_usage: number
+          is_shift_worker: boolean | null
+          mood_triggers: string[] | null
+          peak_energy_times: string[] | null
+          quit_date: string | null
+          quit_type: string
+          support_needs: Json | null
+          taper_schedule: Json | null
+          target_daily_usage: number | null
+          target_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          focus_preferences?: Json | null
+          id?: string
+          initial_daily_usage: number
+          is_shift_worker?: boolean | null
+          mood_triggers?: string[] | null
+          peak_energy_times?: string[] | null
+          quit_date?: string | null
+          quit_type: string
+          support_needs?: Json | null
+          taper_schedule?: Json | null
+          target_daily_usage?: number | null
+          target_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          focus_preferences?: Json | null
+          id?: string
+          initial_daily_usage?: number
+          is_shift_worker?: boolean | null
+          mood_triggers?: string[] | null
+          peak_energy_times?: string[] | null
+          quit_date?: string | null
+          quit_type?: string
+          support_needs?: Json | null
+          taper_schedule?: Json | null
+          target_daily_usage?: number | null
+          target_type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       quit_plans: {
         Row: {
           alternative_product_id: string | null
@@ -25982,6 +26183,13 @@ export type Database = {
       }
     }
     Enums: {
+      achievement_category:
+        | "quit_milestone"
+        | "health_improvement"
+        | "money_saved"
+        | "lifestyle_change"
+        | "coping_skill"
+        | "support_network"
       activity_impact: "positive" | "negative" | "neutral"
       activity_type: "steps" | "app_usage" | "subscription_boost" | "purchase"
       app_role: "admin" | "user" | "product_manager"
