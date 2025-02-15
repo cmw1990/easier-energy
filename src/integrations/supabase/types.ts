@@ -596,6 +596,7 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
+          hits_count: number | null
           id: string
           is_active: boolean | null
           pattern: string
@@ -607,6 +608,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           description?: string | null
+          hits_count?: number | null
           id?: string
           is_active?: boolean | null
           pattern: string
@@ -618,6 +620,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           description?: string | null
+          hits_count?: number | null
           id?: string
           is_active?: boolean | null
           pattern?: string
