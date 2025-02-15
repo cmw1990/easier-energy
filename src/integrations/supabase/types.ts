@@ -11641,31 +11641,46 @@ export type Database = {
       }
       mead_reviews: {
         Row: {
+          appearance_rating: number
+          aroma_rating: number
           author_name: string
           created_at: string
+          flavor_rating: number
           helpful_votes: number | null
           id: string
           mead_id: string | null
+          mouthfeel_rating: number
+          overall_rating: number
           rating: number
           review_text: string | null
           verified_purchase: boolean | null
         }
         Insert: {
+          appearance_rating?: number
+          aroma_rating?: number
           author_name: string
           created_at?: string
+          flavor_rating?: number
           helpful_votes?: number | null
           id?: string
           mead_id?: string | null
+          mouthfeel_rating?: number
+          overall_rating?: number
           rating: number
           review_text?: string | null
           verified_purchase?: boolean | null
         }
         Update: {
+          appearance_rating?: number
+          aroma_rating?: number
           author_name?: string
           created_at?: string
+          flavor_rating?: number
           helpful_votes?: number | null
           id?: string
           mead_id?: string | null
+          mouthfeel_rating?: number
+          overall_rating?: number
           rating?: number
           review_text?: string | null
           verified_purchase?: boolean | null
