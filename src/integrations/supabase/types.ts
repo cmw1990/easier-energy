@@ -1116,6 +1116,45 @@ export type Database = {
           },
         ]
       }
+      ai_devotionals: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_shared: boolean | null
+          personalization_context: Json | null
+          scheduled_for: string | null
+          theme: string | null
+          title: string
+          user_id: string | null
+          verse_reference: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_shared?: boolean | null
+          personalization_context?: Json | null
+          scheduled_for?: string | null
+          theme?: string | null
+          title: string
+          user_id?: string | null
+          verse_reference: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_shared?: boolean | null
+          personalization_context?: Json | null
+          scheduled_for?: string | null
+          theme?: string | null
+          title?: string
+          user_id?: string | null
+          verse_reference?: string
+        }
+        Relationships: []
+      }
       ai_verse_recommendations: {
         Row: {
           context_tags: string[] | null
@@ -24097,6 +24136,39 @@ export type Database = {
         }
         Relationships: []
       }
+      verse_insights: {
+        Row: {
+          generated_at: string | null
+          id: string
+          insight_text: string
+          likes_count: number | null
+          model_used: string
+          tags: string[] | null
+          user_id: string | null
+          verse_reference: string
+        }
+        Insert: {
+          generated_at?: string | null
+          id?: string
+          insight_text: string
+          likes_count?: number | null
+          model_used: string
+          tags?: string[] | null
+          user_id?: string | null
+          verse_reference: string
+        }
+        Update: {
+          generated_at?: string | null
+          id?: string
+          insight_text?: string
+          likes_count?: number | null
+          model_used?: string
+          tags?: string[] | null
+          user_id?: string | null
+          verse_reference?: string
+        }
+        Relationships: []
+      }
       verse_memorization: {
         Row: {
           book: string
@@ -24130,6 +24202,36 @@ export type Database = {
           next_review?: string | null
           user_id?: string
           verse?: number
+        }
+        Relationships: []
+      }
+      verse_recommendations: {
+        Row: {
+          context: string
+          created_at: string | null
+          id: string
+          is_favorite: boolean | null
+          reasoning: string
+          user_id: string | null
+          verse_reference: string
+        }
+        Insert: {
+          context: string
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          reasoning: string
+          user_id?: string | null
+          verse_reference: string
+        }
+        Update: {
+          context?: string
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          reasoning?: string
+          user_id?: string | null
+          verse_reference?: string
         }
         Relationships: []
       }
@@ -24353,6 +24455,39 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           visual_format?: Json
+        }
+        Relationships: []
+      }
+      voice_reading_sessions: {
+        Row: {
+          content_reference: string
+          content_type: string
+          created_at: string | null
+          duration: number | null
+          id: string
+          is_completed: boolean | null
+          user_id: string | null
+          voice_id: string
+        }
+        Insert: {
+          content_reference: string
+          content_type: string
+          created_at?: string | null
+          duration?: number | null
+          id?: string
+          is_completed?: boolean | null
+          user_id?: string | null
+          voice_id: string
+        }
+        Update: {
+          content_reference?: string
+          content_type?: string
+          created_at?: string | null
+          duration?: number | null
+          id?: string
+          is_completed?: boolean | null
+          user_id?: string | null
+          voice_id?: string
         }
         Relationships: []
       }
