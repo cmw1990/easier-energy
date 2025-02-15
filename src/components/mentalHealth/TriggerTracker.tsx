@@ -10,6 +10,7 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Brain, Plus } from "lucide-react";
+import type { MoodTrigger } from "@/types/supabase";
 
 export const TriggerTracker = () => {
   const { toast } = useToast();
@@ -22,7 +23,7 @@ export const TriggerTracker = () => {
     notes: ""
   });
 
-  const { data: triggers } = useQuery({
+  const { data: triggers } = useQuery<MoodTrigger[]>({
     queryKey: ['mood-triggers'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -40,6 +41,7 @@ export const TriggerTracker = () => {
       const { error } = await supabase
         .from('mood_triggers')
         .insert([{
+          user_id: (await supabase.auth.getUser()).data.user?.id,
           trigger_name: newTrigger.name,
           trigger_category: newTrigger.category,
           impact_level: newTrigger.impact,

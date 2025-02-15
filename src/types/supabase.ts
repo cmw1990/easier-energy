@@ -608,6 +608,107 @@ export interface Database {
         Insert: Omit<InsuranceClaim, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<InsuranceClaim, 'id' | 'created_at' | 'updated_at'>>;
       };
+      mood_triggers: {
+        Row: {
+          id: string
+          user_id: string
+          trigger_name: string
+          trigger_category: string
+          impact_level: number
+          frequency: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['mood_triggers']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['mood_triggers']['Insert']>
+      }
+      coping_strategies: {
+        Row: {
+          id: string
+          user_id: string
+          strategy_name: string
+          category: string
+          effectiveness_rating: number
+          used_count: number
+          notes: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['coping_strategies']['Row'], 'id' | 'created_at' | 'used_count'>
+        Update: Partial<Database['public']['Tables']['coping_strategies']['Insert']> & { used_count?: number }
+      }
+      loyalty_programs: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['loyalty_programs']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['loyalty_programs']['Insert']>
+      }
+      loyalty_tiers: {
+        Row: {
+          id: string
+          program_id: string
+          level: 'bronze' | 'silver' | 'gold' | 'platinum'
+          points_required: number
+          benefits: Json
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['loyalty_tiers']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['loyalty_tiers']['Insert']>
+      }
+      loyalty_rewards: {
+        Row: {
+          id: string
+          program_id: string
+          name: string
+          description: string | null
+          points_cost: number
+          is_active: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['loyalty_rewards']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['loyalty_rewards']['Insert']>
+      }
+      marketplace_metrics: {
+        Row: {
+          id: string
+          active_users: number
+          engagement_rate: number | null
+          response_rate: number | null
+          peak_hours: Json
+          segments: Json
+          metrics_data: Json
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['marketplace_metrics']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['marketplace_metrics']['Insert']>
+      }
+      withdrawal_symptoms: {
+        Row: {
+          id: string
+          user_id: string
+          symptom: string
+          severity: number | null
+          date: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          symptom: string
+          severity?: number | null
+          date?: string
+          created_at?: string
+        }
+        Update: {
+          user_id?: string
+          symptom?: string
+          severity?: number | null
+          date?: string
+        }
+      }
     }
     Functions: {
       calculate_available_discount: {
@@ -987,3 +1088,5 @@ export interface InsuranceClaim {
   created_at: string;
   updated_at: string;
 }
+export type MoodTrigger = Database['public']['Tables']['mood_triggers']['Row']
+export type CopingStrategy = Database['public']['

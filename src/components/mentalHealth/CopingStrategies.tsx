@@ -10,6 +10,7 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Plus, Check } from "lucide-react";
+import type { CopingStrategy } from "@/types/supabase";
 
 export const CopingStrategies = () => {
   const { toast } = useToast();
@@ -21,7 +22,7 @@ export const CopingStrategies = () => {
     notes: ""
   });
 
-  const { data: strategies } = useQuery({
+  const { data: strategies } = useQuery<CopingStrategy[]>({
     queryKey: ['coping-strategies'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,6 +40,7 @@ export const CopingStrategies = () => {
       const { error } = await supabase
         .from('coping_strategies')
         .insert([{
+          user_id: (await supabase.auth.getUser()).data.user?.id,
           strategy_name: newStrategy.name,
           category: newStrategy.category,
           effectiveness_rating: newStrategy.effectiveness,
@@ -71,9 +73,12 @@ export const CopingStrategies = () => {
 
   const useStrategy = useMutation({
     mutationFn: async (strategyId: string) => {
+      const strategy = strategies?.find(s => s.id === strategyId);
+      if (!strategy) return;
+
       const { error } = await supabase
         .from('coping_strategies')
-        .update({ used_count: strategies?.find(s => s.id === strategyId)?.used_count + 1 })
+        .update({ used_count: (strategy.used_count || 0) + 1 })
         .eq('id', strategyId);
 
       if (error) throw error;

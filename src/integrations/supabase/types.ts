@@ -4806,6 +4806,39 @@ export type Database = {
         }
         Relationships: []
       }
+      coping_strategies: {
+        Row: {
+          category: string
+          created_at: string | null
+          effectiveness_rating: number
+          id: string
+          notes: string | null
+          strategy_name: string
+          used_count: number | null
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          effectiveness_rating: number
+          id?: string
+          notes?: string | null
+          strategy_name: string
+          used_count?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          effectiveness_rating?: number
+          id?: string
+          notes?: string | null
+          strategy_name?: string
+          used_count?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           active: boolean | null
@@ -10295,6 +10328,7 @@ export type Database = {
           created_at: string | null
           diagnosis_codes: string[] | null
           id: string
+          notes: string | null
           priority: string | null
           procedure_codes: string[] | null
           processing_notes: string | null
@@ -10315,6 +10349,7 @@ export type Database = {
           created_at?: string | null
           diagnosis_codes?: string[] | null
           id?: string
+          notes?: string | null
           priority?: string | null
           procedure_codes?: string[] | null
           processing_notes?: string | null
@@ -10335,6 +10370,7 @@ export type Database = {
           created_at?: string | null
           diagnosis_codes?: string[] | null
           id?: string
+          notes?: string | null
           priority?: string | null
           procedure_codes?: string[] | null
           processing_notes?: string | null
@@ -10384,6 +10420,7 @@ export type Database = {
           id: string
           insurance_group_name: string | null
           insurance_plan_name: string | null
+          policy_number: string | null
           professional_id: string
           status: string
           updated_at: string | null
@@ -10400,6 +10437,7 @@ export type Database = {
           id?: string
           insurance_group_name?: string | null
           insurance_plan_name?: string | null
+          policy_number?: string | null
           professional_id: string
           status: string
           updated_at?: string | null
@@ -10416,6 +10454,7 @@ export type Database = {
           id?: string
           insurance_group_name?: string | null
           insurance_plan_name?: string | null
+          policy_number?: string | null
           professional_id?: string
           status?: string
           updated_at?: string | null
@@ -11078,6 +11117,133 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      loyalty_programs: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      loyalty_rewards: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          points_cost: number
+          program_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          points_cost: number
+          program_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          points_cost?: number
+          program_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_rewards_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_tiers: {
+        Row: {
+          benefits: Json | null
+          created_at: string | null
+          id: string
+          level: Database["public"]["Enums"]["loyalty_tier_level"]
+          points_required: number
+          program_id: string | null
+        }
+        Insert: {
+          benefits?: Json | null
+          created_at?: string | null
+          id?: string
+          level: Database["public"]["Enums"]["loyalty_tier_level"]
+          points_required: number
+          program_id?: string | null
+        }
+        Update: {
+          benefits?: Json | null
+          created_at?: string | null
+          id?: string
+          level?: Database["public"]["Enums"]["loyalty_tier_level"]
+          points_required?: number
+          program_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_tiers_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_metrics: {
+        Row: {
+          active_users: number | null
+          created_at: string | null
+          engagement_rate: number | null
+          id: string
+          metrics_data: Json | null
+          peak_hours: Json | null
+          response_rate: number | null
+          segments: Json | null
+        }
+        Insert: {
+          active_users?: number | null
+          created_at?: string | null
+          engagement_rate?: number | null
+          id?: string
+          metrics_data?: Json | null
+          peak_hours?: Json | null
+          response_rate?: number | null
+          segments?: Json | null
+        }
+        Update: {
+          active_users?: number | null
+          created_at?: string | null
+          engagement_rate?: number | null
+          id?: string
+          metrics_data?: Json | null
+          peak_hours?: Json | null
+          response_rate?: number | null
+          segments?: Json | null
         }
         Relationships: []
       }
@@ -11811,6 +11977,39 @@ export type Database = {
           user_id?: string | null
           weather_data?: Json | null
           weather_impact_score?: number | null
+        }
+        Relationships: []
+      }
+      mood_triggers: {
+        Row: {
+          created_at: string | null
+          frequency: string
+          id: string
+          impact_level: number
+          notes: string | null
+          trigger_category: string
+          trigger_name: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          frequency: string
+          id?: string
+          impact_level: number
+          notes?: string | null
+          trigger_category: string
+          trigger_name: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          frequency?: string
+          id?: string
+          impact_level?: number
+          notes?: string | null
+          trigger_category?: string
+          trigger_name?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -25598,6 +25797,7 @@ export type Database = {
         | "migraine"
       integration_status: "pending" | "active" | "failed" | "revoked"
       life_situation: "regular" | "pregnancy" | "postpartum" | "breastfeeding"
+      loyalty_tier_level: "bronze" | "silver" | "gold" | "platinum"
       mood_category: "positive" | "negative" | "neutral"
       notification_priority: "low" | "medium" | "high"
       order_status:
