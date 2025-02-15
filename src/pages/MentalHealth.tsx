@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -14,6 +13,8 @@ import { ConsultationPackages } from "@/components/mentalHealth/packages/Consult
 import { ProfessionalDashboard } from "@/components/mentalHealth/professionals/ProfessionalDashboard";
 import { ClientDashboard } from "@/components/mentalHealth/clients/ClientDashboard";
 import { TreatmentPlanManager } from "@/components/mentalHealth/treatment/TreatmentPlanManager";
+import { TriggerTracker } from "@/components/mentalHealth/TriggerTracker";
+import { CopingStrategies } from "@/components/mentalHealth/CopingStrategies";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
@@ -29,7 +30,9 @@ import {
   Package,
   AlertTriangle,
   Loader2,
-  ClipboardList
+  ClipboardList,
+  Shield,
+  Target
 } from "lucide-react";
 
 const fadeIn = {
@@ -133,7 +136,7 @@ export default function MentalHealth() {
 
       <Tabs defaultValue="dashboard" className="space-y-6">
         <motion.div variants={stagger}>
-          <TabsList className="grid grid-cols-2 lg:grid-cols-8 gap-4">
+          <TabsList className="grid grid-cols-2 lg:grid-cols-10 gap-4">
             {[
               { value: "dashboard", icon: <Activity className="h-4 w-4" />, label: "Dashboard" },
               { value: "professionals", icon: <Users className="h-4 w-4" />, label: "Find Professional" },
@@ -142,6 +145,8 @@ export default function MentalHealth() {
               { value: "groups", icon: <MessagesSquare className="h-4 w-4" />, label: "Support Groups" },
               { value: "exercises", icon: <Brain className="h-4 w-4" />, label: "CBT Exercises" },
               { value: "mood", icon: <LineChart className="h-4 w-4" />, label: "Mood Tracking" },
+              { value: "triggers", icon: <Target className="h-4 w-4" />, label: "Triggers" },
+              { value: "coping", icon: <Shield className="h-4 w-4" />, label: "Coping" },
               { value: "emergency", icon: <AlertTriangle className="h-4 w-4" />, label: "Emergency" }
             ].map((tab) => (
               <motion.div key={tab.value} variants={tabVariants}>
@@ -197,6 +202,18 @@ export default function MentalHealth() {
           <TabsContent value="mood">
             <Card className="elegant-card">
               <MoodTracker />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="triggers">
+            <Card className="elegant-card">
+              <TriggerTracker />
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="coping">
+            <Card className="elegant-card">
+              <CopingStrategies />
             </Card>
           </TabsContent>
 
