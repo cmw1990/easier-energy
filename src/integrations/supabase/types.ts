@@ -10906,6 +10906,125 @@ export type Database = {
           },
         ]
       }
+      mead: {
+        Row: {
+          abv: number | null
+          brewery: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          search_rank: number | null
+          search_vector: unknown | null
+          style: string | null
+          sweetness_level: string | null
+        }
+        Insert: {
+          abv?: number | null
+          brewery: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          search_rank?: number | null
+          search_vector?: unknown | null
+          style?: string | null
+          sweetness_level?: string | null
+        }
+        Update: {
+          abv?: number | null
+          brewery?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          search_rank?: number | null
+          search_vector?: unknown | null
+          style?: string | null
+          sweetness_level?: string | null
+        }
+        Relationships: []
+      }
+      mead_guide: {
+        Row: {
+          author: string
+          category: string
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          last_updated_at: string
+          search_vector: unknown | null
+          title: string
+        }
+        Insert: {
+          author: string
+          category: string
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          last_updated_at?: string
+          search_vector?: unknown | null
+          title: string
+        }
+        Update: {
+          author?: string
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          last_updated_at?: string
+          search_vector?: unknown | null
+          title?: string
+        }
+        Relationships: []
+      }
+      mead_reviews: {
+        Row: {
+          author_name: string
+          created_at: string
+          helpful_votes: number | null
+          id: string
+          mead_id: string | null
+          rating: number
+          review_text: string | null
+          verified_purchase: boolean | null
+        }
+        Insert: {
+          author_name: string
+          created_at?: string
+          helpful_votes?: number | null
+          id?: string
+          mead_id?: string | null
+          rating: number
+          review_text?: string | null
+          verified_purchase?: boolean | null
+        }
+        Update: {
+          author_name?: string
+          created_at?: string
+          helpful_votes?: number | null
+          id?: string
+          mead_id?: string | null
+          rating?: number
+          review_text?: string | null
+          verified_purchase?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mead_reviews_mead_id_fkey"
+            columns: ["mead_id"]
+            isOneToOne: false
+            referencedRelation: "mead"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medication_logs: {
         Row: {
           created_at: string | null
