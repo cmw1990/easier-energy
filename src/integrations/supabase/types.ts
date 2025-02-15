@@ -592,6 +592,99 @@ export type Database = {
         }
         Relationships: []
       }
+      ad_blocking_filter_lists: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          enabled_by_default: boolean | null
+          id: string
+          is_premium: boolean | null
+          last_updated: string | null
+          name: string
+          rules_count: number | null
+          url: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          enabled_by_default?: boolean | null
+          id?: string
+          is_premium?: boolean | null
+          last_updated?: string | null
+          name: string
+          rules_count?: number | null
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          enabled_by_default?: boolean | null
+          id?: string
+          is_premium?: boolean | null
+          last_updated?: string | null
+          name?: string
+          rules_count?: number | null
+          url?: string
+        }
+        Relationships: []
+      }
+      ad_blocking_options: {
+        Row: {
+          cosmetic_filtering: boolean | null
+          created_at: string | null
+          custom_css: string | null
+          custom_scripts: string | null
+          element_hiding: boolean | null
+          filter_lists: Json | null
+          id: string
+          is_premium: boolean | null
+          network_filtering: boolean | null
+          script_injection: boolean | null
+          stealth_mode: boolean | null
+          updated_at: string | null
+          user_id: string | null
+          whitelist_search: boolean | null
+          whitelist_social: boolean | null
+        }
+        Insert: {
+          cosmetic_filtering?: boolean | null
+          created_at?: string | null
+          custom_css?: string | null
+          custom_scripts?: string | null
+          element_hiding?: boolean | null
+          filter_lists?: Json | null
+          id?: string
+          is_premium?: boolean | null
+          network_filtering?: boolean | null
+          script_injection?: boolean | null
+          stealth_mode?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+          whitelist_search?: boolean | null
+          whitelist_social?: boolean | null
+        }
+        Update: {
+          cosmetic_filtering?: boolean | null
+          created_at?: string | null
+          custom_css?: string | null
+          custom_scripts?: string | null
+          element_hiding?: boolean | null
+          filter_lists?: Json | null
+          id?: string
+          is_premium?: boolean | null
+          network_filtering?: boolean | null
+          script_injection?: boolean | null
+          stealth_mode?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+          whitelist_search?: boolean | null
+          whitelist_social?: boolean | null
+        }
+        Relationships: []
+      }
       ad_blocking_rules: {
         Row: {
           created_at: string | null
@@ -22246,6 +22339,38 @@ export type Database = {
           },
         ]
       }
+      user_filter_subscriptions: {
+        Row: {
+          created_at: string | null
+          filter_list_id: string | null
+          id: string
+          is_enabled: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          filter_list_id?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          filter_list_id?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_filter_subscriptions_filter_list_id_fkey"
+            columns: ["filter_list_id"]
+            isOneToOne: false
+            referencedRelation: "ad_blocking_filter_lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_follows: {
         Row: {
           created_at: string | null
@@ -24876,6 +25001,12 @@ export type Database = {
           "": unknown
         }
         Returns: unknown
+      }
+      has_premium_ad_blocking: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
       }
       has_role: {
         Args: {

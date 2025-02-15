@@ -25,6 +25,20 @@ serve(async (req) => {
     const payload: AdBlockPayload = await req.json()
     const { userId, url, requestType } = payload
 
+    // Get user's options
+    const { data: options } = await supabaseClient
+      .from('ad_blocking_options')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+
+    if (!options || !options.network_filtering) {
+      return new Response(
+        JSON.stringify({ shouldBlock: false, reason: 'Network filtering disabled' }),
+        { headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Check exceptions first
     const { data: exceptions } = await supabaseClient
       .from('ad_blocking_exceptions')
@@ -41,7 +55,48 @@ serve(async (req) => {
       )
     }
 
-    // Check rules
+    // Get active filter lists for the user
+    const { data: filterLists } = await supabaseClient
+      .from('user_filter_subscriptions')
+      .select(`
+        filter_list_id,
+        ad_blocking_filter_lists (
+          url,
+          rules_count
+        )
+      `)
+      .eq('user_id', userId)
+      .eq('is_enabled', true)
+
+    // Check rules from filter lists
+    if (filterLists?.length) {
+      for (const subscription of filterLists) {
+        // In a real implementation, we would fetch and cache rules from the filter list URLs
+        // For now, we'll just simulate checking against the rules count
+        if (Math.random() < subscription.ad_blocking_filter_lists.rules_count / 10000) {
+          // Update stats
+          const today = new Date().toISOString().split('T')[0]
+          await supabaseClient.rpc('increment_ad_block_stats', {
+            user_id: userId,
+            block_date: today,
+            ads_inc: 1,
+            bandwidth_inc: 5000, // Estimate 5KB per blocked ad
+            time_inc: 1 // Estimate 1 second saved per blocked ad
+          })
+
+          return new Response(
+            JSON.stringify({
+              shouldBlock: true,
+              reason: `Matched filter list rule`,
+              ruleId: subscription.filter_list_id
+            }),
+            { headers: { 'Content-Type': 'application/json' } }
+          )
+        }
+      }
+    }
+
+    // Check custom rules
     const { data: rules } = await supabaseClient
       .from('ad_blocking_rules')
       .select('*')

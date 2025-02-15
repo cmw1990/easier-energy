@@ -5,8 +5,9 @@ import { AdBlockingRules } from "@/components/adblocking/AdBlockingRules";
 import { AdBlockingExceptions } from "@/components/adblocking/AdBlockingExceptions";
 import { AdBlockingStats } from "@/components/adblocking/AdBlockingStats";
 import { AdBlockingControls } from "@/components/adblocking/AdBlockingControls";
+import { FilterListManager } from "@/components/adblocking/FilterListManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, ShieldOff, List, Activity } from "lucide-react";
+import { Shield, ShieldOff, List, Activity, ListFilter } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
 export function AdBlockerPage() {
@@ -35,7 +36,7 @@ export function AdBlockerPage() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="rules" className="flex items-center gap-2">
                 <List className="h-4 w-4" />
                 Rules
@@ -44,6 +45,10 @@ export function AdBlockerPage() {
                 <ShieldOff className="h-4 w-4" />
                 Exceptions
               </TabsTrigger>
+              <TabsTrigger value="filter-lists" className="flex items-center gap-2">
+                <ListFilter className="h-4 w-4" />
+                Filter Lists
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="rules">
               <AdBlockingRules />
@@ -51,9 +56,14 @@ export function AdBlockerPage() {
             <TabsContent value="exceptions">
               <AdBlockingExceptions />
             </TabsContent>
+            <TabsContent value="filter-lists">
+              <FilterListManager />
+            </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
     </div>
   );
 }
+
+export default AdBlockerPage;
