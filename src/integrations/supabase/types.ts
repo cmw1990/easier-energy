@@ -5082,6 +5082,39 @@ export type Database = {
           },
         ]
       }
+      crisis_resources: {
+        Row: {
+          available_hours: string | null
+          category: string
+          contact_info: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_emergency: boolean | null
+          name: string
+        }
+        Insert: {
+          available_hours?: string | null
+          category: string
+          contact_info: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_emergency?: boolean | null
+          name: string
+        }
+        Update: {
+          available_hours?: string | null
+          category?: string
+          contact_info?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_emergency?: boolean | null
+          name?: string
+        }
+        Relationships: []
+      }
       cultural_gatherings: {
         Row: {
           accessibility_info: string | null
@@ -10993,6 +11026,33 @@ export type Database = {
           tags?: string[] | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      journal_templates: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          prompts: Json
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          prompts: Json
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          prompts?: Json
+          title?: string
         }
         Relationships: []
       }
@@ -22982,6 +23042,30 @@ export type Database = {
           },
         ]
       }
+      user_points: {
+        Row: {
+          id: string
+          lifetime_points: number | null
+          points: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          lifetime_points?: number | null
+          points?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          lifetime_points?: number | null
+          points?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           created_at: string | null
@@ -23135,6 +23219,35 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "reading_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_rewards: {
+        Row: {
+          claimed_at: string | null
+          id: string
+          reward_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          claimed_at?: string | null
+          id?: string
+          reward_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          claimed_at?: string | null
+          id?: string
+          reward_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_rewards_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "wellness_rewards"
             referencedColumns: ["id"]
           },
         ]
@@ -25201,6 +25314,45 @@ export type Database = {
           },
         ]
       }
+      wellness_goals: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          progress: number | null
+          status: string
+          target_date: string | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          progress?: number | null
+          status?: string
+          target_date?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          progress?: number | null
+          status?: string
+          target_date?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       wellness_metrics: {
         Row: {
           coping_strategies_used: string[] | null
@@ -25240,6 +25392,63 @@ export type Database = {
           stress_level?: number | null
           triggers?: string[] | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      wellness_rewards: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          points_required: number
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          points_required: number
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          points_required?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      wellness_streaks: {
+        Row: {
+          activity_type: string
+          created_at: string | null
+          current_streak: number | null
+          id: string
+          last_check_in: string | null
+          longest_streak: number | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_check_in?: string | null
+          longest_streak?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_check_in?: string | null
+          longest_streak?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }
