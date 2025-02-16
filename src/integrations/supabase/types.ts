@@ -11812,6 +11812,45 @@ export type Database = {
         }
         Relationships: []
       }
+      meditation_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          current_streak: number | null
+          id: string
+          longest_streak: number | null
+          meditation_level: number | null
+          preferred_frequencies: Json | null
+          total_minutes: number | null
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          current_streak?: number | null
+          id: string
+          longest_streak?: number | null
+          meditation_level?: number | null
+          preferred_frequencies?: Json | null
+          total_minutes?: number | null
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          current_streak?: number | null
+          id?: string
+          longest_streak?: number | null
+          meditation_level?: number | null
+          preferred_frequencies?: Json | null
+          total_minutes?: number | null
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
       meditation_progress: {
         Row: {
           completed_duration: number
@@ -11889,6 +11928,42 @@ export type Database = {
           title?: string
           type?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      meditation_settings: {
+        Row: {
+          auto_next_session: boolean | null
+          background_sounds: boolean | null
+          created_at: string
+          haptic_feedback: boolean | null
+          id: string
+          notification_preferences: Json | null
+          reminder_time: string | null
+          theme: string | null
+          updated_at: string
+        }
+        Insert: {
+          auto_next_session?: boolean | null
+          background_sounds?: boolean | null
+          created_at?: string
+          haptic_feedback?: boolean | null
+          id: string
+          notification_preferences?: Json | null
+          reminder_time?: string | null
+          theme?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auto_next_session?: boolean | null
+          background_sounds?: boolean | null
+          created_at?: string
+          haptic_feedback?: boolean | null
+          id?: string
+          notification_preferences?: Json | null
+          reminder_time?: string | null
+          theme?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -26400,6 +26475,11 @@ export type Database = {
       loyalty_tier_level: "bronze" | "silver" | "gold" | "platinum"
       mood_category: "positive" | "negative" | "neutral"
       notification_priority: "low" | "medium" | "high"
+      notification_type:
+        | "session_reminder"
+        | "achievement"
+        | "streak"
+        | "custom"
       order_status:
         | "pending"
         | "processing"
