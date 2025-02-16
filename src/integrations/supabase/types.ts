@@ -11641,49 +11641,106 @@ export type Database = {
       }
       mead_reviews: {
         Row: {
+          acidity_rating: number | null
+          aftertaste_rating: number | null
           appearance_rating: number
+          aroma_notes: string[] | null
           aroma_rating: number
           author_name: string
+          balance_rating: number | null
+          bottle_condition: boolean | null
+          carbonation_description: string | null
+          clarity_description: string | null
+          color_description: string | null
+          complexity_rating: number | null
           created_at: string
+          drinkability_rating: number | null
+          fermentation_character_rating: number | null
           flavor_rating: number
           helpful_votes: number | null
+          honey_character_rating: number | null
           id: string
           mead_id: string | null
           mouthfeel_rating: number
           overall_rating: number
           rating: number
           review_text: string | null
+          serving_temperature_c: number | null
+          serving_vessel: string | null
+          sweetness_rating: number | null
+          taste_notes: string[] | null
+          tasting_date: string | null
           verified_purchase: boolean | null
+          vintage_year: number | null
+          would_buy_again: boolean | null
         }
         Insert: {
+          acidity_rating?: number | null
+          aftertaste_rating?: number | null
           appearance_rating?: number
+          aroma_notes?: string[] | null
           aroma_rating?: number
           author_name: string
+          balance_rating?: number | null
+          bottle_condition?: boolean | null
+          carbonation_description?: string | null
+          clarity_description?: string | null
+          color_description?: string | null
+          complexity_rating?: number | null
           created_at?: string
+          drinkability_rating?: number | null
+          fermentation_character_rating?: number | null
           flavor_rating?: number
           helpful_votes?: number | null
+          honey_character_rating?: number | null
           id?: string
           mead_id?: string | null
           mouthfeel_rating?: number
           overall_rating?: number
           rating: number
           review_text?: string | null
+          serving_temperature_c?: number | null
+          serving_vessel?: string | null
+          sweetness_rating?: number | null
+          taste_notes?: string[] | null
+          tasting_date?: string | null
           verified_purchase?: boolean | null
+          vintage_year?: number | null
+          would_buy_again?: boolean | null
         }
         Update: {
+          acidity_rating?: number | null
+          aftertaste_rating?: number | null
           appearance_rating?: number
+          aroma_notes?: string[] | null
           aroma_rating?: number
           author_name?: string
+          balance_rating?: number | null
+          bottle_condition?: boolean | null
+          carbonation_description?: string | null
+          clarity_description?: string | null
+          color_description?: string | null
+          complexity_rating?: number | null
           created_at?: string
+          drinkability_rating?: number | null
+          fermentation_character_rating?: number | null
           flavor_rating?: number
           helpful_votes?: number | null
+          honey_character_rating?: number | null
           id?: string
           mead_id?: string | null
           mouthfeel_rating?: number
           overall_rating?: number
           rating?: number
           review_text?: string | null
+          serving_temperature_c?: number | null
+          serving_vessel?: string | null
+          sweetness_rating?: number | null
+          taste_notes?: string[] | null
+          tasting_date?: string | null
           verified_purchase?: boolean | null
+          vintage_year?: number | null
+          would_buy_again?: boolean | null
         }
         Relationships: [
           {
