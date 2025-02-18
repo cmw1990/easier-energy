@@ -2,6 +2,7 @@
 import { RouteObject } from "react-router-dom";
 import Layout from "@/components/Layout";
 import Dashboard from "@/pages/Dashboard";
+import LandingPage from "@/pages/LandingPage";
 import { InsuranceDashboard } from "@/pages/insurance/Dashboard";
 import { SubmitClaim } from "@/pages/insurance/SubmitClaim";
 import { VerifyCoverage } from "@/pages/insurance/VerifyCoverage";
@@ -18,6 +19,10 @@ export const mainRoutes: RouteObject[] = [
     children: [
       {
         index: true,
+        element: <LandingPage />,
+      },
+      {
+        path: "dashboard",
         element: <Dashboard />,
       },
       {
@@ -55,4 +60,3 @@ export const mainRoutes: RouteObject[] = [
     ],
   },
 ];
-
