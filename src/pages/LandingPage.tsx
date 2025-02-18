@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowRight, Brain, Globe, Zap, Wrench, Battery, Settings2 as Settings, Pill, Wind, Coffee, Smartphone, Tablet, Laptop, Monitor, Chrome, Star } from "lucide-react"
@@ -218,3 +219,4 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+
