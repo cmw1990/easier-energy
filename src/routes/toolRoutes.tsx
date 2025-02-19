@@ -10,6 +10,7 @@ import DualNBack from "@/pages/tools/DualNBack";
 import PatternRecognition from "@/pages/tools/PatternRecognition";
 import SpeedMath from "@/pages/tools/SpeedMath";
 import Test from "@/pages/Test";
+import Tools from "@/pages/tools/Tools";
 
 export const toolRoutes: RouteObject[] = [
   {
@@ -19,6 +20,10 @@ export const toolRoutes: RouteObject[] = [
   {
     path: "tools",
     children: [
+      {
+        index: true,
+        element: <Tools />,
+      },
       {
         path: "word-scramble",
         element: <WordScramble />,
