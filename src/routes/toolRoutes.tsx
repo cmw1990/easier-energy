@@ -1,4 +1,3 @@
-
 import { RouteObject } from "react-router-dom";
 import WordScramble from "@/pages/tools/WordScramble";
 import ColorMatch from "@/pages/tools/ColorMatch";
@@ -10,8 +9,13 @@ import NBackGame from "@/pages/tools/NBackGame";
 import DualNBack from "@/pages/tools/DualNBack";
 import PatternRecognition from "@/pages/tools/PatternRecognition";
 import SpeedMath from "@/pages/tools/SpeedMath";
+import Test from "@/pages/Test";
 
 export const toolRoutes: RouteObject[] = [
+  {
+    path: "test",
+    element: <Test />,
+  },
   {
     path: "tools",
     children: [

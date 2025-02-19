@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -24,6 +23,7 @@ import {
   Eye,
   Wrench,
   Bath,
+  TestTube,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -75,6 +75,11 @@ const navigationGroups = [
   {
     label: "Support Tools",
     links: [
+      {
+        to: "/test",
+        icon: TestTube,
+        label: "Test Connection",
+      },
       {
         to: "/breathing",
         icon: Wind,
