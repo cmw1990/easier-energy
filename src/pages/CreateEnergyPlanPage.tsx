@@ -9,23 +9,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlanType, PlanCategory } from "@/types/energyPlans";
 
+type Visibility = "public" | "private" | "shared";
+
 const initialValues = {
   title: "",
   description: "",
   plan_type: "mental_clarity" as PlanType,
   category: "charged" as PlanCategory,
-  visibility: "public",
+  visibility: "public" as Visibility,
   is_expert_plan: false,
   energy_level_required: 5,
   estimated_duration_minutes: 30,
 };
 
-const CreateEnergyPlanPage = () => {
+export default function CreateEnergyPlanPage() {
   const { session } = useAuth();
   const { toast } = useToast();
   const [values, setValues] = useState(initialValues);
 
-  const handleSubmit = async (values: typeof initialValues) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!session?.user?.id) return;
 
     const planData = {
@@ -57,10 +60,7 @@ const CreateEnergyPlanPage = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Create Energy Plan</h1>
-      <form onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit(values);
-      }} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="title">Title</Label>
           <Input
@@ -112,7 +112,7 @@ const CreateEnergyPlanPage = () => {
         </div>
         <div>
           <Label htmlFor="visibility">Visibility</Label>
-          <Select onValueChange={(value) => setValues({ ...values, visibility: value })}>
+          <Select onValueChange={(value) => setValues({ ...values, visibility: value as Visibility })}>
             <SelectTrigger>
               <SelectValue placeholder="Select visibility" />
             </SelectTrigger>
@@ -145,6 +145,4 @@ const CreateEnergyPlanPage = () => {
       </form>
     </div>
   );
-};
-
-export default CreateEnergyPlanPage;
+}

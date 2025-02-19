@@ -8,8 +8,8 @@ import type { UserLifeSituationRow } from "@/types/supabase"
 interface LifeSituationDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentSituation: UserLifeSituationRow['situation'] | null
-  onUpdateSituation: (situation: UserLifeSituationRow['situation']) => void
+  currentSituation: UserLifeSituationRow['situation_type'] | null
+  onUpdateSituation: (situation: UserLifeSituationRow['situation_type']) => void
 }
 
 export function LifeSituationDialog({
@@ -26,7 +26,7 @@ export function LifeSituationDialog({
         </DialogHeader>
         <div className="space-y-4 py-4">
           <RadioGroup 
-            onValueChange={(value) => onUpdateSituation(value as UserLifeSituationRow['situation'])}
+            onValueChange={(value) => onUpdateSituation(value as UserLifeSituationRow['situation_type'])}
             defaultValue={currentSituation || "regular"}
             className="gap-4"
           >

@@ -1,42 +1,47 @@
 
-export interface InsuranceProvider {
-  id: string;
-  name: string;
-  payer_id: string;
-  provider_network: string[];
-  claims_api_endpoint?: string;
-  eligibility_api_endpoint?: string;
-  verification_method: 'manual' | 'api';
-  supported_claim_types: string[];
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface InsuranceEligibilityCheck {
+export interface InsuranceClaim {
   id: string;
   client_insurance_id: string;
   professional_id: string;
-  verification_date: string;
-  status: 'pending' | 'verified' | 'failed';
-  coverage_details?: Record<string, any>;
-  copay_amount?: number;
-  coinsurance_percentage?: number;
-  deductible_remaining?: number;
-  error_message?: string;
+  session_id: string;
+  claim_number: string;
+  service_date: string;
+  submission_date: string;
+  status: string;
+  billed_amount: number;
+  diagnosis_codes: string[];
+  procedure_codes: string[];
+  notes: string;
   created_at: string;
   updated_at: string;
 }
 
-export interface InsuranceClaimSubmission {
+export interface LoyaltyProgram {
   id: string;
-  claim_id: string;
-  submission_date: string;
-  status: 'pending' | 'submitted' | 'accepted' | 'rejected' | 'paid';
-  payer_claim_id?: string;
-  submission_method: 'electronic' | 'manual';
-  response_details?: Record<string, any>;
-  error_message?: string;
-  created_at: string;
-  updated_at: string;
+  name: string;
+  description: string;
+  active: boolean;
+}
+
+export interface LoyaltyTier {
+  id: string;
+  program_id: string;
+  name: string;
+  minimum_points: number;
+  benefits: string[];
+}
+
+export interface LoyaltyReward {
+  id: string;
+  tier_id: string;
+  name: string;
+  description: string;
+  points_required: number;
+}
+
+export interface MarketplaceMetrics {
+  id: string;
+  total_sales: number;
+  active_vendors: number;
+  customer_satisfaction: number;
 }

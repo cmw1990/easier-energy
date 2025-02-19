@@ -1,67 +1,66 @@
-
 import { RouteObject } from "react-router-dom";
-import Layout from "@/components/Layout";
-import Dashboard from "@/pages/Dashboard";
-import LandingPage from "@/pages/LandingPage";
-import NavigationGuide from "@/pages/NavigationGuide";
-import { InsuranceDashboard } from "@/pages/insurance/Dashboard";
-import { SubmitClaim } from "@/pages/insurance/SubmitClaim";
-import { VerifyCoverage } from "@/pages/insurance/VerifyCoverage";
+import CreateEnergyPlanPage from "@/pages/CreateEnergyPlanPage";
 import EnergyPlans from "@/pages/EnergyPlans";
-import { EnergyPlanDetailsPage } from "@/pages/EnergyPlanDetailsPage";
-import { CreateEnergyPlanPage } from "@/pages/CreateEnergyPlanPage";
-import { EditEnergyPlanPage } from "@/pages/EditEnergyPlanPage";
-import { AdBlockerPage } from "@/pages/AdBlockerPage";
+import AdBlockingPage from "@/pages/AdBlockingPage";
+import AdsDashboard from "@/pages/AdsDashboard";
+import Pregnancy from "@/pages/Pregnancy";
+import MoodTracker from "@/pages/MoodTracker";
+import InsuranceDashboard from "@/pages/insurance/Dashboard";
+import InsuranceClaimSubmission from "@/pages/insurance/SubmitClaim";
+import InsuranceCoverageVerification from "@/pages/insurance/VerifyCoverage";
+import ClientManagement from "@/pages/mentalHealth/clients/ClientManagement";
+import ProfessionalDashboard from "@/pages/mentalHealth/professional/ProfessionalDashboard";
 
-export const mainRoutes: RouteObject[] = [
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        index: true,
-        element: <LandingPage />,
-      },
-      {
-        path: "nav-guide",
-        element: <NavigationGuide />,
-      },
-      {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "insurance",
-        element: <InsuranceDashboard />,
-      },
-      {
-        path: "insurance/submit-claim",
-        element: <SubmitClaim />,
-      },
-      {
-        path: "insurance/verify",
-        element: <VerifyCoverage />,
-      },
-      {
-        path: "energy-plans",
-        element: <EnergyPlans />,
-      },
-      {
-        path: "energy-plans/:id",
-        element: <EnergyPlanDetailsPage />,
-      },
-      {
-        path: "energy-plans/create",
-        element: <CreateEnergyPlanPage />,
-      },
-      {
-        path: "energy-plans/:id/edit",
-        element: <EditEnergyPlanPage />,
-      },
-      {
-        path: "ad-blocker",
-        element: <AdBlockerPage />,
-      }
-    ],
-  },
-];
+export const mainRoutes: RouteObject = {
+  path: "/",
+  children: [
+    {
+      index: true,
+      element: <EnergyPlans />,
+    },
+    {
+      path: "energy-plans",
+      element: <EnergyPlans />,
+    },
+    {
+      path: "energy-plans/create",
+      element: <CreateEnergyPlanPage />,
+    },
+    {
+      path: "ad-blocking",
+      element: <AdBlockingPage />,
+    },
+    {
+      path: "ads-dashboard",
+      element: <AdsDashboard />,
+    },
+    {
+      path: "pregnancy",
+      element: <Pregnancy />,
+    },
+    {
+      path: "mood-tracker",
+      element: <MoodTracker />,
+    },
+    {
+      path: "insurance/dashboard",
+      element: <InsuranceDashboard />,
+    },
+    {
+      path: "insurance/submit-claim",
+      element: <InsuranceClaimSubmission />,
+    },
+    {
+      path: "insurance/verify-coverage",
+      element: <InsuranceCoverageVerification />,
+    },
+    {
+      path: "clients",
+      element: <ClientManagement />,
+    },
+    {
+      path: "professional-dashboard",
+      element: <ProfessionalDashboard />,
+    },
+  ],
+};
