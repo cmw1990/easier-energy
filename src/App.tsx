@@ -6,14 +6,15 @@ import { mainRoutes } from "@/routes/mainRoutes";
 import { toolRoutes } from "@/routes/toolRoutes";
 import { gameRoutes } from "@/routes/gameRoutes";
 import Layout from "@/components/Layout";
+import ErrorBoundary from "@/components/layout/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
-// Combine all routes
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
+    errorElement: <ErrorBoundary />,
     children: [
       ...mainRoutes[0].children,
       ...toolRoutes,
