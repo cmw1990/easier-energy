@@ -1,4 +1,3 @@
-
 // Database types for Supabase
 export type Json =
   | string
@@ -247,10 +246,36 @@ export type UserLifeSituationRow = Database['public']['Tables']['user_life_situa
 export type PregnancyWellnessCorrelationsRow = {
   id: string
   user_id: string
+  date: string
   wellness_score: number
   correlation_factors: Json
-  created_at: string
-  updated_at: string
+  energy_pattern: {
+    summary: string;
+    confidence: number;
+    last_updated: string;
+  };
+  focus_pattern: {
+    summary: string;
+    confidence: number;
+    last_updated: string;
+  };
+  activity_impact: {
+    score: number;
+    factors: string[];
+    recommendations: string[];
+  };
+  nutrition_impact: {
+    score: number;
+    factors: string[];
+    recommendations: string[];
+  };
+  sleep_pattern: {
+    quality: number;
+    duration: number;
+    disruptions: string[];
+  };
+  created_at: string;
+  updated_at: string;
 }
 export type MoodJournalEntry = {
   id: string
@@ -275,12 +300,20 @@ export type MoodTrigger = {
   notes: string
 }
 export type PregnancyMilestone = {
-  id: string
-  user_id: string
-  title: string
-  date: string
-  notes: string
-  created_at: string
+  id: string;
+  user_id: string;
+  milestone_type: string;
+  custom_title: string;
+  description: string;
+  achieved_at: string;
+  week_number: number;
+  category: string;
+  photo_urls?: string[];
+  media_url?: string;
+  metadata?: Json;
+  celebration_shared: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export type DemographicData = {
