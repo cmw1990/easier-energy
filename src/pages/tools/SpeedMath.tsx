@@ -89,6 +89,7 @@ export default function SpeedMath() {
           game_type: "speed_math",
           score,
           duration_seconds: 60,
+          metadata: {}
         });
 
         if (error) throw error;
