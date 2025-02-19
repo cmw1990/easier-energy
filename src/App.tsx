@@ -1,3 +1,4 @@
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,7 +14,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    children: [...mainRoutes, ...toolRoutes, ...gameRoutes]
+    children: [...mainRoutes[0].children, ...toolRoutes, ...gameRoutes]
   }
 ]);
 

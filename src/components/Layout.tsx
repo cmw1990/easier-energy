@@ -1,3 +1,4 @@
+
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/components/AuthProvider";
@@ -51,26 +52,6 @@ const Layout = ({ children }: LayoutProps) => {
     enabled: !!session?.user?.id
   });
 
-  // Track navigation state
-  const updateNavigationState = async (currentRoute: string) => {
-    if (!session?.user?.id) return;
-
-    try {
-      const { error } = await supabase
-        .from('navigation_states')
-        .upsert({
-          user_id: session.user.id,
-          current_route: currentRoute,
-          previous_route: window.location.pathname,
-          state_data: { timestamp: new Date().toISOString() }
-        });
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error updating navigation state:', error);
-    }
-  };
-
   const handleSignOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -83,7 +64,7 @@ const Layout = ({ children }: LayoutProps) => {
     } catch (error) {
       toast({
         title: "Error signing out",
-        description: error.message,
+        description: "An error occurred while signing out",
         variant: "destructive",
       });
     }
@@ -143,7 +124,6 @@ const Layout = ({ children }: LayoutProps) => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/settings" className="cursor-pointer">
