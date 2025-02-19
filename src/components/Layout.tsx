@@ -167,8 +167,10 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
         </main>
         <DevModeWatermark 
-          lastBuilt="2025-02-19T21:01:16+08:00"
-          lastEdit="Updated Windows icon to Computer icon in DesktopAppSetup component and configured Vite"
+          lastBuilt="2025-02-19T21:05:24+08:00"
+          lastEdit="Enhanced development mode watermark with collapsible UI, git info, and improved styling"
+          branch="surf1"
+          commitHash="93d20affb9db55e26bedbddfdfea920e84c75b70"
         />
       </div>
     </SidebarProvider>
