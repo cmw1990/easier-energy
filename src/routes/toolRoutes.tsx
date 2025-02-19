@@ -9,12 +9,6 @@ import SequenceMemory from "@/pages/tools/SequenceMemory";
 import NBackGame from "@/pages/tools/NBackGame";
 import DualNBack from "@/pages/tools/DualNBack";
 import PatternRecognition from "@/pages/tools/PatternRecognition";
-import StroopTest from "@/pages/tools/StroopTest";
-import LogicPuzzles from "@/pages/tools/LogicPuzzles";
-import ReadingComprehension from "@/pages/tools/ReadingComprehension";
-import MathSpeed from "@/pages/tools/MathSpeed";
-import VisualMemory from "@/pages/tools/VisualMemory";
-import WordAssociation from "@/pages/tools/WordAssociation";
 
 export const toolRoutes: RouteObject = {
   path: "tools",
@@ -54,30 +48,6 @@ export const toolRoutes: RouteObject = {
     {
       path: "pattern-recognition",
       element: <PatternRecognition />,
-    },
-    {
-      path: "stroop-test",
-      element: <StroopTest />,
-    },
-    {
-      path: "logic-puzzles",
-      element: <LogicPuzzles />,
-    },
-    {
-      path: "reading-comprehension",
-      element: <ReadingComprehension />,
-    },
-    {
-      path: "math-speed",
-      element: <MathSpeed />,
-    },
-    {
-      path: "visual-memory",
-      element: <VisualMemory />,
-    },
-    {
-      path: "word-association",
-      element: <WordAssociation />,
     },
   ],
 };

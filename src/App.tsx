@@ -1,5 +1,5 @@
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, RouterProvider, RouteObject } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
 import { mainRoutes } from "@/routes/mainRoutes"
@@ -8,11 +8,8 @@ import { gameRoutes } from "@/routes/gameRoutes"
 
 const queryClient = new QueryClient()
 
-const router = createBrowserRouter([
-  mainRoutes,
-  toolRoutes,
-  gameRoutes,
-])
+const routes: RouteObject[] = [mainRoutes, toolRoutes, gameRoutes]
+const router = createBrowserRouter(routes)
 
 function App() {
   return (

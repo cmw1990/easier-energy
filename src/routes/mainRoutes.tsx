@@ -3,9 +3,9 @@ import { RouteObject } from "react-router-dom";
 import CreateEnergyPlanPage from "@/pages/CreateEnergyPlanPage";
 import EnergyPlans from "@/pages/EnergyPlans";
 import Pregnancy from "@/pages/Pregnancy";
-import InsuranceDashboard from "@/pages/insurance/Dashboard";
-import InsuranceClaimSubmission from "@/pages/insurance/SubmitClaim";
-import InsuranceCoverageVerification from "@/pages/insurance/VerifyCoverage";
+import { InsuranceDashboard } from "@/pages/insurance/Dashboard";
+import { InsuranceClaimSubmission } from "@/pages/insurance/SubmitClaim";
+import { InsuranceCoverageVerification } from "@/pages/insurance/VerifyCoverage";
 
 export const mainRoutes: RouteObject = {
   path: "/",
