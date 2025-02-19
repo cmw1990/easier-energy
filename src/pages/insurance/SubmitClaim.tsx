@@ -33,7 +33,7 @@ const claimFormSchema = z.object({
   notes: z.string().optional(),
 });
 
-export function SubmitClaim() {
+export function InsuranceClaimSubmission() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
