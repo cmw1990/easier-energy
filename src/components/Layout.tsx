@@ -1,4 +1,3 @@
-
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/components/AuthProvider";
@@ -23,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate, Outlet, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { DevModeWatermark } from "./DevModeWatermark";
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -144,6 +144,7 @@ const Layout = ({ children }: LayoutProps) => {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/settings" className="cursor-pointer">
                       Settings
@@ -165,6 +166,10 @@ const Layout = ({ children }: LayoutProps) => {
             {children || <Outlet />}
           </div>
         </main>
+        <DevModeWatermark 
+          lastBuilt="2025-02-19T21:01:16+08:00"
+          lastEdit="Updated Windows icon to Computer icon in DesktopAppSetup component and configured Vite"
+        />
       </div>
     </SidebarProvider>
   );
