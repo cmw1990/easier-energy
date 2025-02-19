@@ -10,6 +10,38 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      brain_game_scores: {
+        Row: {
+          id: string
+          user_id: string
+          game_type: string
+          score: number
+          difficulty?: number
+          duration_seconds?: number
+          created_at: string
+          metadata: Json
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          game_type: string
+          score: number
+          difficulty?: number
+          duration_seconds?: number
+          created_at?: string
+          metadata?: Json
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          game_type?: string
+          score?: number
+          difficulty?: number
+          duration_seconds?: number
+          created_at?: string
+          metadata?: Json
+        }
+      }
       user_settings: {
         Row: {
           id: string
@@ -239,6 +271,18 @@ export interface Database {
         }
       }
     }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
 }
 
@@ -348,3 +392,6 @@ export type DisplayZone = {
   size: string
   price_per_day: number
 }
+
+export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
+export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T]
