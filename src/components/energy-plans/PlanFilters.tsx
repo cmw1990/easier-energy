@@ -86,14 +86,14 @@ export const PlanFilters = ({
         </div>
 
         <Select
-          value={energyLevel?.toString() || ""}
-          onValueChange={(value) => onEnergyLevelChange?.(value ? parseInt(value) : null)}
+          value={energyLevel?.toString() ?? "all"}
+          onValueChange={(value) => onEnergyLevelChange?.(value === "all" ? null : parseInt(value))}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Energy Level Required" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Any Energy Level</SelectItem>
+            <SelectItem value="all">Any Energy Level</SelectItem>
             {[1,2,3,4,5].map((level) => (
               <SelectItem key={level} value={level.toString()}>
                 Level {level}
@@ -103,14 +103,14 @@ export const PlanFilters = ({
         </Select>
 
         <Select
-          value={duration?.toString() || ""}
-          onValueChange={(value) => onDurationChange?.(value ? parseInt(value) : null)}
+          value={duration?.toString() ?? "all"}
+          onValueChange={(value) => onDurationChange?.(value === "all" ? null : parseInt(value))}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Duration" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Any Duration</SelectItem>
+            <SelectItem value="all">Any Duration</SelectItem>
             <SelectItem value="15">15 minutes</SelectItem>
             <SelectItem value="30">30 minutes</SelectItem>
             <SelectItem value="45">45 minutes</SelectItem>
