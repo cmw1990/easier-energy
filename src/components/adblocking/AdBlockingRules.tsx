@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -102,8 +101,6 @@ export function AdBlockingRules() {
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
-
       toast({
         title: "Rule deleted",
         description: "The blocking rule has been removed."
@@ -192,7 +189,10 @@ export function AdBlockingRules() {
                 />
                 <Label className="font-medium">{rule.pattern}</Label>
                 {rule.priority > 50 && (
-                  <AlertCircle className="h-4 w-4 text-yellow-500" title="High Priority Rule" />
+                  <AlertCircle 
+                    className="h-4 w-4 text-yellow-500" 
+                    aria-label="High Priority Rule" 
+                  />
                 )}
               </div>
               <div className="text-sm text-muted-foreground">
