@@ -14,7 +14,11 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    children: [...mainRoutes[0].children, ...toolRoutes, ...gameRoutes]
+    children: [
+      ...mainRoutes[0].children,
+      ...toolRoutes,
+      ...gameRoutes
+    ]
   }
 ]);
 
