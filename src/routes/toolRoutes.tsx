@@ -11,48 +11,52 @@ import DualNBack from "@/pages/tools/DualNBack";
 import PatternRecognition from "@/pages/tools/PatternRecognition";
 import SpeedMath from "@/pages/tools/SpeedMath";
 
-export const toolRoutes: RouteObject = {
-  path: "tools",
-  children: [
-    {
-      path: "word-scramble",
-      element: <WordScramble />,
-    },
-    {
-      path: "color-match",
-      element: <ColorMatch />,
-    },
-    {
-      path: "brain-match",
-      element: <BrainMatch3 />,
-    },
-    {
-      path: "memory-cards",
-      element: <MemoryCards />,
-    },
-    {
-      path: "mental-rotation",
-      element: <MentalRotation />,
-    },
-    {
-      path: "sequence-memory",
-      element: <SequenceMemory />,
-    },
-    {
-      path: "n-back",
-      element: <NBackGame />,
-    },
-    {
-      path: "dual-n-back",
-      element: <DualNBack />,
-    },
-    {
-      path: "pattern-recognition",
-      element: <PatternRecognition />,
-    },
-    {
-      path: "speed-math",
-      element: <SpeedMath />,
-    }
-  ],
-};
+export const toolRoutes: RouteObject[] = [
+  {
+    path: "tools",
+    children: [
+      {
+        path: "word-scramble",
+        element: <WordScramble />,
+      },
+      {
+        path: "color-match",
+        element: <ColorMatch />,
+      },
+      {
+        path: "brain-match",
+        element: <BrainMatch3 />,
+      },
+      {
+        path: "memory-cards",
+        element: <MemoryCards />,
+      },
+      {
+        path: "mental-rotation",
+        element: <MentalRotation />,
+      },
+      {
+        path: "sequence-memory",
+        element: <SequenceMemory />,
+      },
+      {
+        path: "n-back",
+        element: <NBackGame />,
+      },
+      {
+        path: "dual-n-back",
+        element: <DualNBack />,
+      },
+      {
+        path: "pattern-recognition",
+        element: <PatternRecognition />,
+      },
+      {
+        path: "speed-math",
+        element: <SpeedMath />,
+      }
+    ],
+  }
+];
+
+export default toolRoutes;

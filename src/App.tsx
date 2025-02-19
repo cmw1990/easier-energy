@@ -8,11 +8,11 @@ import { gameRoutes } from "@/routes/gameRoutes";
 
 const queryClient = new QueryClient();
 
-// Combine all routes as a flat array
+// Combine all routes
 const router = createBrowserRouter([
   {
     path: "/",
-    children: [mainRoutes, toolRoutes, gameRoutes]
+    children: [...mainRoutes, ...toolRoutes, ...gameRoutes]
   }
 ]);
 
